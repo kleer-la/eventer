@@ -32,7 +32,7 @@ Eventer::Application.routes.draw do
   match 'api/community_events' => 'home#index_community'
   match 'api/events/:id' => 'home#show'
   match 'api/event_types' => 'event_types#index'
-  match 'api/event_types/:id' => 'event_types#show'
+  match 'api/event_types/:id' => 'home#event_type_show'
   match 'api/event_types/:id/trainers' => 'event_types#show_trainers'
   match 'api/categories' => 'home#categories'
   
