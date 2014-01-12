@@ -12,6 +12,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'poltergeist'
   gem 'database_cleaner'
   gem 'factory_girl_rails',require: false
   gem 'cucumber-rails', require: false
