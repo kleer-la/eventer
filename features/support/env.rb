@@ -7,12 +7,20 @@
 require 'cucumber/rails'
 require 'selenium-webdriver'
 
+require 'capybara/poltergeist'
+
+Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(app, {debug: false})
+end
+
+Capybara.javascript_driver = :poltergeist
+
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd
 # prefer to use XPath just remove this line and adjust any selectors in your
 # steps to use the XPath syntax.
 Capybara.default_selector = :css
-Capybara.default_driver = :selenium
+#Capybara.default_driver = :selenium
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how 
