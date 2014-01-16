@@ -212,7 +212,7 @@
     var event_date = new Date( date_string );
     
     var eb_date = new Date( date_string );
-    eb_date.setDate( event_date.getDate()-9 );
+    eb_date.setDate( event_date.getUTCDate()-10 );
 
     var eb_date_day = eb_date.getDate();
     var eb_date_month = eb_date.getMonth()+1;

@@ -1,0 +1,15 @@
+language: ruby
+rvm:
+- 1.9.3
+before_script:
+- sh -e /etc/init.d/xvfb start
+script:
+- bundle exec rake --trace db:migrate
+before_deploy:
+- heroku pgbackups:capture --expire --app keventer-test HEROKU_POSTGRESQL_COPPER_URL
+deploy:
+  provider: heroku
+  api_key:
+    secure: in0pTnnVFO6bBmyQo8lhtmj+7Ta6TY7BJQKxnTkZTweGnpDC/sJ7v6fMCIt6vePNbbS5ODM45MtWs3XtVMUP1Zphv98F7FY4nOyh6CvJ0TJkHiEZsfQYao0M/0XSXEatB2gXoDVEpTLWpGnNwS28249XOOLNP+S0dDlGrb69hQg=
+  app:
+    develop: keventer-test

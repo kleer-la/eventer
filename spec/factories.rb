@@ -61,7 +61,7 @@ FactoryGirl.define do
    end
   
   factory :event do
-    event_type FactoryGirl.build(:event_type)
+    event_type {FactoryGirl.build(:event_type)}
     date "23/01/2100"
     duration 2
     start_time "9:00"

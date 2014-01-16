@@ -41,7 +41,6 @@ def create_valid_event_inputs(event_type_name, event_date='31-01-2030')
   fill_in 'event_list_price_2_pax_discount', :with =>  10
   fill_in 'event_list_price_3plus_pax_discount', :with =>  15
   fill_in 'event_eb_price', :with => 450.00
-  fill_in 'event_eb_end_date', :with => '21-01-2030'
 end
 
 def submit_event
@@ -162,6 +161,7 @@ Then /^I should see the webinar setup$/ do
 end
 
 Then /^EB date should be "([^\"]*)"$/ do |value|
+  sleep 5
   page.find_field('event_eb_end_date').value.should == value
 end
 
