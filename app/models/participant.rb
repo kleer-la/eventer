@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'valid_email'
+require 'mercadopago'
 
 class Participant < ActiveRecord::Base
   belongs_to :event
@@ -108,4 +109,34 @@ class Participant < ActiveRecord::Base
       ""
     end
   end
+  
+  def mp_checkout_ar_for_list_price
+    mp_checkout_ar
+  end
+  
+  def mp_checkout_ar_for_eb_price
+    mp_checkout_ar
+  end
+  
+  def mp_checkout_ar
+    mp_client_id_ar = ENV["KEVENTER_MP_CLIENT_ID_AR"]
+    mp_client_secret_ar = ENV["KEVENTER_MP_CLIENT_SECRET_AR"]
+    mp = MercadoPago.new( mp_client_id_ar , mp_client_secret_ar )
+    
+    preferenceData = { 
+                    "items" => Array[
+                      {
+                        "title" => "sdk-ruby", 
+                        "quantity" => 1, 
+                        "unit_price" => 10.2, 
+                        "currency_id" => "ARS"
+                      }
+                    ]
+                  }
+    
+    preference = mp.create_preference(preferenceData)
+
+    preference['response']['init_point']
+  end
+  
 end

@@ -1,0 +1,1 @@
+MERCADO_PAGO_VERSION = '0.2.0' unless defined?(MERCADO_PAGO_VERSION)
