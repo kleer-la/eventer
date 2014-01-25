@@ -111,14 +111,14 @@ class Participant < ActiveRecord::Base
   end
   
   def mp_checkout_ar_for_list_price
-    mp_checkout_ar
+    self.event.list_price.nil? ? "" : mp_checkout_ar( self.event.list_price )
   end
   
   def mp_checkout_ar_for_eb_price
-    mp_checkout_ar
+    self.event.eb_price.nil? ? "" : mp_checkout_ar( self.event.eb_price )
   end
   
-  def mp_checkout_ar
+  def mp_checkout_ar( price )
     mp_client_id_ar = ENV["KEVENTER_MP_CLIENT_ID_AR"]
     mp_client_secret_ar = ENV["KEVENTER_MP_CLIENT_SECRET_AR"]
     mp = MercadoPago.new( mp_client_id_ar , mp_client_secret_ar )
@@ -128,14 +128,14 @@ class Participant < ActiveRecord::Base
                       {
                         "title" => "sdk-ruby", 
                         "quantity" => 1, 
-                        "unit_price" => 10.2, 
+                        "unit_price" => price.to_f, 
                         "currency_id" => "ARS"
                       }
                     ]
                   }
     
     preference = mp.create_preference(preferenceData)
-
+    
     preference['response']['init_point']
   end
   

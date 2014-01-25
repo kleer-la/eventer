@@ -78,6 +78,8 @@ describe Participant do
   end
 
   it "should generate a MercadoPago Argentinian payment link for EB Price" do
+    @participant.event.eb_price = 450
+    @participant.event.eb_end_date = Date.today+10
     @participant.mp_checkout_ar_for_eb_price.should start_with("https://www.mercadopago.com/mla/checkout/pay?pref_id=")
   end
 
