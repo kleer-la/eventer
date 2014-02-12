@@ -18,4 +18,12 @@ Feature: Administración de Participantes
 		And theres an event
 		And theres an influence zone
 		When I make a blank registration for that event
-		Then I should see an alert "Todos los campos son requeridos"		
+		Then I should see an alert "Todos los campos son requeridos"
+
+	@selenium
+	Scenario: Creacion de E-mail Personalizado de Notificacion de Registro
+		Given Im a logged in user
+		And an event of type "Tipo de Evento de Prueba" with "lorem" as email content
+		When I register a new participant for the "Custom Event"
+		Then the Paricipant should recieve an email with "lorem"
+		

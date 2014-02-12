@@ -88,4 +88,4 @@ Feature: Administración de Eventos
 		And I cancel the event "Tipo de Evento de Prueba"
 		Then I should be on the events listing page
 		And I should see "Evento cancelado exitosamente"	
-		
+
