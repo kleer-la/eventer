@@ -108,6 +108,7 @@ es:
         email: "E-Mail"
         status: "Estado"      
         influence_zone: "Zona de Influencia"  
+        referer_code: "Código de Referencia"
       trainer:
         linedin_url: "URL de LinedIn"
         is_kleerer: "Es Kleerer?"
@@ -154,6 +155,8 @@ es:
         custom_prices_email_text: "Precios para e-mail de registro"
         monitor_email: "Notificación de nuevos registros a"
         specific_conditions: "Condiciones Especeificas del evento"
+        should_welcome_email: "Enviar e-mail de bienvenida a nuevos registrados?"
+        should_ask_for_referer_code: "Solicitar código de referencia (referer) a nuevos registrados?"
         edit:
           title: "Edit title"
       event_type:

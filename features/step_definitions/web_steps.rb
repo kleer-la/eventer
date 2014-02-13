@@ -38,6 +38,8 @@ def create_valid_event_inputs(event_type_name, event_date='31-01-2030')
   choose 'event_visibility_type_pu'
   fill_in 'event_list_price', :with => 500.00
   check 'event_list_price_plus_tax'
+  check 'event_should_welcome_email'
+  check 'event_should_ask_for_referer_code'
   fill_in 'event_list_price_2_pax_discount', :with =>  10
   fill_in 'event_list_price_3plus_pax_discount', :with =>  15
   fill_in 'event_eb_price', :with => 450.00

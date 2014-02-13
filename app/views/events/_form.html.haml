@@ -122,6 +122,11 @@
           .row-fuid
             .span12
               .control-group
+                %label.control-label{ :for => :should_ask_for_referer_code }= t("formtastic.labels.event.should_ask_for_referer_code")
+                = f.check_box :should_ask_for_referer_code
+          .row-fuid
+            .span12
+              .control-group
                 %label.control-label{ :for => :custom_prices_email_text }= t("formtastic.labels.event.custom_prices_email_text")
                 = f.text_area :custom_prices_email_text, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.custom_prices_email_text")
                 %small.muted 
@@ -133,6 +138,11 @@
               .control-group
                 %label.control-label{ :for => :monitor_email }= t("formtastic.labels.event.monitor_email")
                 = f.text_field :monitor_email, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.monitor_email")
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :should_welcome_email }= t("formtastic.labels.event.should_welcome_email")
+                = f.check_box :should_welcome_email
           .row-fuid
             .span12
               .control-group

@@ -91,7 +91,9 @@ class ParticipantsController < ApplicationController
             @participant.save
           end
           
-          EventMailer.delay.welcome_new_event_participant(@participant)
+          if @event.should_welcome_email
+            EventMailer.delay.welcome_new_event_participant(@participant)
+          end
           
           edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
           EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)

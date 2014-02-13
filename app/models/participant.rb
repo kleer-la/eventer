@@ -5,7 +5,7 @@ class Participant < ActiveRecord::Base
   belongs_to :event
   belongs_to :influence_zone
   
-  attr_accessible :email, :fname, :lname, :phone, :event_id, :status, :notes, :influence_zone_id, :influence_zone
+  attr_accessible :email, :fname, :lname, :phone, :event_id, :status, :notes, :influence_zone_id, :influence_zone, :referer_code
   
   validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
   

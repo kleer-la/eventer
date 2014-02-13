@@ -13,18 +13,22 @@
       = form_for [:event, @participant] do |f|
         %fieldset.inputs
           .row-fluid
-            .span4
+            .span3
               .control-group
                 %label.control-label{ :for => :fname }= t("formtastic.labels.participant.fname")
                 = f.text_field :fname
-            .span4
+            .span3
               .control-group
                 %label.control-label{ :for => :lname }= t("formtastic.labels.participant.lname")
                 = f.text_field :lname
-            .span4
+            .span3
               .control-group
                 %label.control-label{ :for => :phone }= t("formtastic.labels.participant.phone")
                 = f.text_field :phone
+            .span3
+              .control-group
+                %label.control-label{ :for => :referer_code }= t("formtastic.labels.participant.referer_code")
+                = f.text_field :referer_code
           .row-fluid
             .span4
               .control-group

@@ -21,6 +21,11 @@
       .span12
         .control-group
           = f.text_field :phone, :class => "span12", :placeholder => t("formtastic.labels.participant.phone")
+    - if @event.should_ask_for_referer_code
+      .row-fluid
+        .span12
+          .control-group
+            = f.text_field :referer_code, :class => "span12", :placeholder => t("formtastic.labels.participant.referer_code")
     .row_fluid
       = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: 'Tu lugar más próximo ...'}
     .row-fluid

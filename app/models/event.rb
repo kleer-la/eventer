@@ -24,7 +24,7 @@ class Event < ActiveRecord::Base
                   :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants, :duration, 
                   :start_time, :end_time, :sepyme_enabled, :is_webinar, :time_zone_name, :embedded_player, :twitter_embedded_search,
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
-                  :specific_conditions
+                  :specific_conditions, :should_welcome_email, :should_ask_for_referer_code
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
             :country, :trainer, :event_type, :duration, :start_time, :end_time, :address, :presence => true
@@ -66,7 +66,8 @@ class Event < ActiveRecord::Base
     if self.new_record?
      self.start_time ||= "9:00"   
      self.end_time ||= "18:00"  
-     self.duration ||= 1        
+     self.duration ||= 1
+     self.should_welcome_email ||= true    
     end
   end
 
