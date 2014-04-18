@@ -204,7 +204,7 @@ end
 
 Then /^I should see a confirmation message$/ do
   current_path.should == '/events/1/participant_confirmed'
-  page.should have_content('Tu registro fue realizado exitosamente.')
+  page.should have_content('Tu pedido fue realizado exitosamente.')
 end
 
 Then /^It should have a registration page$/ do

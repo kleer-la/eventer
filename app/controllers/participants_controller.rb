@@ -100,7 +100,7 @@ class ParticipantsController < ApplicationController
           
         end
         
-        format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: 'Tu registro fue realizado exitosamente.' }
+        format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: 'Tu pedido fue realizado exitosamente.' }
         format.json { render json: @participant, status: :created, location: @participant }
       else
         format.html { render action: "new", :layout => "empty_layout" }

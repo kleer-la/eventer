@@ -48,7 +48,7 @@
                                   =" #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
                                   %br
                                   %br
-                                  - if @participant.event.custom_prices_email_text.nil? || @participant.event.custom_prices_email_text == ""
+                                  - if @participant.event.custom_prices_email_text.blank?
                                     %b
                                       Inversión
                                     %br
@@ -69,6 +69,7 @@
                                   - else
                                     = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
                                   %br
+                                  (Descuentos no acumulables, aplicados sobre precio de lista)
                                   %br
                                   %b
                                     Formas de pago: 
@@ -86,7 +87,7 @@
                                   )
                                   con la forma de pago que prefieras.
                                   %b
-                                    Mientras tanto, te reservaremos un lugar para este evento por las próximas 48 horas.
+                                    Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas.
                                   %br
                                   %br
                                   No dudes en contactarnos por cualquier consulta que tengas :)

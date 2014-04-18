@@ -35,7 +35,10 @@
             %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
             %button.btn.btn-primary{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
               %i.icon-save
-              ¡Me interesa!
+              - if @event.is_community_event?
+                ¡Registrarme!
+              - else
+                ¡Me interesa!
 
 - if @participant.errors.full_messages.count > 0
   :javascript

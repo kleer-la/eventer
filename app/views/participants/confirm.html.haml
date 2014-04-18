@@ -3,14 +3,14 @@
     .form-wrapper
       = render '/commons/notice'
       - if @event.is_webinar?
-        %p Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
+        %p ¡Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
       - else
-        %p Gracias! Te hemos enviado un e-mail con información importante sobre tu registro.
+        %p ¡Gracias! Te hemos enviado un e-mail con información importante.
 - else
   :css
     body {bgcolor:#FFFFFF;}
   = render '/commons/notice'
   - if @event.is_webinar?
-    %p Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
+    %p ¡Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
   - else
-    %p Gracias! Te hemos enviado un e-mail con información importante sobre tu registro.
+    %p ¡Gracias! Te hemos enviado un e-mail con información importante.

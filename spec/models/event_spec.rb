@@ -60,15 +60,15 @@ describe Event do
   end
 
   it "should have a future date" do
-      @event.date = "31/01/2000"
+    @event.date = "31/01/2000"
 
-      @event.valid?.should be false
+    @event.valid?.should be false
   end
 
   it "should have a capacity greater than 0" do
-      @event.capacity = 0
+    @event.capacity = 0
 
-      @event.valid?.should be false
+    @event.valid?.should be false
   end
 
   it "should have specific conditions" do
@@ -98,70 +98,47 @@ describe Event do
   end  
 
   it "Early Bird price should be smaller than List Price" do
-      @event.list_price = 100
-      @event.eb_price = 200
+    @event.list_price = 100
+    @event.eb_price = 200
 
-      @event.valid?.should be false
+    @event.valid?.should be false
   end
 
   it "Early Bird date should be earlier than Event date" do
-      @event.date = "31/01/3000"
-      @event.eb_end_date = "31/01/3100"
+    @event.date = "31/01/3000"
+    @event.eb_end_date = "31/01/3100"
 
-      @event.valid?.should be false
+    @event.valid?.should be false
   end
 
-  it "A private event should not have discounts for 2 persons" do
-       @event.visibility_type = "pr"
-       @event.list_price_2_pax_discount = 10
+  it "It should return a completion percentage" do
+    @event.capacity = 10
+      
+    c = FactoryGirl.create(:country)
+    zi = FactoryGirl.create(:influence_zone)
+    zi.country = c
 
-       @event.valid?.should be false
-   end
+    p = Participant.new({:fname => "juan", :lname => "pipo", :phone => "1234-5678", :email => "ppp@ppp.com", :influence_zone => zi })
+    p.event = @event
+    p.status = "C"
+    p.save
 
-   it "A private event should not have discounts for 3+ persons" do
-        @event.visibility_type = "pr"
-        @event.list_price_3plus_pax_discount = 10
+    @event.completion.should == 0.1
+  end
 
-        @event.valid?.should be false
-    end
+  it "It should compute weeks from now" do
+    today = Date.today
+    @event.date = today
+    
+    @event.weeks_from(today.weeks_ago(3)).should == 3
+  end
 
-    it "A public event can have discounts" do
-         @event.visibility_type = 'pu'
-         @event.list_price_2_pax_discount = 10
-         @event.list_price_3plus_pax_discount = 15
-
-         @event.valid?.should be true
-     end
-
-     it "It should return a completion percentage" do
-
-          @event.capacity = 10
-          
-          c = FactoryGirl.create(:country)
-          zi = FactoryGirl.create(:influence_zone)
-          zi.country = c
-
-          p = Participant.new({:fname => "juan", :lname => "pipo", :phone => "1234-5678", :email => "ppp@ppp.com", :influence_zone => zi })
-          p.event = @event
-          p.status = "C"
-          p.save
-
-          @event.completion.should == 0.1
-      end
-
-     it "It should compute weeks from now" do
-          today = Date.today
-          @event.date = today
-          
-          @event.weeks_from(today.weeks_ago(3)).should == 3
-      end
-
-     it "It should compute weeks from now (next year)" do
-          today = Date.today
-          @event.date = today + 21
-          
-          @event.weeks_from(today).should == 3
-      end
+  it "It should compute weeks from now (next year)" do
+    today = Date.today
+    @event.date = today + 21
+    
+    @event.weeks_from(today).should == 3
+  end
       
   it "should require a duration" do
     @event.duration = ""
@@ -170,9 +147,9 @@ describe Event do
   end
 
   it "should have a duration greater than 0" do
-      @event.duration = 0
+    @event.duration = 0
 
-      @event.valid?.should be false
+    @event.valid?.should be false
   end  
   
   it "should require a start time" do
@@ -263,9 +240,61 @@ describe Event do
     @event.monitor_email = "martin.alaimo@kleer.la"
     @event.monitor_email.should == "martin.alaimo@kleer.la"
   end
-  
-  context "if event date is 15-Jan-2015" do
-    
+
+  context "A private event" do
+
+    before (:each) do
+      @event.visibility_type = "pr"
+    end
+
+    it "should not have discounts for 2 persons" do
+      @event.list_price_2_pax_discount = 10
+
+      @event.valid?.should be false
+    end
+
+    it "should not have discounts for 3+ persons" do
+      @event.list_price_3plus_pax_discount = 10
+
+      @event.valid?.should be false
+    end
+
+    it "should not be marked as community" do
+      @event.is_community_event?.should be false
+    end
+  end
+
+  context "A public event" do
+
+    before (:each) do
+      @event.visibility_type = "pu"
+    end
+
+    it "can have discounts" do
+      @event.list_price_2_pax_discount = 10
+      @event.list_price_3plus_pax_discount = 15
+
+      @event.valid?.should be true
+    end
+
+    it "should not be marked as community" do
+      @event.is_community_event?.should be false
+    end
+  end
+
+  context "A community event" do
+
+    before (:each) do
+      @event.visibility_type = "co"
+    end
+
+    it "should be marked as community" do
+      @event.is_community_event?.should be true
+    end
+  end
+
+  context "When event date is 15-Jan-2015" do
+
     before (:each) do
       @event.date = "15/01/2015"
     end
@@ -286,7 +315,7 @@ describe Event do
     end
   end
   
-  context "if event date is 20-Apr-2015" do
+  context "When event date is 20-Apr-2015" do
     
     before (:each) do
       @event.date = "20/04/2015"

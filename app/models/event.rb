@@ -129,6 +129,10 @@ class Event < ActiveRecord::Base
     end
   end
   
+  def is_community_event?
+    self.visibility_type == 'co'
+  end
+
   private
   
   def get_event_duration
