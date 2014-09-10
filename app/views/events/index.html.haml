@@ -52,6 +52,8 @@
                       %span.label.label-important Privado
                     -elsif event.visibility_type == "co"
                       %span.label.label-info Comunitario
+                    -elsif event.visibility_type == "ex"
+                      %span.label.label-warning Experimental
                     %br 
                     -if event.draft
                       %span.label.label-important Borrador
