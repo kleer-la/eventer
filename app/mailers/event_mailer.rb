@@ -36,7 +36,7 @@ class EventMailer < ActionMailer::Base
      :merge_vars => [{:rcpt=>"#{participant.email}", :vars=>[{:name=>"NAME", :content=>"#{participant.fname}"}]}],
      :from_email=>"entrenamos@kleerer.com"  
     }
-    sending = m.messages.send_template("reminder-habilidades-esenciales-para-team-leaders", "", message) 
+    sending = m.messages.send_template("#{participant.event.event_type.mandrill_template_slug}", "", message) 
   end
 
   def send_certificate(participant, certificate_url_A4, certificate_url_LETTER )

@@ -18,5 +18,9 @@ class EventType < ActiveRecord::Base
       self.name
     end
   end
+
+  def mandrill_template_slug
+    "reminder-#{self.name.downcase.gsub(" ","-")}"
+  end
   
 end
