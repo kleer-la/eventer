@@ -1,3 +1,5 @@
+require 'mandrill'
+
 class ParticipantsController < ApplicationController
   before_filter :authenticate_user!, :except => [:new, :create, :confirm, :certificate]
   
@@ -117,7 +119,11 @@ class ParticipantsController < ApplicationController
           end
           
           if @event.should_welcome_email
-            EventMailer.delay.welcome_new_event_participant(@participant)
+            if @participant.event.visibility_type == "ex"
+              EventMailer.welcome_new_event_participant_mandrill(@participant)
+            else
+              EventMailer.delay.welcome_new_event_participant(@participant)
+            end
           end
           
           edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
