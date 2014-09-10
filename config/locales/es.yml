@@ -241,6 +241,7 @@ es:
           public: "Publico"
           private: "Privado"
           community: "Comunitario"
+          experimental: "Experimental"
   menu:
       dashboard: "Dashboard"
       users: "Usuarios"

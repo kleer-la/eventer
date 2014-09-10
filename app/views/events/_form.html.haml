@@ -83,6 +83,9 @@
                   %label.checkbox.inline
                     = f.radio_button :visibility_type, "co"
                     %span.label.label-info= t('event.type.community')
+                  %label.checkbox.inline
+                    = f.radio_button :visibility_type, "ex"
+                    %span.label.label-info= t('event.type.experimental')
           .row-fuid
             .span12
               %hr.hr-normal
@@ -254,6 +257,7 @@
     $("#event_visibility_type_pu").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_visibility_type_pr").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_visibility_type_co").change( function() { eventTypeActions( $(this).val() ); });
+    $("#event_visibility_type_ex").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_event_type_id").change( function() { dynamicallyFillTrainersForEventType( $(this).val() ); });
 
     $("#event_date").change( function() { eventDateChanged( $(this).val() ); });
@@ -295,7 +299,7 @@
   }
 
   function eventTypeActions( value ) {
-    if (value === "pu") {
+    if (value === "pu" || value === "ex") {
       $("#event_eb_price").removeAttr('disabled');    
       $("#event_couples_eb_price").removeAttr('disabled');
       $("#event_business_price").removeAttr('disabled');
@@ -318,22 +322,16 @@
     else if (value === "pr") {
       $("#event_eb_price").val("");
       $("#event_eb_price").attr('disabled','disabled');
-
       $("#event_couples_eb_price").val("");
       $("#event_couples_eb_price").attr('disabled','disabled');
-
       $("#event_business_price").val("");
       $("#event_business_price").attr('disabled','disabled');
-
       $("#event_business_eb_price").val("");
       $("#event_business_eb_price").attr('disabled','disabled');
-
       $("#event_enterprise_6plus_price").val("");
       $("#event_enterprise_6plus_price").attr('disabled','disabled');
-
       $("#event_enterprise_11plus_price").val("");
       $("#event_enterprise_11plus_price").attr('disabled','disabled');
-
       $("#event_eb_end_date").attr('disabled','disabled');
       $("#event_public_or_private_set").show();
     }
