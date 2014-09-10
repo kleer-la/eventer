@@ -25,18 +25,17 @@ class EventMailer < ActionMailer::Base
     require 'mandrill'  
     m = Mandrill::API.new
     message = {  
-     :subject=> "Hola #{participant.fname}! #{participant.event.event_type.name}",  
+     :subject=> "#{participant.fname} ¡Inscríbete en el curso #{participant.event.event_type.name}!",  
      :from_name=> "#{participant.event.trainer.name} de Kleer",  
-     :text=>"Hi message, how are you?",  
      :to=>[  
        {  
          :email=> "#{participant.email}",  
          :name=> "#{participant.fname}"  
        }  
      ],  
-     :html=>"<html><h1>Hi <strong>message</strong>, how are you?</h1></html>",  
-     :from_email=>"entrenamos.peru@kleer.la"  
-    }  
+     :merge_vars => [{:rcpt=>"#{participant.email}", :vars=>[{:name=>"NAME", :content=>"#{participant.fname}"}]}],
+     :from_email=>"entrenamos@kleerer.com"  
+    }
     sending = m.messages.send_template("reminder-habilidades-esenciales-para-team-leaders", "", message) 
   end
 
