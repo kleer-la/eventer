@@ -92,6 +92,7 @@ GEM
     diff-lcs (1.2.5)
     erubis (2.7.0)
     eventmachine (1.0.3)
+    excon (0.39.5)
     execjs (2.0.2)
     factory_girl (4.3.0)
       activesupport (>= 3.0.0)
@@ -124,6 +125,9 @@ GEM
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    mandrill-api (1.0.52)
+      excon (>= 0.16.0, < 1.0)
+      json (>= 1.7.7, < 2.0)
     mime-types (1.25.1)
     mini_portile (0.5.2)
     money (6.0.0)
@@ -265,6 +269,7 @@ DEPENDENCIES
   haml
   haml-rails
   jquery-rails
+  mandrill-api
   money
   pdf-inspector
   pg
