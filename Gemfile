@@ -86,3 +86,6 @@ gem 'best_in_place'
 
 # Amazon AWS API Client
 gem 'aws-sdk'
+
+# Gemas necesarias para el envío de mails
+gem 'mandrill-api'

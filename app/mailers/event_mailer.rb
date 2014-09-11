@@ -21,6 +21,24 @@ class EventMailer < ActionMailer::Base
     mail(to: @participant.email, from: "Eventos <eventos@kleerer.com>", subject: "Kleer | #{@participant.event.event_type.name}")
   end
 
+  def welcome_new_event_participant_mandrill(participant)
+    require 'mandrill'  
+    m = Mandrill::API.new
+    message = {  
+     :subject=> "#{participant.fname} ¡Inscríbete en el curso #{participant.event.event_type.name}!",  
+     :from_name=> "#{participant.event.trainer.name} de Kleer",  
+     :to=>[  
+       {  
+         :email=> "#{participant.email}",  
+         :name=> "#{participant.fname}"  
+       }  
+     ],  
+     :merge_vars => [{:rcpt=>"#{participant.email}", :vars=>[{:name=>"NAME", :content=>"#{participant.fname}"}]}],
+     :from_email=>"entrenamos@kleerer.com"  
+    }
+    sending = m.messages.send_template("#{participant.event.event_type.mandrill_template_slug}", "", message) 
+  end
+
   def send_certificate(participant, certificate_url_A4, certificate_url_LETTER )
     @participant = participant
     @certificate_link_A4 = certificate_url_A4
