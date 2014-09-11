@@ -175,6 +175,10 @@ class Event < ActiveRecord::Base
     self.visibility_type == 'co'
   end
 
+  def is_experimental_event?
+    self.visibility_type == 'ex'
+  end
+
   def is_classroom?
     self.mode == 'cl'
   end
