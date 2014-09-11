@@ -12,8 +12,9 @@ class Event < ActiveRecord::Base
   scope :visible, where(:cancelled => false).where("date >= ?", DateTime.now-1)
   scope :past_visible, where(:cancelled => false).where("date <= ?", DateTime.now)
   scope :public_events,  where("visibility_type = 'pu' or visibility_type = 'co' or visibility_type = 'ex'")
-  scope :public_commercial_events,  where(:visibility_type => "pu")
+  scope :public_commercial_events,  where("visibility_type = 'pu' or visibility_type ='ex'")
   scope :public_community_events,  where(:visibility_type => "co")
+
   scope :public_commercial_visible, self.visible.public_commercial_events
   scope :public_community_visible, self.visible.public_community_events
   scope :public_and_visible, self.visible.public_events
@@ -172,6 +173,10 @@ class Event < ActiveRecord::Base
   
   def is_community_event?
     self.visibility_type == 'co'
+  end
+
+  def is_experimental_event?
+    self.visibility_type == 'ex'
   end
 
   def is_classroom?

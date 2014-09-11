@@ -13,11 +13,16 @@
           %h6.text-center= "Actualmente en progreso!"
       - else
         %p.text-center
-          %i.icon-calendar
-          = @event.human_date + " " + @event.human_time + "."
-          %br
-          %i.icon-map-marker
-          = @event.place + ", " + @event.city
+          - if @event.is_experimental_event?
+            %h3.text-center= "¡Ups! Aún no estamos listos..."
+            %h4.text-center="Pero queremos fallar con estilo"
+            %h5.text-center="Esto significa que antes de definir todos los detalles del curso, buscamos tener un buen número de interesados. Déjanos tus datos para contactarte cuando lleguemos al número mágico y comparte con tus amigos para lograrlo más rápido."
+          -else
+            %i.icon-calendar
+            = @event.human_date + " " + @event.human_time + "."
+            %br
+            %i.icon-map-marker
+            = @event.place + ", " + @event.city
       = render 'form'
   - else
     = render 'form'
