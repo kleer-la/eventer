@@ -132,7 +132,7 @@ module ParticipantsHelper
 
     certificate_filename = "#{temp_dir}/#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
 
-    Prawn::Document.generate(certificate_filename, 
+    Prawn::Document.generate(certificate_filename,
       :page_layout => :landscape, :page_size => page_size) do |pdf|
       self.render_certificate( pdf, Certificate.new(participant), page_size )
     end

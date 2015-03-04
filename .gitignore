@@ -18,3 +18,4 @@ coverage
 chromedriver.log
 
 .DS_Store
+.idea/

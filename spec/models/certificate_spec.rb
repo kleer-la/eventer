@@ -1,5 +1,18 @@
 include ParticipantsHelper
 
+class PrawnMock
+    attr_reader :history
+
+    def initialize
+        @history = ""
+    end
+    def text(msg, options=nil)
+        @history += msg
+    end
+    def method_missing(m,*args,&block)
+    end
+end
+
 describe Certificate do
   
   before(:each) do
@@ -133,4 +146,20 @@ describe "render certificates" do
         filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
     end
 
-end
+    it "csd certificate for a 3 days " do
+        pdf = PrawnMock.new
+
+        p = FactoryGirl.build(:participant)
+        et = FactoryGirl.build(:event_type)
+        et.duration = 24
+        e = FactoryGirl.build(:event)
+        e.event_type = et
+        p.event = e
+        et.csd_eligible = true
+
+        certificate = Certificate.new(p)
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+
+        pdf.history.should include "duration of 3"
+    end
+    end

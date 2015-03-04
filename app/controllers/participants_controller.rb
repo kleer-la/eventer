@@ -169,7 +169,8 @@ class ParticipantsController < ApplicationController
     @page_size = params[:page_size]
     @verification_code = params[:verification_code]
 
-    @participant = Participant.find(params[:id])
+    participant = Participant.find(params[:id])
+    @certificate = ParticipantsHelper::Certificate.new(participant)
   
   end
 
