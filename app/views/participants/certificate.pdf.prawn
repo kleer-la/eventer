@@ -2,10 +2,11 @@ if @page_size != "LETTER" && @page_size != "A4"
   prawn_document(:page_layout => :landscape, :page_size => "LETTER") do |pdf|
     pdf.text "Solo puedes generar certificados en tamaño carta (LETTER) o A4 (A4). Por favor, contáctanos a entrenamos@kleer.la"
   end
-elsif @verification_code != @participant.verification_code
+elsif @verification_code != @certificate.verification_code
   prawn_document(:page_layout => :landscape, :page_size => "LETTER") do |pdf|
     pdf.text "El código de verificación #{@verification_code} no es válido. Por favor, contáctanos a entrenamos@kleer.la"
-  end  
+  end
+
 elsif !@participant.is_confirmed_or_present?
   prawn_document(:page_layout => :landscape, :page_size => "LETTER") do |pdf|
     pdf.text "#{@participant.fname} #{@participant.lname} no estuvo presente en este evento. Por favor, contáctanos a entrenamos@kleer.la"
