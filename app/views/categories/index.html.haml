@@ -2,24 +2,35 @@
   %h1.pull-left
     %i.icon-sitemap
     %span Categorías
+  .pull-right
+    %a.btn.btn-white{ :href => new_category_path }= t('formtastic.actions.new')
 
-= render '/commons/not_migrated_yet'
 
-%p.record-actions
-  = link_to t('formtastic.actions.new'), new_category_path
+= render '/commons/notice'
 
-%table
-  %tr
-    %th Nombre
-    %th Código
-    %th Descripción
-    %th
-    %th
-
-  - @categories.each do |category|
-    %tr
-      %td= category.name
-      %td= category.codename
-      %td= category.description
-      %td= link_to 'Modificar', edit_category_path(category)
-      %td= link_to 'Borrar', category, method: :delete, data: { confirm: 'Seguro?' }
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .box-header.orange-background
+      .title Categorías
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-striped{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th= t('formtastic.labels.category.name')
+                %th= t('formtastic.labels.category.codename')
+                %th= t('formtastic.labels.category.description')
+                %th
+            %tbody
+              - @categories.each do |category|
+                %tr
+                  %td= category.name
+                  %td= category.codename
+                  %td= category.description
+                  %td
+                    .text-right
+                      %a.btn.btn-warning.btn-mini{ :href => edit_category_path(category) }
+                        %i.icon-edit
+                      %a.btn.btn-danger.btn-mini{ :href => category_path(category), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                        %i.icon-trash
