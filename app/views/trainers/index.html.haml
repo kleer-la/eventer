@@ -2,23 +2,30 @@
   %h1.pull-left
     %i.icon-briefcase
     %span Entrenadores
+  .pull-right
+    %a.btn.btn-white{ :href => new_trainer_path }= t('formtastic.actions.new')
 
-= render '/commons/not_migrated_yet'
+= render '/commons/notice'
 
-
-%p.record-actions
-  = link_to t('formtastic.actions.new'), new_trainer_path
-
-%table
-  %tr
-    %th= t('formtastic.labels.name')
-    %th.record-actions
-   
-  - @trainers.each do |trainer|
-    %tr
-      %td= link_to trainer.name, trainer
-      %td.record-actions
-        = link_to t('formtastic.actions.view'), trainer
-        = link_to t('formtastic.actions.edit'), edit_trainer_path(trainer)
-        = link_to t('formtastic.actions.destroy'), trainer, :confirm => t('confirm.sure'), :method => :delete
-
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .box-header.orange-background
+      .title Entrenadores
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-striped{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th= t('formtastic.labels.trainer.name')
+                %th
+            %tbody
+              - @trainers.each do |trainer|
+                %tr
+                  %td= link_to trainer.name, trainer
+                  %td
+                    .text-right
+                      %a.btn.btn-warning.btn-mini{ :href => edit_trainer_path(trainer) }
+                        %i.icon-edit
+                      %a.btn.btn-danger.btn-mini{ :href => trainer_path(trainer), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                        %i.icon-trash
