@@ -25,7 +25,7 @@
             %tbody
               - @categories.each do |category|
                 %tr
-                  %td= category.name
+                  %td= link_to category.name, category
                   %td= category.codename
                   %td= category.description[0..20]
                   %td

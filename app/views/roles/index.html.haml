@@ -2,22 +2,30 @@
   %h1.pull-left
     %i.icon-cogs
     %span Roles
+  .pull-right
+    %a.btn.btn-white{ :href => new_role_path }= t('formtastic.actions.new')
 
-= render '/commons/not_migrated_yet'
+= render '/commons/notice'
 
-%p.record-actions
-  = link_to t('formtastic.actions.new'), new_role_path
-
-%table
-  %tr
-    %th= t('formtastic.labels.role.name')
-    %th
-    %th
-    %th
-
-  - @roles.each do |role|
-    %tr
-      %td= role.name
-      %td= link_to t('action.link.role.show'), role
-      %td= link_to t('action.link.role.edit'), edit_role_path(role)
-      %td= link_to t('action.link.role.destroy'), role, :confirm => 'Are you sure?', :method => :delete
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .box-header.orange-background
+      .title Roles
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-striped{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th= t('formtastic.labels.roles.name')
+                %th
+            %tbody
+              - @roles.each do |role|
+                %tr
+                  %td= link_to role.name, role
+                  %td
+                    .text-right
+                      %a.btn.btn-warning.btn-mini{ :href => edit_role_path(role) }
+                        %i.icon-edit
+                      %a.btn.btn-danger.btn-mini{ :href => role_path(role), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                        %i.icon-trash
