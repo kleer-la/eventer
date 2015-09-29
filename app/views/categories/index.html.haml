@@ -27,7 +27,7 @@
                 %tr
                   %td= category.name
                   %td= category.codename
-                  %td= category.description
+                  %td= category.description[0..20]
                   %td
                     .text-right
                       %a.btn.btn-warning.btn-mini{ :href => edit_category_path(category) }
