@@ -10,44 +10,6 @@ def click_link_and_wait(link)
   page.should_not have_content "dude, you forgot to assert anything about the view"
 end
 
-def fill_valid_event_type(event_type_name)
-  fill_in 'event_type_name', :with => event_type_name
-  fill_in 'event_type_duration', :with => 30
-  first(:css, '#event_type_trainer_ids_').click
-  fill_in 'event_type_elevator_pitch', :with => "something"
-  fill_in 'event_type_description', :with => "something"
-  fill_in 'event_type_recipients', :with => "something"
-  fill_in 'event_type_program', :with => "something"
-end
-
-def create_valid_event(event_type_name = 'Tipo de Evento de Prueba')
-  create_valid_event_inputs event_type_name
-end
-
-def create_valid_event_inputs(event_type_name, event_date='31-01-2030')
-  select event_type_name, :from => 'event_event_type_id'
-  fill_in 'event_date', :with => event_date
-  fill_in 'event_finish_date', :with => Date.parse(event_date)+1
-  fill_in 'event_date', :with => event_date
-  select 'Presencial', :from => 'event_mode'
-  fill_in 'event_place', :with => 'Hotel Llao Llao'
-  fill_in 'event_address', :with => 'Tucumán 373'
-  fill_in 'event_capacity', :with => 25
-  fill_in 'event_city', :with => 'Buenos Aires'
-  select 'Argentina', :from => 'event_country_id'
-  all('#event_event_type_id option')[1].select_option
-  choose 'event_visibility_type_pu'
-  fill_in 'event_list_price', :with => 500.00
-  check 'event_should_welcome_email'
-  check 'event_should_ask_for_referer_code'
-  fill_in 'event_eb_price', :with => 450.00
-  fill_in 'event_specific_conditions', :with => 'Algunas condiciones especiales'
-end
-
-def submit_event
-  click_button_and_wait 'guardar'
-end
-
 Given /^I visit the home page$/ do
   visit "/"
 end
@@ -99,7 +61,7 @@ When /^I create an private event with discounts$/ do
   create_valid_event 'Tipo de Evento de Prueba'
   choose 'event_visibility_type_pr'
   fill_in 'event_eb_price', :with =>  10
-  fill_in 'event_business_eb_price', :with =>  15  
+  fill_in 'event_business_eb_price', :with =>  15
   submit_event
 end
 
@@ -174,7 +136,8 @@ When /^I modify the event "([^\"]*)"$/ do |link_description|
 end
 
 When /^I cancel the event "([^\"]*)"$/ do |link_description|
-  click_link_and_wait link_description
+  first(:link, link_description).click
+
   click_link_and_wait "Modificar"
   check 'event_cancelled'
   click_button_and_wait "guardar"
@@ -209,15 +172,10 @@ end
 Then /^It should have a registration page$/ do
   @event = Event.first
   visit '/events/'+@event.id.to_s+'/participants/new'
-  
+
   page.should have_content(@event.event_type.name )
   page.should have_content(@event.human_date )
   page.should have_content(@event.city )
-end
-
-When /^I visit the dashboard$/ do
-  visit '/dashboard'
-  page.should_not have_content "dude, you forgot to assert anything about the view"
 end
 
 def create_new_participant
@@ -237,7 +195,7 @@ def contact_participant
 end
 
 Given /^there are (\d+) participants and 1 is contacted$/ do |newones|
-  newones.to_i.times { 
+  newones.to_i.times {
     create_new_participant
   }
   contact_participant
@@ -254,19 +212,5 @@ end
 
 Then /^I should see an alert "([^\"]*)"$/ do |msg|
   page.driver.browser.switch_to.alert.text.should == msg
-  page.driver.browser.switch_to.alert.accept    
+  page.driver.browser.switch_to.alert.accept
 end
-
-Given /^theres (\d+) event (\d+) week away from now$/ do |amount, weeks_away|
-  event_type = EventType.first
-  event_date = Date.today + 7*weeks_away.to_i 
-
-  amount.to_i.times {
-    create_valid_event_inputs(event_type.name, event_date)
-    submit_event
-  }
-end
-
-
-
-

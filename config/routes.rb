@@ -22,13 +22,14 @@ Eventer::Application.routes.draw do
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
   match 'dashboard' => 'dashboard#index'
+  match 'dashboard/:country_iso' => 'dashboard#index'
   match 'dashboard/pricing' => 'dashboard#pricing'
   match 'dashboard/past_events' => 'dashboard#past_events'
   match 'dashboard/countdown' => 'dashboard#countdown'
   match 'dashboard/funneling' => 'dashboard#funneling'
   match 'dashboard/ratings' => 'dashboard#ratings'
   match 'dashboard/calculate_rating' => 'dashboard#calculate_rating'
-  
+
   match 'api/events' => 'home#index'
   match 'api/trainers' => 'home#trainers'
   match 'api/kleerers' => 'home#kleerers'
@@ -38,23 +39,23 @@ Eventer::Application.routes.draw do
   match 'api/event_types/:id' => 'home#event_type_show'
   match 'api/event_types/:id/trainers' => 'home#show_event_type_trainers'
   match 'api/categories' => 'home#categories'
-  
+
   match 'public_events/:id' => 'public_events#show'
   match 'public_events/:event_id/watch' => 'public_events#watch'
   match 'public_events/:event_id/watch/:participant_id' => 'public_events#watch'
-  
+
   match 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
   match 'events/:id/start_webinar' => 'events#start_webinar'
   match 'events/:id/broadcast_webinar' => 'events#broadcast_webinar'
   match 'events/:id/push_to_crm' => 'events#push_to_crm'
   match 'events/:id/send_certificate' => 'events#send_certificate'
-  
+
   match 'events/:event_id/participant_confirmed' => 'participants#confirm'
   match 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
   match 'events/:event_id/participants_print' => 'participants#print'
   match 'events/:event_id/participants_survey' => 'participants#survey'
   match 'events/:event_id/participants_batch_load' => 'participants#batch_load'
-      
+
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)

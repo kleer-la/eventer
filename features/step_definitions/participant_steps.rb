@@ -14,7 +14,7 @@ end
 
 When(/^I visit the "(.*?)" registration page$/) do |lang|
   visit "/events/#{@last_id}/participants/new?lang="+lang
-  
+
 end
 
 When(/^I visit the registration page without languaje$/) do
