@@ -2,28 +2,35 @@
   %h1.pull-left
     %i.icon-user
     %span Usuarios
+  .pull-right
+    %a.btn.btn-white{ :href => new_user_path }= t('formtastic.actions.new')
 
-= render '/commons/not_migrated_yet'
+= render '/commons/notice'
 
-%p.record-actions
-  = link_to t('formtastic.actions.new'), new_user_path
-
-%table
-  %tr
-    %th= t('formtastic.labels.user.email')
-    %th= t('formtastic.labels.user.roles')
-    %th
-    %th
-    %th
-
-  - @users.each do |user|
-    %tr
-      %td= user.email
-      %td
-        - for role in user.roles
-          = role.name
-          %br
-      %td= link_to t('formtastic.actions.view'), user
-      %td= link_to t('formtastic.actions.edit'), edit_user_path(user)
-      %td= link_to t('formtastic.actions.destroy'), user, :confirm => 'Are you sure?', :method => :delete
-
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .box-header.orange-background
+      .title Entrenadores
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-striped{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th= t('formtastic.labels.user.email')
+                %th= t('formtastic.labels.user.roles')
+                %th
+            %tbody
+              - @users.each do |user|
+                %tr
+                  %td= link_to user.email, user
+                  %td
+                    - for role in user.roles
+                      = role.name
+                      %br
+                  %td
+                    .text-right
+                      %a.btn.btn-warning.btn-mini{ :href => edit_user_path(user) }
+                        %i.icon-edit
+                      %a.btn.btn-danger.btn-mini{ :href => user_path(user), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                        %i.icon-trash
