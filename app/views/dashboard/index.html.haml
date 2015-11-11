@@ -1,7 +1,15 @@
 .page-header
   %h1.pull-left
     %i.icon-dashboard
-    %span <a href="dashboard">Dashboard</a>: <a href="dashboard/ar">AR</a> | <a href="dashboard/co">CO</a> | <a href="dashboard/pe">PE</a> 
+    %span
+      %a(href='dashboard') Dashboard:
+      %a(href='dashboard/ar')AR
+      |
+      %a(href='dashboard/co')CO
+      |
+      %a(href='dashboard/pe')PE
+      |
+      %a(href='dashboard/ol')OL
 
 = render '/commons/notice'
 
