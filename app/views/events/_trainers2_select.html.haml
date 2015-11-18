@@ -1,0 +1,25 @@
+- unless request.xhr?
+  = form_for("event") do |f|
+    - if !@trainers_for_event_type.blank?
+      = f.collection_select :trainer2_id, @trainers_for_event_type, :id, :name
+    - else
+      - if !@event.nil? && !@event.event_type.nil?
+        = f.collection_select :trainer2_id, @event.event_type.trainers, :id, :name
+      - else
+        = f.collection_select :trainer2_id, [], :id, :name, {include_blank: 'No hay entrenadores disponibles'}
+- else
+  - if !@trainers_for_event_type.blank?
+    %select{id:'event_trainer_id',name:'event[trainer_id]'}
+      - @trainers_for_event_type.each do |trainer|
+        %option{value: trainer.id}
+          = trainer.name
+  - else
+    - if !@event.nil? && !@event.event_type.nil?
+      %select{id:'event_trainer_id',name:'event[trainer_id]'}
+        - @event.event_type.trainers.each do |trainer|
+          %option{value: trainer.id}
+            = trainer.name
+    - else
+      %select{id:'event_trainer_id',name:'event[trainer_id]'}
+        %option{value: ''}
+          = 'No hay entrenadores disponibles'

@@ -2,9 +2,10 @@
 
 class Event < ActiveRecord::Base
   include ActiveSupport
-  
+
   belongs_to :country
   belongs_to :trainer
+  belongs_to :trainer, :foreign_key => 'trainer2_id'
   belongs_to :event_type
   has_many :participants
   has_many :categories, :through => :event_type
@@ -22,7 +23,7 @@ class Event < ActiveRecord::Base
   after_initialize :initialize_defaults
 
   attr_accessible :event_type_id, :trainer_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
-                  :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants, 
+                  :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants,
                   :start_time, :end_time, :sepyme_enabled, :mode, :time_zone_name, :embedded_player, :twitter_embedded_search,
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
@@ -72,13 +73,13 @@ class Event < ActiveRecord::Base
       record.errors.add(attr, :private_event_should_not_have_discounts)
     end
   end
-  
+
   validates_each :time_zone_name do |record, attr, value|
     if record.is_webinar? && (value == "" || value.nil?)
       record.errors.add(attr, :time_zone_name_is_required_for_a_webinar)
     end
   end
-  
+
   comma do
     self.visibility_type 'Visibilidad'
     self.id 'Event ID'
@@ -93,10 +94,10 @@ class Event < ActiveRecord::Base
 
   def initialize_defaults
     if self.new_record?
-     self.start_time ||= "9:00"   
-     self.end_time ||= "18:00"  
+     self.start_time ||= "9:00"
+     self.end_time ||= "18:00"
      self.duration ||= 1
-     self.should_welcome_email ||= true    
+     self.should_welcome_email ||= true
     end
   end
 
@@ -107,7 +108,7 @@ class Event < ActiveRecord::Base
       1.0
     end
   end
-  
+
   def attendance
     if self.capacity > 0
       (self.participants.attended.count)*1.0/self.capacity
@@ -122,22 +123,22 @@ class Event < ActiveRecord::Base
 
     weeks = (to_date - from_date) / 7
   end
-  
+
   def human_date
     start_date = humanize_start_date
     end_date = humanize_end_date
-    
+
     if event_is_within_the_same_day(start_date, end_date)
-      human_date = start_date 
+      human_date = start_date
     elsif event_is_within_the_same_month(start_date, end_date)
       human_date = merge_dates_in_same_month(start_date, end_date)
     else
       human_date = start_date + "-" + end_date
     end
-    
+
     human_date
   end
-  
+
   def human_time
     if I18n.locale == :es
       "de " + self.start_time.strftime( "%H:%M" ) + " a " + self.end_time.strftime( "%H:%M" ) + " hs"
@@ -154,22 +155,22 @@ class Event < ActiveRecord::Base
 
   def finished?
     timezone = TimeZone.new( self.time_zone_name ) unless self.time_zone_name.nil?
-    
+
     if !timezone.nil?
       timezone_current_time = timezone.now
     else
       timezone_current_time = Time.now
     end
-    
+
     (Time.parse( self.end_time.strftime("%Y/%m/%d %H:%M") ) < timezone_current_time )
   end
-  
+
   def webinar_finished?
     if self.is_webinar? && self.webinar_started?
       finished?
     end
   end
-  
+
   def is_community_event?
     self.visibility_type == 'co'
   end
@@ -196,7 +197,7 @@ class Event < ActiveRecord::Base
   end
 
   private
-  
+
   def get_event_duration
     if !self.duration.nil?
       self.duration
@@ -204,11 +205,11 @@ class Event < ActiveRecord::Base
       1
     end
   end
-  
+
   def humanize_start_date
     humanize_date self.date
   end
-  
+
   def humanize_end_date
     if !self.finish_date.nil?
       humanize_date self.finish_date
@@ -217,23 +218,23 @@ class Event < ActiveRecord::Base
       humanize_date self.date+(duration-1)
     end
   end
-  
+
   def humanize_date(date)
-    human_date = I18n.l date, :format => :short 
+    human_date = I18n.l date, :format => :short
     if human_date[0] == "0"
       human_date = human_date[-5,5]
     end
     human_date
   end
-  
+
   def event_is_within_the_same_day(start_date, end_date)
     start_date == end_date
   end
-  
+
   def event_is_within_the_same_month(start_date, end_date)
     start_date[-3,3] == end_date[-3,3]
   end
-  
+
   def merge_dates_in_same_month(start_date, end_date)
     start_date.split(' ')[0] + "-" + end_date.split(' ')[0] + " " + start_date[-3,3]
   end

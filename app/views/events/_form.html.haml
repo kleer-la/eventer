@@ -42,9 +42,9 @@
             .span12
               .control-group
                 %label.control-label= t("formtastic.labels.event.horario")
-                = "De " 
+                = "De "
                 = f.time_select :start_time, {:minute_step => 15}, :style => "width:5em"
-                = " a " 
+                = " a "
                 = f.time_select :end_time, {:minute_step => 15}, :style => "width:5em"
           .row-fuid
             .span3
@@ -69,6 +69,12 @@
                 %label.control-label{ :for => :trainer_id }= t("formtastic.labels.event.trainer")
                 #trainer_select
                   = render :partial => 'trainers_select'
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :trainer2_id }= t("formtastic.labels.event.trainer")
+                #trainer2_select
+                  = render :partial => 'trainers2_select'
           .row-fuid
             .span12
               .control-group
@@ -104,9 +110,9 @@
                   = f.text_field :business_price, :class => "input-mini"
                   %br
                   %small.muted
-                    5 personas. 
+                    5 personas.
                     %br
-                    Recomendado: 12% descuento.          
+                    Recomendado: 12% descuento.
               .span3
                 .control-group
                   %label.control-label{ :for => :enterprise_6plus_price }= t("formtastic.labels.event.enterprise_6plus_price")
@@ -115,7 +121,7 @@
                   %small.muted
                     6 a 10 personas.
                     %br
-                    Recomendado: 17% descuento.  
+                    Recomendado: 17% descuento.
               .span3
                 .control-group
                   %label.control-label{ :for => :enterprise_11plus_price }= t("formtastic.labels.event.enterprise_11plus_price")
@@ -132,7 +138,7 @@
                   = f.text_field :eb_price, :class => "input-mini"
                   %br
                   %small.muted
-                    Por persona antes de la fecha EB. 
+                    Por persona antes de la fecha EB.
                     %br
                     Recomendado: 5% descuento.
               .span3
@@ -141,7 +147,7 @@
                   = f.text_field :couples_eb_price, :class => "input-mini"
                   %br
                   %small.muted
-                    Por parejas antes de la fecha EB. 
+                    Por parejas antes de la fecha EB.
                     %br
                     Recomendado: 10% descuento.
               .span3
@@ -150,7 +156,7 @@
                   = f.text_field :business_eb_price, :class => "input-mini"
                   %br
                   %small.muted
-                    5 personas antes de la fecha EB. 
+                    5 personas antes de la fecha EB.
                     %br
                     Recomendado: 15% descuento.
               .span3
@@ -187,9 +193,9 @@
               .control-group
                 %label.control-label{ :for => :custom_prices_email_text }= t("formtastic.labels.event.custom_prices_email_text")
                 = f.text_area :custom_prices_email_text, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.custom_prices_email_text")
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML.
           .row-fuid
             .span12
@@ -206,9 +212,9 @@
               .control-group
                 %label.control-label{ :for => :specific_conditions }= t("formtastic.labels.event.specific_conditions")
                 = f.text_area :specific_conditions, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.specific_conditions")
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML.
           .row-fuid
             .span3
@@ -248,9 +254,9 @@
   //bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
 
   $(document).ready(function() {
-	
+
     $('input.datepicker-class').datepicker( { dateFormat: 'dd-mm-yy' } );
-	
+
     $("#event_visibility_type_pu").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_visibility_type_pr").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_visibility_type_co").change( function() { eventTypeActions( $(this).val() ); });
@@ -267,7 +273,7 @@
 
     if ( $("#event_visibility_type_pr").is(":checked") ) {
       $("#event_visibility_type_pr").trigger('change');
-    } 
+    }
     else if ( $("#event_visibility_type_co").is(":checked") ) {
       $("#event_visibility_type_co").trigger('change');
     }
@@ -296,12 +302,12 @@
 
   function eventTypeActions( value ) {
     if (value === "pu") {
-      $("#event_eb_price").removeAttr('disabled');    
+      $("#event_eb_price").removeAttr('disabled');
       $("#event_couples_eb_price").removeAttr('disabled');
       $("#event_business_price").removeAttr('disabled');
       $("#event_business_eb_price").removeAttr('disabled');
       $("#event_enterprise_6plus_price").removeAttr('disabled');
-      $("#event_enterprise_11plus_price").removeAttr('disabled');                        
+      $("#event_enterprise_11plus_price").removeAttr('disabled');
       $("#event_eb_end_date").removeAttr('disabled');
       $("#event_public_or_private_set").show();
     }
@@ -340,10 +346,10 @@
   }
 
   function eventDateChanged( value ) {
-    var date_string = value.substr(6,4) + "-" + value.substr(3,2) + "-" + value.substr(0,2);   
+    var date_string = value.substr(6,4) + "-" + value.substr(3,2) + "-" + value.substr(0,2);
 
     var event_date = new Date( date_string );
-    
+
     var eb_date = new Date( date_string );
     eb_date.setDate( event_date.getUTCDate()-10 );
 
@@ -410,6 +416,8 @@
     if(eventTypeID == "") eventTypeID="0";
     jQuery.get('/events/update_trainer_select/' + eventTypeID, function(data) {
         $("#trainer_select").html(data);
+        $("#trainer2_select").html(data);
+        $("#trainer2_select > select").append('<option value="0" selected="selected">No hay</option>');
     })
     return false;
   }
