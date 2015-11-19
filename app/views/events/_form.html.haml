@@ -416,8 +416,11 @@
     if(eventTypeID == "") eventTypeID="0";
     jQuery.get('/events/update_trainer_select/' + eventTypeID, function(data) {
         $("#trainer_select").html(data);
+    });
+
+    jQuery.get('/events/update_trainer2_select/' + eventTypeID, function(data) {
         $("#trainer2_select").html(data);
-        $("#trainer2_select > select").append('<option value="0" selected="selected">No hay</option>');
-    })
+    });
+
     return false;
   }

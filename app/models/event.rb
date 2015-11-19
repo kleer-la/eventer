@@ -5,7 +5,7 @@ class Event < ActiveRecord::Base
 
   belongs_to :country
   belongs_to :trainer
-  belongs_to :trainer, :foreign_key => 'trainer2_id'
+#  belongs_to :trainer, :foreign_key => 'trainer2_id'
   belongs_to :event_type
   has_many :participants
   has_many :categories, :through => :event_type
@@ -22,7 +22,7 @@ class Event < ActiveRecord::Base
 
   after_initialize :initialize_defaults
 
-  attr_accessible :event_type_id, :trainer_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
+  attr_accessible :event_type_id, :trainer_id, :trainer2_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
                   :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants,
                   :start_time, :end_time, :sepyme_enabled, :mode, :time_zone_name, :embedded_player, :twitter_embedded_search,
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
