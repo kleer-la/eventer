@@ -5,7 +5,7 @@ class Event < ActiveRecord::Base
 
   belongs_to :country
   belongs_to :trainer
-#  belongs_to :trainer, :foreign_key => 'trainer2_id'
+  belongs_to :trainer2, :class_name => "Trainer", :foreign_key => 'trainer2_id'
   belongs_to :event_type
   has_many :participants
   has_many :categories, :through => :event_type

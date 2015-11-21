@@ -25,6 +25,9 @@
   %b Trainer:
   = @event.trainer.name
 %p
+  %b Trainer2:
+  = @event.trainer2.nil? ? "No tiene" : @event.trainer2.name
+%p
   %b Type:
   = @event.visibility_type
 %p
