@@ -3,9 +3,9 @@ include ActiveSupport
 class EventsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :activate_menu
-  
+
   load_and_authorize_resource
-  
+
   # GET /events
   # GET /events.json
   def index
@@ -129,40 +129,40 @@ class EventsController < ApplicationController
     end
 
   end
-  
+
   def start_webinar
     @event = Event.find(params[:id])
   end
-  
+
   def broadcast_webinar
     @event = Event.find(params[:id])
     @notifications = 0
-    
+
     respond_to do |format|
       if @event.update_attributes(params[:event])
         if @event.is_webinar?
-          
+
           @event.start_webinar!
           @event.save
-          
+
           hostname = "http://" + request.host
           port = request.port
-          
+
           if port != 80
             hostname += ":" + port.to_s
           end
-          
+
           @webinar_link = hostname + "/public_events/#{@event.id.to_s}/watch"
-          
+
           if @event.notify_webinar_start?
-            
+
             @event.participants.confirmed.each do |participant|
               @notifications += 1
               webinar_perticipant_link = @webinar_link + "/" + participant.id.to_s
               EventMailer.delay.notify_webinar_start(participant, webinar_perticipant_link)
             end
           end
-          
+
           flash.now[:notice] = t('flash.event.webinar.broadcasting')
           format.html
         end
@@ -172,11 +172,11 @@ class EventsController < ApplicationController
       end
     end
   end
-  
+
   private
-  
+
   def activate_menu
     @active_menu = "events"
   end
-  
+
 end

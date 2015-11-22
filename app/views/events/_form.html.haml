@@ -72,9 +72,13 @@
           .row-fuid
             .span12
               .control-group
-                %label.control-label{ :for => :trainer2_id }= t("formtastic.labels.event.trainer")
+                %label.control-label{ :for => :trainer2_id }= t("formtastic.labels.event.trainer2")
                 #trainer2_select
-                  = render :partial => 'trainers2_select'
+                  - if !@event.nil? && !@event.event_type.nil?
+                    = f.collection_select :trainer2_id, @event.event_type.trainers, :id, :name, {include_blank: "No hay"}
+                  - else
+                    = f.collection_select :trainer2_id, [], :id, :name, {include_blank: 'No hay entrenadores disponibles'}
+                  -# = render :partial => 'trainers2_select'
           .row-fuid
             .span12
               .control-group

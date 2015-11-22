@@ -1,5 +1,5 @@
 en:
-    
+
   # formatos de fecha y hora
   date:
     formats:
@@ -19,14 +19,14 @@ en:
       long: "%A, %d de %B de %Y, %H:%M h"
     am: ''
     pm: ''
-    
+
    # Para Array.to_sentence
   support:
     array:
       words_connector: ", "
       two_words_connector: " y "
       last_word_connector: " y "
-     
+
   # Devise
   devise:
     failure:
@@ -36,8 +36,8 @@ en:
       user:
         signed_in: "Identificación exitosa. Bienvenido!"
         signed_out: "Gracias por utilizar Eventer. Hasta la próxima!"
-     
-     
+
+
   # ActiveRecord
   activerecord:
       errors:
@@ -107,13 +107,13 @@ en:
       country: "Country"
       trainer: "Trainer"
       participant: "Participant"
-      participant: 
+      participant:
         fname: "First name"
         lname: "Last name"
         phone: "Phone"
         email: "E-Mail"
-        status: "Status"      
-        influence_zone: "Influence Zone"  
+        status: "Status"
+        influence_zone: "Influence Zone"
         referer_code: "Reference code"
         notes: "Optional: additional data or question"
         zone: "Where are you?"
@@ -139,6 +139,8 @@ en:
         start_time: "Hora de inicio"
         end_time: "Hora de finalización"
         visibility_type: "Tipo"
+        trainer: "Trainer"
+        trainer2: "Co-Trainer"
         list_price: "Precio de Lista"
         business_price: "Precio 'Business'"
         enterprise_6plus_price: "Precio 'Enterprise 6+'"
@@ -197,12 +199,12 @@ en:
         order: "Orden"
     hints:
       event:
-        eb_end_date: "Fecha de finalización del precio Early Bird" 
+        eb_end_date: "Fecha de finalización del precio Early Bird"
         cancelled: "Si cancelas el evento no podrás acceder más a él"
         registration_link: "Dejar en blanco para que Keventer gestione los registros"
         embedded_player: "Inicia el Google Hangout (On Air) y, sin comenzar el broadcasting, pega aquí el código del reproductor embebido."
         twitter_embedded_search: "Haz una búsqueda en Twitter con el #hashtag del webinar y pega aquí el código para embeberla."
-        notify_webinar_start: "Al seleccionar este campo, se enviará un e-mail a todos los participantes para que ingresen al webinar (este proceso puede demorar unos minutos)."        
+        notify_webinar_start: "Al seleccionar este campo, se enviará un e-mail a todos los participantes para que ingresen al webinar (este proceso puede demorar unos minutos)."
         custom_prices_email_text: "Dejar en blanco para que el e-mail de bienvenida contenga información de precio de lista, early bird y descuentos para 2 y 3+ personas (si corresponde)"
         monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco para no notificar nuevos registros."
         specific_conditions: "Condiciones específicas de este evento. Como por ejemplo: promociones, horarios especiales, ejecución desagregada, etc. En blanco, si no tiene."
@@ -216,7 +218,7 @@ en:
         slug: "Leave blank for an automatically generated slug"
       user:
         email: "you@yours.com"
-        
+
     actions:
       event:
           create: "Ok"
@@ -231,12 +233,12 @@ en:
       edit: "Editar"
       destroy: "Borrar"
       new: "Nuevo"
-      
+
   valid_email:
     validations:
       email:
         invalid: "email inválido."
-      
+
   # Texto customizado
   event:
       type:
@@ -252,7 +254,7 @@ en:
       categories: "Categorías"
       trainers: "Entrenadores"
       exit: "Salir"
-      
+
   title:
       event:
           new: "Nuevo Evento"
@@ -273,7 +275,7 @@ en:
           index: "Listado de Usuarios"
           new: "Nuevo Usuario"
           edit: "Modificación de Usuario"
-          show: "Detalles de Usuario"          
+          show: "Detalles de Usuario"
   action:
       link:
           role:
@@ -281,7 +283,7 @@ en:
               show: "Ver"
               edit: "Modificar"
               destroy: "Borrar"
-          
+
   flash:
       failure: "Por favor verifica los campos destacados"
       unauthorised: "No estás autorizado a acceder a esta página"
@@ -323,6 +325,6 @@ en:
           registration_required: "Es necesario que te registres. Por favor, utiliza el siguiente formulario."
       rating:
         calculating: "Calculando rating. Puede tardar unos minutos... Recarga la página para ver el resultado."
-  
+
   confirm:
       sure: "Está Ud. seguro?"
