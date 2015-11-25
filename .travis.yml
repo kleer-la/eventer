@@ -7,7 +7,6 @@ before_script:
 script:
 - bundle exec rake --trace db:migrate
 - bundle exec rake ci
-- restart
 deploy:
   provider: heroku
   api_key:
@@ -15,3 +14,5 @@ deploy:
   app:
     develop: keventer-test
     master: keventer
+after-deploy:
+- restart
