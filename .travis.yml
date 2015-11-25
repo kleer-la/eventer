@@ -14,5 +14,5 @@ deploy:
   app:
     develop: keventer-test
     master: keventer
-after-deploy:
+after_deploy:
 - restart
