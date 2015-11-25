@@ -14,5 +14,7 @@ deploy:
   app:
     develop: keventer-test
     master: keventer
-after_deploy:
-- restart
+  run:
+    - "rake db:migrate"
+    - restart
+    - "rake cleanup"    
