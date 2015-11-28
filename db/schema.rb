@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151118095103) do
+ActiveRecord::Schema.define(:version => 20151128025714) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(:version => 20151118095103) do
     t.integer  "net_promoter_score"
     t.string   "mode",                        :limit => 2
     t.integer  "trainer2_id"
+    t.text     "extra_script"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"

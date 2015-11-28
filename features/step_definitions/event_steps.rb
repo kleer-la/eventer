@@ -65,3 +65,19 @@ Given /^theres (\d+) event (\d+) week away from now$/ do |amount, weeks_away|
     submit_event
   }
 end
+
+When(/^I create an event with extra script "(.*?)"$/) do |extra_script|
+  visit "/events/new"
+  create_valid_event
+  fill_in 'event_extra_script', :with => extra_script
+  expect(find_field('event_extra_script').value).to eq(extra_script)
+  submit_event
+end
+
+When(/^go to the last course created$/) do
+  click_link('last_event')
+end
+
+Then(/^the extra script should be "(.*?)"$/) do |extra_script|
+  expect(find_field('event_extra_script').value).to  eq(extra_script)
+end

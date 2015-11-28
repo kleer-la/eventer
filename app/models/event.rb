@@ -28,7 +28,7 @@ class Event < ActiveRecord::Base
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
-                  :show_pricing
+                  :show_pricing, :extra_script
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
             :country, :trainer, :event_type, :duration, :start_time, :end_time, :address, :mode, :presence => true

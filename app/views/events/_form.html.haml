@@ -221,6 +221,15 @@
                   %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML.
           .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :extra_script }= t("formtastic.labels.event.extra_script")
+                = f.text_area :extra_script, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.extra_script")
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
+                  y HTML.
+          .row-fuid
             .span3
               .control-group
                 %label.control-label{ :for => :sepyme_enabled }= t("formtastic.labels.event.sepyme_enabled")
