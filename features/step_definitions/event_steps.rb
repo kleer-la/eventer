@@ -55,7 +55,6 @@ Then /^I should an empty dashboard event list$/ do
   page.should_not have_css('ul.unstyled.tasks li')
 end
 
-
 Given /^theres (\d+) event (\d+) week away from now$/ do |amount, weeks_away|
   event_type = EventType.first
   event_date = Date.today + 7*weeks_away.to_i
@@ -70,7 +69,6 @@ When(/^I create an event with extra script "(.*?)"$/) do |extra_script|
   visit "/events/new"
   create_valid_event
   fill_in 'event_extra_script', :with => extra_script
-  expect(find_field('event_extra_script').value).to eq(extra_script)
   submit_event
 end
 
