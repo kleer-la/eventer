@@ -1,4 +1,4 @@
-When(/^Im a request the events list in "(.*?)"$/) do |ext|
+When(/^I request the event list in "(.*?)"$/) do |ext|
   get "/api/events.#{ext.downcase}"
 end
 
@@ -12,4 +12,10 @@ end
 Then(/^it should have an event$/) do
   parsed= Nokogiri::XML(last_response.body)
   parsed.xpath('//event').should have_at_least(1).items
+end
+
+Then(/^it should have extra script in the event$/) do
+  puts last_response.body
+  parsed= Nokogiri::XML(last_response.body)
+  parsed.xpath('//event/extra-script').should have_at_least(1).items
 end

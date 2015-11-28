@@ -87,11 +87,3 @@ Feature: Administración de Eventos
 		When I create an event with extra script "<my extra script/>"
 		And go to the last course created
 		Then the extra script should be "<my extra script/>"
-
-	@wip	@selenium
-	Scenario: Ingresar un script extra
-		Given Im a logged in user
-		When I create a valid event of type "Tipo de Evento de Prueba"
-		And I cancel the event "Tipo de Evento de Prueba"
-		Then I should be on the events listing page
-		And I should see "Evento cancelado exitosamente"
