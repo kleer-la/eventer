@@ -2,7 +2,7 @@
   - if name.to_s == "notice"
     .alert.alert-success
       %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
-      =msg
+      =msg.html_safe
   - elsif name.to_s == "alert"
     .alert.alert-error
       %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
