@@ -1,24 +1,28 @@
 
-@last_id = 1
+def get_last_id
+  last_id = 1
+  href= page.all(:xpath, "//table//tr[td='31 Ene-1 Feb']/td[2]/a").last[:href]
+  if !href.nil?
+      ri = href.rindex("/")
+      last_id = href[ri+1,3]
+  end
+  last_id
+end
+
+
 Given(/^there is one event$/) do
     step 'Im a logged in user'
     step 'theres an event'
-    href= page.all(:xpath, "//table//tr[td='31 Ene-1 Feb']/td[2]/a").last[:href]
-    puts href
-    if !href.nil?
-        ri = href.rindex("/")
-        @last_id = href[ri+1,3]
-        puts @last_id
-    end
 end
 
 When(/^I visit the "(.*?)" registration page$/) do |lang|
-  visit "/events/#{@last_id}/participants/new?lang="+lang
-
+  last_id= get_last_id
+  visit "/events/#{last_id}/participants/new?lang="+lang
 end
 
 When(/^I visit the registration page without languaje$/) do
-  visit "/events/#{@last_id}/participants/new"
+  last_id= get_last_id
+  visit "/events/#{last_id}/participants/new"
 end
 
 Then(/^I can enter a note$/) do
@@ -27,4 +31,8 @@ end
 
 Given /^I wait for (\d+) seconds?$/ do |n|
   sleep(n.to_i)
+end
+
+Then(/^header should be "(.*?)"$/) do |content|
+  expect(find(:css, 'h1').text).to  eq(content)
 end

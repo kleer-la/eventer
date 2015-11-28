@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 Feature: Registración en evento
 
     @selenium
@@ -28,7 +30,7 @@ Feature: Registración en evento
 
     @selenium
     Scenario: Fechas en formulario en inglés
-        Given there is one event 
+        Given there is one event
         When I visit the "en" registration page
         Then I should see "Jan 31-Feb 01 from 09:00 to 18:00 hs."
 
@@ -43,3 +45,10 @@ Feature: Registración en evento
         Given there is one event
         When I visit the "es" registration page
         Then I can enter a note
+
+    @selenium
+    Scenario: Script que modifica
+      Given Im a logged in user
+      When I create an event with extra script "<script>$('h1').text('Hi there!')</script>"
+      And I visit the registration page without languaje
+      Then header should be "Hi there!"
