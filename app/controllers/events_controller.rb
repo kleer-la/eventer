@@ -59,7 +59,9 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       if @event.save
-        format.html { redirect_to events_path, notice: t('flash.event.create.success') }
+        id= @event.id.to_s
+        link= ' <a id="last_event" href="/events/'+id+'/edit">Editar</a>'
+        format.html { redirect_to events_path, notice: t('flash.event.create.success')+link }
         format.json { render json: @event, status: :created, location: @event }
       else
         flash.now[:error] = t('flash.failure')
