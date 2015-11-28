@@ -15,7 +15,6 @@ Then(/^it should have an event$/) do
 end
 
 Then(/^it should have extra script in the event$/) do
-  puts last_response.body
   parsed= Nokogiri::XML(last_response.body)
   parsed.xpath('//event/extra-script').should have_at_least(1).items
 end
