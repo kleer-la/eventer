@@ -61,4 +61,4 @@
     $("#loader_img").show();
     $("#new_participant").submit();
   }
-= @event.extra_script.html_safe
+= @event.extra_script.nil? ? "" : @event.extra_script.html_safe
