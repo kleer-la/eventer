@@ -11,6 +11,7 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Instalá las dependencias: bundle install
 - Creá la base de dates: bundle exec rake db:migrate
 - Cargá los datos iniciales: bundle exec rake db:seed
+
 - Ejecutar las pruebas: bundle exec rake
 - Inicia la aplicación: bundle exec rails s
 
