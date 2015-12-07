@@ -7,6 +7,7 @@ class HomeController < ApplicationController
                                                     :country => {},
                                                     :event_type => {},
                                                     :trainer => {},
+                                                    :trainer2 => {},
                                                     :categories => {}
                                                   },
                                                   :methods => [:human_date, :is_webinar]
@@ -23,6 +24,7 @@ class HomeController < ApplicationController
                                                     :country => {},
                                                     :event_type => {},
                                                     :trainer => {},
+                                                    :trainer2 => {},
                                                     :categories => {}
                                                   },
                                                   :methods => [:human_date, :is_webinar]
@@ -38,7 +40,7 @@ class HomeController < ApplicationController
                                                     :country => {},
                                                     :event_type => {},
                                                     :trainer => {},
-                                                    :trainer2 => {}, 
+                                                    :trainer2 => {},
                                                     :categories => {}
                                                   },
                                                   :methods => [:human_date, :is_webinar]
