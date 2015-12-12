@@ -18,3 +18,9 @@ When(/^I create a event type with subtitle "(.*?)"$/) do |subtitle|
   fill_in 'event_type_subtitle', :with => subtitle
   click_button_and_wait 'guardar'
 end
+
+When(/^I modify the just created event type with subtitle "(.*?)"$/) do |subtitle|
+  click_link('last_event_type')
+  fill_in 'event_type_subtitle', :with => subtitle
+  click_button_and_wait 'guardar'
+end

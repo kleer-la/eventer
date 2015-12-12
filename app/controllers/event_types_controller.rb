@@ -1,7 +1,7 @@
 class EventTypesController < ApplicationController
   before_filter :authenticate_user!
   before_filter :activate_menu
-  
+
   load_and_authorize_resource
 
   # GET /event_types
@@ -57,7 +57,9 @@ class EventTypesController < ApplicationController
 
     respond_to do |format|
       if @event_type.save
-        format.html { redirect_to event_types_path, notice: t('flash.event_type.create.success')  }
+        id= @event_type.id.to_s
+        link= ' <a id="last_event_type" href="/event_types/'+id+'/edit">Editar</a>'
+        format.html { redirect_to event_types_path, notice: t('flash.event_type.create.success')+link  }
         format.json { render json: @event_type, status: :created, location: @event_type }
       else
         format.html { render action: "new" }
@@ -95,9 +97,9 @@ class EventTypesController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   private
-  
+
   def activate_menu
     @active_menu = "event_types"
   end
