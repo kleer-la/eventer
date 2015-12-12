@@ -18,3 +18,8 @@ Then(/^it should have extra script in the event$/) do
   parsed= Nokogiri::XML(last_response.body)
   parsed.xpath('//event/extra-script').should have_at_least(1).items
 end
+
+Then(/^it should have "(.*?)" in the event type$/) do |xml_element|
+  parsed= Nokogiri::XML(last_response.body)
+  parsed.xpath('//event/event-type/'+xml_element).should have_at_least(1).items
+end
