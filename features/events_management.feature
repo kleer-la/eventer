@@ -64,7 +64,7 @@ Feature: Administración de Eventos
 		When I create a public event on "15-01-2015"
 		Then EB date should be "05-01-2015"
 
-	@selenium
+	@selenium 
 	Scenario: Modificación de Evento Válido
 		Given Im a logged in user
 		And there is a event type "Modificar"

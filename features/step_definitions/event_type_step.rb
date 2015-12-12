@@ -1,0 +1,20 @@
+# encoding: utf-8
+
+def fill_valid_event_type(event_type_name)
+  fill_in 'event_type_name', :with => event_type_name
+  fill_in 'event_type_duration', :with => 30
+  first(:css, '#event_type_trainer_ids_').click
+  fill_in 'event_type_elevator_pitch', :with => "something"
+  fill_in 'event_type_description', :with => "something"
+  fill_in 'event_type_recipients', :with => "something"
+  fill_in 'event_type_program', :with => "something"
+end
+
+
+
+When(/^I create a event type with subtitle "(.*?)"$/) do |subtitle|
+  visit '/event_types/new'
+  fill_valid_event_type "Evento de Prueba"
+  fill_in 'event_type_subtitle', :with => subtitle
+  click_button_and_wait 'guardar'
+end

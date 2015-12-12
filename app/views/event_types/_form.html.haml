@@ -58,6 +58,11 @@
           .row-fluid
             .span12
               .control-group
+                %label.control-label{ :for => :subtitle }= t("formtastic.labels.event_type.subtitle")
+                = f.text_field :subtitle, :class => 'input-block-level'
+          .row-fluid
+            .span12
+              .control-group
                 %label.control-label{ :for => :elevator_pitch }= t("formtastic.labels.event_type.elevator_pitch") + " (*)"
                 = f.text_area :elevator_pitch, :rows => 4, :class => "input-block-level"
                 %small.muted
@@ -75,60 +80,60 @@
               .control-group
                 %label.control-label{ :for => :description }= t("formtastic.labels.event_type.description") + " (*)"
                 = f.text_area :description, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Se mostrará inmediátamente después del "Elevator Pitch", en el tab de "Descripción", en kleer.la.
           .row-fluid
             .span6
               .control-group
                 %label.control-label{ :for => :recipients }= t("formtastic.labels.event_type.recipients") + " (*)"
                 = f.text_area :recipients, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Se mostrará en su própio tab ("Destinado A"), en kleer.la.
             .span6
               .control-group
                 %label.control-label{ :for => :program }= t("formtastic.labels.event_type.program") + " (*)"
                 = f.text_area :program, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Se mostrará en su própio tab ("Programa"), en kleer.la.
           .row-fluid
             .span6
               .control-group
                 %label.control-label{ :for => :learnings }= t("formtastic.labels.event_type.learnings")
                 = f.text_area :learnings, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. En el caso de que exista, se mostrará en el tab "Descripción", en kleer.la, dentro de un recuadro amarillo.
             .span6
               .control-group
                 %label.control-label{ :for => :takeaways }= t("formtastic.labels.event_type.takeaways")
                 = f.text_area :takeaways, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. En el caso de que exista, se mostrará en el tab "Descripción", en kleer.la, dentro de un recuadro rosa.
           .row-fluid
             .span6
               .control-group
                 %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.faq")
                 = f.text_area :faq, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Se mostrará en su própio tab ("Preguntas Frecuentes"), en kleer.la.
             .span6
               .control-group
                 %label.control-label{ :for => :materials }= t("formtastic.labels.event_type.materials")
                 = f.text_area :materials, :rows => 8, :class => "input-block-level"
-                %small.muted 
-                  Este texto soporta 
-                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Uso interno, por ahora no se muestra en ningún lado.
           .row-fuid
             .span12

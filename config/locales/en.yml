@@ -178,6 +178,7 @@ en:
           title: "Edit title"
       event_type:
         name: "Tipo de Evento"
+        subtitle: "Subtitle"
         description: "Descripción"
         recipients: "Destinado A"
         program: "Programa"
