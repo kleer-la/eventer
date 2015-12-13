@@ -13,7 +13,7 @@ Feature: Inicio
     When I request the event list in "XML"
     Then it should have extra script in the event
 
-  @selenium @wip
+  @selenium
 	Scenario: API para consultar cursos debe devolver subtitulo
     Given there is one event
     When I request the event list in "XML"

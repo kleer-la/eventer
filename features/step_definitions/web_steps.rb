@@ -128,13 +128,6 @@ Then /^EB date should be "([^\"]*)"$/ do |value|
   page.should have_field('event_eb_end_date', with: value)
 end
 
-When /^I modify the event "([^\"]*)"$/ do |link_description|
-  click_link_and_wait link_description
-  click_link_and_wait "Modificar"
-  fill_in 'event_capacity', :with => 200
-  click_button_and_wait "guardar"
-end
-
 When /^I cancel the event "([^\"]*)"$/ do |link_description|
   first(:link, link_description).click
 
