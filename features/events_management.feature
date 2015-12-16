@@ -64,12 +64,12 @@ Feature: Administración de Eventos
 		When I create a public event on "15-01-2015"
 		Then EB date should be "05-01-2015"
 
-	@selenium 
+	@selenium
 	Scenario: Modificación de Evento Válido
 		Given Im a logged in user
 		And there is a event type "Modificar"
 		When I create a valid event of type "Modificar"
-		And I modify the event "Modificar"
+		And I modify the last event
 		Then I should be on the events listing page
 		And I should see "Evento modificado exitosamente"
 

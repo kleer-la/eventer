@@ -68,3 +68,9 @@ end
 Then(/^the extra script should be "(.*?)"$/) do |extra_script|
   expect(find_field('event_extra_script').value).to  eq(extra_script)
 end
+
+When /^I modify the last event$/ do
+  click_link('last_event')
+  fill_in 'event_capacity', :with => 200
+  click_button_and_wait "guardar"
+end
