@@ -23,9 +23,11 @@
                 %th
             %tbody
               - @event_types.each do |event_type|
+                - subtitle = event_type.subtitle.to_s
+                - subt = subtitle[0...30] + "..." if subtitle.length>30
                 %tr
                   %td= link_to event_type.name, event_type
-                  %td= link_to event_type.subtitle, event_type
+                  %td= link_to subt, event_type
                   -# %td= event_type.description
                   %td
                     .text-right
