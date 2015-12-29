@@ -29,6 +29,7 @@ Eventer::Application.routes.draw do
   match 'dashboard/ratings' => 'dashboard#ratings'
   match 'dashboard/calculate_rating' => 'dashboard#calculate_rating'
   match 'dashboard/:country_iso' => 'dashboard#index'
+  match 'dashboard/pricing/:country_iso' => 'dashboard#pricing'
 
   match 'api/events' => 'home#index'
   match 'api/trainers' => 'home#trainers'

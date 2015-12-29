@@ -26,7 +26,11 @@ class DashboardController < ApplicationController
 
   def pricing
     @active_menu = "pricing"
-    @events = Event.public_commercial_visible.all(:order => 'date').select{ |ev| !ev.event_type.nil? }
+    country_iso= params[:country_iso]
+    @events = Event.public_commercial_visible.all(:order => 'date').select{ |ev|
+      !ev.event_type.nil? &&
+      (country_iso.nil? || Country.find(ev.country_id).iso_code==country_iso.upcase)
+      }
   end
 
   def countdown
