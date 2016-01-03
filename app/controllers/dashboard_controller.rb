@@ -1,15 +1,15 @@
+require './lib/country_filter'
+
 class DashboardController < ApplicationController
   before_filter :authenticate_user!
   before_filter :activate_menu
 
   def index
     @active_menu = "dashboard"
-    country_iso= params[:country_iso]
+    country_filter= CountryFilter.new(params[:country_iso])
     @events = Event.public_and_visible.all(:order => 'date').select{ |ev|
-      !ev.event_type.nil? && ev.registration_link == "" &&
-      (country_iso.nil? || Country.find(ev.country_id).iso_code==country_iso.upcase)
+      !ev.event_type.nil? && ev.registration_link == "" && country_filter.select?(ev.country_id)
       }
-
     @nuevos_registros = 0
     @participantes_contactados = 0
 
