@@ -26,7 +26,8 @@
         .scrollable-area
 
   %br
-
+- rating_options = [["5", "5 - Muy Bueno"], ["4", "4"], ["3", "3 - Medio"], ["2", "2"], ["1", "1 - Muy Malo"] ]
+- promoter_options = [["10", "10 - Definitivamente Si"], ["9", "9 - Seguramente Si"], ["8", "8 - Probablemente Si"], ["7", "7"], ["6", "6"], ["5", "5"], ["4", "4"], ["3", "3"], ["2", "2"], ["1","1 - No"], ["0", "0 - Definitivamente No"]]
 .row-fluid
   .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
     .box-header.green-background
@@ -44,6 +45,7 @@
                 %th Testimonio
             %tbody
               - @participants.each do |participant|
+                - path= "/events/#{participant.event.id}/participants/#{participant.id}"
                 %tr
                   %td{ :style => "white-space:normal;"}
                     %span{ :style => "white-space:nowrap;"}
@@ -52,16 +54,13 @@
                       = " "
                       = participant.lname
                   %td{ :style => "white-space:normal;"}
-                    %span{ :style => "white-space:nowrap;"}
-                      = best_in_place participant, :event_rating, :type => :select, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click'], :collection => [["1", "1 - Muy Malo"], ["2", "2"], ["3", "3 - Medio"], ["4", "4"], ["5", "5 - Muy Bueno"]]
+                    = best_in_place participant, :event_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
-                    %span{ :style => "white-space:nowrap;"}
-                      = best_in_place participant, :trainer_rating, :type => :select, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["1", "1 - Muy Malo"], ["2", "2"], ["3", "3 - Medio"], ["4", "4"], ["5", "5 - Muy Bueno"]], :classes => ['editable','editable-click']
+                    = best_in_place participant, :trainer_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
-                    %span{ :style => "white-space:nowrap;"}
-                      = best_in_place participant, :promoter_score, :type => :select, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["0", "0 - Definitivamente No"], ["1","1 - No"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"], ["6", "6"], ["7", "7"], ["8", "8 - Probablemente Si"], ["9", "9 - Seguramente Si"], ["10", "10 - Definitivamente Si"]], :classes => ['editable','editable-click']
+                    = best_in_place participant, :promoter_score, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => promoter_options
                   %td{ :style => "white-space:pre-line;"}
-                    = best_in_place participant, :testimony, :type => :textarea, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                    = best_in_place participant, :testimony, :type => :textarea, :path => path, :classes => ['editable','editable-click']
 
 :javascript
 
