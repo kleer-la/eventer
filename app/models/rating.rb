@@ -110,6 +110,7 @@ class Rating < ActiveRecord::Base
 
       if rating_as_cotrainer_count > 0
         rating_as_cotrainer_sum=  cualified_cotrained_participants.collect{ |p| p.trainer2_rating}.sum.to_f
+        rating_as_cotrainer_count= cualified_cotrained_participants.count
       end
 
       if rating_as_trainer_count+rating_as_cotrainer_count>0
