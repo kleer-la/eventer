@@ -2,7 +2,7 @@
 require 'factory_girl'
 
 FactoryGirl.define do
-  
+
   factory :user do
     email 'user@test.com'
     password 'please'
@@ -30,25 +30,31 @@ FactoryGirl.define do
     password_confirmation 'please'
     roles [ FactoryGirl.create(:comercial_role) ]
   end
-  
+
   factory :country do
     name "Argentina"
     iso_code "AR"
   end
-  
+
   factory :trainer do
     name "Juan Alberto"
     signature_image "PT.png"
     signature_credentials "Agile Coach & Trainer"
   end
- 
+
+  factory :trainer2, :class => Trainer do
+    name "Juan Torto"
+    signature_image "JG.png"
+    signature_credentials "Agile Coach & Trainer2"
+  end
+
   factory :category do
     name "Negocios"
     description "Management, Negocios y blah blah blah"
     tagline "pep pepepe"
     codename "BIZ"
   end
- 
+
   factory :event_type do
      name "Tipo de Evento de Prueba"
      duration 8
@@ -61,7 +67,7 @@ FactoryGirl.define do
      takeaways "un manual"
      trainers [ FactoryGirl.build(:trainer) ]
    end
-  
+
   factory :event do
     event_type {FactoryGirl.build(:event_type)}
     date "23/01/2100"
@@ -79,13 +85,13 @@ FactoryGirl.define do
     country FactoryGirl.build(:country)
     trainer FactoryGirl.build(:trainer)
   end
-  
+
   factory :influence_zone do
     tag_name "ZI-AMS-AR-PAT (Patagonia)"
     zone_name "Rio Negro"
     country FactoryGirl.build(:country)
   end
-  
+
   factory :participant do
     id "10"
     fname "Juan Carlos"
