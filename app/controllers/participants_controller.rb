@@ -51,6 +51,8 @@ class ParticipantsController < ApplicationController
     @participant = Participant.new
     @event = Event.find(params[:event_id])
     @influence_zones = InfluenceZone.all
+    @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
+
     @nakedform = !params[:nakedform].nil?
     if params[:lang].nil? or params[:lang] == "es"
         I18n.locale=:es

@@ -22,7 +22,7 @@ class AddEuCountries < ActiveRecord::Migration
       ['UA', 'Ucrania'],
       ['SK', 'Eslovaquia'],
       ['SI', 'Eslovenia'],
-      ['HR', 'Coacia'],
+      ['HR', 'Croacia'],
       ['AT', 'Austria'],
       ['CZ', 'Republica Checa'],
       ['HU', 'Hungría'],
