@@ -6,7 +6,7 @@ class Rating < ActiveRecord::Base
 
   def self.calculate( author = User.first )
 
-  	rating = Rating.first || Rating.new()
+    rating = Rating.first || Rating.new()
 
   	rating.user = author
 

@@ -41,6 +41,7 @@
                 %th Participante
                 %th Rating Evento
                 %th Rating Entrenador
+                %th Rating CoEntrenador
                 %th ¿Lo recomendaría a un colega?
                 %th Testimonio
             %tbody
@@ -57,6 +58,8 @@
                     = best_in_place participant, :event_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
                     = best_in_place participant, :trainer_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
+                  %td{ :style => "white-space:normal;"}
+                    = best_in_place participant, :trainer2_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
                     = best_in_place participant, :promoter_score, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => promoter_options
                   %td{ :style => "white-space:pre-line;"}
