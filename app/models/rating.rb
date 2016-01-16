@@ -6,35 +6,41 @@ class Rating < ActiveRecord::Base
 
   def self.calculate( author = User.first )
 
-  	rating = Rating.first
-  	if rating.nil?
-  		rating = Rating.new()
-  	end
+  	rating = Rating.first || Rating.new()
 
   	rating.user = author
 
-  	# calculate global numbers
+    rating.calculate_global_numbers
+    calculate_events_ratings
+    calculate_event_type_ratings
+    calculate_tainer_settings
+  	rating.save!
+  end
+
+  def calculate_global_numbers
   	global_promoter_count = Participant.attended.surveyed.promoter.length.to_f
     global_passive_count = Participant.attended.surveyed.passive.length.to_f
     global_detractor_count = Participant.attended.surveyed.detractor.length.to_f
-    rating.global_nps_count = (global_promoter_count+global_passive_count+global_detractor_count)
+    self.global_nps_count = (global_promoter_count+global_passive_count+global_detractor_count)
 
-    if rating.global_nps_count > 0
-      global_promoter_percent = global_promoter_count / rating.global_nps_count
-      global_detractor_percent = global_detractor_count / rating.global_nps_count
+    if self.global_nps_count > 0
+      global_promoter_percent = global_promoter_count / self.global_nps_count
+      global_detractor_percent = global_detractor_count / self.global_nps_count
 
-      rating.global_nps = ((global_promoter_percent - global_detractor_percent).round(2)*100).to_i
+      self.global_nps = ((global_promoter_percent - global_detractor_percent).round(2)*100).to_i
 
     else
-      rating.global_nps = nil
+      self.global_nps = nil
     end
 
-  	rating.global_event_rating = Participant.attended.surveyed.average("event_rating").to_f.round(2)
-  	rating.global_event_rating_count = Participant.attended.surveyed.count
+    self.global_event_rating = Participant.attended.surveyed.average("event_rating").to_f.round(2)
+    self.global_event_rating_count = Participant.attended.surveyed.count
 
-  	rating.global_trainer_rating = Participant.attended.surveyed.average("trainer_rating").to_f.round(2)
-  	rating.global_trainer_rating_count = Participant.attended.surveyed.count
+    self.global_trainer_rating = Participant.attended.surveyed.average("trainer_rating").to_f.round(2)
+    self.global_trainer_rating_count = Participant.attended.surveyed.count
+  end
 
+  def self.calculate_events_ratings
   	# calculate events ratings
   	Event.select{ |e| e.participants.surveyed.count > 0 }.each do |e|
   		#rating
@@ -62,7 +68,9 @@ class Rating < ActiveRecord::Base
 
   		e.save! unless !e.valid?
   	end
+  end
 
+  def self.calculate_event_type_ratings
   	# calculate event_type ratings
   	EventType.select{ |et| et.participants.surveyed.count > 0 }.each do |et|
   		#rating
@@ -92,8 +100,10 @@ class Rating < ActiveRecord::Base
 
   		et.save! unless !et.valid?
   	end
+  end
 
-  	# calculate trainer ratings
+  def self.calculate_tainer_settings
+    # calculate trainer ratings
   	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.surveyed.count > 0 }.each do |tr|
   		#rating
   		cualified_participants = tr.participants.attended.surveyed
@@ -136,8 +146,5 @@ class Rating < ActiveRecord::Base
   		tr.save! unless !tr.valid?
   	end
 
-  	rating.save!
-
   end
-
 end
