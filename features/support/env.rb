@@ -64,6 +64,10 @@ end
 Cucumber::Rails::Database.javascript_strategy = :deletion #:truncation
 
 After("@selenium") do |scenario|
+  if scenario.failed? && !page.nil?
+    page.save_screenshot(scenario.name+'.png')
+    File.write(scenario.name+'.html', page.html)
+  end
   if scenario.exception.is_a? Timeout::Error
     # restart Selenium driver
     Capybara.send(:session_pool).delete_if { |key, value| key =~ /selenium/i }

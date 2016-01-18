@@ -14,8 +14,11 @@ describe Rating do
 		@event2.country = @country
 
 		@trainer = FactoryGirl.create(:trainer)
+    @trainer2 = FactoryGirl.create(:trainer2)
+
 		@event.trainer = @trainer
 		@event2.trainer = @trainer
+    @event.trainer2= @trainer2
 
 		@event.event_type = @event_type
 		@event2.event_type = @event_type
@@ -40,6 +43,9 @@ describe Rating do
 		@participant2.trainer_rating = 5
 		@participant3.trainer_rating = 2
 
+    @participant1.trainer2_rating = 4
+    @participant2.trainer2_rating = 3
+
 		@participant1.promoter_score = 10
 		@participant2.promoter_score = 9
 		@participant3.promoter_score = 5
@@ -61,6 +67,7 @@ describe Rating do
 		@event2.reload
 		@event_type.reload
 		@trainer.reload
+    @trainer2.reload
     end
 
     context "for each event" do
@@ -75,25 +82,10 @@ describe Rating do
 	    end
 
 	    it "should have an average event rating even with participants without rating" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      participant4.status = "A"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event.average_rating.should == 5.0
 	    end
 
 	    it "should have an average event rating even with participants not being present" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      @participant3.event_rating = 5
-	      participant4.status = "C"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event.average_rating.should == 5.0
 	    end
 
@@ -103,26 +95,11 @@ describe Rating do
 	    end
 
 	    it "should have a net promoter score even with participants without rating" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      participant4.status = "A"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event.net_promoter_score.should == 100
 	      @event2.net_promoter_score.should == -100
 	    end
 
 	    it "should have a net promoter score even with participants not being present" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      @participant3.promoter_score = 0
-	      participant4.status = "C"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event.net_promoter_score.should == 100
 	      @event2.net_promoter_score.should == -100
 	    end
@@ -136,25 +113,10 @@ describe Rating do
 	    end
 
 	    it "should have an average event rating even with participants without rating" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      participant4.status = "A"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event_type.average_rating.should == 4.0
 	    end
 
 	    it "should have an average event rating even with participants not being present" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      @participant3.event_rating = 5
-	      participant4.status = "C"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event_type.average_rating.should == 4.0
 	    end
 
@@ -163,28 +125,13 @@ describe Rating do
 	    end
 
 	    it "should have a net promoter score even with participants without rating" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      participant4.status = "A"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event_type.net_promoter_score.should == 33
 	    end
 
 	    it "should have a net promoter score even with participants not being present" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      @participant3.promoter_score = 0
-	      participant4.status = "C"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @event_type.net_promoter_score.should == 33
 	    end
-	    
+
 	end
 
 	context "for the trainer" do
@@ -194,29 +141,15 @@ describe Rating do
 	    end
 
 	    it "should have a global event rating" do
-	      Rating.first.global_trainer_rating.should == 4.0
+        Rating.first.global_trainer_rating.should == 4.0
+        # Rating.first.global_trainer_rating.should == 3.8
 	    end
 
 	    it "should have an average event rating even with participants without rating" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      participant4.status = "A"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @trainer.average_rating.should == 4.0
 	    end
 
 	    it "should have an average event rating even with participants not being present" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      @participant3.event_rating = 5
-	      participant4.status = "C"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @trainer.average_rating.should == 4.0
 	    end
 
@@ -225,28 +158,17 @@ describe Rating do
 	    end
 
 	    it "should have a net promoter score even with participants without rating" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      participant4.status = "A"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @trainer.net_promoter_score.should == 33
 	    end
 
 	    it "should have a net promoter score even with participants not being present" do
-	      participant4 = FactoryGirl.build(:participant)
-	      participant4.id = 104
-	      @participant3.promoter_score = 0
-	      participant4.status = "C"
-	      participant4.save!
-	      @event.participants << participant4
-	      @event.save!
-
 	      @trainer.net_promoter_score.should == 33
 	    end
-	    
+
+      it "should have a net promoter score for the co-trainer" do
+	      @trainer2.average_rating.should == 3.5
+	    end
+
 	end
 
 end
