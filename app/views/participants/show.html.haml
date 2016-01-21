@@ -14,7 +14,7 @@
   = @participant.phone
 %p
   %b Event:
-  = @participant.event
+  = link_to @participant.event.event_type.name, @participant.event
 
 = link_to 'Edit', edit_event_participant_path(@participant)
 \|
