@@ -34,24 +34,23 @@ class EventMailer < ActionMailer::Base
   def alert_event_monitor(participant, edit_registration_link)
     @participant = participant
     event= @participant.event
-    if event.monitor_email.to_s != ""    ## nil? || ''
-      event_title = event.event_type.name + ' en ' + event.country.name
-      newbie = @participant.fname + ' ' + @participant.lname
-      contact = @participant.email + ', ' + @participant.phone
-      mail(to: event.monitor_email,
-          from: "Eventos <eventos@kleerer.com>",
-          subject: "[Keventer] Nuevo registro a #{event_title}: " + newbie,
-          body: "#{newbie}(#{contact}) se registró a #{event_title} del #{event.human_date}. Puedes ver/editar el registro en #{edit_registration_link}.")
-    end
+    event_title = event.event_type.name + ' en ' + event.country.name
+    newbie = @participant.fname + ' ' + @participant.lname
+    contact = @participant.email + ', ' + @participant.phone
+    body = "#{newbie}(#{contact}) se registró a #{event_title} del #{event.human_date}. Puedes ver/editar el registro en #{edit_registration_link}."
+    mail(to: event.monitor_email,
+        from: "Eventos <eventos@kleerer.com>",
+        subject: "[Keventer] Nuevo registro a #{event_title}: " + newbie,
+        body: body
+        ) unless event.monitor_email.to_s == ""    ## nil? || ''
   end
 
   def alert_event_crm_push_finished(crm_push_transaction)
-    if !crm_push_transaction.user.email.nil? && crm_push_transaction.user.email != ""
-      mail(to: crm_push_transaction.user.email,
-          from: "Keventer <eventos@kleerer.com>",
-          subject: "[Keventer] Envío al CRM finalizado",
-          body: "El último push al CRM que solicitaste ya ha finalizado.")
-    end
+    mail(to: crm_push_transaction.user.email,
+        from: "Keventer <eventos@kleerer.com>",
+        subject: "[Keventer] Envío al CRM finalizado",
+        body: "El último push al CRM que solicitaste ya ha finalizado."
+        ) unless crm_push_transaction.user.nil? || crm_push_transaction.user.email.to_s == ''
   end
 
 end

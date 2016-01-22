@@ -159,4 +159,21 @@ describe EventMailer do
     end
   end
 
+  context 'alert_event_crm_push_finished' do
+    it 'dont send notification when PushTransation dont have email address' do
+      email= EventMailer.alert_event_crm_push_finished(CrmPushTransaction.new)
+      expect(email.body).to eq ''
+    end
+
+    it 'send registration in event with alert email address' do
+      cpt= CrmPushTransaction.new
+      cpt.user= FactoryGirl.build(:user)
+      email= EventMailer.alert_event_crm_push_finished(cpt)
+
+      expect(email.subject).to include('CRM finalizado')
+      expect(email.body).to include('finalizado')
+    end
+  end
+
+
 end
