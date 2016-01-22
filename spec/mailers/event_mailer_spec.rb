@@ -150,12 +150,14 @@ describe EventMailer do
       @participant.fname = 'Martin'
       @participant.lname = 'Alaimo'
       @participant.phone = "1234-5678"
+      @participant.notes = "questions"
       edit_registration_link = "http://fighters.foo/events/1/participants/2/edit"
       email= EventMailer.alert_event_monitor(@participant, edit_registration_link)
       expect(email.subject).to include('Martin Alaimo')
       expect(email.body).to include('martin.alaimo@kleer.la')
       expect(email.body).to include('Martin Alaimo')
       expect(email.body).to include('1234-5678')
+      expect(email.body).to include("'questions'")
     end
   end
 
