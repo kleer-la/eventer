@@ -1,14 +1,14 @@
 # encoding: utf-8
 
 class EventMailer < ActionMailer::Base
-  
+
   add_template_helper(DashboardHelper)
 
   def welcome_new_webinar_participant(participant)
     @participant = participant
     mail(to: @participant.email, from: "Eventos <eventos@kleerer.com>", subject: "Kleer | #{@participant.event.event_type.name}" )
   end
-  
+
   def notify_webinar_start(participant, webinar_link)
     @participant = participant
     @webinar_link = webinar_link
@@ -26,25 +26,29 @@ class EventMailer < ActionMailer::Base
     @certificate_link_A4 = certificate_url_A4
     @certificate_link_LETTER = certificate_url_LETTER
     @markdown_renderer = Redcarpet::Markdown.new( Redcarpet::Render::HTML.new(:hard_wrap => true), :autolink => true)
-    mail( to: @participant.email, 
-          from: "#{@participant.event.trainer.name} <eventos@kleerer.com>", 
+    mail( to: @participant.email,
+          from: "#{@participant.event.trainer.name} <eventos@kleerer.com>",
           subject: "Kleer | Certificado del #{@participant.event.event_type.name}")
   end
-  
+
   def alert_event_monitor(participant, edit_registration_link)
     @participant = participant
-    if !@participant.event.monitor_email.nil? && @participant.event.monitor_email != ""
-      mail(to: @participant.event.monitor_email, 
-          from: "Eventos <eventos@kleerer.com>", 
-          subject: "[Keventer] Nuevo registro a #{@participant.event.event_type.name} en #{@participant.event.country.name}: #{@participant.fname} #{@participant.lname}",
-          body: "Una nueva persona se registró a #{@participant.event.event_type.name} del #{@participant.event.human_date} en #{@participant.event.country.name}. Puedes ver/editar el registro en #{edit_registration_link}.")
+    event= @participant.event
+    if event.monitor_email.to_s != ""    ## nil? || ''
+      event_title = event.event_type.name + ' en ' + event.country.name
+      newbie = @participant.fname + ' ' + @participant.lname
+      contact = @participant.email + ', ' + @participant.phone
+      mail(to: event.monitor_email,
+          from: "Eventos <eventos@kleerer.com>",
+          subject: "[Keventer] Nuevo registro a #{event_title}: " + newbie,
+          body: "#{newbie}(#{contact}) se registró a #{event_title} del #{event.human_date}. Puedes ver/editar el registro en #{edit_registration_link}.")
     end
   end
 
   def alert_event_crm_push_finished(crm_push_transaction)
     if !crm_push_transaction.user.email.nil? && crm_push_transaction.user.email != ""
-      mail(to: crm_push_transaction.user.email, 
-          from: "Keventer <eventos@kleerer.com>", 
+      mail(to: crm_push_transaction.user.email,
+          from: "Keventer <eventos@kleerer.com>",
           subject: "[Keventer] Envío al CRM finalizado",
           body: "El último push al CRM que solicitaste ya ha finalizado.")
     end

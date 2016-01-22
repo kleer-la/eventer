@@ -2,13 +2,13 @@
 
 require "spec_helper"
 describe EventMailer do
-  
+
   before (:each) do
     @participant = FactoryGirl.build(:participant)
     @participant.email = "martin.alaimo@kleer.la"
     @participant.event.event_type.name = "Concurso de truco"
   end
-  
+
   it "should queue and verify a simple email" do
 
     email = EventMailer.welcome_new_event_participant(@participant).deliver
@@ -54,7 +54,7 @@ describe EventMailer do
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should include("(ARS) $ 180.00")
   end
-  
+
   it "should show 2 person price if present" do
     @participant.event.couples_eb_price = 950
 
@@ -62,11 +62,11 @@ describe EventMailer do
 
     text_message = email.body.parts.find {|p| p.content_type.match /plain/}.body.raw_source
     text_message.should include("950.00 pagando de a 2 personas antes del")
-        
+
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should include("950.00 pagando de a 2 personas antes del")
   end
-  
+
   it "should show 5 person price if present" do
     @participant.event.business_eb_price = 850
 
@@ -74,20 +74,20 @@ describe EventMailer do
 
     text_message = email.body.parts.find {|p| p.content_type.match /plain/}.body.raw_source
     text_message.should include("850.00 pagando de a 5 personas antes del")
-    
+
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should include("850.00 pagando de a 5 personas antes del")
   end
-  
+
   it "should not send list price or early bird prices if custom text is present" do
     @participant.event.list_price = 200
     @participant.event.eb_end_date = Date.today
     @participant.event.eb_price = 180
     @participant.event.couples_eb_price = 100
     @participant.event.business_eb_price = 150
-    
+
     @participant.event.custom_prices_email_text = "texto customizado"
-    
+
     email = EventMailer.welcome_new_event_participant(@participant).deliver
 
     text_message = email.body.parts.find {|p| p.content_type.match /plain/}.body.raw_source
@@ -95,7 +95,7 @@ describe EventMailer do
     text_message.should_not include("(ARS) $ 180.00")
     text_message.should_not include("pagando de a 2 personas")
     text_message.should_not include("pagando de a 5 personas")
-    
+
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should_not include("(ARS) $ 200.00")
     html_message.should_not include("(ARS) $ 180.00")
@@ -103,24 +103,24 @@ describe EventMailer do
     html_message.should_not include("pagando de a 2 personas")
     html_message.should_not include("pagando de a 5 personas")
   end
-  
+
   it "should send the custom text if custom text is present" do
     @participant.event.custom_prices_email_text = "texto customizado"
-    
+
     email = EventMailer.welcome_new_event_participant(@participant).deliver
 
     text_message = email.body.parts.find {|p| p.content_type.match /plain/}.body.raw_source
     text_message.should include("texto customizado")
-    
+
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should include("texto customizado")
   end
-  
+
   it "should send the custom text in HTML format if custom text markdown is present" do
     @participant.event.custom_prices_email_text = "**texto customizado**: 16"
-    
+
     email = EventMailer.welcome_new_event_participant(@participant).deliver
-    
+
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should include("<strong>texto customizado</strong>: 16")
 
@@ -137,5 +137,26 @@ describe EventMailer do
     ActionMailer::Base.deliveries.empty?.should_not be true
 
   end
-  
+
+  context 'alert_event_monitor' do
+    it 'dont send registration when the event dont have alert email address' do
+      email= EventMailer.alert_event_monitor(@participant, '')
+      expect(email.body).to eq ''
+    end
+
+    it 'send registration in event with alert email address' do
+      @participant.event = FactoryGirl.create(:event)
+      @participant.event.monitor_email = "eventos@k.com"
+      @participant.fname = 'Martin'
+      @participant.lname = 'Alaimo'
+      @participant.phone = "1234-5678"
+      edit_registration_link = "http://fighters.foo/events/1/participants/2/edit"
+      email= EventMailer.alert_event_monitor(@participant, edit_registration_link)
+      expect(email.subject).to include('Martin Alaimo')
+      expect(email.body).to include('martin.alaimo@kleer.la')
+      expect(email.body).to include('Martin Alaimo')
+      expect(email.body).to include('1234-5678')
+    end
+  end
+
 end
