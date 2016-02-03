@@ -1,0 +1,32 @@
+.page-header
+  %h1.pull-left
+    %i.icon-group
+    %span Participantes encontrados
+
+= render '/commons/notice'
+
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .box-header.orange-background
+      .title Participantes encontrado
+    .box-content.box-no-padding
+      - if @participants.nil?
+        = "No encontré '#{@searching}'"
+      - else
+        .responsive-table
+          .scrollable-area
+            %table.table.table-striped{ :style => "margin-bottom:0;" }
+              %thead
+                %tr
+                  %th Nombre
+                  %th
+              %tbody
+                - @participants.each do |participant|
+                  %tr
+                    %td= link_to trainer.name, trainer
+                    %td
+                      .text-right
+                        %a.btn.btn-warning.btn-mini{ :href => edit_trainer_path(trainer) }
+                          %i.icon-edit
+                        %a.btn.btn-danger.btn-mini{ :href => trainer_path(trainer), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                          %i.icon-trash

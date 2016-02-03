@@ -58,6 +58,8 @@ Eventer::Application.routes.draw do
   match 'events/:event_id/participants_survey' => 'participants#survey'
   match 'events/:event_id/participants_batch_load' => 'participants#batch_load'
 
+  match 'participants/search' => 'participants#search'
+
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Participant do
-  
+
   before(:each) do
     @participant = FactoryGirl.build(:participant)
   end
@@ -40,58 +40,58 @@ describe Participant do
     it "should be valid" do
       @participant.valid?.should be true
     end
-    
+
     it "should require its name" do
       @participant.fname = ""
-      
+
       @participant.valid?.should be false
     end
-    
+
     it "should require its last name" do
       @participant.lname = ""
-      
+
       @participant.valid?.should be false
     end
-    
+
     it "should require its email" do
       @participant.email = ""
-      
+
       @participant.valid?.should be false
     end
-    
+
     it "should validate the email" do
       @participant.email = "cualquiercosa"
-      
+
       @participant.valid?.should be false
     end
 
     it "should require the influence zone" do
       @participant.influence_zone = nil
-      
+
       @participant.valid?.should be false
     end
 
     it "should validate the email" do
       @participant.email = "hola@gmail.com"
-      
+
       @participant.valid?.should be true
-    end  
-    
+    end
+
     it "should require its phone" do
       @participant.phone = ""
-      
+
       @participant.valid?.should be false
     end
-    
+
     it "should be valid if there's no referer code" do
       @participant.referer_code = ""
-      
+
       @participant.valid?.should be true
     end
-    
+
     it "should be valid if there's a referer code" do
       @participant.referer_code = "UNCODIGO"
-      
+
       @participant.valid?.should be true
     end
   end
@@ -100,12 +100,12 @@ describe Participant do
     @participant.confirm!
     @participant.status.should == "C"
   end
-  
+
   it "should let someone contact it" do
     @participant.contact!
     @participant.status.should == "T"
   end
-  
+
   it "should let someone mark attended it" do
     @participant.is_present?.should be false
     @participant.attend!
@@ -179,7 +179,7 @@ describe Participant do
 
       @reader_A4 = PDF::Reader.new(@filepath_A4)
       @reader_LETTER = PDF::Reader.new(@filepath_LETTER)
- 
+
     end
 
     it "should have a unique name" do
@@ -193,7 +193,7 @@ describe Participant do
 
     it "should have left a temp file in LETTER format" do
       File.exist?(@filepath_LETTER).should be_true
-    end 
+    end
 
     it "should be a single page certificate" do
       @reader_A4.page_count.should == 1
@@ -209,7 +209,7 @@ describe Participant do
       @influence_zone = FactoryGirl.create(:influence_zone)
       @status = "A"
     end
-    
+
     it "sould allow a participant to be created from a batch line using commas" do
       participant_data_line = "Alaimo, Martin, malaimo@gmail.com, 1234-5678"
 
@@ -250,7 +250,7 @@ describe Participant do
       Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
       Participant.all.count.should == 0
     end
-  
+
     it "sould not allow a participant to be created from a batch line without lname" do
       participant_data_line = ",Martin,malaimo@gmail.com"
 
@@ -273,5 +273,33 @@ describe Participant do
     end
 
   end
-  
+
+  context 'search' do
+    before(:all) do
+      valid_attributes= {
+          :event_id => FactoryGirl.create(:event).id,
+          :fname => "Pablo",
+          :lname => "Picasso",
+          :email => "ppicaso@pintores.org",
+          :phone => "1234-5678",
+          :influence_zone_id => FactoryGirl.create(:influence_zone).id
+        }
+      @participant = Participant.create! valid_attributes
+    end
+    it 'By last name' do
+      found= Participant.search 'Pica'
+      found.count.should == 1
+      found[0].lname.should == 'Picasso'
+    end
+    it 'Not found' do
+      found= Participant.search 'Ramanaya'
+      found.should eq([])
+    end
+    it 'By first name' do
+      found= Participant.search 'Pabl'
+      found.count.should == 1
+      found[0].lname.should == 'Picasso'
+    end
+  end
+
 end

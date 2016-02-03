@@ -26,7 +26,7 @@ describe ParticipantsController do
   def valid_attributes
     { :event_id => FactoryGirl.create(:event).id,
       :fname => "Pablo",
-      :lname => "Picasso", 
+      :lname => "Picasso",
       :email => "ppicaso@pintores.org",
       :phone => "1234-5678",
       :influence_zone_id => FactoryGirl.create(:influence_zone).id}
@@ -38,9 +38,9 @@ describe ParticipantsController do
   def valid_session
     nil
   end
-  
+
   context "the user is a comercial" do
-  
+
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
       @user = FactoryGirl.create(:comercial)
@@ -183,7 +183,15 @@ describe ParticipantsController do
           response.should redirect_to( "/events/" + participant.event.id.to_s + "/participants"  )
         end
       end
-    
+
+      describe "search a participant" do
+        it 'By last name' do
+          participant = Participant.create! valid_attributes
+          get :search, {:name => 'Pica'}, valid_session
+          assigns(:participants).should eq([participant])
+        end
+      end
+
     end
 
 end

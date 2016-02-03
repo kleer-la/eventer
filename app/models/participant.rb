@@ -151,4 +151,8 @@ class Participant < ActiveRecord::Base
 
   end
 
+  def self.search(searching)
+    Participant.find(all).find_all {|p| (p.fname + ' ' + p.lname).include?(searching)}
+  end
+
 end

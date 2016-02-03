@@ -1,6 +1,6 @@
 !!!
 %html{html_attrs(I18n.locale)}
-  
+
   %head
     %title
       = (yield(:title) || t('title.untitled'))
@@ -9,9 +9,9 @@
     = stylesheet_link_tag "application", :media => "all"
     = javascript_include_tag "application"
     = csrf_meta_tags
-	
+
     = yield(:head)
-  
+
   - if !user_signed_in?
     %body.sign-in
       #wrapper
@@ -43,6 +43,12 @@
                       %a{ :href => destroy_user_session_path,  "data-method" => :delete, :rel => :nofollow }
                         %i.icon-signout
                         = t('menu.exit')
+              %span.pull-right
+                %form{ :action=> "/participants/search", :method => 'GET' }
+                  %input#search_name{ :name=> 'name'}
+                  %button.btn.btn-primary#search{ :type=>"submit" }
+                    %i.icon-search
+                  %span.hidden-phone &nbsp;
       .wrapper
         - if user_signed_in?
           = render '/commons/menu'

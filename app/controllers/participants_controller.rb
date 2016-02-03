@@ -211,4 +211,13 @@ class ParticipantsController < ApplicationController
 
   end
 
+  def search
+    @searching= params[:name]
+    @participant= Participant.search @searching
+
+    respond_to do |format|
+      format.html # search.html.erb
+    end
+  end
+
 end
