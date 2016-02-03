@@ -134,12 +134,7 @@ class Participant < ActiveRecord::Base
       lname = data_attibutes[0].strip
       fname = data_attibutes[1].strip
       email = data_attibutes[2].strip
-
-      if data_attibutes.size == 3
-        phone = "N/A"
-      else
-        phone = data_attibutes[3].strip
-      end
+      phone = (data_attibutes[3] || "N/A").strip
 
       participant = Participant.new(:fname => fname, :lname => lname, :email => email,
                                     :phone => phone, :event_id => event.id, :notes => "Batch load",
@@ -152,7 +147,7 @@ class Participant < ActiveRecord::Base
   end
 
   def self.search(searching)
-    Participant.find(all).find_all {|p| (p.fname + ' ' + p.lname).include?(searching)}
+    Participant.find(:all).find_all {|p| (p.fname + ' ' + p.lname).include?(searching)}
   end
 
 end

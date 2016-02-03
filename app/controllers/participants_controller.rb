@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class ParticipantsController < ApplicationController
   before_filter :authenticate_user!, :except => [:new, :create, :confirm, :certificate]
 
@@ -212,9 +214,11 @@ class ParticipantsController < ApplicationController
   end
 
   def search
-    @searching= params[:name]
-    @participant= Participant.search @searching
-
+    searching= params[:name]
+    @participants= Participant.search searching
+    if @participants.count == 0
+      flash[:notice] = "No encontré '#{searching}'"
+    end
     respond_to do |format|
       format.html # search.html.erb
     end

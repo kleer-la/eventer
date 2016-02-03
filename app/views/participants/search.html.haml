@@ -10,23 +10,21 @@
     .box-header.orange-background
       .title Participantes encontrado
     .box-content.box-no-padding
-      - if @participants.nil?
-        = "No encontré '#{@searching}'"
-      - else
-        .responsive-table
-          .scrollable-area
-            %table.table.table-striped{ :style => "margin-bottom:0;" }
-              %thead
+      .responsive-table
+        .scrollable-area
+          %table.table.table-striped{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th Nombre
+                %th Apellido
+                %th Evento
+                %th Fecha
+            %tbody
+              - @participants.each do |participant|
                 %tr
-                  %th Nombre
-                  %th
-              %tbody
-                - @participants.each do |participant|
-                  %tr
-                    %td= link_to trainer.name, trainer
-                    %td
-                      .text-right
-                        %a.btn.btn-warning.btn-mini{ :href => edit_trainer_path(trainer) }
-                          %i.icon-edit
-                        %a.btn.btn-danger.btn-mini{ :href => trainer_path(trainer), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
-                          %i.icon-trash
+                  %td= participant.fname
+                  %td= participant.lname
+                  %td= participant.event.event_type.name
+                  %td= participant.event.date
+                  -#%td= link_to participant.fname, participant
+                  -#%td= link_to participant.lname, participant
