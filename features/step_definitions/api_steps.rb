@@ -3,8 +3,6 @@ When(/^I request the event list in "(.*?)" format$/) do |ext|
 end
 
 Then(/^it should be an XML$/) do
-#  puts last_response.methods
-#  puts last_response.body
   expect(last_response.status).to  eq(200)
   expect(last_response.body).to  start_with("<?xml")
 end
@@ -31,4 +29,8 @@ end
 Then(/^it should have "(.*?)"$/) do |element|
   parsed= Nokogiri::XML(last_response.body)
   parsed.xpath(element).should have_at_least(1).items
+end
+
+When(/^I request the category list in "(.*?)" format$/) do |ext|
+  get "/api/categories.#{ext.downcase}"
 end
