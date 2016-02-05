@@ -39,3 +39,9 @@ Feature: Inicio
       Then it should be an XML
       And show last response body
       And it should have "//categories/category"
+
+
+#     API_ROOT + "/event_types/#{event_type_id}.xml"
+#  API_COMMUNITY_EVENTS_PATH = "/community_events.xml"
+# /events/_trainers_select
+# /events/_trainers_2select
