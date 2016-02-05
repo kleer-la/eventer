@@ -14,6 +14,12 @@ When(/^I fill the category "(.*?)" fields "(.*?)"$/) do |lang, fields|
   fill_in 'category_name_en', :with => values[0]
   fill_in 'category_tagline_en', :with => values[1]
   fill_in 'category_description_en', :with => values[2]
+end
 
+When(/^the category is visible$/) do
+  check 'category_visible'
+end
+
+When(/^I save the category$/) do
   click_button_and_wait 'Guardar'
 end
