@@ -1,4 +1,4 @@
-When(/^I request the event list in "(.*?)"$/) do |ext|
+When(/^I request the event list in "(.*?)" format$/) do |ext|
   get "/api/events.#{ext.downcase}"
 end
 
@@ -22,4 +22,13 @@ end
 Then(/^it should have "(.*?)" in the event type$/) do |xml_element|
   parsed= Nokogiri::XML(last_response.body)
   parsed.xpath('//event/event-type/'+xml_element).should have_at_least(1).items
+end
+
+When(/^I request the kleerer list in "(.*?)" format$/) do |ext|
+  get "/api/kleerers.#{ext.downcase}"
+end
+
+Then(/^it should have "(.*?)"$/) do |element|
+  parsed= Nokogiri::XML(last_response.body)
+  parsed.xpath(element).should have_at_least(1).items
 end
