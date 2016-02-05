@@ -64,9 +64,10 @@ end
 Cucumber::Rails::Database.javascript_strategy = :deletion #:truncation
 
 After("@selenium") do |scenario|
+  folder= './tmp/'
   if scenario.failed? && !page.nil?
-    page.save_screenshot(scenario.name+'.png')
-    File.write(scenario.name+'.html', page.html)
+    page.save_screenshot(folder+scenario.name+'.png')
+    File.write(folder+scenario.name+'.html', page.html)
   end
   if scenario.exception.is_a? Timeout::Error
     # restart Selenium driver
