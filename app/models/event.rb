@@ -105,14 +105,6 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def attendance
-    if self.capacity > 0
-      (self.participants.attended.count)*1.0/self.capacity
-    else
-      1.0
-    end
-  end
-
   def weeks_from(now=Date.today)
     from_date = now.beginning_of_week
     to_date = self.date.beginning_of_week
@@ -136,10 +128,12 @@ class Event < ActiveRecord::Base
   end
 
   def human_time
+    from= self.start_time.strftime( "%H:%M" )
+    to= self.end_time.strftime( "%H:%M" )
     if I18n.locale == :es
-      "de " + self.start_time.strftime( "%H:%M" ) + " a " + self.end_time.strftime( "%H:%M" ) + " hs"
+      "de " + from + " a " + to + " hs"
     else
-      "from " + self.start_time.strftime( "%H:%M" ) + " to " + self.end_time.strftime( "%H:%M" ) + " hs"
+      "from " + from + " to " + to + " hs"
     end
   end
 
@@ -195,11 +189,7 @@ class Event < ActiveRecord::Base
   private
 
   def get_event_duration
-    if !self.duration.nil?
-      self.duration
-    else
-      1
-    end
+    self.duration || 1
   end
 
   def humanize_start_date
