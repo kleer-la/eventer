@@ -44,34 +44,30 @@ class Event < ActiveRecord::Base
       record.errors.add(attr, :eb_price_should_be_smaller_than_list_price) unless value.nil? || value < record.list_price
   end
 
-  validates_each :couples_eb_price  do |record, attr, value|
+  def self.discount_on_private(record, attr, value)
     if !value.nil? && (value > 0 && record.visibility_type == 'pr')
       record.errors.add(attr, :private_event_should_not_have_discounts)
     end
+  end
+
+  validates_each :couples_eb_price  do |record, attr, value|
+    self.discount_on_private(record, attr, value)
   end
 
   validates_each :business_price  do |record, attr, value|
-    if !value.nil? && (value > 0 && record.visibility_type == 'pr')
-      record.errors.add(attr, :private_event_should_not_have_discounts)
-    end
+    self.discount_on_private(record, attr, value)
   end
 
   validates_each :business_eb_price  do |record, attr, value|
-    if !value.nil? && (value > 0 && record.visibility_type == 'pr')
-      record.errors.add(attr, :private_event_should_not_have_discounts)
-    end
+    self.discount_on_private(record, attr, value)
   end
 
   validates_each :enterprise_6plus_price  do |record, attr, value|
-    if !value.nil? && (value > 0 && record.visibility_type == 'pr')
-      record.errors.add(attr, :private_event_should_not_have_discounts)
-    end
+    self.discount_on_private(record, attr, value)
   end
 
   validates_each :enterprise_11plus_price  do |record, attr, value|
-    if !value.nil? && (value > 0 && record.visibility_type == 'pr')
-      record.errors.add(attr, :private_event_should_not_have_discounts)
-    end
+    self.discount_on_private(record, attr, value)
   end
 
   validates_each :time_zone_name do |record, attr, value|
