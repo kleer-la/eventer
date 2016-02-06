@@ -63,12 +63,7 @@ class Participant < ActiveRecord::Base
   end
 
   def status_sort_order
-    order = "NTCADX".index(self.status)
-    if order.nil?
-      7
-    else
-      order+1
-    end
+    ("NTCADX".index(self.status) || 6)+1
   end
 
   def confirm!
