@@ -300,6 +300,11 @@ describe Participant do
       found.count.should == 1
       found[0].lname.should == 'Picasso'
     end
+    it 'By first name lowercase' do
+      found= Participant.search 'pabl'
+      found.count.should == 1
+      found[0].lname.should == 'Picasso'
+    end
   end
 
 end

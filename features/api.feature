@@ -37,7 +37,6 @@ Feature: Inicio
       And I save the category
       When I request the category list in "XML" format
       Then it should be an XML
-      And show last response body
       And it should have "//categories/category"
 
 
