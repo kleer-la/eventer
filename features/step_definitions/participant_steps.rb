@@ -1,7 +1,10 @@
 
 def get_last_id
   last_id = 1
-  href= page.all(:xpath, "//table//tr[td='31 Ene-1 Feb']/td[2]/a").last[:href]
+  expect(page).to have_css("table tr")
+  elem= page.all(:xpath, "//table//tr[td='31 Ene-1 Feb']/td[2]/a").last ||
+        page.all(:xpath, "//table//tr[td='31 Jan-1 Feb']/td[2]/a").last
+  href= elem[:href] unless elem.nil?
   if !href.nil?
       ri = href.rindex("/")
       last_id = href[ri+1,3]
