@@ -299,7 +299,7 @@ en:
               success: "Evento cancelado exitosamente!"
           webinar:
               broadcasting: "Webinar Iniciado Exitosamente!"
-          pushing_to_crm: "Enviando participantes del evento a CapsuleCRM... Te eviaré un e-mail al finalizar."
+          pushing_to_crm: "Enviando participantes del evento a CapsuleCRM... Te enviaré un e-mail al finalizar."
           send_certificate:
               success: "Enviando certificados de asistencia a los participantes."
               signature_failure: "El entrenador necesita tener una firma para poder enviar los certificados."
