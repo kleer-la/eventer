@@ -2,12 +2,12 @@ class TrainersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :activate_menu
   load_and_authorize_resource
-  
-  
+
+
   # GET /trainers
   # GET /trainers.json
   def index
-    @trainers = Trainer.all
+    @trainers = Trainer.all(:order => 'name')
 
     respond_to do |format|
       format.html # index.html.erb
@@ -85,9 +85,9 @@ class TrainersController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   private
-  
+
   def activate_menu
     @active_menu = "trainers"
   end
