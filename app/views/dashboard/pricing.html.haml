@@ -80,7 +80,7 @@
                       = currency_symbol_for( event.currency_iso_code )
                       = sprintf("%05.2f", event.eb_price)
                       %br
-                      = "Hasta el " + event.eb_end_date.to_formatted_s(:short)
+                      = "Hasta el " + short_date(event.eb_end_date)
                   - else
                     %td= " "
 
@@ -90,7 +90,7 @@
                       = currency_symbol_for( event.currency_iso_code )
                       = sprintf("%05.2f", event.couples_eb_price)
                       %br
-                      = "Hasta el " + event.eb_end_date.to_formatted_s(:short)
+                      = "Hasta el " + short_date(event.eb_end_date)
                   - else
                     %td= " "
 
@@ -100,7 +100,7 @@
                       = currency_symbol_for( event.currency_iso_code )
                       = sprintf("%05.2f", event.business_eb_price)
                       %br
-                      = "Hasta el " + event.eb_end_date.to_formatted_s(:short)
+                      = "Hasta el " + short_date(event.eb_end_date)
                   - else
                     %td= " "
 
