@@ -310,7 +310,7 @@ en:
           create:
               success: "Tipo de Evento creado exitosamente!"
           update:
-              success: "Tipo de Evento modificado exitósamente"
+              success: "Tipo de Evento modificado exitosamente"
           remove:
               success: "Tipo de Evento removido exitosamente!"
       trainer:
