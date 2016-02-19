@@ -25,12 +25,21 @@ class Participant < ActiveRecord::Base
       record.errors.add(attr, :promoter_score_should_be_between_0_and_10) unless value.nil? || (value >= 0 && value <= 10)
   end
 
-  scope :new_ones, where(:status => "N")
-  scope :confirmed, where(:status => "C")
-  scope :contacted, where(:status => "T")
-  scope :cancelled, where(:status => "X")
-  scope :deffered, where(:status => "D")
-  scope :attended, where(:status => "A")
+  STATUS= {
+    :new => "N",
+    :confirmed => "C",
+    :contacted => "T",
+    :cancelled => "X",
+    :deffered => "D",
+    :attended => "A"
+  }
+
+  scope :new_ones, where(:status => STATUS[:new])
+  scope :confirmed, where(:status => STATUS[:confirmed])
+  scope :contacted, where(:status => STATUS[:contacted])
+  scope :cancelled, where(:status => STATUS[:cancelled])
+  scope :deffered, where(:status => STATUS[:deffered])
+  scope :attended, where(:status => STATUS[:attended])
 
   scope :surveyed, where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1')
   scope :promoter, where('promoter_score >= 9')
@@ -52,7 +61,7 @@ class Participant < ActiveRecord::Base
 
   def initialize_defaults
     if new_record?
-      self.status = "N" unless !self.status.nil?
+      self.status = STATUS[:new] unless !self.status.nil?
       self.verification_code = Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase
     end
   end
@@ -67,11 +76,11 @@ class Participant < ActiveRecord::Base
   end
 
   def confirm!
-    self.status = "C"
+    self.status = STATUS[:confirmed]
   end
 
   def contact!
-    self.status = "T"
+    self.status = STATUS[:contacted]
     if !self.notes.nil?
       self.notes += "\n"
     else
@@ -81,15 +90,15 @@ class Participant < ActiveRecord::Base
   end
 
   def attend!
-    self.status = "A"
+    self.status = STATUS[:attended]
   end
 
   def is_present?
-    (self.status == "A")
+    self.status == STATUS[:attended]
   end
 
   def is_confirmed_or_present?
-    (self.status == "A" || self.status == "C")
+    self.status == STATUS[:confirmed] || self.status == STATUS[:attended]
   end
 
   def influence_zone_tag
