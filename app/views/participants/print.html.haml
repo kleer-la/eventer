@@ -5,9 +5,11 @@
   @media print {
     .page-break { display: block; page-break-before: always; }
   }
-  
+
   body{ font-size: 11pt;line-height:1;  }
 
+- if @participants.count ==0
+  %h3 No hay participantes Confirmados ni Presentes
 - i = 0
 - @participants.each_slice(10) do |batch|
   %h3= @event.event_type.name + " - " + @event.human_date + " - " + @event.city
@@ -42,6 +44,7 @@
             %br
             &nbsp;
   #page-break.page-break
-      
-:javascript
-  window.print();
+
+- if i>0
+  :javascript
+    window.print();
