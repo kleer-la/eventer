@@ -175,29 +175,30 @@ describe ParticipantsController do
       end
 
       describe "print attendance sheet" do
+        before(:each) do
+          @participant = Participant.create! valid_attributes
+        end
         it "A message is shown when no participant is confirmed" do
-          participant = Participant.create! valid_attributes
-          get :print, {:event_id => participant.event.id}, valid_session
+          get :print, {:event_id => @participant.event.id}, valid_session
           assigns(:participants).should eq([])
         end
 
         it "A confirmed participant is shown" do
-          participant = Participant.create! valid_attributes
-          participant.confirm!
-          participant.save!
-          get :print, {:event_id => participant.event.id}, valid_session
-          assigns(:participants).should eq([participant])
+          @participant.confirm!
+          @participant.save!
+          get :print, {:event_id => @participant.event.id}, valid_session
+          assigns(:participants).should eq([@participant])
           response.should render_template("print")
         end
         it "A confirmed participant is shown" do
-          participant = Participant.create! valid_attributes
-          participant.attend!
-          participant.save!
-          get :print, {:event_id => participant.event.id}, valid_session
-          assigns(:participants).should eq([participant])
+          @participant.attend!
+          @participant.save!
+          get :print, {:event_id => @participant.event.id}, valid_session
+          assigns(:participants).should eq([@participant])
           response.should render_template("print")
         end
       end
+
     end
 
 end
