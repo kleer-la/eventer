@@ -28,7 +28,7 @@ class ParticipantsController < ApplicationController
 
   def print
     @event = Event.find(params[:event_id])
-    @participants = @event.participants.confirmed.sort_by(&:lname)
+    @participants = @event.participants.confirmed_or_attended.sort_by(&:lname)
 
     respond_to do |format|
       format.html { render :layout => "empty_layout" }
