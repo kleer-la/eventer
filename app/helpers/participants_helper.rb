@@ -28,7 +28,7 @@ module ParticipantsHelper
       @participant.event.date.year.to_s
     end
     def event_duration
-      duration = @participant.event.event_type.duration 
+      duration = @participant.event.event_type.duration
       d = duration/8
       unit = "day"
       if d*8 != duration
@@ -72,17 +72,17 @@ module ParticipantsHelper
       pdf.move_down 50
 
       pdf.text "<b>Kleer</b> certifies that", :align => :center, :size => 14, :inline_format => true
-     
+
       pdf.move_down 20
 
-      pdf.text  "<b><i>#{certificate.name}</i></b>", 
+      pdf.text  "<b><i>#{certificate.name}</i></b>",
             :align => :center, :size => 48, :inline_format => true
 
       pdf.text "attended the course named", :align => :center, :size => 14
 
       pdf.move_down 10
 
-      pdf.text    "<b><i>#{certificate.event_name}</i></b>", 
+      pdf.text    "<b><i>#{certificate.event_name}</i></b>",
                   :align => :center, :size => 24, :inline_format => true
 
       pdf.move_down 10
@@ -90,7 +90,7 @@ module ParticipantsHelper
       pdf.text  "delivered in <b>#{certificate.event_city}, #{certificate.event_country}</b>, " +
             "on <b>#{certificate.event_date} #{certificate.event_year}</b>, " +
                   "with a duration of #{certificate.event_duration}.",
-            :align => :center, :size => 14, :inline_format => true 
+            :align => :center, :size => 14, :inline_format => true
 
       if certificate.is_csd_eligible?
           pdf.text    "This course has been approved by the <b>Scrum Alliance</b> as a CSD-eligible one,",
@@ -101,7 +101,7 @@ module ParticipantsHelper
       end
 
       pdf.text    "<i>Certificate verification code: #{certificate.verification_code}.</i>",
-                  :align => :center, :size => 9, :inline_format => true         
+                  :align => :center, :size => 9, :inline_format => true
 
       signature_position = PageConfig[:SignPos][page_size]
 
@@ -141,7 +141,7 @@ module ParticipantsHelper
   end
 
   def self.upload_certificate( certificate_filename )
-  	
+
   	s3 = AWS::S3.new(
   		:access_key_id => ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
   		:secret_access_key => ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
