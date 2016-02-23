@@ -13,16 +13,23 @@ class Participant < ActiveRecord::Base
 
   validates :email, :email => true
 
+  def self.val_range(record, attr, value, msg, from, to)
+    record.errors.add(attr, msg) unless value.nil? || (value >= from && value <= to)
+  end
+
   validates_each :event_rating do |record, attr, value|
-      record.errors.add(attr, :event_rating_should_be_between_1_and_5) unless value.nil? || (value >= 1 && value <= 5)
+    self.val_range(record, attr, value, :event_rating_should_be_between_1_and_5, 1, 5)
+#      record.errors.add(attr, :event_rating_should_be_between_1_and_5) unless value.nil? || (value >= 1 && value <= 5)
   end
 
   validates_each :trainer_rating do |record, attr, value|
-      record.errors.add(attr, :trainer_rating_should_be_between_1_and_5) unless value.nil? || (value >= 1 && value <= 5)
+    self.val_range(record, attr, value, :trainer_rating_should_be_between_1_and_5, 1, 5)
+#      record.errors.add(attr, :trainer_rating_should_be_between_1_and_5) unless value.nil? || (value >= 1 && value <= 5)
   end
 
   validates_each :promoter_score do |record, attr, value|
-      record.errors.add(attr, :promoter_score_should_be_between_0_and_10) unless value.nil? || (value >= 0 && value <= 10)
+    self.val_range(record, attr, value, :promoter_score_should_be_between_0_and_10, 0, 10)
+#      record.errors.add(attr, :promoter_score_should_be_between_0_and_10) unless value.nil? || (value >= 0 && value <= 10)
   end
 
   STATUS= {
@@ -111,40 +118,40 @@ class Participant < ActiveRecord::Base
   end
 
   def influence_zone_country
-    if !self.influence_zone.nil?
-      self.influence_zone.country.nil? ? "" : self.influence_zone.country.name
+    if !self.influence_zone.nil? && !self.influence_zone.country.nil?
+      self.influence_zone.country.name
     else
       ""
     end
   end
 
   def generate_certificate_and_notify
-    certificate_filename = ParticipantsHelper::generate_certificate( self, "A4" )
-    certificate_url_A4 = ParticipantsHelper::upload_certificate( certificate_filename )
+    ['A4', 'LETTER'].each { |s|
+      certificate_filename = ParticipantsHelper::generate_certificate( self, s )
+      certificate_url[s] = ParticipantsHelper::upload_certificate( certificate_filename )
+    }
 
-    certificate_filename = ParticipantsHelper::generate_certificate( self, "LETTER" )
-    certificate_url_LETTER = ParticipantsHelper::upload_certificate( certificate_filename )
-
-    EventMailer.send_certificate(self, certificate_url_A4, certificate_url_LETTER).deliver
+    EventMailer.send_certificate(self, certificate_url['A4'], certificate_url['LETTER']).deliver
   end
 
   def self.create_from_batch_line(participant_data_line, event, influence_zone, status)
 
-    data_attibutes = participant_data_line.split("\t")
-    if data_attibutes.size == 1
-      data_attibutes = participant_data_line.split(",")
+    attributes = participant_data_line.split("\t")
+    if attributes.size == 1
+      attributes = participant_data_line.split(",")
     end
 
-    if data_attibutes.size >= 3
-      lname = data_attibutes[0].strip
-      fname = data_attibutes[1].strip
-      email = data_attibutes[2].strip
-      phone = (data_attibutes[3] || "N/A").strip
-
-      participant = Participant.new(:fname => fname, :lname => lname, :email => email,
-                                    :phone => phone, :event_id => event.id, :notes => "Batch load",
-                                    :influence_zone_id => influence_zone.id, :status => status)
-      participant.save
+    if attributes.size >= 3
+      Participant.new(
+        :fname => attributes[1].strip,
+        :lname => attributes[0].strip,
+        :email => attributes[2].strip,
+        :phone => (attributes[3] || "N/A").strip,
+        :event_id => event.id,
+        :notes => "Batch load",
+        :influence_zone_id => influence_zone.id,
+        :status => status
+      ).save
     else
       false
     end
