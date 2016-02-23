@@ -134,12 +134,16 @@ class Participant < ActiveRecord::Base
     EventMailer.send_certificate(self, certificate_url['A4'], certificate_url['LETTER']).deliver
   end
 
-  def self.create_from_batch_line(participant_data_line, event, influence_zone, status)
-
+  def self.parse_line(participant_data_line)
     attributes = participant_data_line.split("\t")
     if attributes.size == 1
       attributes = participant_data_line.split(",")
     end
+    attributes
+  end
+
+  def self.create_from_batch_line(participant_data_line, event, influence_zone, status)
+    attributes= parse_line(participant_data_line)
 
     if attributes.size >= 3
       Participant.new(
