@@ -186,6 +186,15 @@ class Event < ActiveRecord::Base
     is_webinar
   end
 
+  def trainers
+    t= [trainer]
+    if trainer2.nil?
+      t
+    else
+      t << trainer2
+    end
+  end
+
   private
 
   def get_event_duration

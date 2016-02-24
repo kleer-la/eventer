@@ -7,74 +7,75 @@ describe Event do
     @event = FactoryGirl.build(:event)
   end
 
-  it "should be valid" do
-    @event.valid?.should be true
-  end
+  context "Valid" do
+    it "should be valid" do
+      @event.valid?.should be true
+    end
 
-  it "should require its date" do
-    @event.date = ""
+    it "should require its date" do
+      @event.date = ""
 
-    @event.valid?.should be false
-  end
+      @event.valid?.should be false
+    end
+    it "should require its trainer" do
+      @event.trainer = nil
 
-  it "should require its place" do
-    @event.place = ""
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its place" do
+      @event.place = ""
 
-  it "should require its city" do
-    @event.city = ""
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its city" do
+      @event.city = ""
 
-  it "should require its visibility_type" do
-    @event.visibility_type = ""
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its visibility_type" do
+      @event.visibility_type = ""
 
-  it "should require its mode" do
-    @event.mode = ""
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its mode" do
+      @event.mode = ""
 
-  it "should require its list_price" do
-    @event.list_price = ""
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its list_price" do
+      @event.list_price = ""
 
-  it "should require its country" do
-    @event.country = nil
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its country" do
+      @event.country = nil
 
-  it "should require its trainer" do
-    @event.trainer = nil
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should require its event_type" do
+      @event.event_type = nil
 
-  it "should require its event_type" do
-    @event.event_type = nil
+      @event.valid?.should be false
+    end
 
-    @event.valid?.should be false
-  end
+    it "should not require a future date" do
+      @event.date = "31/01/2000"
 
-  it "should not require a future date" do
-    @event.date = "31/01/2000"
+      @event.valid?.should be true
+    end
 
-    @event.valid?.should be true
-  end
+    it "should have a capacity greater than 0" do
+      @event.capacity = 0
 
-  it "should have a capacity greater than 0" do
-    @event.capacity = 0
-
-    @event.valid?.should be false
+      @event.valid?.should be false
+    end
   end
 
   it "should have specific conditions" do
@@ -444,5 +445,15 @@ describe Event do
     it "should have a human time in English that returns 'from 9:00 to 18:00hs'" do
       @event.human_time.should == "from 09:00 to 18:00 hs"
     end
-  end
+    end
+    context "Trainers" do
+      it "should have one trainer" do
+        @event.trainer2 = nil
+        @event.trainers.count.should be 1
+      end
+      it "should have two trainers" do
+        @event.trainer2 = FactoryGirl.build(:trainer2)
+        @event.trainers.count.should be 2
+      end
+    end
 end
