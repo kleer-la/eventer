@@ -39,13 +39,16 @@ module ParticipantsHelper
       "#{d} #{unit}#{plural}"
     end
     def trainer
-      @participant.event.trainer.name
+      @participant.event.trainers[0].name
     end
     def trainer_credentials
-      @participant.event.trainer.signature_credentials
+      @participant.event.trainers[0].signature_credentials
     end
     def trainer_signature
-      @participant.event.trainer.signature_image
+      @participant.event.trainers[0].signature_image
+    end
+    def trainers
+        @participant.event.trainers
     end
   end
 
@@ -56,10 +59,28 @@ module ParticipantsHelper
     :InnerBox => {"LETTER" => [[-20, 560], 760, 575], "A4" => [[-20, 543], 810, 560]}
   }
 
+  def self.render_signature(pdf, certificate, page_size)
+    trainers= certificate.trainers
+    signature_position = PageConfig[:SignPos][page_size].dup
+    (0...trainers.count).each {|i|
+      render_one_signature(pdf, certificate, signature_position, trainers[i])
+      signature_position[0] -= 205 # ancho + 5
+    }
+  end
+
+  def self.render_one_signature(pdf, certificate, pos, trainer)
+    trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + trainer.signature_image
+    pdf.bounding_box(pos, :width => 200, :height => 120) do
+        #pdf.transparent(0.5) { pdf.stroke_bounds }
+        pdf.image trainer_signature_path, :position => :center, :scale => 0.7
+        pdf.text "<b>#{trainer.name}</b>", :align => :center, :size => 14, :inline_format => true
+        pdf.text "#{trainer.signature_credentials}", :align => :center, :size => 14
+    end
+  end
+
   def self.render_certificate( pdf, certificate, page_size )
     rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
     kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
-    trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + certificate.trainer_signature
 
       if certificate.is_csd_eligible?
           pdf.image rep_logo_path, :width => 150, :position => :right
@@ -103,14 +124,7 @@ module ParticipantsHelper
       pdf.text    "<i>Certificate verification code: #{certificate.verification_code}.</i>",
                   :align => :center, :size => 9, :inline_format => true
 
-      signature_position = PageConfig[:SignPos][page_size]
-
-      pdf.bounding_box(signature_position, :width => 200, :height => 120) do
-          #pdf.transparent(0.5) { pdf.stroke_bounds }
-          pdf.image trainer_signature_path, :position => :center, :scale => 0.7
-          pdf.text "<b>#{certificate.trainer}</b>", :align => :center, :size => 14, :inline_format => true
-          pdf.text "#{certificate.trainer_credentials}", :align => :center, :size => 14
-      end
+      self.render_signature(pdf, certificate, page_size)
 
       if certificate.is_csd_eligible?
           pdf.text    "Kleer is a Scrum Alliance Registered Education Provider. " +
