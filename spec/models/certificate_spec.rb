@@ -14,7 +14,7 @@ class PrawnMock
 end
 
 describe Certificate do
-  
+
   before(:each) do
     @participant = FactoryGirl.build(:participant)
     @et = FactoryGirl.build(:event_type)
@@ -42,7 +42,7 @@ describe Certificate do
         cert = Certificate.new(@participant)
         cert.is_csd_eligible?.should be false
     end
-    
+
     it 'should return the event name' do
         @et.name = 'Pinocchio'
 
@@ -94,17 +94,17 @@ describe Certificate do
 
     it "should return the trainer name" do
         cert = Certificate.new(@participant)
-        cert.trainer.should == "Juan Alberto"    
+        cert.trainer.should == "Juan Alberto"
     end
 
     it "should return the trainer credentials" do
         cert = Certificate.new(@participant)
-        cert.trainer_credentials.should == "Agile Coach & Trainer"    
+        cert.trainer_credentials.should == "Agile Coach & Trainer"
     end
 
     it "should return the trainer signature image" do
         cert = Certificate.new(@participant)
-        cert.trainer_signature.should == "PT.png"    
+        cert.trainer_signature.should == "PT.png"
     end
 
 end
@@ -162,4 +162,14 @@ describe "render certificates" do
 
         pdf.history.should include "duration of 3"
     end
+
+    it "Render one signature" do
+        t = FactoryGirl.build(:trainer)
+        t.signature_image = nil
+
+        certificate = Certificate.new(p)
+        expect{ParticipantsHelper::render_one_signature( nil, [0,0], t)
+        }.to_not raise_error
     end
+
+  end
