@@ -1,3 +1,5 @@
+require 'dimensions'
+
 module ParticipantsHelper
   class Certificate
     def initialize(participant)
@@ -70,7 +72,8 @@ module ParticipantsHelper
 
   def self.render_one_signature(pdf, certificate, pos, trainer)
     trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + trainer.signature_image
-    pdf.bounding_box(pos, :width => 200, :height => 120) do
+    delta=((200-30)-Dimensions.height(trainer_signature_path))*0.7
+    pdf.bounding_box([pos[0],pos[1]-delta], :width => 200, :height => 120) do
         #pdf.transparent(0.5) { pdf.stroke_bounds }
         pdf.image trainer_signature_path, :position => :center, :scale => 0.7
         pdf.text "<b>#{trainer.name}</b>", :align => :center, :size => 14, :inline_format => true

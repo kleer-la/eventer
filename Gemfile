@@ -39,7 +39,7 @@ group :assets do
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'execjs'
   gem 'therubyracer', :platforms => :ruby
-  
+
   gem 'uglifier', '>= 1.0.3'
 end
 
@@ -76,6 +76,7 @@ gem 'comma'
 gem 'money'
 gem 'prawn'
 gem 'prawn_rails'
+gem 'dimensions' # knowing the heigt of an image
 gem 'redcarpet'
 
 # Gemas necesarias para la comunicación con CapsuleCRM
