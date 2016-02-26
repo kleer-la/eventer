@@ -52,3 +52,16 @@ Feature: Registración en evento
       When I create an event with extra script "<script>$('h1').text('Hi there!')</script>"
       And I visit the registration page without languaje
       Then header should be "Hi there!"
+
+    @selenium
+    Scenario: Evento completo
+      Given Im a logged in user
+      When I create completed event
+      And I visit the registration page without languaje
+      Then I should see "completo"
+
+    @selenium
+    Scenario: Evento no completo
+      Given there is one event
+      And I visit the registration page without languaje
+      Then I should not see "completo"

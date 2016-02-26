@@ -74,3 +74,10 @@ When /^I modify the last event$/ do
   fill_in 'event_capacity', :with => 200
   click_button_and_wait "guardar"
 end
+
+When(/^I create completed event$/) do
+  visit "/events/new"
+  create_valid_event
+  check 'event_is_sold_out'
+  submit_event
+end
