@@ -178,7 +178,6 @@ es:
           title: "Edit title"
         alert:
           is_sold_out: "<strong>Este evento está completo.</strong> Tu registro quedará en lista de espera."
-
       event_type:
         name: "Tipo de Evento"
         subtitle: "Subtitulo"
