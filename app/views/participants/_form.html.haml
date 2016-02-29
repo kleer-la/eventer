@@ -1,7 +1,7 @@
 = form_for [:event, @participant] do |f|
   - if @event.is_sold_out
     .alert
-      = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
+      = I18n.t("formtastic.labels.event.alert.is_sold_out")
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }

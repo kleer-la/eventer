@@ -177,7 +177,7 @@ en:
         edit:
           title: "Edit title"
         alert:
-          event_is_sold_out: "This event is sold out. You will be added to its waitlist."
+          is_sold_out: "This event is sold out. You will be added to its waitlist."
       event_type:
         name: "Tipo de Evento"
         subtitle: "Subtitle"

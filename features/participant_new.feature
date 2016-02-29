@@ -65,3 +65,10 @@ Feature: Registración en evento
       Given there is one event
       And I visit the registration page without languaje
       Then I should not see "completo"
+
+    @selenium
+    Scenario: Evento completo
+      Given Im a logged in user
+      And I create completed event
+      When I visit the "EN" registration page
+      Then I should see "sold out"

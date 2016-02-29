@@ -56,7 +56,7 @@ class ParticipantsController < ApplicationController
     @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
 
     @nakedform = !params[:nakedform].nil?
-    if params[:lang].nil? or params[:lang] == "es"
+    if params[:lang].nil? or params[:lang].downcase == "es"
         I18n.locale=:es
       else
         I18n.locale=:en
