@@ -87,8 +87,16 @@ When(/^I create an event with trainers "(.*?)"$/) do |trainers_list|
   fields= ['event_trainer_id', 'event_trainer2_id', 'event_trainer3_id']
   visit "/events/new"
   create_valid_event
+
+#  expect(find('#event_trainer3_id')).to have_content(trainers[3])
+
   (0...trainers.count).each {|i|
-    select trainers[i], :from => fields[i]    
+    select trainers[i], :from => fields[i]
   }
   submit_event
+end
+
+Then(/^the training (\d+) should be "(.*?)"$/) do |pos, trainer|
+  fields= ['event_trainer_id', 'event_trainer2_id', 'event_trainer3_id']
+  expect(find('#'+fields[pos.to_i-1])).to have_content trainer
 end

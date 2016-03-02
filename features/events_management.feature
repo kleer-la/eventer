@@ -1,4 +1,4 @@
-Feature: Administración de Eventos
+ Feature: Administración de Eventos
 
 	Scenario: Ver listado de Eventos Confirmados
 		Given Im a logged in user
@@ -88,11 +88,11 @@ Feature: Administración de Eventos
 		And go to the last course created
 		Then the extra script should be "<my extra script/>"
 
-    @selenium
-  	Scenario: Three trainers
-  		Given Im a logged in user
-  		When I create an event with trainers "John Doe,Jeff Baurer,Michael Donovan"
-  		And go to the last course created
-      Then I should see "John Doe"
-      And I should see "Jeff Baurer"
-      And I should see "Michael Donovan"
+  @selenium
+	Scenario: Three trainers
+		Given Im a logged in user
+		When I create an event with trainers "Jeff Baurer,Jeff Baurer,Jeff Baurer"
+		And go to the last course created
+    Then the training 1 should be "Jeff Baurer"
+    And the training 2 should be "Jeff Baurer"
+    And the training 3 should be "Jeff Baurer"
