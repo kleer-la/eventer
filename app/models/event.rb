@@ -6,6 +6,7 @@ class Event < ActiveRecord::Base
   belongs_to :country
   belongs_to :trainer
   belongs_to :trainer2, :class_name => "Trainer", :foreign_key => 'trainer2_id'
+  belongs_to :trainer3, :class_name => "Trainer", :foreign_key => 'trainer3_id'
   belongs_to :event_type
   has_many :participants
   has_many :categories, :through => :event_type
@@ -22,7 +23,7 @@ class Event < ActiveRecord::Base
 
   after_initialize :initialize_defaults
 
-  attr_accessible :event_type_id, :trainer_id, :trainer2_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
+  attr_accessible :event_type_id, :trainer_id, :trainer2_id, :trainer3_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
                   :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants,
                   :start_time, :end_time, :sepyme_enabled, :mode, :time_zone_name, :embedded_player, :twitter_embedded_search,
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
@@ -188,11 +189,13 @@ class Event < ActiveRecord::Base
 
   def trainers
     t= [trainer]
-    if trainer2.nil?
-      t
-    else
-      t << trainer2
+    if !trainer2.nil?
+      t <<= trainer2
     end
+    if !trainer3.nil?
+      t <<= trainer3
+    end
+    t
   end
 
   private

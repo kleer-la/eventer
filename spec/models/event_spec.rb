@@ -455,5 +455,10 @@ describe Event do
         @event.trainer2 = FactoryGirl.build(:trainer2)
         @event.trainers.count.should be 2
       end
+      it "should have three trainers" do
+        @event.trainer2 = FactoryGirl.build(:trainer2)
+        @event.trainer3 = FactoryGirl.build(:trainer2)
+        @event.trainers.count.should be 3
+      end
     end
 end

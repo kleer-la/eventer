@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160115175521) do
+ActiveRecord::Schema.define(:version => 20160302021632) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -146,6 +146,7 @@ ActiveRecord::Schema.define(:version => 20160115175521) do
     t.string   "mode",                        :limit => 2
     t.integer  "trainer2_id"
     t.text     "extra_script"
+    t.integer  "trainer3_id"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"
