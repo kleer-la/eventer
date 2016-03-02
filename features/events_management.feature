@@ -87,3 +87,12 @@ Feature: Administración de Eventos
 		When I create an event with extra script "<my extra script/>"
 		And go to the last course created
 		Then the extra script should be "<my extra script/>"
+
+    @selenium
+  	Scenario: Three trainers
+  		Given Im a logged in user
+  		When I create an event with trainers "John Doe,Jeff Baurer,Michael Donovan"
+  		And go to the last course created
+      Then I should see "John Doe"
+      And I should see "Jeff Baurer"
+      And I should see "Michael Donovan"

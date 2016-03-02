@@ -10,4 +10,10 @@ class AjaxController < ApplicationController
     render "/events/_trainers2_select", :layout => false
   end
 
+  def events_update_trainer3_select
+    @trainers_for_event_type = EventType.find(params[:id]).trainers.sort{|p1,p2| p1.name <=> p2.name} unless params[:id].blank?
+    @trainers_for_event_type.unshift Trainer.new(name: "No hay")
+    render "/events/_trainers3_select", :layout => false
+  end
+
 end

@@ -82,6 +82,15 @@
           .row-fuid
             .span12
               .control-group
+                %label.control-label{ :for => :trainer3_id }= t("formtastic.labels.event.trainer2")
+                #trainer3_select
+                  - if !@event.nil? && !@event.event_type.nil?
+                    = f.collection_select :trainer3_id, @event.event_type.trainers, :id, :name, {include_blank: "No hay"}
+                  - else
+                    = f.collection_select :trainer3_id, [], :id, :name, {include_blank: 'No hay entrenadores disponibles'}
+          .row-fuid
+            .span12
+              .control-group
                 %label.control-label{ :for => :visibility_type }= t("formtastic.labels.event.visibility_type")
                 .controls
                   %label.checkbox.inline
@@ -433,6 +442,10 @@
 
     jQuery.get('/events/update_trainer2_select/' + eventTypeID, function(data) {
         $("#trainer2_select").html(data);
+    });
+
+    jQuery.get('/events/update_trainer3_select/' + eventTypeID, function(data) {
+        $("#trainer3_select").html(data);
     });
 
     return false;

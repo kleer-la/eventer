@@ -81,3 +81,14 @@ When(/^I create completed event$/) do
   check 'event_is_sold_out'
   submit_event
 end
+
+When(/^I create an event with trainers "(.*?)"$/) do |trainers_list|
+  trainers= trainers_list.split ','
+  fields= ['event_trainer_id', 'event_trainer2_id', 'event_trainer3_id']
+  visit "/events/new"
+  create_valid_event
+  (0...trainers.count).each {|i|
+    select trainers[i], :from => fields[i]    
+  }
+  submit_event
+end
