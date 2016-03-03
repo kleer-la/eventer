@@ -15,7 +15,6 @@ def create_valid_event_inputs(event_type_name, event_date='31-01-2030')
   fill_in 'event_capacity', :with => 25
   fill_in 'event_city', :with => 'Buenos Aires'
   select 'Argentina', :from => 'event_country_id'
-  all('#event_event_type_id option')[1].select_option
   choose 'event_visibility_type_pu'
   fill_in 'event_list_price', :with => 500.00
   check 'event_should_welcome_email'
@@ -89,8 +88,6 @@ When(/^I create an event with trainers "(.*?)"$/) do |trainers_list|
   fields= ['event_trainer_id', 'event_trainer2_id', 'event_trainer3_id']
   visit "/events/new"
   create_valid_event "Many Trainers"
-
-#  expect(find('#event_trainer3_id')).to have_content(trainers[3])
 
   (0...trainers.count).each {|i|
     select trainers[i], :from => fields[i]
