@@ -10,7 +10,12 @@ def fill_valid_event_type(event_type_name)
   fill_in 'event_type_program', :with => "something"
 end
 
-
+def create_event_type_with_all_trainers(event_type_name)
+  visit '/event_types/new'
+  fill_valid_event_type(event_type_name)
+  all(:css, '#event_type_trainer_ids_').each {|t| t.set(true)}
+  click_button_and_wait 'guardar'
+end
 
 When(/^I create a event type with subtitle "(.*?)"$/) do |subtitle|
   visit '/event_types/new'

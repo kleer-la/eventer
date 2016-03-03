@@ -91,8 +91,8 @@
   @selenium
 	Scenario: Three trainers
 		Given Im a logged in user
-		When I create an event with trainers "Jeff Baurer,Jeff Baurer,Jeff Baurer"
+		When I create an event with trainers "John Doe,Jeff Baurer,Michael Donovan"
 		And go to the last course created
-    Then the training 1 should be "Jeff Baurer"
+    Then the training 1 should be "John Doe"
     And the training 2 should be "Jeff Baurer"
-    And the training 3 should be "Jeff Baurer"
+    And the training 3 should be "Michael Donovan"

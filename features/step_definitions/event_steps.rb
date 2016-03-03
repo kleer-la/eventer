@@ -83,10 +83,12 @@ When(/^I create completed event$/) do
 end
 
 When(/^I create an event with trainers "(.*?)"$/) do |trainers_list|
+  create_event_type_with_all_trainers "Many Trainers"
+
   trainers= trainers_list.split ','
   fields= ['event_trainer_id', 'event_trainer2_id', 'event_trainer3_id']
   visit "/events/new"
-  create_valid_event
+  create_valid_event "Many Trainers"
 
 #  expect(find('#event_trainer3_id')).to have_content(trainers[3])
 
