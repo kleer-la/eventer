@@ -41,6 +41,7 @@ class HomeController < ApplicationController
                                                     :event_type => {},
                                                     :trainer => {},
                                                     :trainer2 => {},
+                                                    :trainers => {},
                                                     :categories => {}
                                                   },
                                                   :methods => [:human_date, :is_webinar]
