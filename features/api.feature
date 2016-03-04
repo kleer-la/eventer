@@ -7,6 +7,12 @@ Feature: Inicio
     Then it should be an XML
     And it should have an event
 
+  @selenium @wip
+	Scenario: Events API have trainers
+    Given there is one event
+    When I request the event list in "XML" format
+    Then it should have "//events/event/trainers/trainer"
+
   @selenium
 	Scenario: API para consultar cursos debe devolver un script extra
     Given there is one event
@@ -27,17 +33,17 @@ Feature: Inicio
     Then it should be an XML
     And it should have "//trainers/trainer"
 
-    @selenium
-    Scenario: API for query categories
-      Given Im a logged in user
-      And I create a new category
-      And I fill the category fields
-      And I fill the category "en" fields "en1,en2,en3"
-      And the category is visible
-      And I save the category
-      When I request the category list in "XML" format
-      Then it should be an XML
-      And it should have "//categories/category"
+  @selenium
+  Scenario: API for query categories
+    Given Im a logged in user
+    And I create a new category
+    And I fill the category fields
+    And I fill the category "en" fields "en1,en2,en3"
+    And the category is visible
+    And I save the category
+    When I request the category list in "XML" format
+    Then it should be an XML
+    And it should have "//categories/category"
 
 
 #     API_ROOT + "/event_types/#{event_type_id}.xml"
