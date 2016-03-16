@@ -87,3 +87,6 @@ gem 'best_in_place'
 
 # Amazon AWS API Client
 gem 'aws-sdk'
+
+# App Monitoring Heroku Plug-In
+gem 'newrelic_rpm'
