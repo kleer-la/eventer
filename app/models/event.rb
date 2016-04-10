@@ -198,6 +198,18 @@ class Event < ActiveRecord::Base
     t
   end
 
+  def name
+    event_type.name
+  end
+
+  def country_iso
+    country.nil? ? "" : country.iso_code
+  end
+
+  def country_name
+    country.nil? ? "" : country.name
+  end
+
   private
 
   def get_event_duration
