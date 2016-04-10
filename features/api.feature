@@ -1,13 +1,19 @@
 Feature: Inicio
 
   @selenium
+  Scenario: JSON narrow event index API
+    Given there is one event
+    When I request the v2 event list in "JSON" format
+    Then it should have a JSON event
+
+  @selenium
 	Scenario: API para consultar los cursos visibles y públicos con XML
     Given there is one event
     When I request the event list in "XML" format
     Then it should be an XML
     And it should have an event
 
-  @selenium @wip
+  @selenium
 	Scenario: Events API have trainers
     Given there is one event
     When I request the event list in "XML" format
@@ -44,9 +50,3 @@ Feature: Inicio
     When I request the category list in "XML" format
     Then it should be an XML
     And it should have "//categories/category"
-
-
-#     API_ROOT + "/event_types/#{event_type_id}.xml"
-#  API_COMMUNITY_EVENTS_PATH = "/community_events.xml"
-# /events/_trainers_select
-# /events/_trainers_2select

@@ -34,3 +34,12 @@ end
 When(/^I request the category list in "(.*?)" format$/) do |ext|
   get "/api/categories.#{ext.downcase}"
 end
+
+When(/^I request the v(\d+) event list in "(.*?)" format$/) do |version, format|
+  get "/api/#{version}/events_narrow.#{format.downcase}"
+end
+
+Then(/^it should have a JSON event$/) do
+  json= JSON.parse(last_response.body)
+  expect(json.count).to be > 0
+end
