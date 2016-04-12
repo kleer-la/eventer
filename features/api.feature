@@ -1,7 +1,7 @@
 Feature: Inicio
 
   @selenium
-  Scenario: JSON narrow event index API
+  Scenario: JSON upcoming events API
     Given there is one event
     When I request the v2 event list in "JSON" format
     Then it should have a JSON event

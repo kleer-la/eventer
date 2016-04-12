@@ -36,7 +36,7 @@ When(/^I request the category list in "(.*?)" format$/) do |ext|
 end
 
 When(/^I request the v(\d+) event list in "(.*?)" format$/) do |version, format|
-  get "/api/#{version}/events_narrow.#{format.downcase}"
+  get "/api/#{version}/upcoming_events.#{format.downcase}"
 end
 
 Then(/^it should have a JSON event$/) do
