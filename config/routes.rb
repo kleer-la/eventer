@@ -41,6 +41,9 @@ Eventer::Application.routes.draw do
   match 'api/event_types/:id/trainers' => 'home#show_event_type_trainers'
   match 'api/categories' => 'home#categories'
 
+  match 'api/2/upcoming_events' => 'api#index'
+
+
   match 'public_events/:id' => 'public_events#show'
   match 'public_events/:event_id/watch' => 'public_events#watch'
   match 'public_events/:event_id/watch/:participant_id' => 'public_events#watch'

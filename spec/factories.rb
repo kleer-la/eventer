@@ -82,6 +82,7 @@ FactoryGirl.define do
     list_price 500.00
     currency_iso_code "ARS"
     mode 'cl'
+    cancelled false
     country FactoryGirl.build(:country)
     trainer FactoryGirl.build(:trainer)
   end
