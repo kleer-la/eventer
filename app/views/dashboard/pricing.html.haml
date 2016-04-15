@@ -56,7 +56,8 @@
                     %td= "Sin Tipo de Evento"
                   - else
                     %td
-                      = event.event_type.short_name
+                      %a{ :href => "/events/#{event.id}/edit" }
+                        = event.event_type.short_name
                       %br
                       = event.city
 
