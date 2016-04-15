@@ -3,13 +3,7 @@
     %i.icon-money
     %span
       %a(href='/dashboard/pricing') Pricing:
-      %a(href='/dashboard/pricing/ar')AR
-      |
-      %a(href='/dashboard/pricing/co')CO
-      |
-      %a(href='/dashboard/pricing/pe')PE
-      |
-      %a(href='/dashboard/pricing/ol')OL
+      = render '/dashboard/country_menu', top: '/pricing'
 
 = render '/commons/notice'
 
