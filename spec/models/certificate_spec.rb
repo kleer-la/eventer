@@ -107,6 +107,31 @@ describe Certificate do
         cert.trainer_signature.should == "PT.png"
     end
 
+    describe 'OnLine' do
+
+      before(:each) do
+      end
+
+      it 'the place is OnLine' do
+        cert = Certificate.new(@participant)
+        expect(cert.place).to eq "Punta del Este, Argentina"
+      end
+
+      it 'the place is OnLine' do
+        @participant.event.mode= 'ol'
+        cert = Certificate.new(@participant)
+        expect(cert.place).to eq "an OnLine course"
+      end
+
+      it "a 8 hs online event is a 8 hours event" do
+          @et.duration = 8
+          @participant.event.mode= 'ol'
+          cert = Certificate.new(@participant)
+          cert.event_duration.should == "8 hours"
+      end
+
+
+    end
 end
 
 describe "render certificates" do
