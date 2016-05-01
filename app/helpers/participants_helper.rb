@@ -23,6 +23,13 @@ module ParticipantsHelper
     def event_country
       @participant.event.country.name
     end
+    def place
+      if @participant.event.is_online?
+        'OnLine'
+      else
+        @participant.event.city + ', ' + @participant.event.country.name
+      end
+    end
     def event_date
       @participant.event.human_date
     end
@@ -30,12 +37,12 @@ module ParticipantsHelper
       @participant.event.date.year.to_s
     end
     def event_duration
-      duration = @participant.event.event_type.duration
-      d = duration/8
-      unit = "day"
-      if d*8 != duration
-        d = duration
+      d = @participant.event.event_type.duration
+      if (d % 8)>0 || @participant.event.is_online?
         unit = "hour"
+      else
+        unit = "day"
+        d /= 8
       end
       plural = "s" unless d==1
       "#{d} #{unit}#{plural}"
@@ -113,7 +120,7 @@ module ParticipantsHelper
 
       pdf.move_down 10
 
-      pdf.text  "delivered in <b>#{certificate.event_city}, #{certificate.event_country}</b>, " +
+      pdf.text  "delivered in <b>#{certificate.place}</b>, " +
             "on <b>#{certificate.event_date} #{certificate.event_year}</b>, " +
                   "with a duration of #{certificate.event_duration}.",
             :align => :center, :size => 14, :inline_format => true
