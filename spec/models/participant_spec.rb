@@ -182,6 +182,12 @@ describe Participant do
 
     end
 
+    it "basic generate cert should works wo/errors" do
+      allow(ParticipantsHelper).to receive(:upload_certificate).and_return('')
+      rslt= @participant.generate_certificate
+      expect(rslt.count).to eq 2
+    end
+
     it "should have a unique name" do
       @filepath_A4.should == "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-A4.pdf"
       @filepath_LETTER.should == "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-LETTER.pdf"

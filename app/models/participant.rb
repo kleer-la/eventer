@@ -125,12 +125,17 @@ class Participant < ActiveRecord::Base
     end
   end
 
-  def generate_certificate_and_notify
+  def generate_certificate
+    certificate_url={}
     ['A4', 'LETTER'].each { |s|
       certificate_filename = ParticipantsHelper::generate_certificate( self, s )
       certificate_url[s] = ParticipantsHelper::upload_certificate( certificate_filename )
     }
+    certificate_url
+  end
 
+  def generate_certificate_and_notify
+    certificate_url= generate_certificate
     EventMailer.send_certificate(self, certificate_url['A4'], certificate_url['LETTER']).deliver
   end
 

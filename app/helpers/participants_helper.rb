@@ -25,7 +25,7 @@ module ParticipantsHelper
     end
     def place
       if @participant.event.is_online?
-        'OnLine'
+        'an OnLine course'
       else
         @participant.event.city + ', ' + @participant.event.country.name
       end

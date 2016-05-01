@@ -110,28 +110,23 @@ describe Certificate do
     describe 'OnLine' do
 
       before(:each) do
-        @ol_participant = FactoryGirl.build(:participant)
-        @ol_et = FactoryGirl.build(:event_type)
-        @ol_e = FactoryGirl.build(:event)
-        @ol_e.event_type = @ol_et
-        @ol_participant.event = @ol_e
       end
 
       it 'the place is OnLine' do
-        cert = Certificate.new(@ol_participant)
+        cert = Certificate.new(@participant)
         expect(cert.place).to eq "Punta del Este, Argentina"
       end
 
       it 'the place is OnLine' do
-        @ol_participant.event.mode= 'ol'
-        cert = Certificate.new(@ol_participant)
-        expect(cert.place).to eq "OnLine"
+        @participant.event.mode= 'ol'
+        cert = Certificate.new(@participant)
+        expect(cert.place).to eq "an OnLine course"
       end
 
       it "a 8 hs online event is a 8 hours event" do
-          @ol_et.duration = 8
-          @ol_participant.event.mode= 'ol'
-          cert = Certificate.new(@ol_participant)
+          @et.duration = 8
+          @participant.event.mode= 'ol'
+          cert = Certificate.new(@participant)
           cert.event_duration.should == "8 hours"
       end
 
