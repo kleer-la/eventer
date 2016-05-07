@@ -13,6 +13,7 @@ group :development, :test do
   gem 'rspec-mocks'
   gem 'simplecov', '~> 0.7.1'
   gem 'coveralls', require: false
+  gem "chromedriver-helper"
 end
 
 group :test do
