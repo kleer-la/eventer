@@ -63,7 +63,7 @@ module ParticipantsHelper
 
   PageConfig = {
     :LogoPos => {"LETTER" => [-55, 610], "A4" => [-55, 590]},
-    :SignPos => {"LETTER" => [500, 160], "A4" => [550, 150]},
+    :SignPos => {"LETTER" => [500, 200], "A4" => [550, 190]},
     :OuterBox => {"LETTER" => [[-25, 565], 770, 585], "A4" => [[-25, 548], 820, 570]},
     :InnerBox => {"LETTER" => [[-20, 560], 760, 575], "A4" => [[-20, 543], 810, 560]}
   }

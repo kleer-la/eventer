@@ -167,7 +167,10 @@ describe Participant do
 
     before(:all) do
       @participant_pdf = FactoryGirl.build(:participant)
+      @participant_pdf.fname= "Antonio Hiram"
+      @participant_pdf.lname= "Cuéllar Valencia"
       @participant_pdf.event = FactoryGirl.create(:event)
+      @participant_pdf.event.event_type.csd_eligible = true
       @participant_pdf.influence_zone = FactoryGirl.create(:influence_zone)
       @participant_pdf.status = "A"
 
@@ -184,7 +187,7 @@ describe Participant do
 
     it "basic generate cert should works wo/errors" do
       allow(ParticipantsHelper).to receive(:upload_certificate).and_return('')
-      rslt= @participant.generate_certificate
+      rslt= @participant_pdf.generate_certificate
       expect(rslt.count).to eq 2
     end
 
