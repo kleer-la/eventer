@@ -38,16 +38,6 @@
                   %br
                   %small.muted
                     5 personas
-                %th{ :style => "background: #00FF00" }
-                  Enterprise 6+
-                  %br
-                  %small.muted
-                    6 a 10 personas
-                %th{ :style => "background: #00FF00" }
-                  Enterprise 11+
-                  %br
-                  %small.muted
-                    11 a 20 personas
             %tbody
               - @events.each do |event|
                 %tr
@@ -104,21 +94,5 @@
                       = "(#{event.currency_iso_code})"
                       = currency_symbol_for( event.currency_iso_code )
                       = sprintf("%05.2f", event.business_price)
-                  - else
-                    %td= " "
-
-                  - if !event.enterprise_6plus_price.nil? && event.enterprise_6plus_price > 0
-                    %td
-                      = "(#{event.currency_iso_code})"
-                      = currency_symbol_for( event.currency_iso_code )
-                      = sprintf("%05.2f", event.enterprise_6plus_price)
-                  - else
-                    %td= " "
-
-                  - if !event.enterprise_11plus_price.nil? && event.enterprise_11plus_price > 0
-                    %td
-                      = "(#{event.currency_iso_code})"
-                      = currency_symbol_for( event.currency_iso_code )
-                      = sprintf("%05.2f", event.enterprise_11plus_price)
                   - else
                     %td= " "
