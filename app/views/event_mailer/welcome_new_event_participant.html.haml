@@ -29,36 +29,35 @@
                                   = "Hola " + @participant.fname + ","
                                   %br
                                   %br
-                                  = "¡Gracias por tu interés!"
+                                  ¡Gracias por tu interés!
                                   %br
                                   %br
-                                  El evento
-                                  %b= @participant.event.event_type.name
-                                  será facilitado por
-                                  %b= @participant.event.trainer.name
-                                  = "el día " + @participant.event.human_date + " de " + @participant.event.start_time.strftime( '%H:%M' ) + " a " + @participant.event.end_time.strftime( '%H:%M ' ) + "hs."
+                                  Te enviamos la información de este taller:
                                   %br
                                   %br
-                                  %b
-                                    Lugar:
+                                  %b Fecha:
+                                  =" #{@participant.event.human_date}"
+                                  %br
+                                  %b Horario:
+                                  =@participant.event.start_time.strftime( '%H:%M' ) + " a " + @participant.event.end_time.strftime( '%H:%M ' ) + "hs."
+                                  %br
+                                  %b Lugar:
                                   =" #{@participant.event.place}"
-                                  %br
-                                  %b
-                                    Dirección:
+                                  %b Dirección:
                                   =" #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
                                   %br
+                                  %b Facilitador:
+                                  %b= @participant.event.trainer.name
                                   %br
                                   - if @participant.event.custom_prices_email_text.blank?
-                                    %b
-                                      Inversión
-                                    %br
+                                    %b Precio de lista:
+                                      = "(#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.list_price)}"
                                     - if !@participant.event.eb_price.nil? && @participant.event.eb_price > 0
-                                      ="Pronto pago: (#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.eb_price)} abonando antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
-                                    ="Precio de lista: (#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.list_price)}"
-                                    %br
+                                      %b Pronto pago:
+                                      = "(#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.eb_price)} abonando antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
                                     %br
                                     - if !@participant.event.couples_eb_price.nil? || !@participant.event.business_eb_price.nil?
-                                      Promociones:
+                                      Descuentos Grupales:
                                       %br
                                       - if !@participant.event.couples_eb_price.nil?
                                         = "#{sprintf("%05.2f", @participant.event.couples_eb_price)} pagando de a 2 personas antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
@@ -69,12 +68,14 @@
                                   - else
                                     = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
                                   %br
-                                  (Promociones no acumulables, aplicados sobre precio de lista)
+                                  (Promociones no acumulables, aplicadas sobre el precio de lista)
                                   %br
                                   %b
                                     Formas de pago:
-                                  tarjeta de crédito, transferencia bancaria o cheque
-                                  - if !@participant.event.country.iso_code == 'AR'
+                                  - if @participant.event.country.iso_code != 'CL'
+                                    tarjeta de crédito,
+                                  transferencia bancaria o cheque
+                                  - if @participant.event.country.iso_code == 'AR'
                                     (
                                     %a{ :href => "http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina", :target => "_blank" }
                                       más información
@@ -136,4 +137,4 @@
                           %tbody
                             %tr
                               %td{ :valign => "top", :style => "border-collapse:collapse" }
-                                %img{ :src => "https://d2q0qd5iz04n9u.cloudfront.net/_ssl/proxy.php/http/gallery.mailchimp.com/98726a706d87424c18b69e332/images/munieco.2.png", :alt => "", :border => "0", :width => "160", :height => "304", :style => "border:0px none;min-height:304px;line-height:16px;outline:none;display:inline;width:160px;margin:0px;padding:0px;max-width:160px" }
+                                %img{ :src => "https://s3-sa-east-1.amazonaws.com/kleer-images/indira_mail.png", :alt => "", :border => "0", :width => "160", :height => "304", :style => "border:0px none;min-height:304px;line-height:16px;outline:none;display:inline;width:160px;margin:0px;padding:0px;max-width:160px" }
