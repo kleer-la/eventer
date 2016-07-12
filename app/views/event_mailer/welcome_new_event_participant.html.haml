@@ -114,7 +114,7 @@
                                     %b
                                       Programa:
                                     %br
-                                    = @participant.event.event_type.program
+                                    = @markdown_renderer.render( @participant.event.event_type.program ).html_safe
                                   %br
                                   %br
                                   No dudes en contactarnos por cualquier consulta que tengas :)
