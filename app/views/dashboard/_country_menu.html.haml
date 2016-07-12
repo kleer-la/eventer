@@ -1,13 +1,22 @@
-%a(href='/dashboard#{top}/ar')AR
-|
-%a(href='/dashboard#{top}/bo')BO
-|
-%a(href='/dashboard#{top}/cl')CL
-|
-%a(href='/dashboard#{top}/co')CO
-|
-%a(href='/dashboard#{top}/pe')PE
-|
-%a(href='/dashboard#{top}/uy')UY
-|
-%a(href='/dashboard#{top}/ol')OL
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @country || "país"
+    %b.caret
+  %ul.dropdown-menu
+    %li
+      %a(href='/dashboard#{top}')todos
+    %li
+      %a(href='/dashboard#{top}/ar')ar
+    %li
+      %a(href='/dashboard#{top}/bo')bo
+    %li
+      %a(href='/dashboard#{top}/cl')cl
+    %li
+      %a(href='/dashboard#{top}/co')co
+    %li
+      %a(href='/dashboard#{top}/pe')pe
+    %li
+      %a(href='/dashboard#{top}/uy')uy
+    %li
+      %a(href='/dashboard#{top}/ol')ol
