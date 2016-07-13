@@ -67,6 +67,15 @@ describe DashboardController do
       it('.select? ar should be true ') {expect(@country_filter.select?(@ar_id)).to eq true}
       it('.select? x!=ar should be false ') {expect(@country_filter.select?(@ar_id+1)).to eq false}
     end
+    context 'has been filtered w/ar' do
+      it('.country_iso should be ar when current filter is nil') {expect(CountryFilter.new(nil,'ar').country_iso).to eq 'ar'}
+      it('.country_iso should be nil when current filter is all') {expect(CountryFilter.new('all','ar').country_iso).to eq nil}
+      it('.country_iso should be co when current filter is co') {expect(CountryFilter.new('co','ar').country_iso).to eq 'co'}
+    end
+    context 'has not been filtered' do
+      it('.country_iso should be ar when current filter is ar') {expect(CountryFilter.new('ar',nil).country_iso).to eq 'ar'}
+      it('.country_iso should be nil when current filter is all') {expect(CountryFilter.new('all',nil).country_iso).to eq nil}
+    end
   end
 
 end

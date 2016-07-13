@@ -10,8 +10,8 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    country_filter= CountryFilter.new(params[:country_iso])
-    @country= country_filter.country_iso
+    country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
+    session[:country_filter]= @country= country_filter.country_iso
 
     @events = Event.visible.all(:order => 'date').select{ |ev|
       country_filter.select?(ev.country_id)
