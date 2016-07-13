@@ -1,0 +1,22 @@
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @country || "país"
+    %b.caret
+  %ul.dropdown-menu
+    %li
+      %a(href="#{top}/all")todos
+    %li
+      %a(href='#{top}/ar')ar
+    %li
+      %a(href='#{top}/bo')bo
+    %li
+      %a(href='#{top}/cl')cl
+    %li
+      %a(href='#{top}/co')co
+    %li
+      %a(href='#{top}/pe')pe
+    %li
+      %a(href='#{top}/uy')uy
+    %li
+      %a(href='#{top}/ol')ol
