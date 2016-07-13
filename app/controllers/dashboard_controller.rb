@@ -6,8 +6,9 @@ class DashboardController < ApplicationController
 
   def index
     @active_menu = "dashboard"
-    @country= params[:country_iso]
-    country_filter= CountryFilter.new(@country)
+    country_filter= CountryFilter.new(params[:country_iso])
+    @country= country_filter.country_iso
+
     @events = Event.public_and_visible.all(:order => 'date').select{ |ev|
       !ev.event_type.nil? && ev.registration_link == "" && country_filter.select?(ev.country_id)
       }
@@ -27,8 +28,9 @@ class DashboardController < ApplicationController
 
   def pricing
     @active_menu = "pricing"
-    @country= params[:country_iso]
-    country_filter= CountryFilter.new(@country)
+    country_filter= CountryFilter.new(params[:country_iso])
+    @country= country_filter.country_iso
+
     @events = Event.public_commercial_visible.all(:order => 'date').select{ |ev|
       !ev.event_type.nil? && ev.registration_link == "" && country_filter.select?(ev.country_id)
       }

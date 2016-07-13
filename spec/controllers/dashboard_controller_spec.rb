@@ -26,12 +26,7 @@ describe DashboardController do
   describe CountryFilter do
     before(:all) do
       c= Country.find_by_iso_code('AR')
-      @country_id= !c.nil? ? c.id : FactoryGirl.create(:country).id
-    end
-
-    it "no filter return true" do
-      country= CountryFilter.new(nil)
-      expect(country.select?(1)).to eq true
+      @ar_id= !c.nil? ? c.id : FactoryGirl.create(:country).id
     end
 
     it "Not select a country" do
@@ -40,15 +35,37 @@ describe DashboardController do
     end
     it "Select a country" do
       country_filter= CountryFilter.new('AR')
-      expect(country_filter.select?(@country_id)).to eq true
+      expect(country_filter.select?(@ar_id)).to eq true
     end
     it "Select a country with lowercase" do
       country_filter= CountryFilter.new('ar')
-      expect(country_filter.select?(@country_id)).to eq true
+      expect(country_filter.select?(@ar_id)).to eq true
     end
     it "filter an unknown country" do
       country_filter= CountryFilter.new('xx')
-      expect(country_filter.select?(@country_id)).to eq false
+      expect(country_filter.select?(@ar_id)).to eq false
+    end
+    context 'no filtered' do
+      before(:each) do
+        @country_filter= CountryFilter.new(nil)
+      end
+      it('.country_iso should be nil') {expect(@country_filter.country_iso).to eq nil}
+      it('.select? should be true ') {expect(@country_filter.select?(1)).to eq true}
+    end
+    context 'filtered with all' do
+      before(:each) do
+        @country_filter= CountryFilter.new('all')
+      end
+      it('.country_iso should be nil') {expect(@country_filter.country_iso).to eq nil}
+      it('.select? should be true ') {expect(@country_filter.select?(1)).to eq true}
+    end
+    context 'filtered with ar' do
+      before(:each) do
+        @country_filter= CountryFilter.new('ar')
+      end
+      it('.country_iso should be ar') {expect(@country_filter.country_iso).to eq 'ar'}
+      it('.select? ar should be true ') {expect(@country_filter.select?(@ar_id)).to eq true}
+      it('.select? x!=ar should be false ') {expect(@country_filter.select?(@ar_id+1)).to eq false}
     end
   end
 

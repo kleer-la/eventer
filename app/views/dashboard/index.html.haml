@@ -3,7 +3,7 @@
     %i.icon-dashboard
     %span
       %a(href='/dashboard') Dashboard:
-      = render '/dashboard/country_menu', top: ''
+      = render partial: '/commons/country_menu', locals: {top: '/dashboard'}
 
 = render '/commons/notice'
 

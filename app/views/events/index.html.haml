@@ -1,7 +1,9 @@
 .page-header
   %h1.pull-left
     %i.icon-calendar
-    %span Eventos
+    %a(href='/events') Eventos
+    = render partial: '/commons/country_menu', locals: {top: '/events/filter'}
+
   .pull-right
     %a.btn.btn-white{ :href => new_event_path }
       %i.icon-calendar
@@ -25,7 +27,7 @@
                 %th Fecha
                 %th Tipo de Evento
                 %th Detalles
-                %th 
+                %th
                 %th
             %tbody
               - @events.each do |event|
@@ -45,14 +47,14 @@
                     = event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
                     -if !event.is_webinar? && !event.address.nil?
                       = ", " + event.address
-                  %td 
+                  %td
                     -if event.visibility_type == "pu"
                       %span.label.label-success Público
                     -elsif event.visibility_type == "pr"
                       %span.label.label-important Privado
                     -elsif event.visibility_type == "co"
                       %span.label.label-info Comunitario
-                    %br 
+                    %br
                     -if event.draft
                       %span.label.label-important Borrador
                     -else
@@ -60,7 +62,7 @@
                   %td
                     .text-right
                       - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
-                      - #  %i.icon-eye-open	
+                      - #  %i.icon-eye-open
                       -if event.is_webinar?
                         %a.btn.btn-success.btn-mini{ :href => "/events/#{event.id}/start_webinar" }
                           %i.icon-play
