@@ -4,7 +4,11 @@
     %span
       %a(href='/dashboard/pricing') Pricing:
       = render '/commons/country_menu', top: '/dashboard/pricing'
-
+  .pull-right
+    %a.btn.btn-white{ :onclick => "hideUnselected();" }
+      %i.icon-ok-circle
+      Seleccionados
+  
 = render '/commons/notice'
 
 .row-fluid
@@ -41,7 +45,11 @@
             %tbody
               - @events.each do |event|
                 %tr
-                  %td= event.human_date
+                  %td
+                    = event.human_date
+                    %br
+                    %input{:type => 'checkbox'}
+
                   - if event.event_type.nil?
                     %td= "Sin Tipo de Evento"
                   - else
@@ -96,3 +104,9 @@
                       = sprintf("%05.2f", event.business_price)
                   - else
                     %td= " "
+
+:javascript
+  function hideUnselected() {
+    $("tbody tr td input:not(:checked)").parent().parent().hide();
+    $("tbody tr td input:checked").hide();
+  }
