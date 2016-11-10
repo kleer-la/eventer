@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Rating do
 
-    before(:each) do
+  before(:each) do
 
 		@event_type = FactoryGirl.create(:event_type)
 		@country = FactoryGirl.create(:country)
@@ -68,106 +68,106 @@ describe Rating do
 		@event_type.reload
 		@trainer.reload
     @trainer2.reload
+  end
+
+  context "for each event" do
+
+    it "should have an average event rating" do
+      @event.average_rating.should == 5.0
+      @event2.average_rating.should == 2.0
     end
 
-    context "for each event" do
+    it "should have a global event rating" do
+      Rating.first.global_event_rating.should == 4.0
+    end
 
-	    it "should have an average event rating" do
-	      @event.average_rating.should == 5.0
-	      @event2.average_rating.should == 2.0
-	    end
+    it "should have an average event rating even with participants without rating" do
+      @event.average_rating.should == 5.0
+    end
 
-	    it "should have a global event rating" do
-	      Rating.first.global_event_rating.should == 4.0
-	    end
+    it "should have an average event rating even with participants not being present" do
+      @event.average_rating.should == 5.0
+    end
 
-	    it "should have an average event rating even with participants without rating" do
-	      @event.average_rating.should == 5.0
-	    end
+    it "should have a net promoter score" do
+      @event.net_promoter_score.should == 100
+      @event2.net_promoter_score.should == -100
+    end
 
-	    it "should have an average event rating even with participants not being present" do
-	      @event.average_rating.should == 5.0
-	    end
+    it "should have a net promoter score even with participants without rating" do
+      @event.net_promoter_score.should == 100
+      @event2.net_promoter_score.should == -100
+    end
 
-	    it "should have a net promoter score" do
-	      @event.net_promoter_score.should == 100
-	      @event2.net_promoter_score.should == -100
-	    end
-
-	    it "should have a net promoter score even with participants without rating" do
-	      @event.net_promoter_score.should == 100
-	      @event2.net_promoter_score.should == -100
-	    end
-
-	    it "should have a net promoter score even with participants not being present" do
-	      @event.net_promoter_score.should == 100
-	      @event2.net_promoter_score.should == -100
-	    end
+    it "should have a net promoter score even with participants not being present" do
+      @event.net_promoter_score.should == 100
+      @event2.net_promoter_score.should == -100
+    end
 
 	end
 
 	context "for the event_type" do
 
-	    it "should have an average event rating" do
-	      @event_type.average_rating.should == 4.0
-	    end
+    it "should have an average event rating" do
+      @event_type.average_rating.should == 4.0
+    end
 
-	    it "should have an average event rating even with participants without rating" do
-	      @event_type.average_rating.should == 4.0
-	    end
+    it "should have an average event rating even with participants without rating" do
+      @event_type.average_rating.should == 4.0
+    end
 
-	    it "should have an average event rating even with participants not being present" do
-	      @event_type.average_rating.should == 4.0
-	    end
+    it "should have an average event rating even with participants not being present" do
+      @event_type.average_rating.should == 4.0
+    end
 
-	    it "should have a net promoter score" do
-	      @event_type.net_promoter_score.should == 33
-	    end
+    it "should have a net promoter score" do
+      @event_type.net_promoter_score.should == 33
+    end
 
-	    it "should have a net promoter score even with participants without rating" do
-	      @event_type.net_promoter_score.should == 33
-	    end
+    it "should have a net promoter score even with participants without rating" do
+      @event_type.net_promoter_score.should == 33
+    end
 
-	    it "should have a net promoter score even with participants not being present" do
-	      @event_type.net_promoter_score.should == 33
-	    end
+    it "should have a net promoter score even with participants not being present" do
+      @event_type.net_promoter_score.should == 33
+    end
 
 	end
 
 	context "for the trainer" do
 
-	    it "should have an average event rating" do
-	      @trainer.average_rating.should == 4.0
-	    end
+    it "should have an average event rating" do
+      @trainer.average_rating.should == 4.0
+    end
 
-	    it "should have a global event rating" do
-        Rating.first.global_trainer_rating.should == 4.0
-        # Rating.first.global_trainer_rating.should == 3.8
-	    end
+    it "should have a global event rating" do
+      Rating.first.global_trainer_rating.should == 4.0
+      # Rating.first.global_trainer_rating.should == 3.8
+    end
 
-	    it "should have an average event rating even with participants without rating" do
-	      @trainer.average_rating.should == 4.0
-	    end
+    it "should have an average event rating even with participants without rating" do
+      @trainer.average_rating.should == 4.0
+    end
 
-	    it "should have an average event rating even with participants not being present" do
-	      @trainer.average_rating.should == 4.0
-	    end
+    it "should have an average event rating even with participants not being present" do
+      @trainer.average_rating.should == 4.0
+    end
 
-	    it "should have a net promoter score" do
-	      @trainer.net_promoter_score.should == 33
-	    end
+    it "should have a net promoter score" do
+      @trainer.net_promoter_score.should == 33
+    end
 
-	    it "should have a net promoter score even with participants without rating" do
-	      @trainer.net_promoter_score.should == 33
-	    end
+    it "should have a net promoter score even with participants without rating" do
+      @trainer.net_promoter_score.should == 33
+    end
 
-	    it "should have a net promoter score even with participants not being present" do
-	      @trainer.net_promoter_score.should == 33
-	    end
+    it "should have a net promoter score even with participants not being present" do
+      @trainer.net_promoter_score.should == 33
+    end
 
-      it "should have a net promoter score for the co-trainer" do
-	      @trainer2.average_rating.should == 3.5
-	    end
+    it "should have a net promoter score for the co-trainer" do
+      @trainer2.average_rating.should == 3.5
+    end
 
 	end
 
