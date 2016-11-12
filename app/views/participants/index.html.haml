@@ -15,18 +15,20 @@
     %i.icon-group
     %span Lista de Inscriptos
   .pull-right
+    %a.btn.btn-white{ :href => edit_event_path(@event), :title => "Editar Evento" }
+      %i.icon-calendar
     %a.btn.btn-white{ :href => event_participants_path(@event) }
-      %i.icon-rotate-right 
-    %a.btn.btn-white{ "data-toggle" => "modal", :href => "#modal-batch-load", :role => "button", :title => "Carge de Lote de Usuarios" }
+      %i.icon-rotate-right
+    %a.btn.btn-white{ "data-toggle" => "modal", :href => "#modal-batch-load", :role => "button", :title => "Carga de Lote de Usuarios" }
       %i.icon-user
       Nuevo(s)
     - if @event.participants.count > 0
       %a.btn.btn-white{ :href => event_participants_path(@event) + ".csv" }
         %i.icon-cloud-download
-        Listado (CSV)
+        CSV
       %a.btn.btn-white{ :href => "./participants_print", :target => "_blank" }
         %i.icon-print
-        Lista de Asistencia
+        Asistencia
       %a.btn.btn-white{ "data-toggle" => "modal", :href => "#modal-push-confirmation", :role => "button", :title => "Enviar Participantes a CapsuleCRM" }
         %i.icon-circle-arrow-right
         %i.icon-group
@@ -40,7 +42,7 @@
   .modal-header
     %button.close{ "data-dismiss" => :modal, :type => "button" }
       &times;
-    %h3 
+    %h3
       Finalizar evento y enviar participantes a CapsuleCRM
   .modal-body
     %h4
@@ -59,7 +61,7 @@
   .modal-header
     %button.close{ "data-dismiss" => :modal, :type => "button" }
       &times;
-    %h3 
+    %h3
       Enviar Cetificados de Asistencia
   .modal-body
     %h4
@@ -78,7 +80,7 @@
   .modal-header
     %button.close{ "data-dismiss" => :modal, :type => "button" }
       &times;
-    %h3 
+    %h3
       Carga Rápida de Participantes
   .modal-body
     = render '/commons/notice'
@@ -104,14 +106,14 @@
     %button.btn{ "data-dismiss" => "modal" }
       No, cancelar :(
     %button.btn.btn-primary{ :id => "bulk_submit_btn" }
-      Si, continuar! :)      
+      Si, continuar! :)
 
 = render '/commons/notice'
 
 .row-fluid
   .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
     .box-header.blue-background
-      .title= @event.event_type.name + " - " + @event.date.to_formatted_s(:short) + " - " + @event.city 
+      .title= @event.event_type.name + " - " + @event.date.to_formatted_s(:short) + " - " + @event.city
     .box-content.box-no-padding
       .responsive-table
         .scrollable-area
@@ -177,7 +179,7 @@
               %tr
                 %th Fecha
                 %th Participante
-                %th 
+                %th
                 %th Estado
                 %th Notas
                 %th
@@ -242,7 +244,7 @@
     $('#bulk_form').submit();
   });
 
-  $('.color_on_success').bind("ajax:success", function() { 
+  $('.color_on_success').bind("ajax:success", function() {
     cellBackgroundColor = getCellBackgroundColor( $(this).html() );
     $(this).closest('td').css('background', cellBackgroundColor );
   });
@@ -257,7 +259,7 @@
         break;
       case "Confirmado":
         return "#00acec";
-        break;        
+        break;
       case "Presente":
         return "#49bf67";
         break;
