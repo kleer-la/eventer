@@ -7,9 +7,12 @@
   .span12.box
     .box-header.red-background
       .title
-        %a.btn.btn-white{ :href => edit_event_type_path(@event.event_type), :title => "Editar Tipo de Evento" }
-          %i.icon-tasks
-        = @event.event_type.nil? ? "Nuevo Evento" : @event.event_type.name
+        - if @event.event_type.nil?
+          Nuevo Evento
+        - else
+          %a.btn.btn-white{ :href => edit_event_type_path(@event.event_type), :title => "Editar Tipo de Evento" }
+            %i.icon-tasks
+          = @event.event_type.name
     .box-content
       = form_for @event do |f|
         %fieldset.inputs
