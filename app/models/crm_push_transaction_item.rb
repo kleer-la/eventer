@@ -26,7 +26,7 @@ class CrmPushTransactionItem < ActiveRecord::Base
 	    if self.participant.is_present?
 			apply_event_tags new_id, crm_push_transaction.event
 		end
-		
+
     else
     	if self.participant.is_present?
 	    	crm_ids.each do |crm_id|
@@ -49,7 +49,7 @@ class CrmPushTransactionItem < ActiveRecord::Base
 
   def create_crm_person(participant)
   	c = create_crm_curl("https://kleer.capsulecrm.com/api/person")
-	c.headers['Content-Type'] = 'application/atom+xml'
+	c.headers['Content-Type'] = 'application/xml'
 
 	new_crm_person_xml = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" +
 				 "<person>" +
@@ -70,7 +70,7 @@ class CrmPushTransactionItem < ActiveRecord::Base
 	new_id = redirect_url[from_index..to_index].strip
 
   	self.log += "003 persona creada con ID #{new_id} en CRM\n"
-	
+
 	new_id
 
   end
@@ -102,9 +102,9 @@ class CrmPushTransactionItem < ActiveRecord::Base
 	      end
 	    end
 	  end
-	  
+
 	  crm_ids
-  
+
   end
 
   def create_crm_curl(url)
@@ -113,7 +113,7 @@ class CrmPushTransactionItem < ActiveRecord::Base
 	  c.http_auth_types = :basic
 	  c.username = ENV["KEVENTER_CRM_TOKEN"]
 	  c.password = ENV["KEVENTER_CRM_PASSWORD"]
-	  
+
 	  c
   end
 end
