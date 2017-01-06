@@ -120,6 +120,33 @@ class ParticipantsController < ApplicationController
             @participant.save
           end
 
+          if @event.mailchimp_workflow  
+            workflow_call = @event.mailchimp_workflow_call 
+            email = @participant.email
+
+            list_id = "46a03b3eb3" #Automation Workflow List
+
+            mailchimp = MailchimpConnector.new
+
+            email_md5 = Digest::MD5.hexdigest email.downcase
+            email_validation_call = "/lists/#{list_id}/members/#{email_md5}"
+            response = HTTParty.get("https://us1.api.mailchimp.com/3.0#{email_validation_call}",
+                    :headers => { 'Content-Type' => 'application/json' },
+                    :basic_auth => {:username => "anystring", :password => "#{Eventer::Application.config.mailchimp_token}"})
+
+            if JSON.parse(response.body)['status']==404
+              puts "#{@participant.email} no esta previamente registrado. Procederemos a registrarlo."
+              mailchimp.subscribe_email list_id, email, workflow_call, @participant 
+            elsif JSON.parse(response.body)['status']=="unsubscribed"
+              puts "#{@participant.email} se ha dado de baja (unsubscribe). No podemos iniciar el workflow."
+            elsif JSON.parse(response.body)['status']=="subscribed"
+              puts "Enviando mail a #{@participant.email} "
+              mailchimp.start_workflow workflow_call, email 
+            else
+              puts response.body
+            end
+          end
+
           if @event.should_welcome_email
             EventMailer.delay.welcome_new_event_participant(@participant)
           end
