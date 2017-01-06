@@ -77,6 +77,14 @@ class Event < ActiveRecord::Base
     end
   end
 
+  validate :mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
+ 
+  def mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
+    if mailchimp_workflow? && (mailchimp_workflow_call == "" || mailchimp_workflow_call.nil?)
+      errors.add(:mailchimp_workflow_call, "can't be null or empty when Mailchimp Workflow is checked")
+    end
+  end
+
   comma do
     self.visibility_type 'Visibilidad'
     self.id 'Event ID'
