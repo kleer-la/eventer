@@ -215,7 +215,7 @@ es:
         monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco para no notificar nuevos registros."
         specific_conditions: "Condiciones específicas de este evento. Como por ejemplo: promociones, horarios especiales, ejecución desagregada, etc. En blanco, si no tiene."
         extra_script: "script de Pixel de Facebook"
-        mailchimp_workflow_call: "Colocar el valor del 'Mailchimp Workflow Call' específico para el evento"
+        mailchimp_workflow_call: "Este valor se obtiene al crear un nuevo Workflow en Mailchimp"
       participant:
         phone_old: "Una persona de Kleer se contactará a este teléfono para continuar con tu inscripción."
       event_type:
