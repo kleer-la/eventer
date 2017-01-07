@@ -91,3 +91,8 @@ gem 'aws-sdk'
 
 # App Monitoring Heroku Plug-In
 gem 'newrelic_rpm'
+
+# Gemas necesarias para integracion con mailchimp workflow
+gem 'httparty'
+gem 'json'
+gem 'digest'

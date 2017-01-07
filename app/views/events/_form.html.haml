@@ -245,6 +245,16 @@
                   %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML.
           .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :mailchimp_workflow }= t("formtastic.labels.event.mailchimp_workflow")
+                = f.check_box :mailchimp_workflow
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :mailchimp_workflow_call }= t("formtastic.labels.event.mailchimp_workflow_call")
+                = f.text_field :mailchimp_workflow_call, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.mailchimp_workflow_call")
+          .row-fuid
             .span3
               .control-group
                 %label.control-label{ :for => :sepyme_enabled }= t("formtastic.labels.event.sepyme_enabled")

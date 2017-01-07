@@ -29,7 +29,7 @@ class Event < ActiveRecord::Base
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
-                  :show_pricing, :extra_script
+                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
             :country, :trainer, :event_type, :duration, :start_time, :end_time, :address, :mode, :presence => true
@@ -74,6 +74,14 @@ class Event < ActiveRecord::Base
   validates_each :time_zone_name do |record, attr, value|
     if record.is_webinar? && (value == "" || value.nil?)
       record.errors.add(attr, :time_zone_name_is_required_for_a_webinar)
+    end
+  end
+
+  validate :mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
+ 
+  def mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
+    if mailchimp_workflow? && (mailchimp_workflow_call == "" || mailchimp_workflow_call.nil?)
+      errors.add(:mailchimp_workflow_call, "can't be null or empty when Mailchimp Workflow is checked")
     end
   end
 
