@@ -7,7 +7,8 @@ class Participant < ActiveRecord::Base
 
   attr_accessible :email, :fname, :lname, :phone, :event_id,
                   :status, :notes, :influence_zone_id, :influence_zone,
-                  :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony
+                  :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
+                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount
 
   validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
 
