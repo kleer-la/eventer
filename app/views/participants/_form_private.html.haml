@@ -45,6 +45,19 @@
                 %label.control-label{ :for => :status }= t("formtastic.labels.participant.status")
                 = f.collection_select :status, [["Nuevo", "N"], ["Contactado", "T"], ["Confirmado", "C"], ["Cancelado", "X"], ["Pospuesto", "D"]], :last, :first
           .row-fluid
+            .span4
+              .control-group
+                %label.control-label{ :for => :xero_invoice_number }= t("formtastic.labels.participant.xero_invoice_number")
+                = f.text_field :xero_invoice_number, placeholder: "FC-00000"
+            .span4
+              .control-group
+                %label.control-label{ :for => :xero_invoice_reference }= t("formtastic.labels.participant.xero_invoice_reference")
+                = f.text_field :xero_invoice_reference, placeholder: "A 0000-00000000"
+            .span4
+              .control-group
+                %label.control-label{ :for => :xero_invoice_amount }= t("formtastic.labels.participant.xero_invoice_amount")
+                = f.text_field :xero_invoice_amount, placeholder: "100.00"
+          .row-fluid
             .span12
               .control-group
                 %label.control-label{ :for => :notes }= t("formtastic.labels.participant.notes")
