@@ -111,9 +111,11 @@ describe EventMailer do
 
     text_message = email.body.parts.find {|p| p.content_type.match /plain/}.body.raw_source
     text_message.should include("texto customizado")
+    expect(text_message).not_to include("Promociones no acumulables")
 
     html_message = email.body.parts.find {|p| p.content_type.match /html/}.body.raw_source
     html_message.should include("texto customizado")
+    expect(html_message).not_to include("Promociones no acumulables")
   end
 
   it "should send the custom text in HTML format if custom text markdown is present" do

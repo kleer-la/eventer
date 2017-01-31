@@ -82,32 +82,32 @@
                                       - if !@participant.event.business_eb_price.nil?
                                         = "#{sprintf("%05.2f", @participant.event.business_eb_price)} pagando de a 5 personas antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
                                         %br
+                                    %br
+                                    (Promociones no acumulables, aplicadas sobre el precio de lista)
+                                    %br
+                                    %br
+                                    %b
+                                      Formas de pago:
+                                    - if @participant.event.country.iso_code != 'CL'
+                                      tarjeta de crédito,
+                                    transferencia bancaria, depósito o cheque.
+                                    - if @participant.event.country.iso_code == 'AR'
+                                      (
+                                      %a{ :href => "http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina", :target => "_blank" }
+                                        más información
+                                      ).
+                                    %br
+                                    %br
+                                    Envianos un mensaje a
+                                    %a{ :href => "mailto:entrenamos@kleer.la" }
+                                      entrenamos@kleer.la
+                                    con la forma de pago que prefieras.
+                                    %b
+                                      Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas.
                                   - else
                                     %b
                                       Precios:
                                     = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
-                                  %br
-                                  (Promociones no acumulables, aplicadas sobre el precio de lista)
-                                  %br
-                                  %br
-                                  %b
-                                    Formas de pago:
-                                  - if @participant.event.country.iso_code != 'CL'
-                                    tarjeta de crédito,
-                                  transferencia bancaria, depósito o cheque.
-                                  - if @participant.event.country.iso_code == 'AR'
-                                    (
-                                    %a{ :href => "http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina", :target => "_blank" }
-                                      más información
-                                    ).
-                                  %br
-                                  %br
-                                  Envianos un mensaje a
-                                  %a{ :href => "mailto:entrenamos@kleer.la" }
-                                    entrenamos@kleer.la
-                                  con la forma de pago que prefieras.
-                                  %b
-                                    Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas.
                                   - if ! @participant.event.event_type.program.blank?
                                     %br
                                     %br

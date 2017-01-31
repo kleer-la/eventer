@@ -19,18 +19,19 @@
       = "#{sprintf("%05.2f", @participant.event.couples_eb_price)} pagando de a 2 personas antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
     - if !@participant.event.business_eb_price.nil?
       = "#{sprintf("%05.2f", @participant.event.business_eb_price)} pagando de a 5 personas antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
+  = " "
+  (Promociones no acumulables, aplicados sobre precio de lista)
+
+  Formas de pago: tarjeta de crédito, transferencia bancaria o cheque
+  - if !@participant.event.country.iso_code == 'AR'
+    (Más información: http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina).
+
+  Envianos un mensaje a entrenamos@kleer.la con la forma de pago que prefieras.
+
+  Mientras tanto te reservaremos el orden de inscripción para para este evento por las próximas 48 horas.
 - else
   = @participant.event.custom_prices_email_text
 = " "
-(Promociones no acumulables, aplicados sobre precio de lista)
-
-Formas de pago: tarjeta de crédito, transferencia bancaria o cheque
-- if !@participant.event.country.iso_code == 'AR'
-  (Más información: http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina).
-
-Envianos un mensaje a entrenamos@kleer.la con la forma de pago que prefieras.
-
-Mientras tanto te reservaremos el orden de inscripción para para este evento por las próximas 48 horas.
 
 No dudes en contactarnos por cualquier consulta que tengas :)
 
