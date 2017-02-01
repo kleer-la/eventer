@@ -2,13 +2,8 @@
 = " "
 = "¡Gracias por tu interés!"
 = " "
-= "El evento #{@participant.event.event_type.name} será facilitado por #{@participant.event.trainer.name} el día #{@participant.event.human_date} de #{@participant.event.start_time.strftime( '%H:%M' )} a #{@participant.event.end_time.strftime( '%H:%M' )} hs."
-= " " 
-= "Lugar: #{@participant.event.place}"
-= "Dirección: #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
-= " "
 - if @participant.event.custom_prices_email_text.nil? || @participant.event.custom_prices_email_text == ""
-  Inversión
+  Precio
   - if !@participant.event.eb_price.nil? && @participant.event.eb_price > 0
     ="Pronto pago: (#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.eb_price)} abonando antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
   ="Precio de Lista: (#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.list_price)}."
@@ -31,6 +26,11 @@
   Mientras tanto te reservaremos el orden de inscripción para para este evento por las próximas 48 horas.
 - else
   = @participant.event.custom_prices_email_text
+= " "
+= "El evento #{@participant.event.event_type.name} será facilitado por #{@participant.event.trainer.name} el día #{@participant.event.human_date} de #{@participant.event.start_time.strftime( '%H:%M' )} a #{@participant.event.end_time.strftime( '%H:%M' )} hs."
+= " " 
+= "Lugar: #{@participant.event.place}"
+= "Dirección: #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
 = " "
 
 No dudes en contactarnos por cualquier consulta que tengas :)
