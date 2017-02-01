@@ -35,7 +35,7 @@
                       =participant.human_status
                   %td
                     %a{ :href => "/events/#{participant.event.id}" }
-                      = participant.event.event_type.name
+                      = participant.event.event_type ? participant.event.event_type.name : '<sin tipo evento>' 
                   %td
                     %a{ :href => "/events/#{participant.event.id}" }
                       = participant.event.date
