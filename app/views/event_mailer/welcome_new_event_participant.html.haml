@@ -37,6 +37,7 @@
                                   - if @participant.event.custom_prices_email_text.blank?
                                     %b
                                       Precios:
+                                    %br
                                     %b
                                       Precio de lista:
                                       = "(#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.list_price)}"
