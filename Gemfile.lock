@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/ambethia/recaptcha.git
+  revision: cc828a93f4fca00c2e199412d5141f0968bcffa5
+  specs:
+    recaptcha (4.3.1)
+      json
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -294,6 +301,7 @@ DEPENDENCIES
   prawn
   prawn_rails
   rails (= 3.2.11)
+  recaptcha!
   redcarpet
   rspec-mocks
   rspec-rails
@@ -307,5 +315,8 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   valid_email
 
+RUBY VERSION
+   ruby 2.1.8p440
+
 BUNDLED WITH
-   1.11.2
+   1.15.0

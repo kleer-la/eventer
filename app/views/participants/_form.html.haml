@@ -37,6 +37,9 @@
       = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: I18n.t("formtastic.labels.participant.zone")}
     .row-fluid
       .span12
+        = recaptcha_tags
+    .row-fluid
+      .span12
         .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
           .text-right
             %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
@@ -65,3 +68,4 @@
     $("#new_participant").submit();
   }
 = @event.extra_script.nil? ? "" : @event.extra_script.html_safe
+%script(src="https://www.google.com/recaptcha/api.js")

@@ -96,3 +96,5 @@ gem 'newrelic_rpm'
 gem 'httparty'
 gem 'json'
 gem 'digest'
+#reCaptcha
+gem "recaptcha", require: "recaptcha/rails", github: "ambethia/recaptcha"
