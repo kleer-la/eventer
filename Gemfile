@@ -22,7 +22,7 @@ group :test do
   gem 'cucumber-rails', require: false
   gem 'capybara'
   gem 'shoulda-matchers'
-  gem 'selenium-webdriver', '~> 2.43'
+  gem 'selenium-webdriver', '~> 3.4.0'
 end
 
 group :production do

@@ -2,6 +2,9 @@
   - if @event.is_sold_out
     .alert
       = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
+  - if @participant.errors.full_messages.count > 0 || @captcha_error
+    .alert.alert-danger{:id => "validation_msg"}
+      = "Todos los campos son requeridos"
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
@@ -49,10 +52,6 @@
                 = I18n.t("formtastic.button.participant.register")
               - else
                 = I18n.t("formtastic.button.participant.more_info")
-
-- if @participant.errors.full_messages.count > 0
-  :javascript
-    alert("Todos los campos son requeridos");
 
 :javascript
   $(document).ready(function() {

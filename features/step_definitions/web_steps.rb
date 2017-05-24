@@ -204,6 +204,7 @@ Given /^theres an influence zone$/ do
 end
 
 Then /^I should see an alert "([^\"]*)"$/ do |msg|
-  page.driver.browser.switch_to.alert.text.should == msg
-  page.driver.browser.switch_to.alert.accept
+  wait = Selenium::WebDriver::Wait.new(:timeout => 10)
+  element = wait.until { page.find_by_id("validation_msg") }
+  element.text.should == msg
 end

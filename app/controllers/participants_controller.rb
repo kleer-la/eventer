@@ -156,6 +156,7 @@ class ParticipantsController < ApplicationController
       end
     else
       #invalid captcha
+      @captcha_error = true
       render :action => 'new',:layout => "empty_layout"
     end
 
