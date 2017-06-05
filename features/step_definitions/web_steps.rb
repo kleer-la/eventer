@@ -42,6 +42,13 @@ Given /^theres an event$/ do
   submit_event
 end
 
+Given /^theres an event without welcome email$/ do
+  visit "/events/new"
+  create_valid_event
+  uncheck 'event_should_welcome_email'
+  submit_event
+end
+
 When /^I create an invalid event with "([^"]*)" as "([^"]*)"$/ do |value, attribute|
   visit "/events/new"
   create_valid_event 'Tipo de Evento de Prueba'
@@ -160,6 +167,10 @@ end
 Then /^I should see a confirmation message$/ do
   current_path.should == '/events/1/participant_confirmed'
   page.should have_content('Tu pedido fue realizado exitosamente.')
+end
+
+Then /^I should see a message that someone will get in touch shortly$/ do
+  page.should have_content('En breve un asesor se comunicará contigo')
 end
 
 Then /^It should have a registration page$/ do

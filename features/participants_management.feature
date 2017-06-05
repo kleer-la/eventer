@@ -8,10 +8,15 @@ Feature: Administración de Participantes
 	Scenario: Nueva inscripción Exitosa
 		Given Im a logged in user
 		And theres an event
-#		And theres an influence zone
 		When I register for that event
 		Then I should see a confirmation message
-		
+
+	Scenario: Inscripción sin mail de bienvenida
+		Given Im a logged in user
+		And theres an event without welcome email
+		When I register for that event
+		Then I should see a message that someone will get in touch shortly
+
 	@selenium
 	Scenario: inscripción en Blanco
 		Given Im a logged in user
