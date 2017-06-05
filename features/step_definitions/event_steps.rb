@@ -27,13 +27,6 @@ def submit_event
   click_button_and_wait 'guardar'
 end
 
-def uncheck_welcome_email
-  checkbox=find('#event_should_welcome_email')
-  ##if checkbox.checked? then
-    checkbox.click
-  ##end
-end
-
 When /^I visit the dashboard$/ do
   visit '/dashboard'
 end
