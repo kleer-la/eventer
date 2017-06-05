@@ -11,6 +11,7 @@ Feature: Administración de Participantes
 		When I register for that event
 		Then I should see a confirmation message
 
+	@selenium
 	Scenario: Inscripción sin mail de bienvenida
 		Given Im a logged in user
 		And theres an event without welcome email
