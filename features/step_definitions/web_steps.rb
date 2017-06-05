@@ -45,7 +45,7 @@ end
 Given /^theres an event without welcome email$/ do
   visit "/events/new"
   create_valid_event
-  uncheck 'event_should_welcome_email'
+  uncheck_welcome_email
   submit_event
 end
 
