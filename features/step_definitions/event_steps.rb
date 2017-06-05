@@ -27,7 +27,7 @@ def submit_event
   click_button_and_wait 'guardar'
 end
 
-def uncheck_welcome_email (field)
+def uncheck_welcome_email
   checkbox=find('#event_should_welcome_email')
   ##if checkbox.checked? then
     checkbox.click
