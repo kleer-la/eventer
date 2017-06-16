@@ -207,7 +207,7 @@ class Event < ActiveRecord::Base
   end
 
   def name
-    event_type.name
+    event_type.nil? ? "" : event_type.name
   end
 
   def country_iso
