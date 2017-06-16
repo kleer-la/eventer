@@ -8,7 +8,7 @@ class Participant < ActiveRecord::Base
   attr_accessible :email, :fname, :lname, :phone, :event_id,
                   :status, :notes, :influence_zone_id, :influence_zone,
                   :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
-                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount
+                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type
 
   validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
 
@@ -40,6 +40,14 @@ class Participant < ActiveRecord::Base
     :cancelled => "X",
     :deffered => "D",
     :attended => "A"
+  }
+
+  PAYMENT_TYPE= {
+    :cash => "C",
+    :mercado_pago => "MP",
+    :paypal => "PP",
+    :wire_transfer => "WT",
+    :deposit => "D"
   }
 
   scope :new_ones, where(:status => STATUS[:new])

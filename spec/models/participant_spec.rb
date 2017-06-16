@@ -36,6 +36,10 @@ describe Participant do
     @participant.status.should == "N"
   end
 
+  it "should have a default payed of false" do
+    @participant.is_payed.should == false
+  end
+
   describe "valid" do
     it "should be valid" do
       @participant.valid?.should be true
