@@ -8,7 +8,6 @@ Feature: Administración de Participantes
 	Scenario: Nueva inscripción Exitosa
 		Given Im a logged in user
 		And theres an event
-#		And theres an influence zone
 		When I register for that event
 		Then I should see a confirmation message
 		
