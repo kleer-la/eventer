@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/ambethia/recaptcha.git
+  revision: cc828a93f4fca00c2e199412d5141f0968bcffa5
+  specs:
+    recaptcha (4.3.1)
+      json
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -49,7 +56,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    childprocess (0.5.9)
+    childprocess (0.7.0)
       ffi (~> 1.0, >= 1.0.11)
     chromedriver-helper (1.0.0)
       archive-zip (~> 0.7.0)
@@ -105,7 +112,7 @@ GEM
     factory_girl_rails (4.3.0)
       factory_girl (~> 4.3.0)
       railties (>= 3.0.0)
-    ffi (1.9.10)
+    ffi (1.9.18)
     formtastic (2.2.1)
       actionpack (>= 3.0)
     formtastic-bootstrap (2.1.3)
@@ -205,13 +212,13 @@ GEM
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
     ruby-rc4 (0.1.5)
-    rubyzip (1.2.0)
+    rubyzip (1.2.1)
     sass (3.2.13)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    selenium-webdriver (2.53.0)
+    selenium-webdriver (2.53.4)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
       websocket (~> 1.0)
@@ -254,7 +261,7 @@ GEM
       mail
     warden (1.2.3)
       rack (>= 1.0)
-    websocket (1.2.3)
+    websocket (1.2.4)
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -294,11 +301,12 @@ DEPENDENCIES
   prawn
   prawn_rails
   rails (= 3.2.11)
+  recaptcha!
   redcarpet
   rspec-mocks
   rspec-rails
   sass-rails (~> 3.2.3)
-  selenium-webdriver (~> 2.43)
+  selenium-webdriver (~> 2.53.4)
   shoulda-matchers
   simplecov (~> 0.7.1)
   sqlite3
@@ -307,5 +315,8 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   valid_email
 
+RUBY VERSION
+   ruby 2.1.8p440
+
 BUNDLED WITH
-   1.11.2
+   1.15.0

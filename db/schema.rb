@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170124023728) do
+ActiveRecord::Schema.define(:version => 20170616113940) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -168,8 +168,8 @@ ActiveRecord::Schema.define(:version => 20170124023728) do
     t.string   "email"
     t.string   "phone"
     t.integer  "event_id"
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
+    t.datetime "created_at",                                                               :null => false
+    t.datetime "updated_at",                                                               :null => false
     t.string   "status"
     t.text     "notes"
     t.integer  "influence_zone_id"
@@ -183,6 +183,8 @@ ActiveRecord::Schema.define(:version => 20170124023728) do
     t.string   "xero_invoice_number"
     t.string   "xero_invoice_reference"
     t.decimal  "xero_invoice_amount",    :precision => 10, :scale => 2
+    t.boolean  "is_payed",                                              :default => false
+    t.string   "payment_type"
   end
 
   add_index "participants", ["event_id"], :name => "index_participants_on_event_id"

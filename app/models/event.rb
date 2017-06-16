@@ -78,7 +78,7 @@ class Event < ActiveRecord::Base
   end
 
   validate :mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
- 
+
   def mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
     if mailchimp_workflow? && (mailchimp_workflow_call == "" || mailchimp_workflow_call.nil?)
       errors.add(:mailchimp_workflow_call, "can't be null or empty when Mailchimp Workflow is checked")
@@ -216,6 +216,10 @@ class Event < ActiveRecord::Base
 
   def country_name
     country.nil? ? "" : country.name
+  end
+
+  def unique_name
+    "#{name} - #{date.strftime("%Y-%m-%d")} - #{city}, #{country.name}"
   end
 
   private

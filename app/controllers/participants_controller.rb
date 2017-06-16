@@ -54,19 +54,17 @@ class ParticipantsController < ApplicationController
     @event = Event.find(params[:event_id])
     @influence_zones = InfluenceZone.all
     @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
-
     @nakedform = !params[:nakedform].nil?
     if params[:lang].nil? or params[:lang].downcase == "es"
-        I18n.locale=:es
-      else
-        I18n.locale=:en
+      I18n.locale=:es
+    else
+      I18n.locale=:en
     end
-
     respond_to do |format|
-      format.html { render :layout => "empty_layout" }
-      format.json { render json: @participant }
+        format.html { render :layout => "empty_layout" }
+        format.json { render json: @participant }
     end
-  end
+ end
 
   # GET /participants/new/confirm
   def confirm
@@ -88,81 +86,80 @@ class ParticipantsController < ApplicationController
   # POST /participants
   # POST /participants.json
   def create
-    @participant = Participant.new(params[:participant])
     @event = Event.find(params[:event_id])
-    @participant.event = @event
-    @nakedform = !params[:nakedform].nil?
     @influence_zones = InfluenceZone.all
+    @participant = Participant.new(params[:participant])
+    @participant.event = @event
+    if verify_recaptcha
 
-    if @event.list_price == 0.0
-      @participant.confirm!
-    end
-
-    respond_to do |format|
-      if @participant.save
-
-        if @event.is_webinar?
-
-          if @event.webinar_started?
-
-            format.html { redirect_to "/public_events/#{@event.id.to_s}/watch/#{@participant.id.to_s}" }
-
-          else
-
-            EventMailer.delay.welcome_new_webinar_participant(@participant)
-
-          end
-
-        else
-
-          if @event.list_price != 0.0
-            @participant.contact!
-            @participant.save
-          end
-
-          if @event.mailchimp_workflow  
-            workflow_call = @event.mailchimp_workflow_call 
-            email = @participant.email
-
-            list_id = "46a03b3eb3" #Automation Workflow List
-
-            mailchimp = MailchimpConnector.new
-
-            email_md5 = Digest::MD5.hexdigest email.downcase
-            email_validation_call = "/lists/#{list_id}/members/#{email_md5}"
-            response = HTTParty.get("https://us1.api.mailchimp.com/3.0#{email_validation_call}",
-                    :headers => { 'Content-Type' => 'application/json' },
-                    :basic_auth => {:username => "anystring", :password => "#{Eventer::Application.config.mailchimp_token}"})
-
-            if JSON.parse(response.body)['status']==404
-              puts "#{@participant.email} no esta previamente registrado. Procederemos a registrarlo."
-              mailchimp.subscribe_email list_id, email, workflow_call, @participant 
-            elsif JSON.parse(response.body)['status']=="unsubscribed"
-              puts "#{@participant.email} se ha dado de baja (unsubscribe). No podemos iniciar el workflow."
-            elsif JSON.parse(response.body)['status']=="subscribed"
-              puts "Enviando mail a #{@participant.email} "
-              mailchimp.start_workflow workflow_call, email 
-            else
-              puts response.body
-            end
-          end
-
-          if @event.should_welcome_email
-            EventMailer.delay.welcome_new_event_participant(@participant)
-          end
-
-          edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
-          EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
-
-        end
-
-        format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: 'Tu pedido fue realizado exitosamente.' }
-        format.json { render json: @participant, status: :created, location: @participant }
-      else
-        format.html { render action: "new", :layout => "empty_layout" }
-        format.json { render json: @participant.errors, status: :unprocessable_entity }
+      @nakedform = !params[:nakedform].nil?
+      if @event.list_price == 0.0
+        @participant.confirm!
       end
+
+      respond_to do |format|
+        if @participant.save
+          if @event.is_webinar?
+            if @event.webinar_started?
+              format.html { redirect_to "/public_events/#{@event.id.to_s}/watch/#{@participant.id.to_s}" }
+            else
+              EventMailer.delay.welcome_new_webinar_participant(@participant)
+            end
+          else
+            if @event.list_price != 0.0
+              @participant.contact!
+              @participant.save
+            end
+
+            if @event.mailchimp_workflow
+              workflow_call = @event.mailchimp_workflow_call
+              email = @participant.email
+
+              list_id = "46a03b3eb3" #Automation Workflow List
+
+              mailchimp = MailchimpConnector.new
+
+              email_md5 = Digest::MD5.hexdigest email.downcase
+              email_validation_call = "/lists/#{list_id}/members/#{email_md5}"
+              response = HTTParty.get("https://us1.api.mailchimp.com/3.0#{email_validation_call}",
+                                      :headers => { 'Content-Type' => 'application/json' },
+                                      :basic_auth => {:username => "anystring", :password => "#{Eventer::Application.config.mailchimp_token}"})
+
+              if JSON.parse(response.body)['status']==404
+                puts "#{@participant.email} no esta previamente registrado. Procederemos a registrarlo."
+                mailchimp.subscribe_email list_id, email, workflow_call, @participant
+              elsif JSON.parse(response.body)['status']=="unsubscribed"
+                puts "#{@participant.email} se ha dado de baja (unsubscribe). No podemos iniciar el workflow."
+              elsif JSON.parse(response.body)['status']=="subscribed"
+                puts "Enviando mail a #{@participant.email} "
+                mailchimp.start_workflow workflow_call, email
+              else
+                puts response.body
+              end
+            end
+
+            if @event.should_welcome_email
+              EventMailer.delay.welcome_new_event_participant(@participant)
+            end
+
+            edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
+            EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
+
+          end
+
+          format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: 'Tu pedido fue realizado exitosamente.' }
+          format.json { render json: @participant, status: :created, location: @participant }
+        else
+          format.html { render action: "new", :layout => "empty_layout" }
+          format.json { render json: @participant.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      #invalid captcha
+      @captcha_error = true
+      render :action => 'new',:layout => "empty_layout"
     end
+
   end
 
   # PUT /participants/1

@@ -117,6 +117,8 @@ es:
         referer_code: "Código de Referencia"
         notes: "Opcional: Datos adicionales que te interesa contarnos o preguntarnos"
         zone: "Tu lugar más próximo ..."
+        payment_type: "Forma de Pago"
+        is_payed: "Pagado"
       trainer:
         new_title: "Nuevo Entrenador"
         bio_en: "Bio EN"
