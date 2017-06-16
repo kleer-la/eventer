@@ -5,7 +5,10 @@
       - if @event.is_webinar?
         %p ¡Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
       - else
-        %p ¡Gracias! Te hemos enviado un e-mail con información importante.
+        - if @event.should_welcome_email
+          %p ¡Gracias! Te hemos enviado un e-mail con información importante.
+        - else
+          %p ¡Gracias! En breve un asesor se comunicará contigo con la información del evento.
 - else
   :css
     body {bgcolor:#FFFFFF;}
