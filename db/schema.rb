@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170616113940) do
+ActiveRecord::Schema.define(:version => 20170617113126) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -149,6 +149,9 @@ ActiveRecord::Schema.define(:version => 20170616113940) do
     t.integer  "trainer3_id"
     t.boolean  "mailchimp_workflow"
     t.string   "mailchimp_workflow_call"
+    t.string   "banner_text"
+    t.string   "banner_type"
+    t.date     "registration_ends"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"

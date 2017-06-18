@@ -29,7 +29,7 @@ class Event < ActiveRecord::Base
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
-                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call
+                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :banner_text, :banner_type, :registration_ends
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
             :country, :trainer, :event_type, :duration, :start_time, :end_time, :address, :mode, :presence => true
@@ -96,6 +96,13 @@ class Event < ActiveRecord::Base
     self.participants 'Confirmados' do |participants| participants.count > 0 ? participants.confirmed.count : 0 end
     self.capacity 'Capacidad'
   end
+
+  BANNER_TYPE= {
+    :info => "info",
+    :success => "success",
+    :warning => "warning",
+    :danger => "danger"
+  }
 
   def initialize_defaults
     if self.new_record?
