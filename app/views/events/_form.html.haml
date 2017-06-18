@@ -228,11 +228,11 @@
                   %br
                   (ARS) $ 13000.00 pagando de a 5 personas antes del 4-Feb-2017.
                   %br
-                  (Promociones no acumulables, aplicadas sobre el precio de lista) 
+                  (Promociones no acumulables, aplicadas sobre el precio de lista)
                   %br
-                  **Formas de pago:** tarjeta de crédito, transferencia bancaria, depósito o cheque. ( [más información](http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentinas) ). 
+                  **Formas de pago:** tarjeta de crédito, transferencia bancaria, depósito o cheque. ( [más información](http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentinas) ).
                   %br
-                  Envianos un mensaje a <entrenamos@kleer.la> con la forma de pago que prefieras. Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas. 
+                  Envianos un mensaje a <entrenamos@kleer.la> con la forma de pago que prefieras. Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas.
           .row-fuid
             .span12
               .control-group
@@ -243,6 +243,20 @@
               .control-group
                 %label.control-label{ :for => :should_welcome_email }= t("formtastic.labels.event.should_welcome_email")
                 = f.check_box :should_welcome_email
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :banner_text }= t("formtastic.labels.event.banner_text")
+                = f.text_area :banner_text, :rows => 4, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.banner_text")
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
+                  y HTML.
+          .row-fuid
+            .span4
+              .control-group
+                %label.control-label{ :for => :banner_type }= t("formtastic.labels.event.banner_type")
+                = f.collection_select :banner_type, [["Info (azul)", "info"], ["Success (verde)", "success"], ["Warning (amarillo)", "warning"], ["Danger (rojo)", "danger"]], :last, :first, {include_blank: 'Selecciona uno...'}
           .row-fuid
             .span12
               .control-group

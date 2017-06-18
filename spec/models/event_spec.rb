@@ -297,6 +297,16 @@ describe Event do
     @event.monitor_email.should == "martin.alaimo@kleer.la"
   end
 
+  it "should allow a banner text to be displayes promptly" do
+    @event.banner_text = "Un texto a ser resaltado"
+    @event.banner_text.should == "Un texto a ser resaltado"
+  end
+
+  it "should allow a banner type" do
+    @event.banner_type = "info"
+    @event.banner_type.should == "info"
+  end
+
   context "A private event" do
 
     before (:each) do
