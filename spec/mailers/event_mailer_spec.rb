@@ -159,7 +159,7 @@ describe EventMailer do
       expect(email.body).to include('martin.alaimo@kleer.la')
       expect(email.body).to include('Martin Alaimo')
       expect(email.body).to include('1234-5678')
-      expect(email.body).to include("'questions'")
+      expect(email.body).to include("questions")
     end
   end
 
