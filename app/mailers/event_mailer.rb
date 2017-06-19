@@ -40,7 +40,7 @@ class EventMailer < ActionMailer::Base
     body = "#{newbie} (#{contact}) se registró a #{event_title} del #{event.human_date}.\n"
     body += "Código de referencia: #{@participant.referer_code}\n" unless (@participant.referer_code.nil? || @participant.referer_code.to_s == "")
     if (!@participant.notes.nil? && @participant.notes.to_s != "")
-      body += "Notas del participante:\n'#{@participant.notes}'"
+      body += "Notas del participante:\n"
       body += "------------------------------------\n"
       body += "#{@participant.notes}\n"
       body += "------------------------------------\n"
