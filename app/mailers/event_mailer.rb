@@ -37,14 +37,18 @@ class EventMailer < ActionMailer::Base
     event_title = event.event_type.name + ' en ' + event.country.name
     newbie = @participant.fname + ' ' + @participant.lname
     contact = @participant.email + ', ' + @participant.phone
-    body = %{
-      #{newbie}(#{contact}) se registró a #{event_title} del #{event.human_date}.
-      Notas del participante: '#{@participant.notes}'
-      Puedes ver/editar el registro en #{edit_registration_link}.
-    }
+    body = "#{newbie} (#{contact}) se registró a #{event_title} del #{event.human_date}.\n"
+    body += "Código de referencia: #{@participant.referer_code}\n" unless (@participant.referer_code.nil? || @participant.referer_code.to_s == "")
+    if (!@participant.notes.nil? && @participant.notes.to_s != "")
+      body += "Notas del participante:\n'#{@participant.notes}'"
+      body += "------------------------------------\n"
+      body += "#{@participant.notes}\n"
+      body += "------------------------------------\n"
+    end
+    body += "Puedes ver/editar el registro en #{edit_registration_link}"
     mail(to: event.monitor_email,
         from: "Eventos <eventos@kleerer.com>",
-        subject: "[Keventer] Nuevo registro a #{event_title}: " + newbie,
+        subject: "[Keventer] Nuevo registro a #{event_title} del #{event.human_date}: " + newbie,
         body: body
         ) unless event.monitor_email.to_s == ""    ## nil? || ''
   end

@@ -212,6 +212,11 @@
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-envelope-alt
                       = best_in_place participant, :email, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                    - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
+                      %br
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-key
+                        = participant.referer_code
                   %td{ :style => "white-space:normal;"}
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-phone-sign
