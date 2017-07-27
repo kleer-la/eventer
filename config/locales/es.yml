@@ -341,3 +341,8 @@ es:
 
   confirm:
       sure: "Está Ud. seguro?"
+
+  will_paginate:
+    previous_label: "<<"
+    page_gap: "..."
+    next_label: ">>"
