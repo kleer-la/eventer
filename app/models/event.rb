@@ -3,6 +3,8 @@
 class Event < ActiveRecord::Base
   include ActiveSupport
 
+  self.per_page = 20
+
   belongs_to :country
   belongs_to :trainer
   belongs_to :trainer2, :class_name => "Trainer", :foreign_key => 'trainer2_id'

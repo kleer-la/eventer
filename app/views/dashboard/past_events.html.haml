@@ -1,3 +1,52 @@
+:css
+  .digg_pagination {
+    background: white;
+    cursor: default;
+    /* self-clearing method: */
+  }
+  .digg_pagination a, .digg_pagination span, .digg_pagination em {
+    padding: 0.2em 0.5em;
+    display: block;
+    float: left;
+    margin-right: 1px; }
+  .digg_pagination .disabled {
+    color: #999999;
+    border: 1px solid #dddddd; }
+  .digg_pagination .current {
+    font-style: normal;
+    font-weight: bold;
+    background: #2e6ab1;
+    color: white;
+    border: 1px solid #2e6ab1; }
+  .digg_pagination a {
+    text-decoration: none;
+    color: #105cb6;
+    border: 1px solid #9aafe5; }
+    .digg_pagination a:hover, .digg_pagination a:focus {
+      color: #000033;
+      border-color: #000033; }
+  .digg_pagination .page_info {
+    background: #2e6ab1;
+    color: white;
+    padding: 0.4em 0.6em;
+    width: 22em;
+    margin-bottom: 0.3em;
+    text-align: center; }
+    .digg_pagination .page_info b {
+      color: #000033;
+      background: #6aa6ed;
+      padding: 0.1em 0.25em; }
+  .digg_pagination:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden; }
+  * html .digg_pagination {
+    height: 1%; }
+  *:first-child + html .digg_pagination {
+    overflow: hidden; }
+
 .page-header
   %h1.pull-left
     %i.icon-calendar-empty
@@ -14,54 +63,61 @@
             %a.btn.box-collapse.btn-mini.btn-link
               %i
         .box-content
+          .digg_pagination
+            = will_paginate @events
+
           %ul.unstyled.tasks
             - printed_year = -1
-            - @events.select{ |ev| !ev.event_type.nil? }.each do |event|
-              - event_people_count = event.participants.attended.count.to_f + event.participants.confirmed.count.to_f
-              - if printed_year != event.date.year
+            - @events.each do |event|
+              - if !event.event_type.nil?
+                - event_people_count = event.participants.attended.count.to_f + event.participants.confirmed.count.to_f
+                - if printed_year != event.date.year
+                  %li
+                    .span12.box.bordered-box.blue-border.blue-background{ :style => "margin-bottom:0;" }
+                      .box-header.blue-background
+                        .title= event.date.year.to_s
+                  - printed_year = event.date.year
                 %li
-                  .span12.box.bordered-box.blue-border.blue-background{ :style => "margin-bottom:0;" }
-                    .box-header.blue-background
-                      .title= event.date.year.to_s 
-                - printed_year = event.date.year
-              %li
-                .row-fluid
-                  .span1
-                    &nbsp;
-                    = event.human_date
-                    %br
-                    -if event.is_webinar? && false
-                      %img{:src => "/assets/icons/webinar.png", :style => "vertical-align:middle; width:50%"}
-                    - elsif false
-                      %img{:src => "/assets/icons/presencial.png", :style => "vertical-align:middle; width:50%"}
-                  .span11
-                    .task
-                      %span.pull-left
-                        %a{ :href => "/events/#{event.id}/participants" }
-                          %b= event.event_type.name
-                          = "| " + event.city + " | " + event.place
-                      %small.pull-right
-                        %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
-                          %i.icon-group
-                        &nbsp;
-                        %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants_survey" }
-                          %i.icon-check
-                    - if event_people_count > 0
-                      - event_attended_percent = event.participants.attended.count.to_f / event_people_count
-                    - else
-                      - event_attended_percent = 0
+                  .row-fluid
+                    .span1
+                      &nbsp;
+                      = event.human_date
+                      %br
+                      -if event.is_webinar? && false
+                        %img{:src => "/assets/icons/webinar.png", :style => "vertical-align:middle; width:50%"}
+                      - elsif false
+                        %img{:src => "/assets/icons/presencial.png", :style => "vertical-align:middle; width:50%"}
+                    .span11
+                      .task
+                        %span.pull-left
+                          %a{ :href => "/events/#{event.id}/participants" }
+                            %b= event.event_type.name
+                            = "| " + event.city + " | " + event.place
+                        %small.pull-right
+                          %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
+                            %i.icon-group
+                          &nbsp;
+                          %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants_survey" }
+                            %i.icon-check
+                      - if event_people_count > 0
+                        - event_attended_percent = event.participants.attended.count.to_f / event_people_count
+                      - else
+                        - event_attended_percent = 0
 
-                    Porcentaje de Asistentes Presentes:
-                    = "#{(event_attended_percent*100).round.to_s}% (#{event.participants.attended.count.to_s}/#{event_people_count.to_i})"
-                    - if event_attended_percent < 0.2
-                      .progress.progress-small.progress-danger
-                        .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-                    - elsif event_attended_percent >= 0.2 && event_attended_percent < 0.5
-                      .progress.progress-small.progress-info
-                        .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-                    - elsif event_attended_percent >= 0.5 && event_attended_percent < 0.8
-                      .progress.progress-small
-                        .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-                    - elsif event_attended_percent >= 0.8
-                      .progress.progress-small.progress-success
-                        .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
+                      Porcentaje de Asistentes Presentes:
+                      = "#{(event_attended_percent*100).round.to_s}% (#{event.participants.attended.count.to_s}/#{event_people_count.to_i})"
+                      - if event_attended_percent < 0.2
+                        .progress.progress-small.progress-danger
+                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
+                      - elsif event_attended_percent >= 0.2 && event_attended_percent < 0.5
+                        .progress.progress-small.progress-info
+                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
+                      - elsif event_attended_percent >= 0.5 && event_attended_percent < 0.8
+                        .progress.progress-small
+                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
+                      - elsif event_attended_percent >= 0.8
+                        .progress.progress-small.progress-success
+                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
+            
+            .digg_pagination
+              = will_paginate @events
