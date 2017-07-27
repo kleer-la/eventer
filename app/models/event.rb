@@ -11,6 +11,8 @@ class Event < ActiveRecord::Base
   has_many :participants
   has_many :categories, :through => :event_type
 
+  has_many :campaign_views
+
   scope :visible, where(:cancelled => false).where("date >= ?", DateTime.now-1)
   scope :past_visible, where(:cancelled => false).where("date <= ?", DateTime.now)
   scope :public_events,  where("visibility_type = 'pu' or visibility_type = 'co'")

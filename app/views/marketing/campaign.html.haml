@@ -1,0 +1,62 @@
+.page-header
+  %h1.pull-left
+    %i.icon-bar-chart
+    %span
+      Campaña
+      = @campaign.display_name
+  .pull-right
+    %ul.breadcrumb
+      %li
+        %a{ href: "/marketing"}
+          Marketing
+
+.col-sm-12
+
+  %a{ href: "/marketing"}
+    < Marketing
+  %br
+  &nbsp;
+
+  .box.bordered-box.red-border
+    .box-header.red-background
+      .title Sources
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-hover.table-striped
+            %thead
+              %tr
+                %td
+                  %strong Source
+                %td
+                  %strong Views
+            %tbody
+              - @sources.each do |source|
+                %tr
+                  %td= source[0].nil? ? "N/A" : source[0]
+                  %td= source[1]
+
+  .box.bordered-box.red-border
+    .box-header.red-background
+      .title Eventos
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-hover.table-striped
+            %thead
+              %tr
+                %td
+                  %strong Evento
+                %td
+                  %strong Views
+                %td
+                  %strong Registros
+                %td
+                  %strong Confirmados
+            %tbody
+              - @campaign.events.each do |event|
+                %tr
+                  %td= event.name
+                  %td= event.campaign_views.where(campaign_id: @campaign.id).count
+                  %td X
+                  %td X
