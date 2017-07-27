@@ -1,6 +1,8 @@
 class Campaign < ActiveRecord::Base
   has_many :campaign_views
   has_many :events, through: :campaign_views
+  has_many :event_types, through: :events
+  has_many :countries, through: :events
   attr_accessible :codename, :description
 
   def display_name
