@@ -1,4 +1,5 @@
 Eventer::Application.routes.draw do
+
   resources :categories
 
 
@@ -58,6 +59,7 @@ Eventer::Application.routes.draw do
   match 'events/:id/broadcast_webinar' => 'events#broadcast_webinar'
   match 'events/:id/push_to_crm' => 'events#push_to_crm'
   match 'events/:id/send_certificate' => 'events#send_certificate'
+  match 'events/:id/viewed' => 'events#viewed'
 
   match 'events/:event_id/participant_confirmed' => 'participants#confirm'
   match 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
@@ -66,6 +68,9 @@ Eventer::Application.routes.draw do
   match 'events/:event_id/participants_batch_load' => 'participants#batch_load'
 
   match 'participants/search' => 'participants#search'
+
+  get "marketing" => 'marketing#index'
+  get "marketing/campaigns/:id" => 'marketing#campaign'
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase

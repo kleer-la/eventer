@@ -11,7 +11,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170617113126) do
+ActiveRecord::Schema.define(:version => 20170727112248) do
+
+  create_table "campaign_views", :force => true do |t|
+    t.string   "source"
+    t.integer  "campaign_id"
+    t.integer  "event_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "campaigns", :force => true do |t|
+    t.string   "codename"
+    t.text     "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "categories", :force => true do |t|
     t.string   "name"
