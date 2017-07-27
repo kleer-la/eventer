@@ -65,7 +65,8 @@
         .box-content
           .digg_pagination
             = will_paginate @events
-
+          %br
+          &nbsp;
           %ul.unstyled.tasks
             - printed_year = -1
             - @events.each do |event|
@@ -118,6 +119,6 @@
                       - elsif event_attended_percent >= 0.8
                         .progress.progress-small.progress-success
                           .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-            
+
             .digg_pagination
               = will_paginate @events
