@@ -70,7 +70,11 @@ class ParticipantsController < ApplicationController
       source = CampaignSource.where(codename: utm_source).first_or_create
       campaign = Campaign.where(codename: utm_campaign).first_or_create
 
-      CampaignView.create( campaign: campaign, campaign_source: source, event: @event, element_viewed: "registration_form" )
+      begin
+        CampaignView.create( campaign: campaign, campaign_source: source, event: @event, element_viewed: "registration_form" )
+      rescue Exception
+        puts "Sometimes a DB locked error: we can skip this record"
+      end
     end
 
     respond_to do |format|
