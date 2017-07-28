@@ -11,14 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170727112248) do
+ActiveRecord::Schema.define(:version => 20170728162451) do
+
+  create_table "campaign_sources", :force => true do |t|
+    t.string   "codename"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "campaign_views", :force => true do |t|
-    t.string   "source"
     t.integer  "campaign_id"
     t.integer  "event_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+    t.integer  "campaign_source_id"
+    t.string   "element_viewed"
   end
 
   create_table "campaigns", :force => true do |t|
@@ -203,6 +210,8 @@ ActiveRecord::Schema.define(:version => 20170727112248) do
     t.decimal  "xero_invoice_amount",    :precision => 10, :scale => 2
     t.boolean  "is_payed",                                              :default => false
     t.string   "payment_type"
+    t.integer  "campaign_id"
+    t.integer  "campaign_source_id"
   end
 
   add_index "participants", ["event_id"], :name => "index_participants_on_event_id"

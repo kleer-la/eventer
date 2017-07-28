@@ -21,7 +21,7 @@
           %li
             %a{ "data-toggle" => 'tab', href: "#event_types" }
               Tipos de Evento
-          %li
+          -#%li
             %a{ "data-toggle" => 'tab', href: "#countries" }
               Países
         .tab-content
@@ -34,12 +34,18 @@
                       %td
                         %strong Source
                       %td
-                        %strong Views
+                        %strong Landing Page Views
+                      %td
+                        %strong Registration Form Views
+                      %td
+                        %strong Última Acción (View o Registro)
                   %tbody
-                    - @sources.each do |source|
+                    - @campaign.campaign_sources.order("updated_at DESC").each do |source|
                       %tr
-                        %td= source[0].nil? ? "N/A" : source[0]
-                        %td= source[1]
+                        %td= source.display_name
+                        %td= source.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
+                        %td= source.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "registration_form").count
+                        %td= source.updated_at
 
           .tab-pane#events
             .responsive-table
@@ -54,7 +60,9 @@
                       %td
                         %strong País
                       %td
-                        %strong Views
+                        %strong Landing Page Views
+                      %td
+                        %strong Registration Form Views
                       %td
                         %strong Registros
                       %td
@@ -65,9 +73,10 @@
                         %td= event.name
                         %td= event.date
                         %td= event.country
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).count
-                        %td X
-                        %td X
+                        %td= event.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
+                        %td= event.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "registration_form").count
+                        %td= event.participants.where(campaign_id: @campaign.id).count
+                        %td= event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).count
 
           .tab-pane#event_types
             .responsive-table
@@ -78,7 +87,9 @@
                       %td
                         %strong Tipo de Evento
                       %td
-                        %strong Views
+                        %strong Landing Page Views
+                      %td
+                        %strong Registration Form Views
                       %td
                         %strong Registros
                       %td
@@ -87,6 +98,29 @@
                     - @campaign.event_types.each do |event_type|
                       %tr
                         %td= event_type.name
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).count
+                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
+                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "registration_form").count
+                        %td= event_type.participants.where(campaign_id: @campaign.id).count
+                        %td= event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).count
+
+          -#.tab-pane#countries
+            .responsive-table
+              .scrollable-area
+                %table.table.table-hover.table-striped
+                  %thead
+                    %tr
+                      %td
+                        %strong País
+                      %td
+                        %strong Views
+                      %td
+                        %strong Registros
+                      %td
+                        %strong Confirmados
+                  %tbody
+                    - @campaign.countries.each do |country|
+                      %tr
+                        %td= country.name
+                        %td= @campaign.participants.where(country: country).count
                         %td X
                         %td X

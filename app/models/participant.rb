@@ -4,11 +4,14 @@ require 'valid_email'
 class Participant < ActiveRecord::Base
   belongs_to :event
   belongs_to :influence_zone
+  belongs_to :campaign
+  belongs_to :campaign_source
 
   attr_accessible :email, :fname, :lname, :phone, :event_id,
                   :status, :notes, :influence_zone_id, :influence_zone,
                   :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
-                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type
+                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
+                  :campaign_source, :campaign
 
   validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
 
@@ -64,6 +67,11 @@ class Participant < ActiveRecord::Base
   scope :detractor, where('promoter_score <= 6')
 
   after_initialize :initialize_defaults
+
+  after_create do |participant|
+    participant.campaign.touch unless participant.campaign.nil?
+    participant.campaign_source.touch unless participant.campaign_source.nil?
+  end
 
   comma do
     self.lname 'Apellido'

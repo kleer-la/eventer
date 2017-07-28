@@ -181,22 +181,6 @@ class EventsController < ApplicationController
     end
   end
 
-  def viewed
-    @event = Event.find(params[:id])
-    campaign = params[:utm_campaign]
-    source = params[:utm_source]
-
-    if !@event.nil?
-      CampaignView.create( campaign: Campaign.where(codename: campaign).first_or_create, source: source, event: @event )
-    end
-
-    respond_to do |format|
-      format.gif {
-        redirect_to '/images/1x1.gif'
-      }
-    end
-  end
-
   private
 
   def activate_menu

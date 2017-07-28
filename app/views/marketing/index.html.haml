@@ -18,6 +18,8 @@
                   %strong Nombre
                 %td
                   %strong Fecha Inicio
+                %td
+                  %strong Última Acción (View o Registro)
             %tbody
               - @camapigns.each do |campaign|
                 %tr
@@ -26,3 +28,5 @@
                       = campaign.display_name
                   %td
                     = campaign.created_at
+                  %td
+                    = campaign.updated_at
