@@ -59,7 +59,6 @@ Eventer::Application.routes.draw do
   match 'events/:id/broadcast_webinar' => 'events#broadcast_webinar'
   match 'events/:id/push_to_crm' => 'events#push_to_crm'
   match 'events/:id/send_certificate' => 'events#send_certificate'
-  match 'events/:id/viewed' => 'events#viewed'
 
   match 'events/:event_id/participant_confirmed' => 'participants#confirm'
   match 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
@@ -71,6 +70,7 @@ Eventer::Application.routes.draw do
 
   get "marketing" => 'marketing#index'
   get "marketing/campaigns/:id" => 'marketing#campaign'
+  match 'events/:id/viewed' => 'marketing#viewed'
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase

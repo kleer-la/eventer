@@ -8,6 +8,16 @@
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
+
+    - utm_campaign = params[:utm_campaign]
+    - utm_source = params[:utm_source]
+
+    - if !utm_campaign.nil?
+      %input{ :type => "hidden", :name => "utm_campaign", :value => utm_campaign }
+
+    - if !utm_source.nil?
+      %input{ :type => "hidden", :name => "utm_source", :value => utm_source }
+
     .row-fluid
       .span12
         .control-group

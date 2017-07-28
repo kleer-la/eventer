@@ -60,6 +60,19 @@ class ParticipantsController < ApplicationController
     else
       I18n.locale=:en
     end
+
+    utm_campaign = params[:utm_campaign]
+    utm_source = params[:utm_source]
+    utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
+    utm_source = utm_source.downcase unless utm_source.nil?
+
+    if !@event.nil?
+      source = CampaignSource.where(codename: utm_source).first_or_create
+      campaign = Campaign.where(codename: utm_campaign).first_or_create
+
+      CampaignView.create( campaign: campaign, campaign_source: source, event: @event, element_viewed: "registration_form" )
+    end
+
     respond_to do |format|
         format.html { render :layout => "empty_layout" }
         format.json { render json: @participant }
@@ -97,8 +110,17 @@ class ParticipantsController < ApplicationController
         @participant.confirm!
       end
 
+      utm_campaign = params[:utm_campaign]
+      utm_source = params[:utm_source]
+      utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
+      utm_source = utm_source.downcase unless utm_source.nil?
+      source = CampaignSource.where(codename: utm_source).first_or_create
+      campaign = Campaign.where(codename: utm_campaign).first_or_create
+
       respond_to do |format|
         if @participant.save
+          @participant.update_attribute( :campaign_source, source)
+          @participant.update_attribute( :campaign, campaign)
           if @event.is_webinar?
             if @event.webinar_started?
               format.html { redirect_to "/public_events/#{@event.id.to_s}/watch/#{@participant.id.to_s}" }
