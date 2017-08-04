@@ -178,6 +178,7 @@ es:
         show_pricing: "Exponer precios"
         should_ask_for_referer_code: "Solicitar código de referencia (referer) a nuevos registrados?"
         extra_script: "Extra Script"
+        cancellation_policy: "Política de Cancelación"
         banner_text: "Texto resaltado"
         banner_type: "Tipo de resalte"
         edit:
@@ -199,6 +200,7 @@ es:
         include_in_catalog: "Incluido en Catálogo (Currícula)"
         tag_name: "Tag Name (CapsuleCRM)"
         csd_eligible: "Es CSD-Eligible? (Aprobado por la Scrum Alliance para la certificación CSD)"
+        cancellation_policy: "Política de Cancelación"
       category:
         new_title: "Nueva Categoría"
         name: "Nombre"
@@ -221,10 +223,12 @@ es:
         extra_script: "script de Pixel de Facebook"
         mailchimp_workflow_call: "Este valor se obtiene al crear un nuevo Workflow en Mailchimp"
         banner_text: "Leyenda que quisieras que aparezca resaltada antes de la descripción del evento."
+        cancellation_policy: "Si el tipo de evento tiene una política de cancelación definida, puedes cargarla aquí haciendo click en el botón siguiente. De lo contrario, puedes usar la que necesites."
       participant:
         phone_old: "Una persona de Kleer se contactará a este teléfono para continuar con tu inscripción."
       event_type:
         materials: "Materiales requeridos para el dictado de este curso"
+        cancellation_policy: "Si hay seteada una política de cancelación global, puedes cargarla aquí haciendo click en el botón siguiente..."
     placeholders:
       post:
         name: "Title your post"

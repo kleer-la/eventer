@@ -1,0 +1,41 @@
+.page-header
+  %h1.pull-left
+    %i.icon-cog
+    %span Settings
+  .pull-right
+    %a.btn.btn-white{ :href => new_setting_path }= t('formtastic.actions.new')
+
+= render '/commons/notice'
+
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .box-header.orange-background
+      .title Settings
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table.table-striped{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th= t('formtastic.labels.settings.key')
+                %th= t('formtastic.labels.settings.value')
+                %th
+            %tbody
+              - @settings.each do |setting|
+                -#%tr
+                  %td= setting.key
+                  %td= setting.value
+                  %td= link_to 'Show', setting
+                  %td= link_to 'Edit', edit_setting_path(setting)
+                  %td= link_to 'Destroy', setting, :method => :delete, :data => { :confirm => 'Are you sure?' }
+                %tr
+                  %td= setting.key
+                  %td
+                    %pre
+                      = preserve setting.value
+                  %td
+                    .text-right
+                      %a.btn.btn-warning.btn-mini{ :href => edit_setting_path(setting) }
+                        %i.icon-edit
+                      %a.btn.btn-danger.btn-mini{ :href => setting_path(setting), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                        %i.icon-trash

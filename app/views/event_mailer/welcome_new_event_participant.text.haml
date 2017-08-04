@@ -29,11 +29,15 @@
   = @participant.event.custom_prices_email_text
 = " "
 = "El evento #{@participant.event.event_type.name} será facilitado por #{@participant.event.trainer.name} el día #{@participant.event.human_date} de #{@participant.event.start_time.strftime( '%H:%M' )} a #{@participant.event.end_time.strftime( '%H:%M' )} hs."
-= " " 
+= " "
 = "Fecha: #{@participant.event.human_date}"
 = "Lugar: #{@participant.event.place}"
 = "Dirección: #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
 = " "
+
+- if !@participant.event.cancellation_policy.nil? && @participant.event.cancellation_policy != ""
+  Política de Cancelación:
+  = @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date
 
 No dudes en contactarnos por cualquier consulta que tengas :)
 

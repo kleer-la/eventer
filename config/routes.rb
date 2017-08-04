@@ -1,5 +1,8 @@
 Eventer::Application.routes.draw do
 
+  resources :settings
+
+
   resources :categories
 
 
@@ -52,6 +55,7 @@ Eventer::Application.routes.draw do
   match 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
   match 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
   match 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'
+  match 'events/load_cancellation_policy/:id' => 'ajax#load_cancellation_policy'
 
   match 'events/filter/:country_iso' => 'events#index'
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170728162451) do
+ActiveRecord::Schema.define(:version => 20170804112405) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -98,8 +98,8 @@ ActiveRecord::Schema.define(:version => 20170728162451) do
     t.text     "description"
     t.text     "recipients"
     t.text     "program"
-    t.datetime "created_at",                                       :null => false
-    t.datetime "updated_at",                                       :null => false
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
     t.text     "goal"
     t.integer  "duration"
     t.text     "faq"
@@ -110,11 +110,12 @@ ActiveRecord::Schema.define(:version => 20170728162451) do
     t.text     "takeaways"
     t.string   "tag_name"
     t.boolean  "csd_eligible"
-    t.decimal  "average_rating",     :precision => 4, :scale => 2
+    t.decimal  "average_rating",      :precision => 4, :scale => 2
     t.integer  "net_promoter_score"
     t.integer  "surveyed_count"
     t.integer  "promoter_count"
     t.string   "subtitle"
+    t.text     "cancellation_policy"
   end
 
   create_table "event_types_trainers", :id => false, :force => true do |t|
@@ -174,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20170728162451) do
     t.string   "banner_text"
     t.string   "banner_type"
     t.date     "registration_ends"
+    t.text     "cancellation_policy"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"
@@ -239,6 +241,13 @@ ActiveRecord::Schema.define(:version => 20170728162451) do
   create_table "roles_users", :id => false, :force => true do |t|
     t.integer "role_id"
     t.integer "user_id"
+  end
+
+  create_table "settings", :force => true do |t|
+    t.string   "key"
+    t.text     "value"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "trainers", :force => true do |t|
