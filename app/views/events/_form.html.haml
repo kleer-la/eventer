@@ -34,8 +34,20 @@
                 = f.text_field :finish_date, :class => 'datepicker-class input-small'
             .span2
               .control-group
+                %label.control-label{ :for => :registration_ends }= t("formtastic.labels.event.registration_ends")
+                = f.text_field :registration_ends, :class => "datepicker-class input-small"
+            .span2
+              .control-group
                 %label.control-label{ :for => :capacity }= t("formtastic.labels.event.capacity")
                 = f.text_field :capacity, :class => "input-mini"
+          .row-fluid
+            .span6
+              .control-group
+                %label.control-label= t("formtastic.labels.event.horario")
+                = "De "
+                = f.time_select :start_time, {:minute_step => 15}, :style => "width:5em"
+                = " a "
+                = f.time_select :end_time, {:minute_step => 15}, :style => "width:5em"
             .span3
               .control-group
                 %label.control-label{ :for => :mode }= t("formtastic.labels.event.mode")
@@ -44,14 +56,6 @@
               .control-group#event_time_zone_name_input
                 %label.control-label{ :for => :time_zone_name }= t("formtastic.labels.event.time_zone_name")
                 = f.collection_select :time_zone_name, @timezones, :name, :to_s, {include_blank: 'Selecciona una...'}
-          .row-fluid
-            .span12
-              .control-group
-                %label.control-label= t("formtastic.labels.event.horario")
-                = "De "
-                = f.time_select :start_time, {:minute_step => 15}, :style => "width:5em"
-                = " a "
-                = f.time_select :end_time, {:minute_step => 15}, :style => "width:5em"
           .row-fuid
             .span3
               .control-group
@@ -269,6 +273,18 @@
           .row-fuid
             .span12
               .control-group
+                %label.control-label{ :for => :specific_conditions }= t("formtastic.labels.event.cancellation_policy")
+                = f.text_area :cancellation_policy, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.cancellation_policy")
+                %a.btn.btn-small.btn-info.btn-cancellation-policy{ :href => "#"}
+                  %i.icon-tasks
+                  Utilizar la del Tipo de Evento
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
+                  y HTML.
+          .row-fuid
+            .span12
+              .control-group
                 %label.control-label{ :for => :extra_script }= t("formtastic.labels.event.extra_script")
                 = f.text_area :extra_script, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.extra_script")
                 %small.muted
@@ -320,6 +336,8 @@
   $event_place_before_webinar = "";
   $event_address_before_webinar = "";
 
+  $event_type_cancellation_policy = "#{ (@event_type_cancellation_policy.nil? ? "" : escape_javascript(@event_type_cancellation_policy) ) }";
+
   //bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
 
   $(document).ready(function() {
@@ -329,7 +347,10 @@
     $("#event_visibility_type_pu").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_visibility_type_pr").change( function() { eventTypeActions( $(this).val() ); });
     $("#event_visibility_type_co").change( function() { eventTypeActions( $(this).val() ); });
-    $("#event_event_type_id").change( function() { dynamicallyFillTrainersForEventType( $(this).val() ); });
+    $("#event_event_type_id").change( function() {
+      dynamicallyFillTrainersForEventType( $(this).val() );
+      loadCancellationPolicyForEventType( $(this).val() );
+    });
 
     $("#event_date").change( function() { eventDateChanged( $(this).val() ); });
 
@@ -346,6 +367,11 @@
     else if ( $("#event_visibility_type_co").is(":checked") ) {
       $("#event_visibility_type_co").trigger('change');
     }
+
+    $('.btn-cancellation-policy').on('click', function(e){
+      e.preventDefault();
+      $('#event_cancellation_policy').val( $event_type_cancellation_policy );
+    });
 
   })
 
@@ -415,6 +441,10 @@
   }
 
   function eventDateChanged( value ) {
+
+    if ($("#event_registration_ends").val() == "") 
+      $("#event_registration_ends").val( value );
+
     var date_string = value.substr(6,4) + "-" + value.substr(3,2) + "-" + value.substr(0,2);
 
     var event_date = new Date( date_string );
@@ -495,5 +525,13 @@
         $("#trainer3_select").html(data);
     });
 
+    return false;
+  }
+
+  function loadCancellationPolicyForEventType( eventTypeID ) {
+    if(eventTypeID == "") eventTypeID="0";
+    jQuery.get('/events/load_cancellation_policy/' + eventTypeID, function(data) {
+        $event_type_cancellation_policy = data;
+    });
     return false;
   }

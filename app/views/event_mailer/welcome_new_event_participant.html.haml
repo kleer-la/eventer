@@ -119,6 +119,14 @@
                                     = @markdown_renderer.render( @participant.event.event_type.program ).html_safe
                                   %br
                                   %br
+                                  - if !@participant.event.cancellation_policy.nil? && @participant.event.cancellation_policy != ""
+                                    %b
+                                      Política de Cancelación
+                                    %br
+                                    %br
+                                    = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
+                                  %br
+                                  %br
                                   No dudes en contactarnos por cualquier consulta que tengas :)
                                   %br
                                   %br

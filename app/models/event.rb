@@ -33,7 +33,8 @@ class Event < ActiveRecord::Base
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
-                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :banner_text, :banner_type, :registration_ends
+                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :banner_text, :banner_type, :registration_ends,
+                  :cancellation_policy
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
             :country, :trainer, :event_type, :duration, :start_time, :end_time, :address, :mode, :presence => true
@@ -233,7 +234,15 @@ class Event < ActiveRecord::Base
     "#{name} - #{date.strftime("%Y-%m-%d")} - #{city}, #{country.name}"
   end
 
+  def human_cancellation_limit_date
+    humanize_date cancellation_limit_date
+  end
+
   private
+
+  def cancellation_limit_date
+    registration_ends.nil? ? date : registration_ends
+  end
 
   def get_event_duration
     self.duration || 1

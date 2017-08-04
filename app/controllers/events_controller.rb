@@ -54,6 +54,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     @timezones = TimeZone.all
     @currencies = Money::Currency.table
+    @event_type_cancellation_policy = @event.event_type.cancellation_policy
   end
 
   # POST /events

@@ -71,12 +71,7 @@
                   Este texto será lo primero que se muetra en el tab de "Descripción", en kleer.la. También será utilizado en las
                   %a{ :href => "https://dev.twitter.com/docs/cards", :target => "_blank"}Twittercards
           .row-fluid
-            .span6
-              .control-group
-                %label.control-label{ :for => :goal }= t("formtastic.labels.event_type.goal")
-                = f.text_area :goal, :rows => 8, :class => "input-block-level"
-                %small.muted Se eliminará esta campo en Septiembre 2013. Por favor, mover el texto a otro lado, por ejemplo, a "Descripción".
-            .span6
+            .span12
               .control-group
                 %label.control-label{ :for => :description }= t("formtastic.labels.event_type.description") + " (*)"
                 = f.text_area :description, :rows => 8, :class => "input-block-level"
@@ -135,6 +130,19 @@
                   Este texto soporta
                   %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Uso interno, por ahora no se muestra en ningún lado.
+          .row-fluid
+            .span12
+              .control-group
+                %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.cancellation_policy")
+                = f.text_area :cancellation_policy, :rows => 8, :class => "input-block-level"
+                - if !@cancellation_policy_setting.nil?
+                  %a.btn.btn-small.btn-info.btn-cancellation-policy{ :href => "#"}
+                    %i.icon-cog
+                    Utilizar la default
+                %small.muted
+                  Este texto soporta
+                  %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
+                  y HTML. Se mostrará en su própio tab ("Preguntas Frecuentes"), en kleer.la.
           .row-fuid
             .span12
               .form-actions
@@ -145,3 +153,10 @@
                   %a.btn.btn-large{ :href => events_path }
                     %i.icon-undo
                     Cancelar
+
+- if !@cancellation_policy_setting.nil?
+  :javascript
+    $('.btn-cancellation-policy').on('click', function(e){
+      e.preventDefault();
+      $('#event_type_cancellation_policy').val( "#{escape_javascript @cancellation_policy_setting.value}" );
+    });

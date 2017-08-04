@@ -16,4 +16,9 @@ class AjaxController < ApplicationController
     render "/events/_trainers3_select", :layout => false
   end
 
+  def load_cancellation_policy
+    @cancellation_policy = EventType.find(params[:id]).cancellation_policy
+    render text: @cancellation_policy, :layout => false
+  end
+
 end
