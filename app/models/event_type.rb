@@ -8,7 +8,7 @@ class EventType < ActiveRecord::Base
 
   attr_accessible :name, :subtitle, :duration, :goal, :description, :recipients, :program, :trainer_ids, :trainers,
                   :faq, :materials, :category_ids, :categories, :events, :include_in_catalog, :elevator_pitch,
-                  :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy
+                  :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification, :kleer_cert_seal_image
 
   validates :name, :duration, :description, :recipients, :program, :trainers, :elevator_pitch, :presence => true
 

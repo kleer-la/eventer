@@ -201,6 +201,8 @@ es:
         tag_name: "Tag Name (CapsuleCRM)"
         csd_eligible: "Es CSD-Eligible? (Aprobado por la Scrum Alliance para la certificación CSD)"
         cancellation_policy: "Política de Cancelación"
+        is_kleer_certification: "Es certificación kleer"
+        kleer_cert_seal_image: "Nombre de Imagen del Seal"
       category:
         new_title: "Nueva Categoría"
         name: "Nombre"
