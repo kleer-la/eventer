@@ -14,6 +14,12 @@ module ParticipantsHelper
     def is_csd_eligible?
       @participant.event.event_type.csd_eligible
     end
+    def is_kleer_certification?
+      @participant.event.event_type.is_kleer_certification
+    end
+    def kleer_cert_seal_image
+      @participant.event.event_type.kleer_cert_seal_image
+    end
     def event_name
       @participant.event.event_type.name
     end
@@ -46,6 +52,9 @@ module ParticipantsHelper
       end
       plural = "s" unless d==1
       "#{d} #{unit}#{plural}"
+    end
+    def human_event_finish_date
+      @participant.event.human_finish_date
     end
     def trainer
       @participant.event.trainers[0].name
@@ -93,9 +102,13 @@ module ParticipantsHelper
   def self.render_certificate( pdf, certificate, page_size )
     rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
     kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
+    kleer_certification_seals_path = "#{Rails.root}/app/assets/images/seals/"
 
       if certificate.is_csd_eligible?
           pdf.image rep_logo_path, :width => 150, :position => :right
+      elsif certificate.is_kleer_certification?
+          this_seal_path = "#{kleer_certification_seals_path}/#{certificate.kleer_cert_seal_image}"
+          pdf.image this_seal_path, :width => 150, :position => :right
       else
           pdf.move_down 100
       end
@@ -111,28 +124,37 @@ module ParticipantsHelper
       pdf.text  "<b><i>#{certificate.name}</i></b>",
             :align => :center, :size => 48, :inline_format => true
 
-      pdf.text "attended the course named", :align => :center, :size => 14
+      if certificate.is_kleer_certification?
+        pdf.text "is awarded the designation", :align => :center, :size => 14
+        pdf.move_down 10
+        pdf.text "<b>#{certificate.event_name}</b>", :align => :center, :size => 24, :inline_format => true
+        pdf.move_down 10
+        pdf.text "on this day, #{certificate.human_event_finish_date} #{certificate.event_year}, for completing the prescribed requirements for this certification.", :align => :center, :size => 14
+      else
+        pdf.text "attended the course named", :align => :center, :size => 14
 
-      pdf.move_down 10
+        pdf.move_down 10
 
-      pdf.text    "<b><i>#{certificate.event_name}</i></b>",
-                  :align => :center, :size => 24, :inline_format => true
+        pdf.text    "<b><i>#{certificate.event_name}</i></b>",
+                    :align => :center, :size => 24, :inline_format => true
 
-      pdf.move_down 10
+        pdf.move_down 10
 
-      pdf.text  "delivered in <b>#{certificate.place}</b>, " +
-            "on <b>#{certificate.event_date} #{certificate.event_year}</b>, " +
-                  "with a duration of #{certificate.event_duration}.",
-            :align => :center, :size => 14, :inline_format => true
+        pdf.text  "delivered in <b>#{certificate.place}</b>, " +
+              "on <b>#{certificate.event_date} #{certificate.event_year}</b>, " +
+                    "with a duration of #{certificate.event_duration}.",
+              :align => :center, :size => 14, :inline_format => true
 
-      if certificate.is_csd_eligible?
-          pdf.text    "This course has been approved by the <b>Scrum Alliance</b> as a CSD-eligible one,",
-                      :align => :center, :size => 14, :inline_format => true
+        if certificate.is_csd_eligible?
+            pdf.text    "This course has been approved by the <b>Scrum Alliance</b> as a CSD-eligible one,",
+                        :align => :center, :size => 14, :inline_format => true
 
-          pdf.text    "therefore valid for the <b>Certified Scrum Developer</b> certification.",
-                      :align => :center, :size => 14, :inline_format => true
+            pdf.text    "therefore valid for the <b>Certified Scrum Developer</b> certification.",
+                        :align => :center, :size => 14, :inline_format => true
+        end
       end
 
+      pdf.move_down 10
       pdf.text    "<i>Certificate verification code: #{certificate.verification_code}.</i>",
                   :align => :center, :size => 9, :inline_format => true
 

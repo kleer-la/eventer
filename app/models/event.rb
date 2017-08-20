@@ -148,6 +148,10 @@ class Event < ActiveRecord::Base
     human_date
   end
 
+  def human_finish_date
+    humanize_end_date
+  end
+
   def human_time
     from= self.start_time.strftime( "%H:%M" )
     to= self.end_time.strftime( "%H:%M" )

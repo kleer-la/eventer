@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170804112405) do
+ActiveRecord::Schema.define(:version => 20170820133706) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -98,8 +98,8 @@ ActiveRecord::Schema.define(:version => 20170804112405) do
     t.text     "description"
     t.text     "recipients"
     t.text     "program"
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.datetime "created_at",                                                              :null => false
+    t.datetime "updated_at",                                                              :null => false
     t.text     "goal"
     t.integer  "duration"
     t.text     "faq"
@@ -110,12 +110,14 @@ ActiveRecord::Schema.define(:version => 20170804112405) do
     t.text     "takeaways"
     t.string   "tag_name"
     t.boolean  "csd_eligible"
-    t.decimal  "average_rating",      :precision => 4, :scale => 2
+    t.decimal  "average_rating",         :precision => 4, :scale => 2
     t.integer  "net_promoter_score"
     t.integer  "surveyed_count"
     t.integer  "promoter_count"
     t.string   "subtitle"
     t.text     "cancellation_policy"
+    t.boolean  "is_kleer_certification",                               :default => false
+    t.string   "kleer_cert_seal_image"
   end
 
   create_table "event_types_trainers", :id => false, :force => true do |t|
