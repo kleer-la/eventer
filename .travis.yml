@@ -3,7 +3,9 @@ sudo: false
 rvm:
 - 2.1.8
 before_script:
+- export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
+
 script:
 - bundle exec rake --trace db:migrate
 - bundle exec rake ci
@@ -17,4 +19,4 @@ deploy:
   run:
     - "rake db:migrate"
     - restart
-    - "rake cleanup"    
+    - "rake cleanup"
