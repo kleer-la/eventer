@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170820133706) do
+ActiveRecord::Schema.define(:version => 20180321014100) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -178,6 +178,10 @@ ActiveRecord::Schema.define(:version => 20170820133706) do
     t.string   "banner_type"
     t.date     "registration_ends"
     t.text     "cancellation_policy"
+    t.string   "specific_subtitle"
+    t.boolean  "enable_online_payment",                                                     :default => false
+    t.string   "online_course_codename"
+    t.string   "online_cohort_codename"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"
