@@ -34,7 +34,7 @@ class Event < ActiveRecord::Base
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
                   :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :banner_text, :banner_type, :registration_ends,
-                  :cancellation_policy
+                  :cancellation_policy, :enable_online_payment, :online_course_codename, :online_cohort_codename, :specific_subtitle
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
             :country, :trainer, :event_type, :duration, :start_time, :end_time, :address, :mode, :presence => true
