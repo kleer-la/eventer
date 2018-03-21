@@ -209,6 +209,11 @@
           .row-fuid
             .span12
               .control-group
+                %label.control-label{ :for => :jit_payment_link }= t("formtastic.labels.event.jit_payment_link")
+                = f.text_field :jit_payment_link, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.jit_payment_link")
+          .row-fuid
+            .span12
+              .control-group
                 %label.control-label{ :for => :should_ask_for_referer_code }= t("formtastic.labels.event.should_ask_for_referer_code")
                 = f.check_box :should_ask_for_referer_code
           .row-fuid
@@ -261,6 +266,11 @@
               .control-group
                 %label.control-label{ :for => :banner_type }= t("formtastic.labels.event.banner_type")
                 = f.collection_select :banner_type, [["Info (azul)", "info"], ["Success (verde)", "success"], ["Warning (amarillo)", "warning"], ["Danger (rojo)", "danger"]], :last, :first, {include_blank: 'Selecciona uno...'}
+          .row-fluid
+            .span12
+              .control-group
+                %label.control-label{ :for => :specific_subtitle }= t("formtastic.labels.event.specific_subtitle")
+                = f.text_field :specific_subtitle, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.specific_subtitle")
           .row-fuid
             .span12
               .control-group
@@ -273,7 +283,7 @@
           .row-fuid
             .span12
               .control-group
-                %label.control-label{ :for => :specific_conditions }= t("formtastic.labels.event.cancellation_policy")
+                %label.control-label{ :for => :cancellation_policy }= t("formtastic.labels.event.cancellation_policy")
                 = f.text_area :cancellation_policy, :rows => 10, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.cancellation_policy")
                 %a.btn.btn-small.btn-info.btn-cancellation-policy{ :href => "#"}
                   %i.icon-tasks
@@ -442,7 +452,7 @@
 
   function eventDateChanged( value ) {
 
-    if ($("#event_registration_ends").val() == "") 
+    if ($("#event_registration_ends").val() == "")
       $("#event_registration_ends").val( value );
 
     var date_string = value.substr(6,4) + "-" + value.substr(3,2) + "-" + value.substr(0,2);
