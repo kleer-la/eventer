@@ -179,7 +179,9 @@ ActiveRecord::Schema.define(:version => 20180321014100) do
     t.date     "registration_ends"
     t.text     "cancellation_policy"
     t.string   "specific_subtitle"
-    t.string   "jit_payment_link"
+    t.boolean  "enable_online_payment",                                                     :default => false
+    t.string   "online_course_codename"
+    t.string   "online_cohort_codename"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"
