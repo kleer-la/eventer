@@ -52,19 +52,20 @@
                 = f.collection_select :event_id, Event.find(:all).sort{|p1,p2| p1.unique_name <=> p2.unique_name}, :id, :unique_name, {include_blank: 'Selecciona uno...'}, {:style => "width:500px"}
           %hr
           .row-fluid
-            .span2
+            .span3
               .control-group
                 %label.control-label{ :for => :xero_invoice_number }= t("formtastic.labels.participant.xero_invoice_number")
                 = f.text_field :xero_invoice_number, placeholder: "FC-00000"
-            .span2
+            .span3
               .control-group
                 %label.control-label{ :for => :xero_invoice_reference }= t("formtastic.labels.participant.xero_invoice_reference")
                 = f.text_field :xero_invoice_reference, placeholder: "A 0000-00000000"
-            .span2
+            .span3
               .control-group
                 %label.control-label{ :for => :xero_invoice_amount }= t("formtastic.labels.participant.xero_invoice_amount")
                 = f.text_field :xero_invoice_amount, placeholder: "100.00"
-            .span2
+          .row-fluid
+            .span3
               .control-group
                 %label.control-label{ :for => :payment_type }= t("formtastic.labels.participant.payment_type")
                 = f.collection_select :payment_type, [["Cash", "C"], ["Mercado Pago", "MP"], ["PayPal", "PP"], ["Transferencia", "WT"], ["Depósito", "D"]], :last, :first, {include_blank: 'Ninguna'}
@@ -72,6 +73,10 @@
               .control-group
                 %label.control-label{ :for => :is_payed }= t("formtastic.labels.participant.is_payed")
                 = f.check_box :is_payed
+            .span3
+              .control-group
+                %label.control-label{ :for => :konline_po_number }= "PO Number (online.kleer.la)"
+                = f.text_field :konline_po_number, placeholder: "PO-XXXXXXXXX", disabled: true
           .row-fluid
             .span12
               .control-group
