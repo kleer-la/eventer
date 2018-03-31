@@ -30,10 +30,10 @@ class ApiController < ApplicationController
 
       @event = Event.where("online_course_codename = ? AND online_cohort_codename = ?", course_codename, cohort_codename).first
       if !@event.nil?
-        @participant = event.participants.where("email = ?", participant_email ).last
+        @participant = @event.participants.where("email = ?", participant_email ).last
 
         if @participant.nil?
-          @participant = event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname)
+          @participant = @event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname)
         end
 
         if status == "KONLINE_NEW"
