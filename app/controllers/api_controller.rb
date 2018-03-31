@@ -26,18 +26,25 @@ class ApiController < ApplicationController
       event = Event.where("online_course_codename = ? AND online_cohort_codename = ?", course_codename, cohort_codename).first
       if !event.nil?
         participant = event.participants.where("email = ?", participant_email ).last
+
         if participant.nil?
           participant = event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname)
         end
+
         if status == "KONLINE_NEW"
           participant.status = Participant::STATUS[:new]
         elsif status == "KONLINE_PURCHASED"
           participant.status = Participant::STATUS[:confirmed]
         end
+
         participant.konline_po_number = po_number
         participant.save!
+        render plain: "OK: #{participant.id.to_s}"
+      else
+        render plain: "ERROR: Event not found."
       end
-
+    else
+      render plain: "ERROR: Unauthorized api call."
     end
   end
 
