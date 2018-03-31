@@ -25,6 +25,8 @@ class ApiController < ApplicationController
       course_codename = params[:course_codename]
       cohort_codename = params[:cohort_codename]
       participant_email = params[:participant_email]
+      participant_fname = params[:participant_fname]
+      participant_lname = params[:participant_lname]
       status = params[:status]
       po_number = params[:po_number]
 
