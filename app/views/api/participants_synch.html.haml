@@ -1,0 +1,7 @@
+- if !@authorized_call
+  = "ERROR: unauthorized api call"
+- else
+  - if @event.nil?
+    = "ERROR: event not found"
+  - elsif !@participant.nil?
+    = "OK: #{@participant.id}"
