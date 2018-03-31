@@ -46,6 +46,7 @@ Eventer::Application.routes.draw do
   match 'api/categories' => 'home#categories'
 
   match 'api/2/upcoming_events' => 'api#index'
+  match 'api/2/participants/synch' => 'api#participants_synch'
 
 
   match 'public_events/:id' => 'public_events#show'
