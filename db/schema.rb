@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180321014100) do
+ActiveRecord::Schema.define(:version => 20180331143036) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -220,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20180321014100) do
     t.string   "payment_type"
     t.integer  "campaign_id"
     t.integer  "campaign_source_id"
+    t.string   "konline_po_number"
   end
 
   add_index "participants", ["event_id"], :name => "index_participants_on_event_id"
