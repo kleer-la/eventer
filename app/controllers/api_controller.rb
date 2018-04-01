@@ -28,6 +28,7 @@ class ApiController < ApplicationController
       participant_fname = params[:participant_fname]
       participant_lname = params[:participant_lname]
       status = params[:status]
+      notes = params[:notes]
       po_number = params[:po_number]
 
       @event = Event.where("online_course_codename = ? AND online_cohort_codename = ?", course_codename, cohort_codename).first
@@ -36,7 +37,9 @@ class ApiController < ApplicationController
 
         if @participant.nil?
           iz = InfluenceZone.where("zone_name = ? AND tag_name = ?", "Capital Federal", "ZI-AMS-AR-BUE (Buenos Aires)").first
-          @participant = @event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname, :influence_zone => iz, :phone => "N/A", :notes => "Creado desde online.kleer.la, PO: #{po_number}")
+          @participant = @event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname, :influence_zone => iz, :phone => "N/A", :notes => notes)
+        else
+          @participant.notes = "#{notes}\n#{@participant.notes}"
         end
 
         if status == "KONLINE_NEW"
