@@ -62,6 +62,7 @@ class Participant < ActiveRecord::Base
   scope :confirmed_or_attended, where("status=? OR status=?", STATUS[:confirmed], STATUS[:attended])
 
   scope :surveyed, where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1')
+  scope :cotrainer_surveyed, where('trainer2_rating > 0 AND event_rating > 0 and promoter_score > -1')
   scope :promoter, where('promoter_score >= 9')
   scope :passive, where('promoter_score <= 8 AND promoter_score >= 7')
   scope :detractor, where('promoter_score <= 6')
