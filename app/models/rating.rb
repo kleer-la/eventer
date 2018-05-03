@@ -104,7 +104,7 @@ class Rating < ActiveRecord::Base
 
   def self.calculate_tainer_settings
     # calculate trainer ratings
-  	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.surveyed.count > 0 }.each do |tr|
+  	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.cotrained_surveyed.count > 0 }.each do |tr|
   		#rating
   		cualified_participants = tr.participants.attended.surveyed
       cualified_cotrained_participants = tr.cotrained_participants.attended.cotrainer_surveyed
@@ -119,13 +119,7 @@ class Rating < ActiveRecord::Base
       end
 
       if rating_as_cotrainer_count > 0
-        begin
-          rating_as_cotrainer_sum  = cualified_cotrained_participants.collect{ |p| p.trainer2_rating}.sum.to_f
-        rescue
-          # BUG no resuelto si quedo en nil el puntaje de un cotrainer
-        end
-
-        rating_as_cotrainer_count= cualified_cotrained_participants.count
+        rating_as_cotrainer_sum  = cualified_cotrained_participants.collect{ |p| p.trainer2_rating}.sum.to_f
       end
 
       if rating_as_trainer_count+rating_as_cotrainer_count>0
