@@ -104,7 +104,7 @@ class Rating < ActiveRecord::Base
 
   def self.calculate_tainer_settings
     # calculate trainer ratings
-  	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.cotrained_surveyed.count > 0 }.each do |tr|
+  	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.cotrainer_surveyed.count > 0 }.each do |tr|
   		#rating
   		cualified_participants = tr.participants.attended.surveyed
       cualified_cotrained_participants = tr.cotrained_participants.attended.cotrainer_surveyed
