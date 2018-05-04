@@ -83,20 +83,19 @@ class Rating < ActiveRecord::Base
 
   		#nps
   		promoter_count = cualified_participants.promoter.length.to_f
-		passive_count = cualified_participants.passive.length.to_f
-		detractor_count = cualified_participants.detractor.length.to_f
-		attended_count = (promoter_count+passive_count+detractor_count)
+  		passive_count = cualified_participants.passive.length.to_f
+  		detractor_count = cualified_participants.detractor.length.to_f
+  		attended_count = (promoter_count+passive_count+detractor_count)
 
-		if (promoter_count+detractor_count) > 0
-		   promoter_percent = promoter_count / attended_count
-		   detractor_percent = detractor_count / attended_count
-
-		   et.promoter_count = promoter_count
-		   et.net_promoter_score = ((promoter_percent - detractor_percent).round(2)*100).to_i
-
-		else
-		   et.net_promoter_score = nil
-		end
+  		if (promoter_count+detractor_count) > 0
+  		   promoter_percent = promoter_count / attended_count
+  		   detractor_percent = detractor_count / attended_count
+        
+  		   et.promoter_count = promoter_count
+  		   et.net_promoter_score = ((promoter_percent - detractor_percent).round(2)*100).to_i
+  		else
+  		   et.net_promoter_score = nil
+  		end
 
   		et.save! unless !et.valid?
   	end
