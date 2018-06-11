@@ -11,11 +11,12 @@ class Participant < ActiveRecord::Base
                   :status, :notes, :influence_zone_id, :influence_zone,
                   :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
                   :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
-                  :campaign_source, :campaign
+                  :campaign_source, :campaign, :accept_terms
 
   validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
 
   validates :email, :email => true
+  validates_acceptance_of :accept_terms, message: 'No podemos contactarlo si no acepta los términos.'
 
   def self.val_range(record, attr, value, msg, from, to)
     record.errors.add(attr, msg) unless value.nil? || (value >= from && value <= to)
@@ -188,6 +189,10 @@ class Participant < ActiveRecord::Base
   def self.search(searching)
     s= searching.downcase
     Participant.find(:all).find_all {|p| (p.fname + ' ' + p.lname).downcase.include?(s)}
+  end
+
+  def accept_terms
+    #Placeholder for accepting terms & conditions
   end
 
 end

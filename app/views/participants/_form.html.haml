@@ -50,6 +50,11 @@
       = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: I18n.t("formtastic.labels.participant.zone")}
     .row-fluid
       .span12
+      .control-group
+        %label.control-label{ :for => :accept_terms }= I18n.t("formtastic.labels.participant.accept_terms").html_safe
+        = f.check_box :accept_terms, :required => true
+    .row-fluid
+      .span12
         = recaptcha_tags
     .row-fluid
       .span12
@@ -62,6 +67,7 @@
                 = I18n.t("formtastic.button.participant.register")
               - else
                 = I18n.t("formtastic.button.participant.more_info")
+
 
 :javascript
   $(document).ready(function() {

@@ -117,6 +117,9 @@ en:
         referer_code: "Reference code"
         notes: "Optional: additional data or question"
         zone: "Where are you?"
+        payment_type: "Payment type"
+        is_payed: "Paid"
+        accept_terms: "I have read and accepted <a href='http://www.kleer.la/en/privacy'>the privacy policy</a>."
       trainer:
         new_title: "New Trainer"
         bio_en: "Bio EN"
