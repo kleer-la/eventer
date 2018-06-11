@@ -1,8 +1,8 @@
 GIT
-  remote: git://github.com/ambethia/recaptcha.git
-  revision: cc828a93f4fca00c2e199412d5141f0968bcffa5
+  remote: https://github.com/ambethia/recaptcha.git
+  revision: 7ed15d060186c1465948aa2f17f338ba001027d8
   specs:
-    recaptcha (4.3.1)
+    recaptcha (4.8.0)
       json
 
 GEM
@@ -283,7 +283,6 @@ DEPENDENCIES
   database_cleaner
   delayed_job_active_record
   devise (= 3.1.0)
-  digest
   dimensions
   execjs
   factory_girl_rails
@@ -316,5 +315,8 @@ DEPENDENCIES
   valid_email
   will_paginate (~> 3.1.0)
 
+RUBY VERSION
+   ruby 2.1.8p440
+
 BUNDLED WITH
-   1.15.0
+   1.16.2
