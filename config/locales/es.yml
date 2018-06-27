@@ -119,6 +119,7 @@ es:
         zone: "Tu lugar más próximo ..."
         payment_type: "Forma de Pago"
         is_payed: "Pagado"
+        accept_terms: "He leído y aceptado <a href='http://www.kleer.la/es/privacy'>la política de privacidad</a>."
       trainer:
         new_title: "Nuevo Entrenador"
         bio_en: "Bio EN"

@@ -96,9 +96,10 @@ gem 'newrelic_rpm'
 # Gemas necesarias para integracion con mailchimp workflow
 gem 'httparty'
 gem 'json'
-gem 'digest'
+#gem 'digest'
+
 #reCaptcha
-gem "recaptcha", require: "recaptcha/rails", github: "ambethia/recaptcha"
+gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate', '~> 3.1.0'

@@ -52,19 +52,19 @@ class Rating < ActiveRecord::Base
 
   		#nps
   		promoter_count = cualified_participants.promoter.length.to_f
-		passive_count = cualified_participants.passive.length.to_f
-		detractor_count = cualified_participants.detractor.length.to_f
-		attended_count = (promoter_count+passive_count+detractor_count)
+  		passive_count = cualified_participants.passive.length.to_f
+  		detractor_count = cualified_participants.detractor.length.to_f
+  		attended_count = (promoter_count+passive_count+detractor_count)
 
-		if (promoter_count+detractor_count) > 0
-		   promoter_percent = promoter_count / attended_count
-		   detractor_percent = detractor_count / attended_count
+  		if (promoter_count+detractor_count) > 0
+  		   promoter_percent = promoter_count / attended_count
+  		   detractor_percent = detractor_count / attended_count
 
-		   e.net_promoter_score = ((promoter_percent - detractor_percent).round(2)*100).to_i
+  		   e.net_promoter_score = ((promoter_percent - detractor_percent).round(2)*100).to_i
 
-		else
-		   e.net_promoter_score = nil
-		end
+  		else
+  		   e.net_promoter_score = nil
+  		end
 
   		e.save! unless !e.valid?
   	end
@@ -83,20 +83,19 @@ class Rating < ActiveRecord::Base
 
   		#nps
   		promoter_count = cualified_participants.promoter.length.to_f
-		passive_count = cualified_participants.passive.length.to_f
-		detractor_count = cualified_participants.detractor.length.to_f
-		attended_count = (promoter_count+passive_count+detractor_count)
+  		passive_count = cualified_participants.passive.length.to_f
+  		detractor_count = cualified_participants.detractor.length.to_f
+  		attended_count = (promoter_count+passive_count+detractor_count)
 
-		if (promoter_count+detractor_count) > 0
-		   promoter_percent = promoter_count / attended_count
-		   detractor_percent = detractor_count / attended_count
-
-		   et.promoter_count = promoter_count
-		   et.net_promoter_score = ((promoter_percent - detractor_percent).round(2)*100).to_i
-
-		else
-		   et.net_promoter_score = nil
-		end
+  		if (promoter_count+detractor_count) > 0
+  		   promoter_percent = promoter_count / attended_count
+  		   detractor_percent = detractor_count / attended_count
+        
+  		   et.promoter_count = promoter_count
+  		   et.net_promoter_score = ((promoter_percent - detractor_percent).round(2)*100).to_i
+  		else
+  		   et.net_promoter_score = nil
+  		end
 
   		et.save! unless !et.valid?
   	end
@@ -104,10 +103,10 @@ class Rating < ActiveRecord::Base
 
   def self.calculate_tainer_settings
     # calculate trainer ratings
-  	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.surveyed.count > 0 }.each do |tr|
+  	Trainer.select{ |tr| tr.participants.surveyed.count > 0 || tr.cotrained_participants.cotrainer_surveyed.count > 0 }.each do |tr|
   		#rating
   		cualified_participants = tr.participants.attended.surveyed
-      cualified_cotrained_participants = tr.cotrained_participants.attended.surveyed
+      cualified_cotrained_participants = tr.cotrained_participants.attended.cotrainer_surveyed
 
       rating_as_trainer_count = cualified_participants.count
       rating_as_cotrainer_count = cualified_cotrained_participants.count
@@ -115,23 +114,18 @@ class Rating < ActiveRecord::Base
       rating_as_cotrainer_sum = 0
 
       if rating_as_trainer_count > 0
-        rating_as_trainer_sum=  cualified_participants.collect{ |p| p.trainer_rating}.sum.to_f
+        rating_as_trainer_sum = cualified_participants.collect{ |p| p.trainer_rating}.sum.to_f
       end
 
       if rating_as_cotrainer_count > 0
-        begin
-          rating_as_cotrainer_sum  = cualified_cotrained_participants.collect{ |p| p.trainer2_rating}.sum.to_f
-        rescue
-          # BUG no resuelto si quedo en nil el puntaje de un cotrainer
-        end
-
-        rating_as_cotrainer_count= cualified_cotrained_participants.count
+        rating_as_cotrainer_sum  = cualified_cotrained_participants.collect{ |p| p.trainer2_rating}.sum.to_f
       end
 
       if rating_as_trainer_count+rating_as_cotrainer_count>0
         tr.surveyed_count = rating_as_trainer_count+rating_as_cotrainer_count
         tr.average_rating = (rating_as_trainer_sum+rating_as_cotrainer_sum) / tr.surveyed_count
       end
+      
   		#nps
   		promoter_count = cualified_participants.promoter.length.to_f
   		passive_count = cualified_participants.passive.length.to_f
