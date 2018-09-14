@@ -11,13 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180331143036) do
+ActiveRecord::Schema.define(:version => 20180914213149) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "campaign_sources", ["codename"], :name => "index_campaign_sources_on_codename"
 
   create_table "campaign_views", :force => true do |t|
     t.integer  "campaign_id"
@@ -28,12 +30,19 @@ ActiveRecord::Schema.define(:version => 20180331143036) do
     t.string   "element_viewed"
   end
 
+  add_index "campaign_views", ["campaign_id"], :name => "index_campaign_views_on_campaign_id"
+  add_index "campaign_views", ["campaign_source_id"], :name => "index_campaign_views_on_campaign_source_id"
+  add_index "campaign_views", ["element_viewed"], :name => "index_campaign_views_on_element_viewed"
+  add_index "campaign_views", ["event_id"], :name => "index_campaign_views_on_event_id"
+
   create_table "campaigns", :force => true do |t|
     t.string   "codename"
     t.text     "description"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
+
+  add_index "campaigns", ["codename"], :name => "index_campaigns_on_codename"
 
   create_table "categories", :force => true do |t|
     t.string   "name"
