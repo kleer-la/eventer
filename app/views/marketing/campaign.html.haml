@@ -76,10 +76,10 @@
                         %td= event.name
                         %td= event.date
                         %td= event.country
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "registration_form").count
-                        %td= event.participants.where(campaign_id: @campaign.id).count
-                        %td= event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).count
+                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "landing").count
+                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "registration_form").count
+                        %td= event.participants.where(campaign_id: @campaign.id).where("created_at >= ?", @since).count
+                        %td= event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("created_at >= ?", @since).count
 
           .tab-pane#event_types
             .responsive-table
@@ -101,10 +101,10 @@
                     - @campaign.event_types(@since).each do |event_type|
                       %tr
                         %td= event_type.name
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "registration_form").count
-                        %td= event_type.participants.where(campaign_id: @campaign.id).count
-                        %td= event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).count
+                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where(element_viewed: "landing").count
+                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where(element_viewed: "registration_form").count
+                        %td= event_type.participants.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).count
+                        %td= event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).count
 
           -#.tab-pane#countries
             .responsive-table
