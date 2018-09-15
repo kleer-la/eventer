@@ -17,8 +17,8 @@ class Campaign < ActiveRecord::Base
   end
 
   def event_types(since, untilll)
-    @event_type_ids = events(since,untilll).map{ |p| p.event_type_id }
-    EventType.where('id in (?)', @event_type_ids ).order('created_at DESC')
+    @event_ids = events(since,untilll).map{ |p| p.event_type_id }
+    EventType.where('id in (?)', @event_ids ).order('created_at DESC')
   end
 
   def campaign_sources(since, untilll)
