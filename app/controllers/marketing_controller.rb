@@ -44,7 +44,7 @@ class MarketingController < ApplicationController
       else
         @since = DateTime.now-36000
       end
-      @camapign_ids = CampaignView.where("updated_at >= ?", @since ).where("updated_at < ?", @until ).map{ |p| p.campaign_id }
+      @camapign_ids = CampaignView.where("created_at >= ?", @since ).where("created_at < ?", @until ).map{ |p| p.campaign_id }
       @camapigns = Campaign.where('id in (?)', @camapign_ids ).order('updated_at DESC')
     end
   end
