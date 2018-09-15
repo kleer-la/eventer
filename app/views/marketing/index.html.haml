@@ -29,20 +29,28 @@
                 %td
                   %strong Confirmados
                 %td
+                  %strong Conversion Rate (%)
+                %td
                   %strong Fecha Inicio
                 %td
                   %strong Última Acción (View o Registro)
             %tbody
               - @camapigns.each do |campaign|
+                - visitors_count = CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+                - interested_count = CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+                - registrants_count = Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                - sales_count = Participant.confirmed_or_attended.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                - conversion_rate = (visitors_count==0 )? 0 : sales_count.to_f / visitors_count.to_f * 100
                 %tr
                   %td
                     %a{ href: "/marketing/campaigns/#{campaign.id}/#{@time_segment}" }
                       = campaign.display_name
-                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
-                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
-                  %td= Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
-                  %td= Participant.confirmed_or_attended.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                  %td= visitors_count
+                  %td= interested_count
+                  %td= registrants_count
+                  %td= sales_count
+                  %td= conversion_rate.round(0)
                   %td
-                    = campaign.created_at
+                    = campaign.created_at.strftime("%d-%b-%Y")
                   %td
-                    = campaign.updated_at
+                    = campaign.updated_at.strftime("%d-%b-%Y")

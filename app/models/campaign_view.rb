@@ -1,5 +1,6 @@
 class CampaignView < ActiveRecord::Base
   belongs_to :event
+  belongs_to :event_type
   belongs_to :campaign
   belongs_to :campaign_source
 

@@ -46,14 +46,28 @@
                       %td
                         %strong Registration Form Views
                       %td
+                        %strong Registros
+                      %td
+                        %strong Confirmados
+                      %td
+                        %strong Conversion Rate (%)
+                      %td
                         %strong Última Acción (View o Registro)
                   %tbody
-                    - @campaign.campaign_sources.order("updated_at DESC").each do |source|
+                    - @campaign.campaign_sources(@since, @until).order("updated_at DESC").each do |source|
+                      - visitors_count = source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+                      - interested_count = source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+                      - registrants_count = source.participants.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                      - sales_count = source.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                      - conversion_rate = (visitors_count==0 )? 0 : sales_count.to_f / visitors_count.to_f * 100
                       %tr
                         %td= source.display_name
-                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
-                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
-                        %td= source.updated_at
+                        %td= visitors_count
+                        %td= interested_count
+                        %td= registrants_count
+                        %td= sales_count
+                        %td= conversion_rate.round(0)
+                        %td= source.updated_at.strftime("%d-%b-%Y")
 
           .tab-pane#events
             .responsive-table
@@ -75,16 +89,24 @@
                         %strong Registros
                       %td
                         %strong Confirmados
+                      %td
+                        %strong Conversion Rate (%)
                   %tbody
-                    - @campaign.events(@since).each do |event|
+                    - @campaign.events(@since, @until).each do |event|
+                      - visitors_count = CampaignView.where(campaign_id: @campaign.id).where(event_id: event.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+                      - interested_count = CampaignView.where(campaign_id: @campaign.id).where(event_id: event.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+                      - registrants_count = event.participants.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                      - sales_count = event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                      - conversion_rate = (visitors_count==0 )? 0 : sales_count.to_f / visitors_count.to_f * 100
                       %tr
                         %td= event.name
                         %td= event.date
                         %td= event.country
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
-                        %td= event.participants.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
-                        %td= event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                        %td= visitors_count
+                        %td= interested_count
+                        %td= registrants_count
+                        %td= sales_count
+                        %td= conversion_rate.round(0)
 
           .tab-pane#event_types
             .responsive-table
@@ -102,14 +124,22 @@
                         %strong Registros
                       %td
                         %strong Confirmados
+                      %td
+                        %strong Conversion Rate (%)
                   %tbody
-                    - @campaign.event_types(@since).each do |event_type|
+                    - @campaign.event_types(@since, @until).each do |event_type|
+                      - visitors_count = CampaignView.where(campaign_id: @campaign.id).where(event_type_id: event_type.id).where("campaign_views.created_at >= ?", @since).where("campaign_views.created_at < ?", @until ).where(element_viewed: "landing").count
+                      - interested_count = CampaignView.where(campaign_id: @campaign.id).where(event_type_id: event_type.id).where("campaign_views.created_at >= ?", @since).where("campaign_views.created_at < ?", @until ).where(element_viewed: "registration_form").count
+                      - registrants_count = event_type.participants.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).where("participants.created_at < ?", @until ).count
+                      - sales_count = event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("participants.created_at < ?", @until ).where("participants.created_at >= ?", @since).count
+                      - conversion_rate = (visitors_count==0 )? 0 : sales_count.to_f / visitors_count.to_f * 100
                       %tr
                         %td= event_type.name
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where("campaign_views.created_at < ?", @until ).where(element_viewed: "landing").count
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where("campaign_views.created_at < ?", @until ).where(element_viewed: "registration_form").count
-                        %td= event_type.participants.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).where("participants.created_at < ?", @until ).count
-                        %td= event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("participants.created_at < ?", @until ).where("participants.created_at >= ?", @since).count
+                        %td= visitors_count
+                        %td= interested_count
+                        %td= registrants_count
+                        %td= sales_count
+                        %td= conversion_rate.round(0)
 
           -#.tab-pane#countries
             .responsive-table

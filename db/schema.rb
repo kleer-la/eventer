@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180914213149) do
+ActiveRecord::Schema.define(:version => 20180915161333) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -28,12 +28,14 @@ ActiveRecord::Schema.define(:version => 20180914213149) do
     t.datetime "updated_at",         :null => false
     t.integer  "campaign_source_id"
     t.string   "element_viewed"
+    t.integer  "event_type_id"
   end
 
   add_index "campaign_views", ["campaign_id"], :name => "index_campaign_views_on_campaign_id"
   add_index "campaign_views", ["campaign_source_id"], :name => "index_campaign_views_on_campaign_source_id"
   add_index "campaign_views", ["element_viewed"], :name => "index_campaign_views_on_element_viewed"
   add_index "campaign_views", ["event_id"], :name => "index_campaign_views_on_event_id"
+  add_index "campaign_views", ["event_type_id"], :name => "index_campaign_views_on_event_type_id"
 
   create_table "campaigns", :force => true do |t|
     t.string   "codename"
