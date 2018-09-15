@@ -7,6 +7,9 @@ class Campaign < ActiveRecord::Base
   has_many :participants
   attr_accessible :codename, :description
 
+  scope :real, where("codename <> ''")
+  scope :fake, where("codename == NULL")
+
   def display_name
     (!self.codename.nil? && self.codename != "") ? self.codename : "n/a"
   end
