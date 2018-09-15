@@ -2,11 +2,12 @@
   .box-header.blue-background
     .title Funnel
   .box-content
-    - if @campaign.nil?
-      - @visitors_count = CampaignView.where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
-      - @interested_count = CampaignView.where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
-      - @registrants_count = Participant.where("created_at >= ?", @since).where("created_at < ?", @until ).count
-      - @sales_count = Participant.confirmed_or_attended.where("created_at >= ?", @since).where("created_at < ?", @until ).count
+    - if @campaign.nil? && !@camapigns.nil?
+      - campaign_ids = @camapigns.map{ |p| p.id }
+      - @visitors_count = CampaignView.where("campaign_id in (?)", campaign_ids).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+      - @interested_count = CampaignView.where("campaign_id in (?)", campaign_ids).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+      - @registrants_count = Participant.where("campaign_id in (?)", campaign_ids).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+      - @sales_count = Participant.confirmed_or_attended.where("campaign_id in (?)", campaign_ids).where("created_at >= ?", @since).where("created_at < ?", @until ).count
     - else
       - @visitors_count = CampaignView.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
       - @interested_count = CampaignView.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
