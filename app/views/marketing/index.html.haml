@@ -6,60 +6,7 @@
       = render partial: '/commons/time_segment_menu', locals: {top: '/marketing'}
 
 .col-sm-12
-  .box.bordered-box.red-border
-    .box-header.red-background
-      .title Funnel
-    .box-content
-      - @visitors_count = CampaignView.where("created_at >= ?", @since).where(element_viewed: "landing").count
-      - @interested_count = CampaignView.where("created_at >= ?", @since).where(element_viewed: "registration_form").count
-      - @registrants_count = Participant.where("created_at >= ?", @since).count
-      - @sales_count = Participant.confirmed_or_attended.where("created_at >= ?", @since).count
-      - @conversion_rate = (@visitors_count==0 )? 0 : @sales_count.to_f / @visitors_count.to_f * 100
-      = "Conversion Rate: #{@conversion_rate.round(0)}%"
-      .responsive-table
-        %table{ style: "background-image:url(/images/funnel.png);background-repeat:no-repeat;background-position: center;", width: 400 }
-          %tr
-            %td{ align: "center" }
-              %br
-              %br
-              %br
-              %br
-              %small
-                Landing Page Views
-              %br
-              %strong
-                = @visitors_count
-          %tr
-            %td{ align: "center" }
-              %br
-              %br
-              %br
-              %small
-                Registration Form Views
-              %br
-              %strong
-                = @interested_count
-          %tr
-            %td{ align: "center" }
-              %br
-              %small
-                Registros
-              %br
-              %strong
-                = @registrants_count
-          %tr
-            %td{ align: "center" }
-              %br
-              %small
-                Confirmados
-              %br
-              %strong
-                = @sales_count
-              %br
-              %br
-              %br
-
-      -#%img{ src: "/images/funnel.png" }
+  = render partial: '/marketing/funnel'
 
 .col-sm-12
   .box.bordered-box.red-border
