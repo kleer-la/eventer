@@ -3,14 +3,14 @@
     %i.icon-bar-chart
     %span
       %a(href='/marketing') Marketing:
-      = render partial: '/commons/time_segment_menu', locals: {top: '/marketing'}
+      = render partial: '/marketing/time_segment_menu', locals: {top: '/marketing'}
 
 .col-sm-12
   = render partial: '/marketing/funnel'
 
 .col-sm-12
   .box.bordered-box.red-border
-    .box-header.red-background
+    .box-header.green-background
       .title Campañas
     .box-content.box-no-padding
       .responsive-table
@@ -38,10 +38,10 @@
                   %td
                     %a{ href: "/marketing/campaigns/#{campaign.id}/#{@time_segment}" }
                       = campaign.display_name
-                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where(element_viewed: "landing").count
-                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where(element_viewed: "registration_form").count
-                  %td= Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).count
-                  %td= Participant.confirmed_or_attended.where(campaign_id: campaign.id).where("created_at >= ?", @since).count
+                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+                  %td= Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                  %td= Participant.confirmed_or_attended.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
                   %td
                     = campaign.created_at
                   %td

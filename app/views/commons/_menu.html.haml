@@ -24,6 +24,12 @@
             %a{ :href => "/event_types" }
               %i.icon-tasks
               %span Tipos de Evento
+        %li{ :class => menu_item_class(@active_menu, "marketing") }
+          %a{ :href => "/marketing" }
+            %i.icon-bar-chart
+            %span Marketing
+            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
+              new
         - if can? :manage, Category.new
           %li{ :class => menu_item_class(@active_menu, "categories") }
             %a{ :href => categories_path }

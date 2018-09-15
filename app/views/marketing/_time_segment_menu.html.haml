@@ -1,0 +1,22 @@
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @time_segment || "segmento"
+    %b.caret
+  %ul.dropdown-menu
+    %li
+      %a(href="#{top}/30")Último mes
+    %li
+      %a(href="#{top}/30-60")Mes anterior
+    %li
+      %a(href='#{top}/60')Últimos dos meses
+    %li
+      %a(href='#{top}/60-120')Dos meses anteriores
+    %li
+      %a(href='#{top}/90')Último trimestre
+    %li
+      %a(href='#{top}/90-180')Trimestre anterior
+    %li
+      %a(href='#{top}/365')Último año
+    -#%li
+      %a(href='#{top}/all')todos

@@ -25,24 +25,50 @@ class MarketingController < ApplicationController
 
   def index
     @time_segment = params[:time_segment]
-    @active_menu = @time_segment
+    @active_menu = "marketing"
     if @time_segment.nil?
       redirect_to "/marketing/30"
     else
-      @since = DateTime.now-36000
-      @since = DateTime.now-@time_segment.to_i if @time_segment != "all"
-      @camapigns = Campaign.where("updated_at >= ?", @since ).order("updated_at DESC")
+      if @time_segment.is_integer?
+        @since = DateTime.now-@time_segment.to_i
+        @until = DateTime.now
+      elsif @time_segment == "30-60"
+        @since = DateTime.now-60
+        @until = DateTime.now-30
+      elsif @time_segment == "60-120"
+        @since = DateTime.now-120
+        @until = DateTime.now-60
+      elsif @time_segment == "90-180"
+        @since = DateTime.now-180
+        @until = DateTime.now-90
+      else
+        @since = DateTime.now-36000
+      end
+      @camapigns = Campaign.where("updated_at >= ?", @since ).where("updated_at < ?", @until ).order("updated_at DESC")
     end
   end
 
   def campaign
     @time_segment = params[:time_segment]
-    @active_menu = @time_segment
+    @active_menu = "marketing"
     if @time_segment.nil?
       redirect_to "marketing/campaigns/#{params[:id]}/30"
     else
-      @since = DateTime.now-36000
-      @since = DateTime.now-@time_segment.to_i if @time_segment != "all"
+      if @time_segment.is_integer?
+        @since = DateTime.now-@time_segment.to_i
+        @until = DateTime.now
+      elsif @time_segment == "30-60"
+        @since = DateTime.now-60
+        @until = DateTime.now-30
+      elsif @time_segment == "60-120"
+        @since = DateTime.now-120
+        @until = DateTime.now-60
+      elsif @time_segment == "90-180"
+        @since = DateTime.now-180
+        @until = DateTime.now-90
+      else
+        @since = DateTime.now-36000
+      end
       @campaign = Campaign.find(params[:id])
     end
   end

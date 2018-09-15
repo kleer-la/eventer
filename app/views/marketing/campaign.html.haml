@@ -5,7 +5,7 @@
       Detalles de Campaña:
       = @campaign.display_name
     %br
-    = render partial: '/commons/time_segment_menu', locals: {top: "/marketing/campaigns/#{@campaign.id}"}
+    = render partial: '/marketing/time_segment_menu', locals: {top: "/marketing/campaigns/#{@campaign.id}"}
 
 .col-sm-12
   = render partial: '/marketing/funnel'
@@ -13,7 +13,7 @@
 .col-sm-12
 
   .box.bordered-box.red-border
-    .box-header.red-background
+    .box-header.green-background
       .title
         Campaña:
         = @campaign.display_name
@@ -51,8 +51,8 @@
                     - @campaign.campaign_sources.order("updated_at DESC").each do |source|
                       %tr
                         %td= source.display_name
-                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "landing").count
-                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "registration_form").count
+                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
                         %td= source.updated_at
 
           .tab-pane#events
@@ -81,10 +81,10 @@
                         %td= event.name
                         %td= event.date
                         %td= event.country
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "landing").count
-                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "registration_form").count
-                        %td= event.participants.where(campaign_id: @campaign.id).where("created_at >= ?", @since).count
-                        %td= event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("created_at >= ?", @since).count
+                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+                        %td= event.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+                        %td= event.participants.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+                        %td= event.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
 
           .tab-pane#event_types
             .responsive-table
@@ -106,10 +106,10 @@
                     - @campaign.event_types(@since).each do |event_type|
                       %tr
                         %td= event_type.name
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where(element_viewed: "landing").count
-                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where(element_viewed: "registration_form").count
-                        %td= event_type.participants.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).count
-                        %td= event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).count
+                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where("campaign_views.created_at < ?", @until ).where(element_viewed: "landing").count
+                        %td= event_type.campaign_views.where(campaign_id: @campaign.id).where("campaign_views.created_at >= ?", @since).where("campaign_views.created_at < ?", @until ).where(element_viewed: "registration_form").count
+                        %td= event_type.participants.where(campaign_id: @campaign.id).where("participants.created_at >= ?", @since).where("participants.created_at < ?", @until ).count
+                        %td= event_type.participants.confirmed_or_attended.where(campaign_id: @campaign.id).where("participants.created_at < ?", @until ).where("participants.created_at >= ?", @since).count
 
           -#.tab-pane#countries
             .responsive-table
