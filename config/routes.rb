@@ -74,7 +74,9 @@ Eventer::Application.routes.draw do
   match 'participants/search' => 'participants#search'
 
   get "marketing" => 'marketing#index'
+  get "marketing/:time_segment" => 'marketing#index'
   get "marketing/campaigns/:id" => 'marketing#campaign'
+  get "marketing/campaigns/:id/:time_segment" => 'marketing#campaign'
   match 'events/:id/viewed' => 'marketing#viewed'
 
   # Sample of named route:

@@ -2,7 +2,8 @@
   %h1.pull-left
     %i.icon-bar-chart
     %span
-      %a(href='/marketing') Marketing
+      %a(href='/marketing') Marketing:
+      = render partial: '/commons/time_segment_menu', locals: {top: '/marketing'}
 
 .col-sm-12
   .box.bordered-box.red-border
@@ -24,7 +25,7 @@
               - @camapigns.each do |campaign|
                 %tr
                   %td
-                    %a{ href: "/marketing/campaigns/#{campaign.id}" }
+                    %a{ href: "/marketing/campaigns/#{campaign.id}/#{@time_segment}" }
                       = campaign.display_name
                   %td
                     = campaign.created_at
