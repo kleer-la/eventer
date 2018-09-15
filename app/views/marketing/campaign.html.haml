@@ -66,7 +66,7 @@
                         %td= interested_count
                         %td= registrants_count
                         %td= sales_count
-                        %td= conversion_rate.round(0)
+                        %td= conversion_rate.round(2)
                         %td= source.updated_at.strftime("%d-%b-%Y")
 
           .tab-pane#events
@@ -106,7 +106,7 @@
                         %td= interested_count
                         %td= registrants_count
                         %td= sales_count
-                        %td= conversion_rate.round(0)
+                        %td= conversion_rate.round(2)
 
           .tab-pane#event_types
             .responsive-table
@@ -139,7 +139,7 @@
                         %td= interested_count
                         %td= registrants_count
                         %td= sales_count
-                        %td= conversion_rate.round(0)
+                        %td= conversion_rate.round(2)
 
           -#.tab-pane#countries
             .responsive-table

@@ -14,7 +14,7 @@
       - @registrants_count = Participant.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
       - @sales_count = Participant.where(campaign_id: @campaign.id).confirmed_or_attended.where("created_at >= ?", @since).where("created_at < ?", @until ).count
     - @conversion_rate = (@visitors_count==0 )? 0 : @sales_count.to_f / @visitors_count.to_f * 100
-    = "Conversion Rate: #{@conversion_rate.round(0)}%"
+    = "Conversion Rate: #{@conversion_rate.round(2)}%"
     .responsive-table
       %table{ style: "background-image:url(/images/funnel.png);background-repeat:no-repeat;background-position: center;", width: 400 }
         %tr
