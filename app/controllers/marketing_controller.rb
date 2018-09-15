@@ -70,6 +70,7 @@ class MarketingController < ApplicationController
         @until = DateTime.now-90
       else
         @since = DateTime.now-36000
+        @until = DateTime.now
       end
       @campaign = Campaign.find(params[:id])
     end
