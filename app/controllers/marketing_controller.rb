@@ -28,10 +28,10 @@ class MarketingController < ApplicationController
     @active_menu = @time_segment
     if @time_segment.nil?
       redirect_to "/marketing/30"
-    elsif @time_segment == "all"
-      @camapigns = Campaign.order("updated_at DESC")
     else
-      @camapigns = Campaign.where("updated_at >= ?", DateTime.now-@time_segment.to_i ).order("updated_at DESC")
+      @since = DateTime.now-36000
+      @since = DateTime.now-@time_segment.to_i if @time_segment != "all"
+      @camapigns = Campaign.where("updated_at >= ?", @since ).order("updated_at DESC")
     end
   end
 

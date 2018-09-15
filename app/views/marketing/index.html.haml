@@ -12,11 +12,19 @@
     .box-content.box-no-padding
       .responsive-table
         .scrollable-area
-          %table.table.table-hover.table-striped
+          %table.table.table-hover.table-striped.data-table
             %thead
               %tr
                 %td
                   %strong Nombre
+                %td
+                  %strong Landing Page Views
+                %td
+                  %strong Registration Form Views
+                %td
+                  %strong Registros
+                %td
+                  %strong Confirmados
                 %td
                   %strong Fecha Inicio
                 %td
@@ -27,6 +35,10 @@
                   %td
                     %a{ href: "/marketing/campaigns/#{campaign.id}/#{@time_segment}" }
                       = campaign.display_name
+                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where(element_viewed: "landing").count
+                  %td= CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where(element_viewed: "registration_form").count
+                  %td= Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).count
+                  %td= Participant.confirmed_or_attended.where(campaign_id: campaign.id).where("created_at >= ?", @since).count
                   %td
                     = campaign.created_at
                   %td
