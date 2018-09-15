@@ -24,17 +24,33 @@ class MarketingController < ApplicationController
   end
 
   def index
-    @camapigns = Campaign.order("updated_at DESC")
+    @time_segment = params[:time_segment]
+    @active_menu = @time_segment
+    if @time_segment.nil?
+      redirect_to "/marketing/30"
+    elsif @time_segment == "all"
+      @camapigns = Campaign.order("updated_at DESC")
+    else
+      @camapigns = Campaign.where("updated_at >= ?", DateTime.now-@time_segment.to_i ).order("updated_at DESC")
+    end
   end
 
   def campaign
-    @campaign = Campaign.find(params[:id])
+    @time_segment = params[:time_segment]
+    @active_menu = @time_segment
+    if @time_segment.nil?
+      redirect_to "marketing/campaigns/#{params[:id]}/30"
+    else
+      @since = DateTime.now-36000
+      @since = DateTime.now-@time_segment.to_i if @time_segment != "all"
+      @campaign = Campaign.find(params[:id])
+    end
   end
 
   private
 
   def activate_menu
-    @active_menu = "marketing"
+    @active_menu = "segmento"
   end
 
 end

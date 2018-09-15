@@ -3,12 +3,15 @@
     %i.icon-bar-chart
     %span
       Detalles de Campaña
+    = render partial: '/commons/time_segment_menu', locals: {top: "/marketing/campaigns/#{@campaign.id}"}
 
 .col-sm-12
 
   .box.bordered-box.red-border
     .box-header.red-background
-      .title= @campaign.display_name
+      .title
+        Campaña:
+        = @campaign.display_name
     .box-content.box-no-padding
       .tabbable{ :style => 'margin-top: 20px' }
         %ul.nav.nav-responsive.nav-tabs
@@ -43,8 +46,8 @@
                     - @campaign.campaign_sources.order("updated_at DESC").each do |source|
                       %tr
                         %td= source.display_name
-                        %td= source.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
-                        %td= source.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "registration_form").count
+                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "landing").count
+                        %td= source.campaign_views.where(campaign_id: @campaign.id).where("created_at >= ?", @since).where(element_viewed: "registration_form").count
                         %td= source.updated_at
 
           .tab-pane#events
@@ -68,7 +71,7 @@
                       %td
                         %strong Confirmados
                   %tbody
-                    - @campaign.events.each do |event|
+                    - @campaign.events(@since).each do |event|
                       %tr
                         %td= event.name
                         %td= event.date
@@ -95,7 +98,7 @@
                       %td
                         %strong Confirmados
                   %tbody
-                    - @campaign.event_types.each do |event_type|
+                    - @campaign.event_types(@since).each do |event_type|
                       %tr
                         %td= event_type.name
                         %td= event_type.campaign_views.where(campaign_id: @campaign.id).where(element_viewed: "landing").count
