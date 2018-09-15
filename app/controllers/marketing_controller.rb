@@ -13,7 +13,7 @@ class MarketingController < ApplicationController
       source = CampaignSource.where(codename: utm_source).first_or_create
       campaign = Campaign.where(codename: utm_campaign).first_or_create
 
-      CampaignView.create( campaign: campaign, campaign_source: source, event: @event, element_viewed: "landing" )
+      CampaignView.create( campaign: campaign, campaign_source: source, event: @event, event_type: @event.event_type, element_viewed: "landing" )
     end
 
     respond_to do |format|
