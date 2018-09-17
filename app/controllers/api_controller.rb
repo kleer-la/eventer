@@ -27,18 +27,26 @@ class ApiController < ApplicationController
       participant_email = params[:participant_email]
       participant_fname = params[:participant_fname]
       participant_lname = params[:participant_lname]
+      utm_source = params[:utm_source]
+      utm_campaign = params[:utm_campaign]
       status = params[:status]
       notes = params[:notes]
       po_number = params[:po_number]
 
       @event = Event.where("online_course_codename = ? AND online_cohort_codename = ?", course_codename, cohort_codename).first
       if !@event.nil?
+
+        source = CampaignSource.where(codename: utm_source).first_or_create
+        campaign = Campaign.where(codename: utm_campaign).first_or_create
+
         @participant = @event.participants.where("email = ?", participant_email ).last
 
         if @participant.nil?
           iz = InfluenceZone.where("zone_name = ? AND tag_name = ?", "Capital Federal", "ZI-AMS-AR-BUE (Buenos Aires)").first
-          @participant = @event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname, :influence_zone => iz, :phone => "N/A", :notes => notes)
+          @participant = @event.participants.create( :email => participant_email, :fname => participant_fname, :lname => participant_lname, :influence_zone => iz, :phone => "N/A", :notes => notes, :campaign => campaign, :campaign_source => source)
         else
+          @participant.campaign = campaign
+          @participant.campaign_source = source
           @participant.notes = "#{notes}\n#{@participant.notes}"
         end
 
