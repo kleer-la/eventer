@@ -51,6 +51,6 @@
                   %td= sales_count
                   %td= conversion_rate.round(2)
                   %td
-                    = campaign.created_at.strftime("%d-%b-%Y")
+                    = campaign.created_at.strftime("%F")
                   %td
-                    = campaign.updated_at.strftime("%d-%b-%Y")
+                    = campaign.updated_at.strftime("%F %H:%M")
