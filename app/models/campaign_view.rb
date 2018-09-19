@@ -6,7 +6,7 @@ class CampaignView < ActiveRecord::Base
 
   attr_accessible :campaign, :campaign_source, :event, :event_type, :element_viewed
 
-  after_commit do |view|
+  after_create do |view|
     view.campaign.touch unless view.campaign.nil?
     view.campaign_source.touch unless view.campaign_source.nil?
   end
