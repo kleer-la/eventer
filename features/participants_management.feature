@@ -19,19 +19,4 @@ Feature: Administración de Participantes
 		When I make a blank registration for that event
 		Then I should see an alert "Todos los campos son requeridos"
 
-#	Scenario: Certificado asistencia
-#		Given Im a logged in user
-#		And theres an event
-#        And I register for that event
-#		When I visit the certificate page
-#		Then I should receive a PDF file
-		
-#		Then I should see "Certificado de Asistencia"
-#        And  I should see "Tipo de Evento de Prueba"
-#        And  I should see "Juan Callidoro"
-#        And  I should see "31 de enero de 2030"
-#        And  I should see "Buenos Aires"
-
-			
-
 
