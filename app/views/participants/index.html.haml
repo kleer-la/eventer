@@ -29,10 +29,6 @@
       %a.btn.btn-white{ :href => "./participants_print", :target => "_blank" }
         %i.icon-print
         Asistencia
-      %a.btn.btn-white{ "data-toggle" => "modal", :href => "#modal-push-confirmation", :role => "button", :title => "Enviar Participantes a CapsuleCRM" }
-        %i.icon-circle-arrow-right
-        %i.icon-group
-        CapsuleCRM
       %a.btn.btn-white{ :href => "/events/#{@event.id}/participants_survey" }
         %i.icon-check
         Encuestas
@@ -40,25 +36,6 @@
         %i.icon-circle-arrow-right
         %i.icon-certificate
         Certificados
-
-.modal.hide.fade#modal-push-confirmation{ :role => :dialog, :tabindex => -1 }
-  .modal-header
-    %button.close{ "data-dismiss" => :modal, :type => "button" }
-      &times;
-    %h3
-      Finalizar evento y enviar participantes a CapsuleCRM
-  .modal-body
-    %h4
-      ¡Atención!
-    %p
-      Esta operación creará las personas en CapsuleCRM y aplicará los tags del curso y trainer SOLO a quienes están marcados como "Presente". Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas que participaron estén marcadas como "Presente" y que quienes estuvieron ausentes estén marcados como "Postergado" o "Cancelado".
-    %p
-      ¿Estás seguro/a de continuar?
-  .modal-footer
-    %button.btn{ "data-dismiss" => "modal" }
-      No, cancelar :(
-    %a.btn.btn-primary{ :href => "./push_to_crm" }
-      Si, continuar! :)
 
 .modal.hide.fade#modal-cert-confirmation{ :role => :dialog, :tabindex => -1 }
   .modal-header

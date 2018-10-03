@@ -102,12 +102,17 @@
                                   %br
                                   %br
                                   %b
+                                  - if @participant.event.trainer2.nil?
                                     Facilitador:
+                                  - else
+                                    Facilitadores:                                  
                                   - if @participant.event.trainer.linkedin_url.blank?
                                     %b= @participant.event.trainer.name
                                   - if ! @participant.event.trainer.linkedin_url.blank?
                                     %a{ :href => @participant.event.trainer.linkedin_url, :target => "_blank" }
                                       = @participant.event.trainer.name
+                                  - if ! @participant.event.trainer2.nil?
+                                    %b= " y "+ @participant.event.trainer2.name
                                   %br
                                   %br
                                   - if ! @participant.event.event_type.program.blank?
