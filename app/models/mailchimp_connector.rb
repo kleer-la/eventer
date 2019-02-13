@@ -33,5 +33,12 @@ class MailchimpConnector
     end
 
   end
-
+  def get_member email, list_id
+    email_md5 = Digest::MD5.hexdigest email.downcase
+    email_validation_call = "/lists/#{list_id}/members/#{email_md5}"
+    response = HTTParty.get("https://us1.api.mailchimp.com/3.0#{email_validation_call}",
+                            :headers => { 'Content-Type' => 'application/json'},
+                            :basic_auth => {:username => "anystring", :password => "#{Eventer::Application.config.mailchimp_token}"})
+    response.body
+  end
 end

@@ -320,6 +320,16 @@
                 %label.control-label{ :for => :mailchimp_workflow_call }= t("formtastic.labels.event.mailchimp_workflow_call")
                 = f.text_field :mailchimp_workflow_call, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.mailchimp_workflow_call")
           .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :mailchimp_workflow_for_warmup }= t("formtastic.labels.event.mailchimp_workflow_for_warmup")
+                = f.check_box :mailchimp_workflow_for_warmup
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :mailchimp_workflow_for_warmup_call }= t("formtastic.labels.event.mailchimp_workflow_for_warmup_call")
+                = f.text_field :mailchimp_workflow_for_warmup_call, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.mailchimp_workflow_for_warmup_call")
+          .row-fuid
             .span3
               .control-group
                 %label.control-label{ :for => :sepyme_enabled }= t("formtastic.labels.event.sepyme_enabled")

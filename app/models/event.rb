@@ -33,7 +33,7 @@ class Event < ActiveRecord::Base
                   :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
-                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :banner_text, :banner_type, :registration_ends,
+                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :mailchimp_workflow_for_warmup, :mailchimp_workflow_for_warmup_call, :banner_text, :banner_type, :registration_ends,
                   :cancellation_policy, :enable_online_payment, :online_course_codename, :online_cohort_codename, :specific_subtitle
 
   validates :date, :place, :capacity, :city, :visibility_type, :list_price,
@@ -84,9 +84,18 @@ class Event < ActiveRecord::Base
 
   validate :mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
 
+  validate :mailchimp_workflow_for_warmup_call_cannot_be_empty_when_mailchimp_warmup_is_checked
+
+
   def mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
     if mailchimp_workflow? && (mailchimp_workflow_call == "" || mailchimp_workflow_call.nil?)
       errors.add(:mailchimp_workflow_call, "can't be null or empty when Mailchimp Workflow is checked")
+    end
+  end
+
+  def mailchimp_workflow_for_warmup_call_cannot_be_empty_when_mailchimp_warmup_is_checked
+    if mailchimp_workflow_for_warmup && (mailchimp_workflow_for_warmup_call == "" || mailchimp_workflow_for_warmup_call.nil?)
+      errors.add(:mailchimp_workflow_for_warmup_call, "can't be null or empty when Mailchimp Workflow for Warmup is checked")
     end
   end
 

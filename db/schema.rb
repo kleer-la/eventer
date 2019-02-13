@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180915161333) do
+ActiveRecord::Schema.define(:version => 20190213161555) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -193,6 +193,8 @@ ActiveRecord::Schema.define(:version => 20180915161333) do
     t.boolean  "enable_online_payment",                                                     :default => false
     t.string   "online_course_codename"
     t.string   "online_cohort_codename"
+    t.boolean  "mailchimp_workflow_for_warmup"
+    t.string   "mailchimp_workflow_for_warmup_call"
   end
 
   add_index "events", ["country_id"], :name => "index_events_on_country_id"
