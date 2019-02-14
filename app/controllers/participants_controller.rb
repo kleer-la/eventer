@@ -138,30 +138,8 @@ class ParticipantsController < ApplicationController
             end
 
             if @event.mailchimp_workflow
-              workflow_call = @event.mailchimp_workflow_call
-              email = @participant.email
-
-              list_id = "46a03b3eb3" #Automation Workflow List
-
-              mailchimp = MailchimpConnector.new
-
-              email_md5 = Digest::MD5.hexdigest email.downcase
-              email_validation_call = "/lists/#{list_id}/members/#{email_md5}"
-              response = HTTParty.get("https://us1.api.mailchimp.com/3.0#{email_validation_call}",
-                                      :headers => { 'Content-Type' => 'application/json' },
-                                      :basic_auth => {:username => "anystring", :password => "#{Eventer::Application.config.mailchimp_token}"})
-
-              if JSON.parse(response.body)['status']==404
-                puts "#{@participant.email} no esta previamente registrado. Procederemos a registrarlo."
-                mailchimp.subscribe_email list_id, email, workflow_call, @participant
-              elsif JSON.parse(response.body)['status']=="unsubscribed"
-                puts "#{@participant.email} se ha dado de baja (unsubscribe). No podemos iniciar el workflow."
-              elsif JSON.parse(response.body)['status']=="subscribed"
-                puts "Enviando mail a #{@participant.email} "
-                mailchimp.start_workflow workflow_call, email
-              else
-                puts response.body
-              end
+              mailchimp_service = MailChimpService.new
+              mailchimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_call, @participant
             end
 
             if @event.should_welcome_email
@@ -193,9 +171,16 @@ class ParticipantsController < ApplicationController
   def update
     @participant = Participant.find(params[:id])
     @influence_zones = InfluenceZone.all
-
     respond_to do |format|
-      if @participant.update_attributes(params[:participant])
+      original_participant_status = @participant.status
+      participant_parameter = params[:participant]
+      if @participant.update_attributes(participant_parameter)
+        new_participant_status = participant_parameter[:status]
+        @event = Event.find(params[:event_id])
+        if @event.mailchimp_workflow_for_warmup && new_participant_status == "C" && new_participant_status != original_participant_status
+          mailChimp_service = MailChimpService.new
+          mailChimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_for_warmup_call, @participant
+        end
         format.html { redirect_to event_participants_path(@participant.event), notice: 'Participant was successfully updated.' }
         format.json { respond_with_bip(@participant) }
       else
