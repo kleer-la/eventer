@@ -10,7 +10,7 @@
         .icon-edit
           = @participant.fname + " " + @participant.lname
     .box-content
-      = form_for [@event, @participant] do |f|
+      = form_for [:event, @participant] do |f|
         %fieldset.inputs
           .row-fluid
             .span3
