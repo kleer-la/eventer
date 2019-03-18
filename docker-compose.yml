@@ -1,0 +1,11 @@
+version: "3"
+services:
+  eventer:
+    image: ruby:2.1.8
+    container_name: eventer
+    ports:
+      - '3000:3000'
+      - '5432:5432'
+    volumes:
+      - .:/home/eventer
+    tty: true
