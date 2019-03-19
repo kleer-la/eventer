@@ -52,7 +52,7 @@ class ParticipantsController < ApplicationController
   def new
     @participant = Participant.new
     @event = Event.find(params[:event_id])
-    @payment_on_eventer = params[:payment_on_eventer] ? true : false
+    session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
     @influence_zones = InfluenceZone.all
     @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
     @nakedform = !params[:nakedform].nil?
@@ -79,13 +79,14 @@ class ParticipantsController < ApplicationController
     end
 
     respond_to do |format|
-        format.html { render :layout => "empty_layout" }
+        format.html { render :layout => "empty_layout"}
         format.json { render json: @participant }
     end
  end
 
   # GET /participants/new/confirm
   def confirm
+    puts params
     @event = Event.find(params[:event_id])
     @nakedform = !params[:nakedform].nil?
 
@@ -143,7 +144,7 @@ class ParticipantsController < ApplicationController
               mailchimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_call, @participant
             end
 
-            if @event.should_welcome_email
+            if @event.should_welcome_email and !session[:payment_on_eventer]
               EventMailer.delay.welcome_new_event_participant(@participant)
             end
 
@@ -152,8 +153,15 @@ class ParticipantsController < ApplicationController
 
           end
 
-          format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: 'Tu pedido fue realizado exitosamente.' }
-          format.json { render json: @participant, status: :created, location: @participant }
+
+          if session[:payment_on_eventer]
+            @name = @participant.fname
+            format.html { render action: "confirm_with_payment", :layout => "empty_layout"}
+          else
+            format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: "Tu pedido fue realizado exitosamente." }
+            format.json { render json: @participant, status: :created, location: @participant }
+          end
+
         else
           format.html { render action: "new", :layout => "empty_layout" }
           format.json { render json: @participant.errors, status: :unprocessable_entity }

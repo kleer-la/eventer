@@ -1,0 +1,13 @@
+.controls
+  .form-wrapper
+    = render '/commons/notice'
+    - if @event.is_webinar?
+      %p registro.
+    - else
+      - if @event.should_welcome_email
+        %p ¡ importante.
+      - else
+        %p  evento.
+    = @name
+    = @event.country
+    = session[:payment_on_eventer]

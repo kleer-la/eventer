@@ -53,16 +53,18 @@
       .control-group
         %label.control-label{ :for => :accept_terms }= I18n.t("formtastic.labels.participant.accept_terms").html_safe
         = f.check_box :accept_terms, :required => true
+
     .row-fluid
       .span12
         = recaptcha_tags
+
     .row-fluid
       .span12
         .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
           .text-right
             %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
 
-            - if @payment_on_eventer
+            - if session[:payment_on_eventer]
               %button.btn.btn-success{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
                 %i.icon-flag
                 = I18n.t("formtastic.button.participant.pay")

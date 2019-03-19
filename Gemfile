@@ -14,6 +14,8 @@ group :development, :test do
   gem 'simplecov', '~> 0.7.1'
   gem 'coveralls', require: false
   gem "chromedriver-helper"
+  gem 'debase'
+  gem 'ruby-debug-ide'
 end
 
 group :test do

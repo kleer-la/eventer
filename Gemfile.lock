@@ -83,6 +83,9 @@ GEM
     curb (0.8.5)
     daemons (1.1.9)
     database_cleaner (1.2.0)
+    debase (0.2.2)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.4)
     delayed_job (4.0.0)
       activesupport (>= 3.0, < 4.1)
     delayed_job_active_record (4.0.0)
@@ -205,6 +208,8 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
+    ruby-debug-ide (0.6.1)
+      rake (>= 0.8.1)
     ruby-rc4 (0.1.5)
     rubyzip (1.2.1)
     sass (3.2.13)
@@ -276,6 +281,7 @@ DEPENDENCIES
   curb
   daemons
   database_cleaner
+  debase
   delayed_job_active_record
   devise (= 3.1.0)
   dimensions
@@ -299,6 +305,7 @@ DEPENDENCIES
   redcarpet
   rspec-mocks
   rspec-rails
+  ruby-debug-ide
   sass-rails (~> 3.2.3)
   selenium-webdriver (~> 2.53.4)
   shoulda-matchers
@@ -310,5 +317,8 @@ DEPENDENCIES
   valid_email
   will_paginate (~> 3.1.0)
 
+RUBY VERSION
+   ruby 2.1.8p440
+
 BUNDLED WITH
-   1.16.2
+   1.16.6
