@@ -98,6 +98,7 @@ en:
     button:
       participant:
         register: "Register Now!"
+        pay: "Pay Now!"
         more_info: "More info!"
     labels:
       name: "Name"

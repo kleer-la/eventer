@@ -52,6 +52,7 @@ class ParticipantsController < ApplicationController
   def new
     @participant = Participant.new
     @event = Event.find(params[:event_id])
+    @payment_on_eventer = params[:payment_on_eventer] ? true : false
     @influence_zones = InfluenceZone.all
     @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
     @nakedform = !params[:nakedform].nil?

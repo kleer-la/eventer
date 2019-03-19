@@ -61,12 +61,18 @@
         .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
           .text-right
             %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
-            %button.btn.btn-primary{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-              %i.icon-save
-              - if @event.is_community_event?
-                = I18n.t("formtastic.button.participant.register")
-              - else
-                = I18n.t("formtastic.button.participant.more_info")
+
+            - if @payment_on_eventer
+              %button.btn.btn-success{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+                %i.icon-flag
+                = I18n.t("formtastic.button.participant.pay")
+            - else
+              %button.btn.btn-primary{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+                %i.icon-save
+                - if @event.is_community_event?
+                  = I18n.t("formtastic.button.participant.register")
+                - else
+                  = I18n.t("formtastic.button.participant.more_info")
 
 
 :javascript
