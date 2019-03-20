@@ -34,6 +34,8 @@ class PayuCoWebcheckoutService
     webcheckout_data[:telephone]= participant.phone
     webcheckout_data[:responseUrl]= @responseUrl
     webcheckout_data[:confirmationUrl]= @confirmationUrl
+    webcheckout_data[:extra1]= participant.id
+    webcheckout_data[:extra2]= event.id
     webcheckout_data
   end
 

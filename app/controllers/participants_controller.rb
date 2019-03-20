@@ -176,6 +176,12 @@ class ParticipantsController < ApplicationController
 
   end
 
+  # POST events/payuco_result
+  def payuco_confirmation
+    payu_co_confirmation_service = PayuCoConfirmationService.new params
+
+  end
+
   # PUT /participants/1
   # PUT /participants/1.json
   def update

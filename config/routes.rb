@@ -66,6 +66,7 @@ Eventer::Application.routes.draw do
   match 'events/:id/send_certificate' => 'events#send_certificate'
 
   match 'events/:event_id/participant_confirmed' => 'participants#confirm'
+  post 'events/payuco_confirmation' =>'participantes#payuco_confirmation'
   match 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
   match 'events/:event_id/participants_print' => 'participants#print'
   match 'events/:event_id/participants_survey' => 'participants#survey'
