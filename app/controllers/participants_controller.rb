@@ -155,7 +155,8 @@ class ParticipantsController < ApplicationController
 
 
           if session[:payment_on_eventer]
-            @name = @participant.fname
+            webCheckout = PayuCoWebcheckoutService.new
+            @payment_data = webCheckout.prepare_webcheckout(@event, @participant)
             format.html { render action: "confirm_with_payment", :layout => "empty_layout"}
           else
             format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: "Tu pedido fue realizado exitosamente." }
