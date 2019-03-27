@@ -50,6 +50,7 @@ class PayuCoConfirmationService
   def update_participant
     if @estado === :APROBADO
       @participant.status = "C" #confirmado
+      @participant.is_payed = true
     end
     @result = "#{@estado.to_s} (#{@respuesta}),"\
       " con número de transacción en PayU: #{@referencia_payu}, por valor de: #{@value},"\
