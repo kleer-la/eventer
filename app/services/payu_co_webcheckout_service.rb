@@ -4,10 +4,6 @@ class PayuCoWebcheckoutService
   include PayuUtils
 
   def initialize
-    @webCheckoutUrl="https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/"
-    @responseUrl="http..."
-    @confirmationUrl="http..."
-    @accountId="33333"
     @iva = 19
   end
 
@@ -16,9 +12,9 @@ class PayuCoWebcheckoutService
     iva = find_iva(pricing)
     reference_code = "#{event.id}---#{participant.id}---#{pricing}---#{get_time_in_milis(Time.now)}"
     webcheckout_data = {}
-    webcheckout_data[:action]=@webCheckoutUrl
+    webcheckout_data[:action]=WEB_CHECKOUT_URL
     webcheckout_data[:merchantId]= MERCHANT_ID
-    webcheckout_data[:accountId]= @accountId
+    webcheckout_data[:accountId]= ACCOUNT_ID
     webcheckout_data[:description]= "Pago por #{event.event_type.name}, de #{participant.fname} #{participant.lname} por #{pricing}"
     webcheckout_data[:referenceCode]= reference_code
     webcheckout_data[:amount]= pricing
@@ -26,12 +22,12 @@ class PayuCoWebcheckoutService
     webcheckout_data[:taxReturnBase]= pricing - iva
     webcheckout_data[:currency]= CURRENCY
     webcheckout_data[:signature]= find_signature(reference_code, pricing)
-    webcheckout_data[:test]= "1"
+    webcheckout_data[:test]= TEST
     webcheckout_data[:buyerEmail]= participant.email
     webcheckout_data[:buyerFullName]= "#{participant.fname} #{participant.lname}"
     webcheckout_data[:telephone]= participant.phone
-    webcheckout_data[:responseUrl]= @responseUrl
-    webcheckout_data[:confirmationUrl]= @confirmationUrl
+    #webcheckout_data[:responseUrl]= RESPONSE_URL
+    webcheckout_data[:confirmationUrl]= CONFIRMATION_URL
     webcheckout_data[:extra1]= participant.id
     webcheckout_data[:extra2]= event.id
     webcheckout_data

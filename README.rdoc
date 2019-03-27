@@ -20,6 +20,15 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     #export RECAPTCHA_SITE_KEY="6Ld_iSIUAAAAAC2VRB5HPMSoEvQb4UGREvqbxGbQ"
     #export RECAPTCHA_SECRET_KEY="6Ld_iSIUAAAAAClJtl3YV7HfT4B4idylgMrBLQ9k"
 
+- Tambien es importante setear las variables, by default hay datos para mabientes de prueba:
+
+    PAYU_CO_API_KEY
+    PAYU_CO_MERCHANT_ID
+    PAYU_CO_ACCOUNT_ID
+    PAYU_CO_WEBCHECKOUT_URL
+    PAYU_CO_TEST_OPTION
+    PUBLIC_DOMAIN
+
 - Inicia la aplicación: bundle exec rails s
 
 Enjoy it!

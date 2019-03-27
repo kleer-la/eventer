@@ -180,8 +180,11 @@ class ParticipantsController < ApplicationController
   def payuco_confirmation
     payu_co_confirmation_service = PayuCoConfirmationService.new params
     payu_co_confirmation_service.confirm
-    # TODO responder status 200 o no si no graba
-
+    render status: 200, json: "ok"
+  rescue Exception => e
+    logger.info "error #{e.message}"
+    logger.info e.backtrace
+    render status: 500, json: 'error'
   end
 
   # PUT /participants/1
