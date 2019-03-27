@@ -1,6 +1,7 @@
 class PayuCoConfirmationService
+  include PayuUtils
 
-  ESTADOS = {4 => :APROBADA, 6 => :DECLINADA, 5=> :EXPIRADA}
+  ESTADOS = {4 => :APROBADO, 6 => :DECLINADO, 5=> :EXPIRADO}
   RESPUESTAS = {1	=> "Transacción aprobada",
                 4 => "Transacción rechazada por entidad financiera",
                 5 => "Transacción rechazada por el banco",
@@ -18,24 +19,44 @@ class PayuCoConfirmationService
   }
 
   def initialize params
-    @event = Event.find(params[:extra2])
-    @participant = Participant.find[params[:extra1]]
-    @estado = ESTADOS[params[:state_pol]]
-    @respuesta = RESPUESTAS[params[:response_code_pol]] # tambien viene el response_message_pol
+    @participant = Participant.find(params[:extra1])
+    @state_pol = params[:state_pol]
+    @estado = ESTADOS[@state_pol]
+    @respuesta = RESPUESTAS[params[:response_code_pol]] || "Error en el pago: #{params[:response_message_pol]}"
     @referencia_payu = params[:reference_pol]
-    @sing = params[:sign]
-    params[:reference_sale] #reference_code
-    params[:value]
-    params[:tax]
+    @sign = params[:sign]
+    @reference = params[:reference_sale] #reference_code
+    @value = params[:value].to_f
     params[:description]
-    params[:date]
-    params[:transaction_date]
-    params[:email_buyer]#TODO validar contra el del formulario y actualizarlo
+    @transaction_date=params[:transaction_date]
+  end
 
-    # TODO validar sign de la transaccion
-    # TODO actualizar participante
-    # TODO enviar un mail de confirmacion de resultado
-    # TODO responder status 200
+  def confirm
+    if is_valid_signature?
+      update_participant
+      sent_email_confirmation
+    end
+  end
+
+  def sent_email_confirmation
+    EventMailer.delay.payment_process_result(@participant,@result)
+  end
+
+  def is_valid_signature?
+    sign = find_signature(@reference, @value, @state_pol)
+    sign === @sign
+  end
+
+  def update_participant
+    if @estado === :APROBADO
+      @participant.status = "C" #confirmado
+    end
+    @result = "#{@estado.to_s} (#{@respuesta}),"\
+      " con número de transacción en PayU: #{@referencia_payu}, por valor de: #{@value},"\
+             " en la fecha de: #{@transaction_date}"
+    @participant.notes += "\n\n Resultado del pago: #{@result}"
+
+    @participant.save!
   end
 
 end

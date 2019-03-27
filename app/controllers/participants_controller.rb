@@ -179,6 +179,8 @@ class ParticipantsController < ApplicationController
   # POST events/payuco_result
   def payuco_confirmation
     payu_co_confirmation_service = PayuCoConfirmationService.new params
+    payu_co_confirmation_service.confirm
+    # TODO responder status 200 o no si no graba
 
   end
 

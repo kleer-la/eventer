@@ -1,14 +1,12 @@
 require 'digest'
 
 class PayuCoWebcheckoutService
+  include PayuUtils
 
   def initialize
     @webCheckoutUrl="https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/"
-    @currency="COP"
-    @apiKey="11111"
     @responseUrl="http..."
     @confirmationUrl="http..."
-    @merchantId="22222"
     @accountId="33333"
     @iva = 19
   end
@@ -19,15 +17,15 @@ class PayuCoWebcheckoutService
     reference_code = "#{event.id}---#{participant.id}---#{pricing}---#{get_time_in_milis(Time.now)}"
     webcheckout_data = {}
     webcheckout_data[:action]=@webCheckoutUrl
-    webcheckout_data[:merchantId]= @merchantId
+    webcheckout_data[:merchantId]= MERCHANT_ID
     webcheckout_data[:accountId]= @accountId
     webcheckout_data[:description]= "Pago por #{event.event_type.name}, de #{participant.fname} #{participant.lname} por #{pricing}"
     webcheckout_data[:referenceCode]= reference_code
     webcheckout_data[:amount]= pricing
     webcheckout_data[:tax]= iva
     webcheckout_data[:taxReturnBase]= pricing - iva
-    webcheckout_data[:currency]= @currency
-    webcheckout_data[:signature]= find_signature(reference_code,pricing)
+    webcheckout_data[:currency]= CURRENCY
+    webcheckout_data[:signature]= find_signature(reference_code, pricing)
     webcheckout_data[:test]= "1"
     webcheckout_data[:buyerEmail]= participant.email
     webcheckout_data[:buyerFullName]= "#{participant.fname} #{participant.lname}"
@@ -57,9 +55,6 @@ class PayuCoWebcheckoutService
     (time.to_f * 1000).floor
   end
 
-  def find_signature reference_code, pricing
-    format="#{@apiKey}~#{@merchantId}~#{reference_code}~#{pricing}~#{@currency}"
-    Digest::MD5.hexdigest format
-  end
+
 
 end
