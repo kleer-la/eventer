@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class ParticipantsController < ApplicationController
-  before_filter :authenticate_user!, :except => [:new, :create, :confirm, :certificate]
+  before_filter :authenticate_user!, :except => [:new, :create, :confirm, :certificate, :payuco_confirmation]
 
   # GET /participants
   # GET /participants.json
