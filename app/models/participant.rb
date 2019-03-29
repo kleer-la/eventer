@@ -11,7 +11,7 @@ class Participant < ActiveRecord::Base
                   :status, :notes, :influence_zone_id, :influence_zone,
                   :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
                   :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
-                  :campaign_source, :campaign, :accept_terms
+                  :campaign_source, :campaign, :accept_terms, :id_number, :address
 
   validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
 

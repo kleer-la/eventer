@@ -112,6 +112,8 @@ en:
         fname: "First name"
         lname: "Last name"
         phone: "Phone"
+        id_number: "ID Number(for invoice)"
+        address: "Address (for invoice)"
         email: "E-Mail"
         status: "Status"
         influence_zone: "Influence Zone"

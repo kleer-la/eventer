@@ -189,6 +189,12 @@
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-envelope-alt
                       = best_in_place participant, :email, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-barcode
+                      = "ID: "
+                      = best_in_place participant, :id_number, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                    %br
                     - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
                       %br
                       %span{ :style => "white-space:nowrap;"}
@@ -206,6 +212,10 @@
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-tag
                       = participant.influence_zone.nil? ? "N/A" : participant.influence_zone.tag_name
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-home
+                      = best_in_place participant, :address, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
                   %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
                     = best_in_place participant, :status, :type => :select, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["N", "Nuevo"], ["T", "Contactado"], ["C", "Confirmado"], ["A", "Presente"], ["X", "Cancelado"], ["D", "Postergado"]], :classes => ['color_on_success','editable','editable-click']
                   %td{ :style => "white-space:pre-line;"}

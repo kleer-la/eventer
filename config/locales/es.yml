@@ -112,6 +112,8 @@ es:
         fname: "Nombre"
         lname: "Apellido"
         phone: "Teléfono de contacto"
+        id_number: "Número de identificación (Para facturación)"
+        address: "Dirección (Para facturación)"
         email: "E-Mail"
         status: "Estado"
         influence_zone: "Zona de Influencia"
