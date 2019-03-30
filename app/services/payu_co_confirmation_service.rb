@@ -35,6 +35,8 @@ class PayuCoConfirmationService
     if is_valid_signature?
       update_participant
       sent_email_confirmation
+    else
+      raise "invalid signature"
     end
   end
 
