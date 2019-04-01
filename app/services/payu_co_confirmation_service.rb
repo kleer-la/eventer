@@ -34,6 +34,7 @@ class PayuCoConfirmationService
   def confirm
     if is_valid_signature?
       update_participant
+      update_event(@participant.event)
       sent_email_confirmation
     else
       raise "invalid signature"
@@ -58,8 +59,15 @@ class PayuCoConfirmationService
       " con número de transacción en PayU: #{@referencia_payu}, por valor de: #{@value},"\
              " en la fecha de: #{@transaction_date}"
     @participant.notes += "\n\n Resultado del pago: #{@result}"
-
     @participant.save!
+  end
+
+  def update_event(event)
+    participants_confirmed = event.participants.select {|participant| participant.status === "C"}
+    if(event.capacity <= participants_confirmed.size)
+      event.is_sold_out = true
+      event.save!
+    end
   end
 
 end
