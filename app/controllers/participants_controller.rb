@@ -86,7 +86,6 @@ class ParticipantsController < ApplicationController
 
   # GET /participants/new/confirm
   def confirm
-    puts params
     @event = Event.find(params[:event_id])
     @nakedform = !params[:nakedform].nil?
 
@@ -176,7 +175,7 @@ class ParticipantsController < ApplicationController
 
   end
 
-  # POST events/payuco_result
+  # POST events/payuco_confirmation
   def payuco_confirmation
     payu_co_confirmation_service = PayuCoConfirmationService.new params
     payu_co_confirmation_service.confirm
@@ -185,6 +184,14 @@ class ParticipantsController < ApplicationController
     logger.info "error #{e.message}"
     logger.info e.backtrace
     render status: 500, json: 'error'
+  end
+
+  # GET events/payuco_confirmation
+  def payuco_response
+    @data_to_show = PayuCoResponseService.new(params).response
+    respond_to do |format|
+      format.html { render :layout => "empty_layout" }
+    end
   end
 
   # PUT /participants/1

@@ -1,22 +1,6 @@
 class PayuCoConfirmationService
   include PayuUtils
 
-  ESTADOS = {4 => :APROBADO, 6 => :DECLINADO, 5=> :EXPIRADO}
-  RESPUESTAS = {1	=> "Transacción aprobada",
-                4 => "Transacción rechazada por entidad financiera",
-                5 => "Transacción rechazada por el banco",
-                6 => "Fondos insuficientes",
-                7 => "Tarjeta inválida",
-                8 => "Contactar entidad financiera",
-                9 => "Tarjeta vencida",
-                10 =>"Tarjeta restringida",
-                14 => "Transacción inválida",
-                17 => "El valor excede el máximo permitido por la entidad",
-                19 => "Transacción abandonada por el pagador",
-                22 => "Tarjeta no autorizada para comprar por internet",
-                23 => "Transacción rechazada por sospecha de fraude",
-                20 => "Transacción expirada"
-  }
 
   def initialize params
     @participant = Participant.find(params[:extra1])

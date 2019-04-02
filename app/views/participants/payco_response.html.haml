@@ -1,0 +1,16 @@
+.controls
+  .form-wrapper
+    = render '/commons/notice'
+    .alert.alert-info
+      Transacción finalizada, en breve recibirás un e-mail con la confirmación.
+    %br
+    %table
+      %tbody
+        %tr
+          %td
+          %td
+        - @data_to_show.each do |key,value|
+          %tr
+            %td= "#{key}: "
+            %td= value
+
