@@ -10,12 +10,12 @@ class PayuCoWebcheckoutService
   def prepare_webcheckout event, participant
     pricing = find_pricing event
     iva = find_iva(pricing)
-    reference_code = "#{event.name}, #{participant.fname} #{participant.lname}, #{pricing}, #{Time.now}"
+    reference_code = "Kleer: #{event.name}, #{participant.fname} #{participant.lname}, #{pricing}, #{Time.now}"
     webcheckout_data = {}
     webcheckout_data[:action]=WEB_CHECKOUT_URL
     webcheckout_data[:merchantId]= MERCHANT_ID
     webcheckout_data[:accountId]= ACCOUNT_ID
-    webcheckout_data[:description]= "Pago por #{event.event_type.name}"
+    webcheckout_data[:description]= "Pago por #{event.event_type.name} de Kleer"
     webcheckout_data[:referenceCode]= reference_code
     webcheckout_data[:amount]= pricing
     webcheckout_data[:tax]= iva

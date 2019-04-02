@@ -1,8 +1,14 @@
 .controls
   .form-wrapper
-    = render '/commons/notice'
-    .alert.alert-info
-      Transacción finalizada, en breve recibirás un e-mail con la confirmación.
+    %img(src="/assets/K-kleer_horizontal_negro_web.png")
+
+
+    - if @data_to_show['Estado del pago'] == :APROBADO
+      .alert.alert-success
+        Transacción finalizada, en breve recibirás un e-mail con la confirmación.
+    - else
+      .alert.alert-error
+        Ups tenemos problemas con la transacción, en breve recibirás un e-mail los detalles.
     %br
     %table
       %tbody
