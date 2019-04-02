@@ -17,7 +17,7 @@ describe PayuCoConfirmationService do
     confirmation = PayuCoConfirmationService.new({state_pol: "6",
                                                   reference_sale: "TestPayU04",
                                                   value: "150.00",
-                                                  sign: "c72fc48a474bbf8317de68390b43d3a0",
+                                                  sign: "30ce6597d4a4d58469ad4dc876e0f12d",
                                                   extra2: @event.id,
                                                   extra1: @participant.id})
 

@@ -10,7 +10,7 @@ class PayuCoWebcheckoutService
   def prepare_webcheckout event, participant
     pricing = find_pricing event
     iva = find_iva(pricing)
-    reference_code = "#{event.id}---#{participant.id}---#{pricing}---#{get_time_in_milis(Time.now)}"
+    reference_code = "#{event.name},#{participant.fname} #{participant.lname},#{pricing},#{Time.now}"
     webcheckout_data = {}
     webcheckout_data[:action]=WEB_CHECKOUT_URL
     webcheckout_data[:merchantId]= MERCHANT_ID
