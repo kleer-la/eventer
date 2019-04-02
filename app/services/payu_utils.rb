@@ -7,8 +7,8 @@ module PayuUtils
   ACCOUNT_ID = ENV['PAYU_CO_ACCOUNT_ID'] || "512321"
   TEST =ENV['PAYU_CO_TEST_OPTION'] || 1
   DOMAIN = ENV['PUBLIC_DOMAIN'] || "http://localhost:3000"
-  RESPONSE_URL=DOMAIN+"/events/payuco_response"
-  CONFIRMATION_URL=DOMAIN+"/events/payuco_confirmation"
+  RESPONSE_URL=DOMAIN+"/events/payuco/response"
+  CONFIRMATION_URL=DOMAIN+"/events/payuco/confirmation"
 
   ESTADOS = {'4' => :APROBADO, '6' => :DECLINADO, '5'=> :EXPIRADO}
   RESPUESTAS = {'1'	=> "Transacción aprobada",

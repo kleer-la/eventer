@@ -186,7 +186,7 @@ class ParticipantsController < ApplicationController
     render status: 500, json: 'error'
   end
 
-  # GET events/payuco_confirmation
+  # GET events/payuco_response
   def payuco_response
     @data_to_show = PayuCoResponseService.new(params).response
     respond_to do |format|

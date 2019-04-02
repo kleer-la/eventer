@@ -62,6 +62,8 @@ class EventMailer < ActionMailer::Base
   end
 
   def payment_process_result(participant,result)
+
+    puts "------------------SENDING MAIL FOR PAYU CONFIRMATION ------------------"
     @participant = participant
     @result = result
     mail(to: "#{@participant.email}, #{@participant.event.monitor_email}",
