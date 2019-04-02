@@ -7,8 +7,8 @@ Eventer::Application.initialize!
 #ActionMailer configuration
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {
-  :address => "smtp.mandrillapp.com",
-  :port => 587,
+  :address => ENV["KEVENTER_SMTP_ADDRESS"] || "smtp.mandrillapp.com",
+  :port => ENV["KEVENTER_SMTP_PORT"]|| 587,
   :user_name => ENV["KEVENTER_SMTP_USERNAME"],
   :password => ENV["KEVENTER_SMTP_PASSWORD"]
 }
