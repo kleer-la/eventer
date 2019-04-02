@@ -6,7 +6,7 @@ class PayuCoConfirmationService
     @participant = Participant.find(params[:extra1])
     @state_pol = params[:state_pol]
     @estado = ESTADOS[@state_pol]
-    @respuesta = RESPUESTAS[params[:response_code_pol]] || "Error en el pago: #{params[:response_message_pol]}"
+    @respuesta = RESPUESTAS[params[:response_code_pol]] || "Error en el pago: #{params[:response_message_pol]} #{params[:response_code_pol]}"
     @referencia_payu = params[:reference_pol]
     @sign = params[:sign]
     @reference = params[:reference_sale] #reference_code
