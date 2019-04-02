@@ -30,7 +30,7 @@ module PayuUtils
 
   def find_signature reference_code, pricing, state_pol=nil
     format="#{API_KEY}~#{MERCHANT_ID}~#{reference_code}~#{pricing}~#{CURRENCY}"
-    logger.debug "sign plain: #{format}"
+    puts "sign plain: #{format}"
     if state_pol
       format+="~#{state_pol}"
     end
