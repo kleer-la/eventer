@@ -19,14 +19,14 @@ class PayuCoConfirmationService
     if is_valid_signature?
       update_participant
       update_event(@participant.event)
-      sent_email_confirmation
+      send_email_confirmation
     else
       raise "invalid signature"
     end
   end
 
-  def sent_email_confirmation
-    EventMailer.delay.payment_process_result(@participant,@result)
+  def send_email_confirmation
+    EventMailer.payment_process_result(@participant,@result).deliver
   end
 
   def is_valid_signature?
