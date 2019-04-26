@@ -12,8 +12,8 @@ class PayuCoResponseService
     @data_to_show['Estado del pago'] = ESTADOS[@transactionState]
     @data_to_show['Respuesta de PayU'] = RESPUESTAS[params[:polResponseCode]] || "Error en el pago: #{params[:message]}"
     @data_to_show['Referencia'] = params[:referenceCode]
-    @data_to_show['ReferenciaDetallada'] = params[:extra3]
-    @data_to_show['Valor total'] = params[:TX_VALUE].to_f
+    #@data_to_show['ReferenciaDetallada'] = params[:extra3]
+    @data_to_show['Valor total'] = num_to_currency(params[:TX_VALUE].to_f)
     @data_to_show['Fecha'] =params[:processingDate]
     @data_to_show['Descripción'] =params[:description]
 
@@ -36,7 +36,5 @@ class PayuCoResponseService
     @signGenerated = find_signature(@data_to_show['Referencia'], @data_to_show['Valor total'], @transactionState)
     @signGenerated === @sign
   end
-
-
 
 end

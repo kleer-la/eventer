@@ -220,6 +220,7 @@
                     = best_in_place participant, :status, :type => :select, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["N", "Nuevo"], ["T", "Contactado"], ["C", "Confirmado"], ["A", "Presente"], ["X", "Cancelado"], ["D", "Postergado"]], :classes => ['color_on_success','editable','editable-click']
                   %td{ :style => "white-space:pre-line;"}
                     = best_in_place participant, :notes, :type => :textarea, :path => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                    = participant.pay_notes
                   %td
                     %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
                       %i.icon-edit

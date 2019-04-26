@@ -36,4 +36,9 @@ module PayuUtils
     end
     Digest::MD5.hexdigest format
   end
+
+  def num_to_currency price
+    "$#{price.to_i}."+"#{(price % 1.0)}"[2..3]
+  end
+
 end

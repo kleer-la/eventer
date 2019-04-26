@@ -5,10 +5,10 @@
 
     - if @data_to_show['Estado del pago'] == :APROBADO
       .alert.alert-success
-        Transacción finalizada, en breve recibirás un e-mail con la confirmación.
+        Felicidades tu cupo esta confirmado, en breve recibirás un e-mail con la confirmación.
     - else
       .alert.alert-error
-        Ups tenemos problemas con la transacción, en breve recibirás un e-mail los detalles.
+        Ups tenemos problemas con la transacción, en breve recibirás un e-mail con los detalles, te sugerimos intentarlo nuevamente.
     %br
     %table
       %tbody
@@ -22,6 +22,6 @@
 
     %br
     %br
-
-    %a{ href: "https://www.kleer.la/entrenamos/todos", title: "Volver a la agenda", class: "btn btn-primary"}
-      Volver a la agenda
+    .text-center
+      %a{ href: "https://www.kleer.la/entrenamos/todos", title: "Volver a la agenda", class: "btn btn-primary"}
+        Volver a la agenda

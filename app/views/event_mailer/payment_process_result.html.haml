@@ -33,16 +33,19 @@
                                   = "facilitado por #{@participant.event.trainer.name}"
                                   %br
                                   %br
-                                  Te contactamos para notificarte el resultado de tu proceso de pago:
+                                  ¡¡Tenemos noticias para ti!!
                                   %br
                                   %br
                                   = "Tu pago fue " + @result
                                   %br
                                   %br
-                                  Nos pondremos en contacto contigo en la víspera del taller para darte todos los detalles
-                                  %br
-                                  %br
-                                  Cualquier consulta que tengas no dudes en contactarnos.
+                                  - if @status == PayuUtils::ESTADOS['4']
+                                    Nos pondremos en contacto contigo en la víspera del taller para darte todos los detalles
+                                    %br
+                                    %br
+                                    Cualquier consulta que tengas no dudes en contactarnos.
+                                  - else
+                                    Te recomendamos intentarlo de nuevo o ponerte en contacto con PayU.
                                   %br
                                   %br
                                   Saludos!

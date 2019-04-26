@@ -10,6 +10,7 @@ class PayuCoConfirmationService
     @referencia_payu = params[:reference_pol]
     @sign = params[:sign]
     @reference = params[:reference_sale] #reference_code
+    @referenceData = params[:extra3]
     @value = params[:value].to_f
     @description = params[:description]
     @transaction_date=params[:transaction_date]
@@ -26,7 +27,7 @@ class PayuCoConfirmationService
   end
 
   def send_email_confirmation
-    EventMailer.payment_process_result(@participant,@result).deliver
+    EventMailer.payment_process_result(@participant,@result,@estado).deliver
   end
 
   def is_valid_signature?
@@ -40,9 +41,9 @@ class PayuCoConfirmationService
       @participant.is_payed = true
     end
     @result = "#{@estado.to_s} (#{@respuesta}),"\
-      " con número de transacción en PayU: #{@referencia_payu}, por valor de: #{@value},"\
+      " con número de transacción en PayU: #{@referencia_payu}: #{@description}, por valor de: #{num_to_currency(@value)},"\
              " en la fecha de: #{@transaction_date}"
-    @participant.notes += "\n\n Resultado del pago: #{@result}"
+    @participant.pay_notes += "\n\n Resultado del pago: #{@result}"
     @participant.save!
   end
 
