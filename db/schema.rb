@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190426091710) do
+ActiveRecord::Schema.define(:version => 20190426141710) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -214,8 +214,8 @@ ActiveRecord::Schema.define(:version => 20190426091710) do
     t.string   "email"
     t.string   "phone"
     t.integer  "event_id"
-    t.datetime "created_at",                                                               :null => false
-    t.datetime "updated_at",                                                               :null => false
+    t.datetime "created_at",                                                                              :null => false
+    t.datetime "updated_at",                                                                              :null => false
     t.string   "status"
     t.text     "notes"
     t.integer  "influence_zone_id"
@@ -228,15 +228,15 @@ ActiveRecord::Schema.define(:version => 20190426091710) do
     t.integer  "trainer2_rating"
     t.string   "xero_invoice_number"
     t.string   "xero_invoice_reference"
-    t.decimal  "xero_invoice_amount",    :precision => 10, :scale => 2
-    t.boolean  "is_payed",                                              :default => false
+    t.decimal  "xero_invoice_amount",                   :precision => 10, :scale => 2
+    t.boolean  "is_payed",                                                             :default => false
     t.string   "payment_type"
     t.integer  "campaign_id"
     t.integer  "campaign_source_id"
     t.string   "konline_po_number"
     t.string   "id_number"
     t.string   "address"
-    t.string   "pay_notes"
+    t.text     "pay_notes",              :limit => 255
   end
 
   add_index "participants", ["event_id"], :name => "index_participants_on_event_id"
