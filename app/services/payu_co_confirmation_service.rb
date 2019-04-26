@@ -11,7 +11,7 @@ class PayuCoConfirmationService
     @sign = params[:sign]
     @reference = params[:reference_sale] #reference_code
     @value = params[:value].to_f
-    params[:description]
+    @description = params[:description]
     @transaction_date=params[:transaction_date]
   end
 
