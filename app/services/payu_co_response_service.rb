@@ -13,7 +13,8 @@ class PayuCoResponseService
     @data_to_show['Respuesta de PayU'] = RESPUESTAS[params[:polResponseCode]] || "Error en el pago: #{params[:message]}"
     @data_to_show['Referencia'] = params[:referenceCode]
     #@data_to_show['ReferenciaDetallada'] = params[:extra3]
-    @data_to_show['Valor total'] = num_to_currency(params[:TX_VALUE].to_f)
+    @plain_amount = params[:TX_VALUE].to_f
+    @data_to_show['Valor total'] = num_to_currency(@plain_amount)
     @data_to_show['Fecha'] =params[:processingDate]
     @data_to_show['Descripción'] =params[:description]
 
@@ -33,7 +34,7 @@ class PayuCoResponseService
   private
 
   def is_valid_signature?
-    @signGenerated = find_signature(@data_to_show['Referencia'], @data_to_show['Valor total'], @transactionState)
+    @signGenerated = find_signature(@data_to_show['Referencia'], @plain_amount, @transactionState)
     @signGenerated === @sign
   end
 

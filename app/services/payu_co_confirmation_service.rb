@@ -22,11 +22,13 @@ class PayuCoConfirmationService
       update_event(@participant.event)
       send_email_confirmation
     else
+      puts "invalid signature"
       raise "invalid signature"
     end
   end
 
   def send_email_confirmation
+    puts 'send email'
     EventMailer.payment_process_result(@participant,@result,@estado).deliver
   end
 
@@ -36,6 +38,7 @@ class PayuCoConfirmationService
   end
 
   def update_participant
+    puts "update_participant"
     if @estado === :APROBADO
       @participant.status = "C" #confirmado
       @participant.is_payed = true
@@ -48,6 +51,7 @@ class PayuCoConfirmationService
   end
 
   def update_event(event)
+    puts "update_event"
     participants_confirmed = event.participants.select {|participant| participant.status === "C"}
     if(event.capacity <= participants_confirmed.size)
       event.is_sold_out = true
