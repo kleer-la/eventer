@@ -181,8 +181,8 @@ class ParticipantsController < ApplicationController
     payu_co_confirmation_service.confirm
     render status: 200, json: "ok"
   rescue Exception => e
-    logger.info "error #{e.message}"
-    logger.info e.backtrace
+    puts "error #{e.message}"
+    puts e.backtrace
     render status: 500, json: 'error'
   end
 

@@ -47,7 +47,9 @@ class PayuCoConfirmationService
       " con número de transacción en PayU: #{@referencia_payu}: #{@description}, por valor de: #{num_to_currency(@value)},"\
              " en la fecha de: #{@transaction_date}"
     @participant.pay_notes += "\n\n Resultado del pago: #{@result}"
-    @participant.save!
+    puts @participant.pay_notes
+    result = @participant.save!
+    puts "save! #{result}"
   end
 
   def update_event(event)
