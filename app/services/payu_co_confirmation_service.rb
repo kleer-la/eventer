@@ -46,8 +46,9 @@ class PayuCoConfirmationService
     @result = "#{@estado.to_s} (#{@respuesta}),"\
       " con número de transacción en PayU: #{@referencia_payu}: #{@description}, por valor de: #{num_to_currency(@value)},"\
              " en la fecha de: #{@transaction_date}"
+    @participant.pay_notes = "" if @participant.pay_notes.nil?
     @participant.pay_notes += "\n\n Resultado del pago: #{@result}"
-    puts @participant.pay_notes
+
     result = @participant.save!
     puts "save! #{result}"
   end
