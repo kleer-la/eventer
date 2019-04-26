@@ -2,13 +2,15 @@
   .form-wrapper
     %img(src="/assets/K-kleer_horizontal_negro_web.png")
 
-
-    - if @data_to_show['Estado del pago'] == :APROBADO
-      .alert.alert-success
-        Felicidades tu cupo esta confirmado, en breve recibirás un e-mail con la confirmación.
-    - else
-      .alert.alert-error
-        Ups tenemos problemas con la transacción, en breve recibirás un e-mail con los detalles, te sugerimos intentarlo nuevamente.
+    .text-center
+      - if @data_to_show['Estado del pago'] == :APROBADO
+        .alert.alert-success
+          %h4 ¡Felicidades tu pago fue aprobado!.
+          %br
+          %h4 Te damos la bienvenida al taller, en breve recibirás un e-mail con las detalles.
+      - else
+        .alert.alert-error
+          %h4 Ups tenemos problemas con la transacción, en breve recibirás un e-mail con los detalles, te sugerimos intentarlo nuevamente.
     %br
     %table
       %tbody
