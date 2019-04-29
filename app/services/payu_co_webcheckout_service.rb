@@ -1,4 +1,5 @@
 require 'digest'
+require 'date'
 
 class PayuCoWebcheckoutService
   include PayuUtils
@@ -38,7 +39,8 @@ class PayuCoWebcheckoutService
   private
 
   def find_pricing event
-    if get_time_in_milis(Time.parse(event.eb_end_date.to_s)) >= get_time_in_milis(Time.now)
+    end_eb = Date.parse(event.eb_end_date.strftime('%Y-%m-%d'))
+    if end_eb  >= Date.today
       event.eb_price.round(2)
     else
       event.list_price.round(2)
