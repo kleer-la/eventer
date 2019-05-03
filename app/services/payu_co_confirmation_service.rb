@@ -29,7 +29,7 @@ class PayuCoConfirmationService
 
   def send_email_confirmation
     puts 'send email'
-    EventMailer.delay.payment_process_result(@participant,@result,@estado).deliver
+    EventMailer.payment_process_result(@participant,@result,@estado).deliver
   end
 
   def is_valid_signature?
