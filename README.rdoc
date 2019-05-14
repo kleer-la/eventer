@@ -5,7 +5,7 @@
 KEventer es una aplicación de administración de cursos, calendarios e inscripciones que utilizamos en Kleer como back-end de nuestro sitio web público.
 
 
-Esta aplicación está basada en Rails 3.2.11.
+Esta aplicación está basada en Rails 3.2.11. Ya veremos cuando la actualizamos.
 
 Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá los siguientes pasos para poner a andar tu ambiente de desarrollo:
 
