@@ -20,6 +20,15 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     #export RECAPTCHA_SITE_KEY="6Ld_iSIUAAAAAC2VRB5HPMSoEvQb4UGREvqbxGbQ"
     #export RECAPTCHA_SECRET_KEY="6Ld_iSIUAAAAAClJtl3YV7HfT4B4idylgMrBLQ9k"
 
+- Tambien es importante setear las variables, by default hay datos para mabientes de prueba:
+
+    PAYU_CO_API_KEY=4Vj8eK4rloUd272L48hsrarnUA
+    PAYU_CO_MERCHANT_ID=508029
+    PAYU_CO_ACCOUNT_ID=512321
+    PAYU_CO_WEBCHECKOUT_URL=https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu
+    PAYU_CO_TEST_OPTION=1
+    PUBLIC_DOMAIN=http://localhost:3000
+
 - Inicia la aplicación: bundle exec rails s
 
 Enjoy it!

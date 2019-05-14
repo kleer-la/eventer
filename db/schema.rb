@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190213161555) do
+ActiveRecord::Schema.define(:version => 20190426141710) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -143,14 +143,14 @@ ActiveRecord::Schema.define(:version => 20190213161555) do
     t.string   "city"
     t.integer  "country_id"
     t.integer  "trainer_id"
-    t.string   "visibility_type",             :limit => 2
-    t.decimal  "list_price",                                 :precision => 10, :scale => 2
-    t.decimal  "eb_price",                                   :precision => 10, :scale => 2
+    t.string   "visibility_type",                    :limit => 2
+    t.decimal  "list_price",                                        :precision => 10, :scale => 2
+    t.decimal  "eb_price",                                          :precision => 10, :scale => 2
     t.date     "eb_end_date"
     t.boolean  "draft"
     t.boolean  "cancelled"
-    t.datetime "created_at",                                                                                   :null => false
-    t.datetime "updated_at",                                                                                   :null => false
+    t.datetime "created_at",                                                                                          :null => false
+    t.datetime "updated_at",                                                                                          :null => false
     t.integer  "event_type_id"
     t.string   "registration_link"
     t.boolean  "is_sold_out"
@@ -160,26 +160,26 @@ ActiveRecord::Schema.define(:version => 20190213161555) do
     t.boolean  "sepyme_enabled"
     t.string   "time_zone_name"
     t.text     "embedded_player"
-    t.boolean  "notify_webinar_start",                                                      :default => false
+    t.boolean  "notify_webinar_start",                                                             :default => false
     t.text     "twitter_embedded_search"
-    t.boolean  "webinar_started",                                                           :default => false
+    t.boolean  "webinar_started",                                                                  :default => false
     t.string   "currency_iso_code"
     t.string   "address"
-    t.text     "custom_prices_email_text",    :limit => 255
+    t.text     "custom_prices_email_text",           :limit => 255
     t.string   "monitor_email"
     t.text     "specific_conditions"
-    t.boolean  "should_welcome_email",                                                      :default => true
-    t.boolean  "should_ask_for_referer_code",                                               :default => false
-    t.decimal  "couples_eb_price",                           :precision => 10, :scale => 2
-    t.decimal  "business_price",                             :precision => 10, :scale => 2
-    t.decimal  "business_eb_price",                          :precision => 10, :scale => 2
-    t.decimal  "enterprise_6plus_price",                     :precision => 10, :scale => 2
-    t.decimal  "enterprise_11plus_price",                    :precision => 10, :scale => 2
+    t.boolean  "should_welcome_email",                                                             :default => true
+    t.boolean  "should_ask_for_referer_code",                                                      :default => false
+    t.decimal  "couples_eb_price",                                  :precision => 10, :scale => 2
+    t.decimal  "business_price",                                    :precision => 10, :scale => 2
+    t.decimal  "business_eb_price",                                 :precision => 10, :scale => 2
+    t.decimal  "enterprise_6plus_price",                            :precision => 10, :scale => 2
+    t.decimal  "enterprise_11plus_price",                           :precision => 10, :scale => 2
     t.date     "finish_date"
-    t.boolean  "show_pricing",                                                              :default => false
-    t.decimal  "average_rating",                             :precision => 4,  :scale => 2
+    t.boolean  "show_pricing",                                                                     :default => false
+    t.decimal  "average_rating",                                    :precision => 4,  :scale => 2
     t.integer  "net_promoter_score"
-    t.string   "mode",                        :limit => 2
+    t.string   "mode",                               :limit => 2
     t.integer  "trainer2_id"
     t.text     "extra_script"
     t.integer  "trainer3_id"
@@ -190,7 +190,7 @@ ActiveRecord::Schema.define(:version => 20190213161555) do
     t.date     "registration_ends"
     t.text     "cancellation_policy"
     t.string   "specific_subtitle"
-    t.boolean  "enable_online_payment",                                                     :default => false
+    t.boolean  "enable_online_payment",                                                            :default => false
     t.string   "online_course_codename"
     t.string   "online_cohort_codename"
     t.boolean  "mailchimp_workflow_for_warmup"
@@ -214,8 +214,8 @@ ActiveRecord::Schema.define(:version => 20190213161555) do
     t.string   "email"
     t.string   "phone"
     t.integer  "event_id"
-    t.datetime "created_at",                                                               :null => false
-    t.datetime "updated_at",                                                               :null => false
+    t.datetime "created_at",                                                                              :null => false
+    t.datetime "updated_at",                                                                              :null => false
     t.string   "status"
     t.text     "notes"
     t.integer  "influence_zone_id"
@@ -228,12 +228,15 @@ ActiveRecord::Schema.define(:version => 20190213161555) do
     t.integer  "trainer2_rating"
     t.string   "xero_invoice_number"
     t.string   "xero_invoice_reference"
-    t.decimal  "xero_invoice_amount",    :precision => 10, :scale => 2
-    t.boolean  "is_payed",                                              :default => false
+    t.decimal  "xero_invoice_amount",                   :precision => 10, :scale => 2
+    t.boolean  "is_payed",                                                             :default => false
     t.string   "payment_type"
     t.integer  "campaign_id"
     t.integer  "campaign_source_id"
     t.string   "konline_po_number"
+    t.string   "id_number"
+    t.string   "address"
+    t.text     "pay_notes",              :limit => 255
   end
 
   add_index "participants", ["event_id"], :name => "index_participants_on_event_id"

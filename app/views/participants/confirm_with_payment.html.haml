@@ -1,0 +1,15 @@
+.controls
+  .form-wrapper
+    = render '/commons/notice'
+    .alert.alert-info
+      Te estamos redirigiendo al sitio de pagos, un momento por favor...
+
+    - action= @payment_data.delete(:action)
+    %form{action: action, method: "post", name: "paynow"}
+      - @payment_data.each do |key,value|
+        %input{type: "hidden", name: key, value: value}
+
+:javascript
+  $(document).ready(function() {
+    $('form[name="paynow"]').submit();
+  })

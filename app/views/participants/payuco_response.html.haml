@@ -1,0 +1,29 @@
+.controls
+  .form-wrapper
+    %img(src="/assets/K-kleer_horizontal_negro_web.png")
+
+    .text-center
+      - if @data_to_show['Estado del pago'] == :APROBADO
+        .alert.alert-success
+          %h4 ¡Felicidades tu pago fue aprobado!
+          %br
+          %h4 Te damos la bienvenida al taller, en breve recibirás un e-mail con los detalles.
+      - else
+        .alert.alert-error
+          %h4 Ups tenemos problemas con la transacción, en breve recibirás un e-mail con los detalles, te sugerimos intentarlo nuevamente.
+    %br
+    %table
+      %tbody
+        %tr
+          %td
+          %td
+        - @data_to_show.each do |key,value|
+          %tr
+            %td= "#{key}: "
+            %td= value
+
+    %br
+    %br
+    .text-center
+      %a{ href: "https://www.kleer.la/entrenamos/todos", title: "Volver a la agenda", class: "btn btn-primary"}
+        Volver a la agenda

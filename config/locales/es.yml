@@ -98,6 +98,7 @@ es:
     button:
       participant:
         register: "¡Registrarme!"
+        pay: "¡Pagar ahora!"
         more_info: "¡Me interesa!"
     labels:
       name: "Nombre"
@@ -111,6 +112,8 @@ es:
         fname: "Nombre"
         lname: "Apellido"
         phone: "Teléfono de contacto"
+        id_number: "Número de identificación (Para facturación)"
+        address: "Dirección (Para facturación)"
         email: "E-Mail"
         status: "Estado"
         influence_zone: "Zona de Influencia"
@@ -166,7 +169,7 @@ es:
         time_zone_name: "Zona Horaria"
         sepyme_enabled: "Habilitado para Sepyme"
         registration_link: "Link de Registro (externo)"
-        enable_online_payment: "Habilitar Pagos en Kleer Online"
+        enable_online_payment: "Habilitar Pagos en Kleer Online, o PayU en K.Co"
         online_course_codename: "Código del curso en Kleer Online"
         online_cohort_codename: "Código del evento/cohort en Kleer Online"
         embedded_player: "Embedded Video (Hangout o YouTube)"

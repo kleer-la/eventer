@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class ParticipantsController < ApplicationController
-  before_filter :authenticate_user!, :except => [:new, :create, :confirm, :certificate]
+  before_filter :authenticate_user!, :except => [:new, :create, :confirm, :certificate, :payuco_confirmation, :payuco_response]
 
   # GET /participants
   # GET /participants.json
@@ -52,6 +52,7 @@ class ParticipantsController < ApplicationController
   def new
     @participant = Participant.new
     @event = Event.find(params[:event_id])
+    session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
     @influence_zones = InfluenceZone.all
     @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
     @nakedform = !params[:nakedform].nil?
@@ -78,7 +79,7 @@ class ParticipantsController < ApplicationController
     end
 
     respond_to do |format|
-        format.html { render :layout => "empty_layout" }
+        format.html { render :layout => "empty_layout"}
         format.json { render json: @participant }
     end
  end
@@ -142,7 +143,7 @@ class ParticipantsController < ApplicationController
               mailchimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_call, @participant
             end
 
-            if @event.should_welcome_email
+            if @event.should_welcome_email and !session[:payment_on_eventer]
               EventMailer.delay.welcome_new_event_participant(@participant)
             end
 
@@ -151,8 +152,16 @@ class ParticipantsController < ApplicationController
 
           end
 
-          format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: 'Tu pedido fue realizado exitosamente.' }
-          format.json { render json: @participant, status: :created, location: @participant }
+
+          if session[:payment_on_eventer]
+            webCheckout = PayuCoWebcheckoutService.new
+            @payment_data = webCheckout.prepare_webcheckout(@event, @participant)
+            format.html { render action: "confirm_with_payment", :layout => "empty_layout"}
+          else
+            format.html { redirect_to "/events/#{@event.id.to_s}/participant_confirmed#{@nakedform ? "?nakedform=1" : ""}", notice: "Tu pedido fue realizado exitosamente." }
+            format.json { render json: @participant, status: :created, location: @participant }
+          end
+
         else
           format.html { render action: "new", :layout => "empty_layout" }
           format.json { render json: @participant.errors, status: :unprocessable_entity }
@@ -164,6 +173,25 @@ class ParticipantsController < ApplicationController
       render :action => 'new',:layout => "empty_layout"
     end
 
+  end
+
+  # POST events/payuco_confirmation
+  def payuco_confirmation
+    payu_co_confirmation_service = PayuCoConfirmationService.new params
+    payu_co_confirmation_service.confirm
+    render status: 200, json: "ok"
+  rescue Exception => e
+    puts "error #{e.message}"
+    puts e.backtrace
+    render status: 500, json: 'error'
+  end
+
+  # GET events/payuco_response
+  def payuco_response
+    @data_to_show = PayuCoResponseService.new(params).response
+    respond_to do |format|
+      format.html { render :layout => "empty_layout" }
+    end
   end
 
   # PUT /participants/1
