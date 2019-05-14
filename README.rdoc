@@ -32,5 +32,3 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Inicia la aplicación: bundle exec rails s
 
 Enjoy it!
-
-Pongo esta línea para forzar un build+deploy
