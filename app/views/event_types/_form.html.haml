@@ -152,6 +152,13 @@
                   Este texto soporta
                   %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Se mostrará en su própio tab ("Preguntas Frecuentes"), en kleer.la.
+          .row-fluid
+            .span12
+              .control-group
+                %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.external_site_url")
+                = f.text_field :external_site_url, :class => "input-block-level"
+                %small.muted
+                  Si la configura kleer.la redirigirá a ella en lugar del landing del taller.
           .row-fuid
             .span12
               .form-actions
