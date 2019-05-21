@@ -17,6 +17,24 @@ class HomeController < ApplicationController
     end
   end
 
+  def event_by_event_type
+    @events = Event.public_commercial_visible.select{|event| event.event_type.id == params[:id].to_i}.sort_by { |event| event.date }
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @events.to_xml( :include => {
+          :country => {},
+          :event_type => {},
+          :trainer => {},
+          :trainer2 => {},
+          :trainers => {},
+          :categories => {}
+      },
+                                                  :methods => [:human_date, :is_webinar]
+      ) }
+      format.json { render json: @events }
+    end
+  end
+
   def index_community
     @events = Event.public_community_visible.all(:order => 'date')
     respond_to do |format|
