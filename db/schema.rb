@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190426141710) do
+ActiveRecord::Schema.define(:version => 20190521141710) do
 
   create_table "campaign_sources", :force => true do |t|
     t.string   "codename"
@@ -129,6 +129,7 @@ ActiveRecord::Schema.define(:version => 20190426141710) do
     t.text     "cancellation_policy"
     t.boolean  "is_kleer_certification",                               :default => false
     t.string   "kleer_cert_seal_image"
+    t.string   "external_site_url"
   end
 
   create_table "event_types_trainers", :id => false, :force => true do |t|

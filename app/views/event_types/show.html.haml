@@ -24,6 +24,10 @@
 %p
   %b Materiales:
   = @event_type.materials
+%p
+  %b External site url:
+  = @event_type.external_site_url
+
 
 = link_to 'Edit', edit_event_type_path(@event_type)
 \|

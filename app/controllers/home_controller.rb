@@ -3,17 +3,25 @@ class HomeController < ApplicationController
     @events = Event.public_commercial_visible.all(:order => 'date')
     respond_to do |format|
       format.html
-      format.xml { render :xml => @events.to_xml( :include => {
-                                                    :country => {},
-                                                    :event_type => {},
-                                                    :trainer => {},
-                                                    :trainer2 => {},
-                                                    :trainers => {},
-                                                    :categories => {}
-                                                  },
+      format.xml { render :xml => @events.to_xml( :include => event_data_to_include,
                                                   :methods => [:human_date, :is_webinar]
                                                 ) }
-      format.json { render json: @events }
+      format.json { render json: @events.to_json( :include => event_data_to_include,
+                                                  :methods => [:human_date, :is_webinar]
+      ) }
+    end
+  end
+
+  def event_by_event_type
+    @events = Event.public_commercial_visible.select{|event| event.event_type.id == params[:id].to_i}.sort_by { |event| event.date }
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @events.to_xml( :include => event_data_to_include,
+                                                  :methods => [:human_date, :is_webinar]
+      ) }
+      format.json { render json: @events.to_json( :include => event_data_to_include,
+                                                 :methods => [:human_date, :is_webinar]
+      )}
     end
   end
 
@@ -21,34 +29,24 @@ class HomeController < ApplicationController
     @events = Event.public_community_visible.all(:order => 'date')
     respond_to do |format|
       format.html
-      format.xml { render :xml => @events.to_xml(:include => {
-                                                    :country => {},
-                                                    :event_type => {},
-                                                    :trainer => {},
-                                                    :trainer2 => {},
-                                                    :trainers => {},
-                                                    :categories => {}
-                                                  },
+      format.xml { render :xml => @events.to_xml(:include => event_data_to_include,
                                                   :methods => [:human_date, :is_webinar]
                                                 ) }
-      format.json { render json: @events }
+      format.json { render json: @events.to_json( :include => event_data_to_include,
+                                                  :methods => [:human_date, :is_webinar]
+      )}
     end
   end
 
   def show
     @event = Event.public_and_visible.find(params[:id])
     respond_to do |format|
-      format.xml { render :xml => @event.to_xml(:include => {
-                                                    :country => {},
-                                                    :event_type => {},
-                                                    :trainer => {},
-                                                    :trainer2 => {},
-                                                    :trainers => {},
-                                                    :categories => {}
-                                                  },
+      format.xml { render :xml => @event.to_xml(:include => event_data_to_include,
                                                   :methods => [:human_date, :is_webinar]
                                                 ) }
-      format.json { render json: @event }
+      format.json { render json: @event.to_json( :include => event_data_to_include,
+                                                  :methods => [:human_date, :is_webinar]
+      )}
     end
   end
 
@@ -105,6 +103,19 @@ class HomeController < ApplicationController
     respond_to do |format|
       format.xml { render xml: @event_type.trainers }
     end
+  end
+
+  private
+
+  def event_data_to_include
+      return {
+        :country => {},
+        :event_type => {},
+        :trainer => {},
+        :trainer2 => {},
+        :trainers => {},
+        :categories => {}
+    }
   end
 
 end
