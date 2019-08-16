@@ -205,6 +205,7 @@ en:
         tag_name: "Tag Name (CapsuleCRM)"
         csd_eligible: "Es CSD-Eligible? (Aprobado por la Scrum Alliance para la certificación CSD)"
         cancellation_policy: "Política de Cancelación"
+        external_site_url: "Link externo al home del curso (en lugar del web site)"
         is_kleer_certification: "Is Kleer Certification"
         kleer_cert_seal_image: "Seal Image Name"
       category:

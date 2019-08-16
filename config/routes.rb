@@ -40,6 +40,7 @@ Eventer::Application.routes.draw do
   match 'api/kleerers' => 'home#kleerers'
   match 'api/community_events' => 'home#index_community'
   match 'api/events/:id' => 'home#show'
+  match 'api/events/event_types/:id' => 'home#event_by_event_type'
   match 'api/event_types' => 'home#event_type_index'
   match 'api/event_types/:id' => 'home#event_type_show'
   match 'api/event_types/:id/trainers' => 'home#show_event_type_trainers'
