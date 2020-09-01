@@ -1,15 +1,13 @@
 source 'http://rubygems.org'
-# ruby '2.1.8'
-ruby '~> 2.2.5'
+ruby '2.1.8'
 
-# gem 'rails', '3.2.11'
-gem 'rails', '~> 3.2' #'~> 3.2.22'
+gem 'rails', '3.2.11'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 group :development, :test do
-  gem 'sqlite3', '~> 1.3.6' # '1.4.2'
+  gem 'sqlite3'
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
@@ -31,9 +29,10 @@ group :test do
 end
 
 group :production do
-  gem 'pg', '0.20'
+  gem 'pg'
   gem 'thin'
 end
+
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -43,18 +42,31 @@ group :assets do
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'execjs'
-  # gem 'therubyracer', :platforms => :ruby # temporaly remove
+  gem 'therubyracer', :platforms => :ruby
 
   gem 'uglifier', '>= 1.0.3'
 end
 
 
+# To use ActiveModel has_secure_password
+# gem 'bcrypt-ruby', '~> 3.0.0'
+
+# To use Jbuilder templates for JSON
+# gem 'jbuilder'
+
+# Use unicorn as the web server
+# gem 'unicorn'
+
+# Deploy with Capistrano
+# gem 'capistrano'
+
+# To use debugger
+# gem 'ruby-debug19', :require => 'ruby-debug'
+
 gem 'jquery-rails'
 gem 'haml'
 gem 'haml-rails'
 
-gem 'nokogiri', '1.6.7.2'
-gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
 gem 'devise', '3.1.0'
 gem 'cancan'
@@ -71,9 +83,8 @@ gem 'prawn_rails'
 gem 'dimensions' # knowing the heigt of an image
 gem 'redcarpet'
 
-
 # Gemas necesarias para la comunicación con CapsuleCRM
-gem 'curb', '0.9.10'
+gem 'curb'
 
 # Edición en el lugar
 gem 'best_in_place'
@@ -86,7 +97,7 @@ gem 'newrelic_rpm'
 
 # Gemas necesarias para integracion con mailchimp workflow
 gem 'httparty'
-gem 'json', '1.8.6'
+gem 'json'
 #gem 'digest'
 
 #reCaptcha
@@ -94,10 +105,3 @@ gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate', '~> 3.1.0'
-
-
-
-
-
-
-
