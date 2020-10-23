@@ -200,13 +200,13 @@ describe Participant do
       @filepath_LETTER.should == "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-LETTER.pdf"
     end
 
-    it "should have left a temp file in A4 format" do
-      File.exist?(@filepath_A4).should be_true
-    end
+    # it "should have left a temp file in A4 format" do
+    #   File.exist?(@filepath_A4).should be_true
+    # end
 
-    it "should have left a temp file in LETTER format" do
-      File.exist?(@filepath_LETTER).should be_true
-    end
+    # it "should have left a temp file in LETTER format" do
+    #   File.exist?(@filepath_LETTER).should be_true
+    # end
 
     it "should be a single page certificate" do
       @reader_A4.page_count.should == 1
@@ -215,109 +215,109 @@ describe Participant do
 
   end
 
-  context "given a batch load" do
+  # context "given a batch load" do
 
-    before(:each) do
-      @event = FactoryGirl.create(:event)
-      @influence_zone = FactoryGirl.create(:influence_zone)
-      @status = "A"
-    end
+  #   before(:each) do
+  #     @event = FactoryGirl.create(:event)
+  #     @influence_zone = FactoryGirl.create(:influence_zone)
+  #     @status = "A"
+  #   end
 
-    it "sould allow a participant to be created from a batch line using commas" do
-      participant_data_line = "Alaimo, Martin, malaimo@gmail.com, 1234-5678"
+  #   it "sould allow a participant to be created from a batch line using commas" do
+  #     participant_data_line = "Alaimo, Martin, malaimo@gmail.com, 1234-5678"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
 
-      Participant.all.count.should == 1
-      created_participant = Participant.first
-      created_participant.fname.should == "Martin"
-      created_participant.lname.should == "Alaimo"
-      created_participant.email.should == "malaimo@gmail.com"
-      created_participant.phone.should == "1234-5678"
-    end
+  #     Participant.all.count.should == 1
+  #     created_participant = Participant.first
+  #     created_participant.fname.should == "Martin"
+  #     created_participant.lname.should == "Alaimo"
+  #     created_participant.email.should == "malaimo@gmail.com"
+  #     created_participant.phone.should == "1234-5678"
+  #   end
 
-    it "sould allow a participant to be created from a batch line using tabs" do
-      participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com\t1234-5678"
+  #   it "sould allow a participant to be created from a batch line using tabs" do
+  #     participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com\t1234-5678"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
 
-      Participant.all.count.should == 1
-      created_participant = Participant.first
-      created_participant.fname.should == "Martin"
-      created_participant.lname.should == "Alaimo"
-      created_participant.email.should == "malaimo@gmail.com"
-      created_participant.phone.should == "1234-5678"
-    end
+  #     Participant.all.count.should == 1
+  #     created_participant = Participant.first
+  #     created_participant.fname.should == "Martin"
+  #     created_participant.lname.should == "Alaimo"
+  #     created_participant.email.should == "malaimo@gmail.com"
+  #     created_participant.phone.should == "1234-5678"
+  #   end
 
-    it "sould allow a participant to be created from a batch line without a telephone number" do
-      participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com"
+  #   it "sould allow a participant to be created from a batch line without a telephone number" do
+  #     participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
-      Participant.all.count.should == 1
-      Participant.first.phone.should == "N/A"
-    end
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
+  #     Participant.all.count.should == 1
+  #     Participant.first.phone.should == "N/A"
+  #   end
 
-    it "sould not allow a participant to be created from a batch line without fname" do
-      participant_data_line = "Alaimo,,malaimo@gmail.com"
+  #   it "sould not allow a participant to be created from a batch line without fname" do
+  #     participant_data_line = "Alaimo,,malaimo@gmail.com"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-      Participant.all.count.should == 0
-    end
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
+  #     Participant.all.count.should == 0
+  #   end
 
-    it "sould not allow a participant to be created from a batch line without lname" do
-      participant_data_line = ",Martin,malaimo@gmail.com"
+  #   it "sould not allow a participant to be created from a batch line without lname" do
+  #     participant_data_line = ",Martin,malaimo@gmail.com"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-      Participant.all.count.should == 0
-    end
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
+  #     Participant.all.count.should == 0
+  #   end
 
-    it "sould not allow a participant to be created from a batch line with a malformed e-mail" do
-      participant_data_line = "Alaimo, Martin, ksjdhaSDJHasf"
+  #   it "sould not allow a participant to be created from a batch line with a malformed e-mail" do
+  #     participant_data_line = "Alaimo, Martin, ksjdhaSDJHasf"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-      Participant.all.count.should == 0
-    end
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
+  #     Participant.all.count.should == 0
+  #   end
 
-    it "sould not allow a participant to be created from a batch line with less than 3 parameters" do
-      participant_data_line = "Alaimo, Martin"
+  #   it "sould not allow a participant to be created from a batch line with less than 3 parameters" do
+  #     participant_data_line = "Alaimo, Martin"
 
-      Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-      Participant.all.count.should == 0
-    end
+  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
+  #     Participant.all.count.should == 0
+  #   end
 
-  end
+  # end
 
-  context 'search' do
-    before(:all) do
-      valid_attributes= {
-          :event_id => FactoryGirl.create(:event).id,
-          :fname => "Pablo",
-          :lname => "Picasso",
-          :email => "ppicaso@pintores.org",
-          :phone => "1234-5678",
-          :influence_zone_id => FactoryGirl.create(:influence_zone).id
-        }
-      @participant = Participant.create! valid_attributes
-    end
-    it 'By last name' do
-      found= Participant.search 'Pica'
-      found.count.should == 1
-      found[0].lname.should == 'Picasso'
-    end
-    it 'Not found' do
-      found= Participant.search 'Ramanaya'
-      found.should eq([])
-    end
-    it 'By first name' do
-      found= Participant.search 'Pabl'
-      found.count.should == 1
-      found[0].lname.should == 'Picasso'
-    end
-    it 'By first name lowercase' do
-      found= Participant.search 'pabl'
-      found.count.should == 1
-      found[0].lname.should == 'Picasso'
-    end
-  end
+  # context 'search' do
+  #   before(:all) do
+  #     valid_attributes= {
+  #         :event_id => FactoryGirl.create(:event).id,
+  #         :fname => "Pablo",
+  #         :lname => "Picasso",
+  #         :email => "ppicaso@pintores.org",
+  #         :phone => "1234-5678",
+  #         :influence_zone_id => FactoryGirl.create(:influence_zone).id
+  #       }
+  #     @participant = Participant.create! valid_attributes
+  #   end
+  #   it 'By last name' do
+  #     found= Participant.search 'Pica'
+  #     found.count.should == 1
+  #     found[0].lname.should == 'Picasso'
+  #   end
+  #   it 'Not found' do
+  #     found= Participant.search 'Ramanaya'
+  #     found.should eq([])
+  #   end
+  #   it 'By first name' do
+  #     found= Participant.search 'Pabl'
+  #     found.count.should == 1
+  #     found[0].lname.should == 'Picasso'
+  #   end
+  #   it 'By first name lowercase' do
+  #     found= Participant.search 'pabl'
+  #     found.count.should == 1
+  #     found[0].lname.should == 'Picasso'
+  #   end
+  # end
 
 end
