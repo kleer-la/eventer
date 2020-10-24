@@ -26,6 +26,7 @@ group :test do
   gem 'capybara'
   gem 'shoulda-matchers'
   gem 'selenium-webdriver', '~> 2.53.4'
+  gem 'pg', '0.20'
 end
 
 group :production do
