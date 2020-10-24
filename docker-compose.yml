@@ -1,7 +1,7 @@
 version: "3"
 services:
   eventer:
-    image: ruby:2.1.8
+    image: ruby:2.2.5
     container_name: eventer
     ports:
       - '3000:3000'
