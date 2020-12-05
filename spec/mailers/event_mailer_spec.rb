@@ -1,6 +1,19 @@
 # encoding: utf-8
 
 require "spec_helper"
+describe EventMailer do
+    it "quitar welcome_new_webinar_participant"
+    it "quitar notify_webinar_start"
+    it ""
+    it "should queue and verify a simple email" do
+    
+    #     email = EventMailer.welcome_new_event_participant(@participant).deliver
+    
+    #     ActionMailer::Base.deliveries.empty?.should_not be true
+    #     email.to.should == ["martin.salias@kleer.la"]
+    #     email.subject.should == "Kleer | Concurso de truco"
+    end
+end
 
 # describe EventMailer do
 
