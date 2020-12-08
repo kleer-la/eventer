@@ -2,35 +2,46 @@
 
 require "spec_helper"
 describe EventMailer do
+    before :each do
+        @participant = FactoryGirl.build(:participant)
+        @participant.email = "app_test@kleer.la"
+        @participant.event.event_type.name = "Concurso de truco"
+        ActionMailer::Base.deliveries.clear
+    end
+    
     it "quitar welcome_new_webinar_participant"
     it "quitar notify_webinar_start"
-    it ""
-    it "should queue and verify a simple email" do
-    
-    #     email = EventMailer.welcome_new_event_participant(@participant).deliver
-    
-    #     ActionMailer::Base.deliveries.empty?.should_not be true
-    #     email.to.should == ["martin.salias@kleer.la"]
-    #     email.subject.should == "Kleer | Concurso de truco"
+
+    context 'welcome_new_event_participant' do
+        after :each do
+            #default from
+            expect(@email.from).to eq ["entrenamos@kleer.la"]
+        end
+        it "should queue and verify a simple email" do
+            @email = EventMailer.welcome_new_event_participant(@participant).deliver
+            expect(ActionMailer::Base.deliveries.count).to be 1
+            expect(@email.to).to eq ["app_test@kleer.la"]
+            expect(@email.subject).to eq "Kleer | Concurso de truco"
+        end
+        it "should send the certificate e-mail" do
+            @participant.influence_zone = FactoryGirl.create(:influence_zone)
+            @participant.status = "A"
+
+            @email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver
+
+            expect(ActionMailer::Base.deliveries.count).to be 1
+        end
     end
+
+    context 'alert_event_monitor' do
+        it 'dont send registration when the event dont have alert email address' do
+            email= EventMailer.alert_event_monitor(@participant, '')
+            expect(email.body).to eq ''
+        end
+    end
+
+
 end
-
-# describe EventMailer do
-
-#   before (:each) do
-#     @participant = FactoryGirl.build(:participant)
-#     @participant.email = "martin.salias@kleer.la"
-#     @participant.event.event_type.name = "Concurso de truco"
-#   end
-
-#   it "should queue and verify a simple email" do
-
-#     email = EventMailer.welcome_new_event_participant(@participant).deliver
-
-#     ActionMailer::Base.deliveries.empty?.should_not be true
-#     email.to.should == ["martin.salias@kleer.la"]
-#     email.subject.should == "Kleer | Concurso de truco"
-#   end
 
 #   it "should send standard prices text info if custom prices text is empty" do
 #     @participant.event.list_price = 200
@@ -142,17 +153,6 @@ end
 
 #   end
 
-#   it "should send the certificate e-mail" do
-#     @participant.event = FactoryGirl.create(:event)
-#     @participant.email = "martin.salias@gmail.com"
-#     @participant.influence_zone = FactoryGirl.create(:influence_zone)
-#     @participant.status = "A"
-
-#     email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver
-
-#     ActionMailer::Base.deliveries.empty?.should_not be true
-
-#   end
 
 #   context 'alert_event_monitor' do
 #     it 'dont send registration when the event dont have alert email address' do
