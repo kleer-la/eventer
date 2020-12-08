@@ -49,7 +49,6 @@ class EventMailer < ActionMailer::Base
     end
     body += "Puedes ver/editar el registro en #{edit_registration_link}"
     mail(to: event.monitor_email,
-        from: "Eventos <eventos@kleerer.com>",
         subject: "[Keventer] Nuevo registro a #{event_title} del #{event.human_date}: " + newbie,
         body: body
         ) unless event.monitor_email.to_s == ""    ## nil? || ''

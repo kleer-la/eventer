@@ -9,8 +9,9 @@ describe EventMailer do
         ActionMailer::Base.deliveries.clear
     end
     
-    it "quitar welcome_new_webinar_participant"
-    it "quitar notify_webinar_start"
+    it "welcome_new_webinar_participant", :pending => "Deprecated - should remove" do fail;end
+    it "notify_webinar_start" , :pending => "Deprecated - should remove"  do fail;end
+    it "alert_event_crm_push_finished" , :pending => "Deprecated - should remove" do fail;end
 
     context 'welcome_new_event_participant' do
         after :each do
@@ -37,6 +38,22 @@ describe EventMailer do
         it 'dont send registration when the event dont have alert email address' do
             email= EventMailer.alert_event_monitor(@participant, '')
             expect(email.body).to eq ''
+        end
+        it 'send registration in event with alert email address' do
+            @participant.event = FactoryGirl.create(:event)
+            @participant.event.monitor_email = "eventos@k.com"
+            @participant.fname = 'Martin'
+            @participant.lname = 'Salias'
+            @participant.phone = "1234-5678"
+            @participant.notes = "questions"
+            edit_registration_link = "http://fighters.foo/events/1/participants/2/edit"
+            email= EventMailer.alert_event_monitor(@participant, edit_registration_link)
+            expect(email.subject).to include('Martin Salias')
+            expect(email.body).to include('app_test@kleer.la')
+            expect(email.body).to include('Martin Salias')
+            expect(email.body).to include('1234-5678')
+            expect(email.body).to include("questions")
+            expect(email.from).to eq ["entrenamos@kleer.la"]
         end
     end
 
@@ -152,31 +169,6 @@ end
 #     html_message.should include("<strong>texto customizado</strong>: 16")
 
 #   end
-
-
-#   context 'alert_event_monitor' do
-#     it 'dont send registration when the event dont have alert email address' do
-#       email= EventMailer.alert_event_monitor(@participant, '')
-#       expect(email.body).to eq ''
-#     end
-
-#     it 'send registration in event with alert email address' do
-#       @participant.event = FactoryGirl.create(:event)
-#       @participant.event.monitor_email = "eventos@k.com"
-#       @participant.fname = 'Martin'
-#       @participant.lname = 'Salias'
-#       @participant.phone = "1234-5678"
-#       @participant.notes = "questions"
-#       edit_registration_link = "http://fighters.foo/events/1/participants/2/edit"
-#       email= EventMailer.alert_event_monitor(@participant, edit_registration_link)
-#       expect(email.subject).to include('Martin Salias')
-#       expect(email.body).to include('martin.salias@kleer.la')
-#       expect(email.body).to include('Martin Salias')
-#       expect(email.body).to include('1234-5678')
-#       expect(email.body).to include("questions")
-#     end
-#   end
-
 #   context 'alert_event_crm_push_finished' do
 #     it 'dont send notification when PushTransation dont have email address' do
 #       email= EventMailer.alert_event_crm_push_finished(CrmPushTransaction.new)
