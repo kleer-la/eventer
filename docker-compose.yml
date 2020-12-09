@@ -6,5 +6,5 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - C:\Users\User\Development\code\kleer\eventer:/home/eventer
+      - .:/home/eventer
     tty: true
