@@ -25,6 +25,17 @@ Eventer::Application.configure do
   # This is a required Rails configuration. In production it must be the actual host of your application
   config.action_mailer.default_url_options = { :host => 'eventos.kleer.la' }
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: ENV["KEVENTER_SMTP_ADDRESS"] || "smtp.mandrillapp.com",
+    port: ENV["KEVENTER_SMTP_PORT"] || 587,
+    domain: "example.com",
+#    authentication: "plain",
+#    enable_starttls_auto: true,
+    user_name: ENV["KEVENTER_SMTP_USERNAME"],
+    password: ENV["KEVENTER_SMTP_PASSWORD"]
+  }
+
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
 
