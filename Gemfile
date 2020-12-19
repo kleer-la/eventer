@@ -24,7 +24,7 @@ group :test do
   gem 'factory_girl_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '2.8.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver', '~> 2.53.4'
 end
 
