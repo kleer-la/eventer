@@ -26,11 +26,14 @@ group :test do
   gem 'capybara'
   gem 'shoulda-matchers'
   gem 'selenium-webdriver', '~> 2.53.4'
+end
+
+group :test, :production do
   gem 'pg', '0.20'
 end
 
 group :production do
-  gem 'pg', '0.20'
+  gem 'rails_12factor'
   gem 'thin'
 end
 
