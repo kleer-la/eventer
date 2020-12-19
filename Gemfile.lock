@@ -290,7 +290,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   best_in_place
-  cancancan (~> 1.17)
+  cancancan (~> 1.17.0)
   capybara
   chromedriver-helper
   coffee-rails (~> 3.2.1)

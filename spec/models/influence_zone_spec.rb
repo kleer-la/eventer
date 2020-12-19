@@ -7,25 +7,25 @@ describe InfluenceZone do
   end
   
     it "should be valid" do
-      @zi.valid?.should be true
+      expect(@zi.valid?).to be true
     end
 
     it "should not require its zone name" do
       @zi.zone_name = ""
 
-      @zi.valid?.should be true
+      expect(@zi.valid?).to be true
     end
 
     it "should require its tag name" do
       @zi.tag_name = ""
 
-      @zi.valid?.should be false
+      expect(@zi.valid?).to be false
     end
 
     it "should require its country" do
       @zi.country = nil
 
-      @zi.valid?.should be false
+      expect(@zi.valid?).to be false
     end
     
     context "for Argentina" do
@@ -37,13 +37,13 @@ describe InfluenceZone do
       it "display_name should be 'Argentina' if zone_name = ''" do
         @zi.zone_name = ""
         
-        @zi.display_name.should == "Argentina"
+        expect(@zi.display_name).to eq "Argentina"
       end
     
       it "display_name should be 'Argentina - Buenos Aires' if zone_name = 'Buenos Aires'" do
         @zi.zone_name = "Buenos Aires"
         
-        @zi.display_name.should == "Argentina - Buenos Aires"
+        expect(@zi.display_name).to eq "Argentina - Buenos Aires"
       end
     
     end

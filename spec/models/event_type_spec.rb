@@ -10,58 +10,58 @@ describe EventType do
   end
   
   it "should be valid" do
-    @event_type.valid?.should be true
+    expect(@event_type.valid?).to  be true
   end
   
   it "should require its name" do
     @event_type.name = ""
     
-    @event_type.valid?.should be false
+    expect(@event_type.valid?).to  be false
   end
   
   it "should require its description" do
     @event_type.description = ""
     
-    @event_type.valid?.should be false
+    expect(@event_type.valid?).to  be false
   end
   
   it "should require an elevator pitch" do
     @event_type.elevator_pitch = ""
     
-    @event_type.valid?.should be false
+    expect(@event_type.valid?).to  be false
   end
   
   it "should require its recipients" do
     @event_type.recipients = ""
     
-    @event_type.valid?.should be false
+    expect(@event_type.valid?).to  be false
   end
   
   it "should require its program" do
     @event_type.program = ""
     
-    @event_type.valid?.should be false
+    expect(@event_type.valid?).to  be false
   end
   
   it "should require its duration" do
     @event_type.duration = ""
     
-    @event_type.valid?.should be false
+    expect(@event_type.valid?).to  be false
   end
   
   it "should have a shot_name version returning 30 characters if name is longer" do
     @event_type.name = "qoweiuq owei owqieu qoiweuqo iweu qwoeu qouwie qowieuq woiequ woei uqowie"
-    @event_type.short_name.should == "qoweiuq owei owqieu qoiweuqo i..."
+    expect(@event_type.short_name).to  eq "qoweiuq owei owqieu qoiweuqo i..."
   end 
   
   it "should have a shot_name version returning all characters if name is shorter than 30 letters" do
     @event_type.name = "hola che!"
-    @event_type.short_name.should == "hola che!"
+    expect(@event_type.short_name).to  eq "hola che!"
   end 
 
   it "should have a crm tag" do
     @event_type.tag_name = "TR-CP (Carlos Peix)"
-    @event_type.valid?.should be true
+    expect(@event_type.valid?).to  be true
   end
   
 end

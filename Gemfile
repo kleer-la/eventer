@@ -58,7 +58,7 @@ gem 'nokogiri', '1.6.7.2'
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
 gem 'devise', '3.1.0'
-gem 'cancancan', '~> 1.17'
+gem 'cancancan', '~> 1.17.0'
 
 gem 'formtastic'
 gem 'formtastic-bootstrap'
