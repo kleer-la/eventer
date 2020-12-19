@@ -42,7 +42,7 @@ GEM
       jquery-rails
       rails (~> 3.1)
     builder (3.0.4)
-    cancan (1.6.10)
+    cancancan (1.17.0)
     capybara (2.2.0)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -290,7 +290,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   best_in_place
-  cancan
+  cancancan (~> 1.17)
   capybara
   chromedriver-helper
   coffee-rails (~> 3.2.1)
@@ -331,7 +331,7 @@ DEPENDENCIES
   ruby-debug-ide
   sass-rails (~> 3.2.3)
   selenium-webdriver (~> 2.53.4)
-  shoulda-matchers (= 2.8.0)
+  shoulda-matchers (~> 2.8.0)
   simplecov (~> 0.7.1)
   sqlite3 (~> 1.3.6)
   test-unit (~> 3.0)

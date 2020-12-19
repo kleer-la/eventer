@@ -24,7 +24,7 @@ group :test do
   gem 'factory_girl_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara'
-  gem 'shoulda-matchers', '2.8.0' # v3 para ActiveRecord 4
+  gem 'shoulda-matchers', '~> 2.8.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver', '~> 2.53.4'
 end
 
@@ -58,7 +58,7 @@ gem 'nokogiri', '1.6.7.2'
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
 gem 'devise', '3.1.0'
-gem 'cancan'
+gem 'cancancan', '~> 1.17'
 
 gem 'formtastic'
 gem 'formtastic-bootstrap'
