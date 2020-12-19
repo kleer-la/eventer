@@ -34,7 +34,7 @@ class EventTypesController < ApplicationController
     @event_type = EventType.new
     @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
     @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @cancellation_policy_setting = Setting.where(key: "CANCELATION_POLICY").first
+    @cancellation_policy_setting = Setting.get("CANCELATION_POLICY")
 
     respond_to do |format|
       format.html # new.html.erb

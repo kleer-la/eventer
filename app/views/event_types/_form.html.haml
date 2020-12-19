@@ -174,5 +174,5 @@
   :javascript
     $('.btn-cancellation-policy').on('click', function(e){
       e.preventDefault();
-      $('#event_type_cancellation_policy').val( "#{escape_javascript @cancellation_policy_setting.value}" );
+      $('#event_type_cancellation_policy').val( "#{escape_javascript @cancellation_policy_setting}" );
     });

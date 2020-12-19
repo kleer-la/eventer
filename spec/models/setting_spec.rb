@@ -1,5 +1,13 @@
 require 'spec_helper'
 
 describe Setting do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "existing setting" do
+    setting = FactoryGirl.create(:setting)
+    
+    expect(Setting.get "Hi").to eq "Hello"
+  end
+  
+  it "setting not found" do
+    expect(Setting.get "Hi").to eq ""
+  end
 end
