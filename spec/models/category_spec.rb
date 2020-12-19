@@ -8,43 +8,43 @@ describe Category do
   end
   
   it "should be valid" do
-    @category.valid?.should be true
+    expect(@category.valid?).to be true
   end
   
   it "should require its name" do
     @category.name = ""
     
-    @category.valid?.should be false
+    expect(@category.valid?).to be false
   end
   
   it "should require its description" do
     @category.description = ""
     
-    @category.valid?.should be false
+    expect(@category.valid?).to be false
   end
   
   it "should require its tagline" do
     @category.tagline = ""
     
-    @category.valid?.should be false
+    expect(@category.valid?).to be false
   end
   
   it "should have a visibility flag" do
     @category.visible = false
     
-    @category.visible.should be false
+    expect(@category.visible).to be false
   end
   
   it "should have an order index" do
     @category.order = 1
     
-    @category.order.should == 1
+    expect(@category.order).to eq 1
   end
   
   it "should require its codename" do
     @category.codename = ""
     
-    @category.valid?.should be false
+    expect(@category.valid?).to be false
   end
 
   it "should get " do
@@ -65,7 +65,7 @@ describe Category do
     tdd.categories << tec
     tdd.save!
     
-    biz.event_types.count.should == 2
+    expect(biz.event_types.count).to eq 2
   end
   
   it "should have a visible scope" do
@@ -81,9 +81,8 @@ describe Category do
     cat3.visible = false
     cat3.save!
     
-    Category.all.count.should == 3
-    Category.visible_ones.count.should == 2
+    expect(Category.all.count).to eq 3
+    expect(Category.visible_ones.count).to eq 2
   end
   
 end
-
