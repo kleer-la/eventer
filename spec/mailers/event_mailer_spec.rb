@@ -1,23 +1,64 @@
 # encoding: utf-8
 
 require "spec_helper"
+describe EventMailer do
+    before :each do
+        @participant = FactoryGirl.build(:participant)
+        @participant.email = "app_test@kleer.la"
+        @participant.event.event_type.name = "Concurso de truco"
+        ActionMailer::Base.deliveries.clear
+    end
+    
+    it "welcome_new_webinar_participant", :pending => "Deprecated - should remove" do fail;end
+    it "notify_webinar_start" , :pending => "Deprecated - should remove"  do fail;end
+    it "alert_event_crm_push_finished" , :pending => "Deprecated - should remove" do fail;end
 
-# describe EventMailer do
+    context 'welcome_new_event_participant' do
+        after :each do
+            #default from
+            expect(@email.from).to eq ["entrenamos@kleer.la"]
+        end
+        it "should queue and verify a simple email" do
+            @email = EventMailer.welcome_new_event_participant(@participant).deliver
+            expect(ActionMailer::Base.deliveries.count).to be 1
+            expect(@email.to).to eq ["app_test@kleer.la"]
+            expect(@email.subject).to eq "Kleer | Concurso de truco"
+        end
+        it "should send the certificate e-mail" do
+            @participant.influence_zone = FactoryGirl.create(:influence_zone)
+            @participant.status = "A"
 
-#   before (:each) do
-#     @participant = FactoryGirl.build(:participant)
-#     @participant.email = "martin.salias@kleer.la"
-#     @participant.event.event_type.name = "Concurso de truco"
-#   end
+            @email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver
 
-#   it "should queue and verify a simple email" do
+            expect(ActionMailer::Base.deliveries.count).to be 1
+        end
+    end
 
-#     email = EventMailer.welcome_new_event_participant(@participant).deliver
+    context 'alert_event_monitor' do
+        it 'dont send registration when the event dont have alert email address' do
+            email= EventMailer.alert_event_monitor(@participant, '')
+            expect(email.body).to eq ''
+        end
+        it 'send registration in event with alert email address' do
+            @participant.event = FactoryGirl.create(:event)
+            @participant.event.monitor_email = "eventos@k.com"
+            @participant.fname = 'Martin'
+            @participant.lname = 'Salias'
+            @participant.phone = "1234-5678"
+            @participant.notes = "questions"
+            edit_registration_link = "http://fighters.foo/events/1/participants/2/edit"
+            email= EventMailer.alert_event_monitor(@participant, edit_registration_link)
+            expect(email.subject).to include('Martin Salias')
+            expect(email.body).to include('app_test@kleer.la')
+            expect(email.body).to include('Martin Salias')
+            expect(email.body).to include('1234-5678')
+            expect(email.body).to include("questions")
+            expect(email.from).to eq ["entrenamos@kleer.la"]
+        end
+    end
 
-#     ActionMailer::Base.deliveries.empty?.should_not be true
-#     email.to.should == ["martin.salias@kleer.la"]
-#     email.subject.should == "Kleer | Concurso de truco"
-#   end
+
+end
 
 #   it "should send standard prices text info if custom prices text is empty" do
 #     @participant.event.list_price = 200
@@ -128,42 +169,6 @@ require "spec_helper"
 #     html_message.should include("<strong>texto customizado</strong>: 16")
 
 #   end
-
-#   it "should send the certificate e-mail" do
-#     @participant.event = FactoryGirl.create(:event)
-#     @participant.email = "martin.salias@gmail.com"
-#     @participant.influence_zone = FactoryGirl.create(:influence_zone)
-#     @participant.status = "A"
-
-#     email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver
-
-#     ActionMailer::Base.deliveries.empty?.should_not be true
-
-#   end
-
-#   context 'alert_event_monitor' do
-#     it 'dont send registration when the event dont have alert email address' do
-#       email= EventMailer.alert_event_monitor(@participant, '')
-#       expect(email.body).to eq ''
-#     end
-
-#     it 'send registration in event with alert email address' do
-#       @participant.event = FactoryGirl.create(:event)
-#       @participant.event.monitor_email = "eventos@k.com"
-#       @participant.fname = 'Martin'
-#       @participant.lname = 'Salias'
-#       @participant.phone = "1234-5678"
-#       @participant.notes = "questions"
-#       edit_registration_link = "http://fighters.foo/events/1/participants/2/edit"
-#       email= EventMailer.alert_event_monitor(@participant, edit_registration_link)
-#       expect(email.subject).to include('Martin Salias')
-#       expect(email.body).to include('martin.salias@kleer.la')
-#       expect(email.body).to include('Martin Salias')
-#       expect(email.body).to include('1234-5678')
-#       expect(email.body).to include("questions")
-#     end
-#   end
-
 #   context 'alert_event_crm_push_finished' do
 #     it 'dont send notification when PushTransation dont have email address' do
 #       email= EventMailer.alert_event_crm_push_finished(CrmPushTransaction.new)

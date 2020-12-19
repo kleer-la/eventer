@@ -1,14 +1,17 @@
 # encoding: utf-8
 
 class EventMailer < ActionMailer::Base
+  default from: "entrenamos@kleer.la"
 
   add_template_helper(DashboardHelper)
 
+  #TODO: quitar funcionalidad de webinars
   def welcome_new_webinar_participant(participant)
     @participant = participant
     mail(to: @participant.email, from: "Eventos <eventos@kleerer.com>", subject: "Kleer | #{@participant.event.event_type.name}" )
   end
 
+  #TODO: quitar funcionalidad de webinars
   def notify_webinar_start(participant, webinar_link)
     @participant = participant
     @webinar_link = webinar_link
@@ -18,7 +21,7 @@ class EventMailer < ActionMailer::Base
   def welcome_new_event_participant(participant)
     @participant = participant
     @markdown_renderer = Redcarpet::Markdown.new( Redcarpet::Render::HTML.new(:hard_wrap => true), :autolink => true)
-    mail(to: @participant.email, from: "Eventos <eventos@kleerer.com>", subject: "Kleer | #{@participant.event.event_type.name}")
+    mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}")
   end
 
   def send_certificate(participant, certificate_url_A4, certificate_url_LETTER )
@@ -27,7 +30,6 @@ class EventMailer < ActionMailer::Base
     @certificate_link_LETTER = certificate_url_LETTER
     @markdown_renderer = Redcarpet::Markdown.new( Redcarpet::Render::HTML.new(:hard_wrap => true), :autolink => true)
     mail( to: @participant.email,
-          from: "#{@participant.event.trainer.name} <eventos@kleerer.com>",
           subject: "Kleer | Certificado del #{@participant.event.event_type.name}")
   end
 
@@ -47,7 +49,6 @@ class EventMailer < ActionMailer::Base
     end
     body += "Puedes ver/editar el registro en #{edit_registration_link}"
     mail(to: event.monitor_email,
-        from: "Eventos <eventos@kleerer.com>",
         subject: "[Keventer] Nuevo registro a #{event_title} del #{event.human_date}: " + newbie,
         body: body
         ) unless event.monitor_email.to_s == ""    ## nil? || ''
