@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '~> 2.2.5'
+ruby '~> 2.3.8'
 
 gem 'rails', '~> 3.2.22'
 
@@ -17,20 +17,23 @@ group :development, :test do
   gem "chromedriver-helper"
   gem 'debase'
   gem 'ruby-debug-ide'
+  gem 'database_cleaner-active_record'
 end
 
 group :test do
-  gem 'database_cleaner'
   gem 'factory_girl_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 2.8.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver', '~> 2.53.4'
+end
+
+group :test, :production do
   gem 'pg', '0.20'
 end
 
 group :production do
-  gem 'pg', '0.20'
+  gem 'rails_12factor'
   gem 'thin'
 end
 
@@ -55,7 +58,7 @@ gem 'nokogiri', '1.6.7.2'
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
 gem 'devise', '3.1.0'
-gem 'cancan'
+gem 'cancancan', '~> 1.17.0'
 
 gem 'formtastic'
 gem 'formtastic-bootstrap'

@@ -111,5 +111,9 @@ FactoryGirl.define do
     event FactoryGirl.build(:event)
     influence_zone FactoryGirl.build(:influence_zone)
   end
-
+  
+  factory :setting do
+    key "Hi"
+    value "Hello"
+  end
 end

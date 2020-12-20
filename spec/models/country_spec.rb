@@ -3,6 +3,6 @@ require 'spec_helper'
 describe Country do
   it "shown as AR - Argentina" do
     c = FactoryGirl.build(:country)
-    c.to_s.should == "AR - Argentina"
+    expect(c.to_s).to eq "AR - Argentina"
   end
 end

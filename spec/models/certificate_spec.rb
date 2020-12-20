@@ -1,4 +1,5 @@
-include ParticipantsHelper
+require 'spec_helper'
+include ParticipantsHelper  
 
 class PrawnMock
     attr_reader :history
@@ -28,83 +29,83 @@ describe Certificate do
         @participant.lname = "Grillo"
 
         cert = Certificate.new(@participant)
-        cert.name.should == "Pepe Grillo"
+        expect(cert.name).to eq "Pepe Grillo"
     end
 
     it "should return the unique verification code" do
         cert = Certificate.new(@participant)
-        cert.verification_code.should == "065BECBA36F903CF6PPP"
+        expect(cert.verification_code).to eq "065BECBA36F903CF6PPP"
     end
 
     it 'should return false if not csd eligible' do
         @et.csd_eligible =false
 
         cert = Certificate.new(@participant)
-        cert.is_csd_eligible?.should be false
+        expect(cert.is_csd_eligible?).to be false
     end
 
     it 'should return the event name' do
         @et.name = 'Pinocchio'
 
         cert = Certificate.new(@participant)
-        cert.event_name.should == "Pinocchio"
+        expect(cert.event_name).to eq "Pinocchio"
     end
 
     it 'should return the event city' do
         @e.city = 'Tandil'
 
         cert = Certificate.new(@participant)
-        cert.event_city.should == "Tandil"
+        expect(cert.event_city).to eq "Tandil"
     end
 
     it 'should return the event country' do
         cert = Certificate.new(@participant)
-        cert.event_country.should == "Argentina"
+        expect(cert.event_country).to eq "Argentina"
     end
 
     it "should return the event human readable date" do
         @e.date = Date.new(2014,3,20)
         cert = Certificate.new(@participant)
-        cert.event_date.should == "20-21 Mar"
+        expect(cert.event_date).to eq "20-21 Mar"
     end
 
     it "should return the event year" do
         @e.date = Date.new(2014,3,20)
         cert = Certificate.new(@participant)
-        cert.event_year.should == "2014"
+        expect(cert.event_year).to eq "2014"
     end
 
     it "a 16 hs event is a 2 days event" do
         @et.duration = 16
         cert = Certificate.new(@participant)
-        cert.event_duration.should == "2 days"
+        expect(cert.event_duration).to eq "2 days"
     end
 
     it "a 2 hs event is a 2 hours event" do
         @et.duration = 2
         cert = Certificate.new(@participant)
-        cert.event_duration.should == "2 hours"
+        expect(cert.event_duration).to eq "2 hours"
     end
 
     it "a 1 hs event is a 1 hour event" do
         @et.duration = 1
         cert = Certificate.new(@participant)
-        cert.event_duration.should == "1 hour"
+        expect(cert.event_duration).to eq "1 hour"
     end
 
     it "should return the trainer name" do
         cert = Certificate.new(@participant)
-        cert.trainer.should == "Juan Alberto"
+        expect(cert.trainer).to eq "Juan Alberto"
     end
 
     it "should return the trainer credentials" do
         cert = Certificate.new(@participant)
-        cert.trainer_credentials.should == "Agile Coach & Trainer"
+        expect(cert.trainer_credentials).to eq "Agile Coach & Trainer"
     end
 
     it "should return the trainer signature image" do
         cert = Certificate.new(@participant)
-        cert.trainer_signature.should == "PT.png"
+        expect(cert.trainer_signature).to eq "PT.png"
     end
 
     describe 'OnLine' do
@@ -127,10 +128,8 @@ describe Certificate do
           @et.duration = 8
           @participant.event.mode= 'ol'
           cert = Certificate.new(@participant)
-          cert.event_duration.should == "8 hours"
+          expect(cert.event_duration).to eq "8 hours"
       end
-
-
     end
 end
 
@@ -185,7 +184,7 @@ describe "render certificates" do
         certificate = Certificate.new(p)
         filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
 
-        pdf.history.should include "duration of 3"
+        expect(pdf.history).to include "duration of 3"
     end
 
     it "Render one signature" do

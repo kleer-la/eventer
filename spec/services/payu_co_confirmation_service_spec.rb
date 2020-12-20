@@ -21,6 +21,6 @@ describe PayuCoConfirmationService do
                                                   extra2: @event.id,
                                                   extra1: @participant.id})
 
-    confirmation.is_valid_signature?.should == true
+    expect(confirmation.is_valid_signature?).to eq true
   end
 end

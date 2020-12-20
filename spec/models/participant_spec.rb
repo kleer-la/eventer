@@ -9,162 +9,162 @@ describe Participant do
   describe "human_status" do
     it "should be Nuevo when status is N" do
       @participant.status = "N"
-      @participant.human_status.should == "Nuevo"
+      expect(@participant.human_status).to eq "Nuevo"
     end
     it "should be Presente when status is A" do
       @participant.status = "A"
-      @participant.human_status.should == "Presente"
+      expect(@participant.human_status).to eq "Presente"
     end
   end
 
   describe "status_sort_order" do
     it "should be 1 when status is N" do
-      @participant.status_sort_order.should == 1
+      expect(@participant.status_sort_order).to eq 1
     end
     it "should be 4 when status is A" do
       @participant.status = "A"
-      @participant.status_sort_order.should == 4
+      expect(@participant.status_sort_order).to eq 4
     end
     it "should be 7 when status is q (unknown)" do
       @participant.status = "q"
-      @participant.status_sort_order.should == 7
+      expect(@participant.status_sort_order).to eq 7
     end
   end
 
 
   it "should have a default status of 'N'" do
-    @participant.status.should == "N"
+    expect(@participant.status).to eq "N"
   end
 
   it "should have a default payed of false" do
-    @participant.is_payed.should == false
+    expect(@participant.is_payed).to eq false
   end
 
   describe "valid" do
     it "should be valid" do
-      @participant.valid?.should be true
+      expect(@participant.valid?).to be true
     end
 
     it "should require its name" do
       @participant.fname = ""
 
-      @participant.valid?.should be false
+      expect(@participant.valid?).to be false
     end
 
     it "should require its last name" do
       @participant.lname = ""
 
-      @participant.valid?.should be false
+      expect(@participant.valid?).to be false
     end
 
     it "should require its email" do
       @participant.email = ""
 
-      @participant.valid?.should be false
+      expect(@participant.valid?).to be false
     end
 
     it "should validate the email" do
       @participant.email = "cualquiercosa"
 
-      @participant.valid?.should be false
+      expect(@participant.valid?).to be false
     end
 
     it "should require the influence zone" do
       @participant.influence_zone = nil
 
-      @participant.valid?.should be false
+      expect(@participant.valid?).to be false
     end
 
     it "should validate the email" do
       @participant.email = "hola@gmail.com"
 
-      @participant.valid?.should be true
+      expect(@participant.valid?).to be true
     end
 
     it "should require its phone" do
       @participant.phone = ""
 
-      @participant.valid?.should be false
+      expect(@participant.valid?).to be false
     end
 
     it "should be valid if there's no referer code" do
       @participant.referer_code = ""
 
-      @participant.valid?.should be true
+      expect(@participant.valid?).to be true
     end
 
     it "should be valid if there's a referer code" do
       @participant.referer_code = "UNCODIGO"
 
-      @participant.valid?.should be true
+      expect(@participant.valid?).to be true
     end
   end
 
   it "should let someone confirm it" do
     @participant.confirm!
-    @participant.status.should == "C"
+    expect(@participant.status).to eq "C"
   end
 
   it "should let someone contact it" do
     @participant.contact!
-    @participant.status.should == "T"
+    expect(@participant.status).to eq "T"
   end
 
   it "should let someone mark attended it" do
-    @participant.is_present?.should be false
+    expect(@participant.is_present?).to be false
     @participant.attend!
-    @participant.status.should == "A"
-    @participant.is_present?.should be true
+    expect(@participant.status).to eq "A"
+    expect(@participant.is_present?).to be true
   end
 
   it "should have the event rating from the participant satisfaction survey" do
     @participant.event_rating = 5
-    @participant.event_rating.should == 5
+    expect(@participant.event_rating).to eq 5
   end
 
   it "should have an event rating smaller or equal to 5" do
     @participant.event_rating = 10
-    @participant.valid?.should be false
+    expect(@participant.valid?).to be false
   end
 
   it "should have an event rating greater or equal to 1" do
     @participant.event_rating = 0
-    @participant.valid?.should be false
+    expect(@participant.valid?).to be false
   end
 
   it "should have the trainer rating from the participant satisfaction survey" do
     @participant.trainer_rating = 5
-    @participant.trainer_rating.should == 5
+    expect(@participant.trainer_rating).to eq 5
   end
 
   it "should have an trainer rating smaller or equal to 5" do
     @participant.trainer_rating = 10
-    @participant.valid?.should be false
+    expect(@participant.valid?).to be false
   end
 
   it "should have an trainer rating greater or equal to 1" do
     @participant.trainer_rating = 0
-    @participant.valid?.should be false
+    expect(@participant.valid?).to be false
   end
 
   it "should have a testimony from a participant satisfaction survey" do
     @participant.testimony = "me ha gustado mucho"
-    @participant.testimony.should == "me ha gustado mucho"
+    expect(@participant.testimony).to eq "me ha gustado mucho"
   end
 
   it "should have a promoter_score from a participant satisfaction survey" do
     @participant.promoter_score = 8
-    @participant.promoter_score.should == 8
+    expect(@participant.promoter_score).to eq 8
   end
 
   it "should have a promoter_score smaller or equal to 10" do
     @participant.promoter_score = 11
-    @participant.valid?.should be false
+    expect(@participant.valid?).to be false
   end
 
   it "should have a promoter_score greater or equal to 0" do
     @participant.promoter_score = -1
-    @participant.valid?.should be false
+    expect(@participant.valid?).to be false
   end
 
   context "given a PDF certificate is generated" do
@@ -196,8 +196,8 @@ describe Participant do
     end
 
     it "should have a unique name" do
-      @filepath_A4.should == "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-A4.pdf"
-      @filepath_LETTER.should == "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-LETTER.pdf"
+      expect(@filepath_A4).to eq "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-A4.pdf"
+      expect(@filepath_LETTER).to eq "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-LETTER.pdf"
     end
 
     # it "should have left a temp file in A4 format" do
@@ -209,8 +209,8 @@ describe Participant do
     # end
 
     it "should be a single page certificate" do
-      @reader_A4.page_count.should == 1
-      @reader_LETTER.page_count.should == 1
+      expect(@reader_A4.page_count).to eq 1
+      expect(@reader_LETTER.page_count).to eq 1
     end
 
   end

@@ -42,7 +42,7 @@ GEM
       jquery-rails
       rails (~> 3.1)
     builder (3.0.4)
-    cancan (1.6.10)
+    cancancan (1.17.0)
     capybara (2.2.0)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -82,7 +82,10 @@ GEM
       rails (>= 3.0.0)
     curb (0.9.10)
     daemons (1.1.9)
-    database_cleaner (1.2.0)
+    database_cleaner (1.8.5)
+    database_cleaner-active_record (1.8.0)
+      activerecord
+      database_cleaner (~> 1.8.0)
     debase (0.2.2)
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.4)
@@ -187,6 +190,11 @@ GEM
       activesupport (= 3.2.22.5)
       bundler (~> 1.0)
       railties (= 3.2.22.5)
+    rails_12factor (0.0.3)
+      rails_serve_static_assets
+      rails_stdout_logging
+    rails_serve_static_assets (0.0.5)
+    rails_stdout_logging (0.0.5)
     railties (3.2.22.5)
       actionpack (= 3.2.22.5)
       activesupport (= 3.2.22.5)
@@ -233,7 +241,7 @@ GEM
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
       websocket (~> 1.0)
-    shoulda-matchers (2.4.0)
+    shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
     simplecov (0.7.1)
       multi_json (~> 1.0)
@@ -285,7 +293,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   best_in_place
-  cancan
+  cancancan (~> 1.17.0)
   capybara
   chromedriver-helper
   coffee-rails (~> 3.2.1)
@@ -294,7 +302,7 @@ DEPENDENCIES
   cucumber-rails
   curb (= 0.9.10)
   daemons
-  database_cleaner
+  database_cleaner-active_record
   debase
   delayed_job_active_record
   devise (= 3.1.0)
@@ -318,6 +326,7 @@ DEPENDENCIES
   prawn
   prawn_rails
   rails (~> 3.2.22)
+  rails_12factor
   recaptcha
   redcarpet
   rspec-mocks
@@ -325,7 +334,7 @@ DEPENDENCIES
   ruby-debug-ide
   sass-rails (~> 3.2.3)
   selenium-webdriver (~> 2.53.4)
-  shoulda-matchers
+  shoulda-matchers (~> 2.8.0)
   simplecov (~> 0.7.1)
   sqlite3 (~> 1.3.6)
   test-unit (~> 3.0)
@@ -336,7 +345,7 @@ DEPENDENCIES
   will_paginate (~> 3.1.0)
 
 RUBY VERSION
-   ruby 2.2.10p489
+   ruby 2.3.8p459
 
 BUNDLED WITH
    1.17.3

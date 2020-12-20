@@ -73,35 +73,35 @@ describe Rating do
   context "for each event" do
 
     it "should have an average event rating" do
-      @event.average_rating.should == 5.0
-      @event2.average_rating.should == 2.0
+      expect(@event.average_rating).to eq 5.0
+      expect(@event2.average_rating).to eq 2.0
     end
 
     it "should have a global event rating" do
-      Rating.first.global_event_rating.should == 4.0
+      expect(Rating.first.global_event_rating).to eq 4.0
     end
 
     it "should have an average event rating even with participants without rating" do
-      @event.average_rating.should == 5.0
+      expect(@event.average_rating).to eq 5.0
     end
 
     it "should have an average event rating even with participants not being present" do
-      @event.average_rating.should == 5.0
+      expect(@event.average_rating).to eq 5.0
     end
 
     it "should have a net promoter score" do
-      @event.net_promoter_score.should == 100
-      @event2.net_promoter_score.should == -100
+      expect(@event.net_promoter_score).to eq 100
+      expect(@event2.net_promoter_score).to eq -100
     end
 
     it "should have a net promoter score even with participants without rating" do
-      @event.net_promoter_score.should == 100
-      @event2.net_promoter_score.should == -100
+      expect(@event.net_promoter_score).to eq 100
+      expect(@event2.net_promoter_score).to eq -100
     end
 
     it "should have a net promoter score even with participants not being present" do
-      @event.net_promoter_score.should == 100
-      @event2.net_promoter_score.should == -100
+      expect(@event.net_promoter_score).to eq 100
+      expect(@event2.net_promoter_score).to eq -100
     end
 
 	end
@@ -109,27 +109,27 @@ describe Rating do
 	context "for the event_type" do
 
     it "should have an average event rating" do
-      @event_type.average_rating.should == 4.0
+      expect(@event_type.average_rating).to eq 4.0
     end
 
     it "should have an average event rating even with participants without rating" do
-      @event_type.average_rating.should == 4.0
+      expect(@event_type.average_rating).to eq 4.0
     end
 
     it "should have an average event rating even with participants not being present" do
-      @event_type.average_rating.should == 4.0
+      expect(@event_type.average_rating).to eq 4.0
     end
 
     it "should have a net promoter score" do
-      @event_type.net_promoter_score.should == 33
+      expect(@event_type.net_promoter_score).to eq 33
     end
 
     it "should have a net promoter score even with participants without rating" do
-      @event_type.net_promoter_score.should == 33
+      expect(@event_type.net_promoter_score).to eq 33
     end
 
     it "should have a net promoter score even with participants not being present" do
-      @event_type.net_promoter_score.should == 33
+      expect(@event_type.net_promoter_score).to eq 33
     end
 
 	end
@@ -137,36 +137,36 @@ describe Rating do
 	context "for the trainer" do
 
     it "should have an average event rating" do
-      @trainer.average_rating.should == 4.0
+      expect(@trainer.average_rating).to eq 4.0
     end
 
     it "should have a global event rating" do
-      Rating.first.global_trainer_rating.should == 4.0
-      # Rating.first.global_trainer_rating.should == 3.8
+      expect(Rating.first.global_trainer_rating).to eq 4.0
+      # expect(Rating.first.global_trainer_rating).to eq 3.8
     end
 
     it "should have an average event rating even with participants without rating" do
-      @trainer.average_rating.should == 4.0
+      expect(@trainer.average_rating).to eq 4.0
     end
 
     it "should have an average event rating even with participants not being present" do
-      @trainer.average_rating.should == 4.0
+      expect(@trainer.average_rating).to eq 4.0
     end
 
     it "should have a net promoter score" do
-      @trainer.net_promoter_score.should == 33
+      expect(@trainer.net_promoter_score).to eq 33
     end
 
     it "should have a net promoter score even with participants without rating" do
-      @trainer.net_promoter_score.should == 33
+      expect(@trainer.net_promoter_score).to eq 33
     end
 
     it "should have a net promoter score even with participants not being present" do
-      @trainer.net_promoter_score.should == 33
+      expect(@trainer.net_promoter_score).to eq 33
     end
 
     it "should have a net promoter score for the co-trainer" do
-      @trainer2.average_rating.should == 3.5
+      expect(@trainer2.average_rating).to eq 3.5
     end
 
 	end
