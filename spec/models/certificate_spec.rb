@@ -1,4 +1,4 @@
-# This line works only when the whole tests are run :P
+require 'spec_helper'
 include ParticipantsHelper  
 
 class PrawnMock
