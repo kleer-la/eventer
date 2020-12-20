@@ -82,7 +82,10 @@ GEM
       rails (>= 3.0.0)
     curb (0.9.10)
     daemons (1.1.9)
-    database_cleaner (1.2.0)
+    database_cleaner (1.8.5)
+    database_cleaner-active_record (1.8.0)
+      activerecord
+      database_cleaner (~> 1.8.0)
     debase (0.2.2)
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.4)
@@ -299,7 +302,7 @@ DEPENDENCIES
   cucumber-rails
   curb (= 0.9.10)
   daemons
-  database_cleaner
+  database_cleaner-active_record
   debase
   delayed_job_active_record
   devise (= 3.1.0)

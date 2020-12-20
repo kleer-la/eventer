@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe CrmPushTransaction do
-#  pending "add some examples to (or delete) #{__FILE__}"
+    pending "delete - unused  #{__FILE__}"
+=begin
     it "should notify when finished" do
         event = FactoryGirl.create(:event)
         user = FactoryGirl.create(:user)
@@ -11,4 +12,5 @@ describe CrmPushTransaction do
         allow(notificator).to receive(:alert_event_crm_push_finished)
         crm_push.start! (notificator)
   end
+=end
 end
