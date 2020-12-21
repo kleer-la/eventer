@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 ruby '~> 2.3.8'
 
 gem 'rails', '~> 3.2.22'
+gem 'test-unit', '~> 3.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
@@ -10,7 +11,6 @@ group :development, :test do
   gem 'pdf-inspector', :require => "pdf/inspector"
 
   gem "minitest-rails", "~> 1.0"
-  gem 'test-unit', '~> 3.0'
   gem 'rspec-mocks'
   gem 'simplecov', '~> 0.7.1'
   gem 'coveralls', require: false
