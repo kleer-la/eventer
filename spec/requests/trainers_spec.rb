@@ -5,7 +5,7 @@ describe "API Trainers GET /trainers" do
   def app
     Rack::Builder.parse_file("config.ru").first
   end
-  context "trainer list in XML" do
+ context "trainer list in XML" do
       before(:example) do
         event = FactoryGirl.create(:trainer,is_kleerer: true)      
         event_url= '/api/kleerers.xml'
