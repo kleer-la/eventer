@@ -1,11 +1,24 @@
 require 'spec_helper'
 
-# describe "Trainers" do
-#   describe "GET /trainers" do
-#     it "works! (now write some real specs)" do
-#       # Run the generator again with the --webrat flag if you want to use webrat methods/matchers
-#       get trainers_path
-#       response.status.should be(302)
-#     end
-#   end
-# end
+describe "API Trainers GET /trainers" do
+  include Rack::Test::Methods
+  def app
+    Rack::Builder.parse_file("config.ru").first
+  end
+  context "trainer list in XML" do
+      before(:example) do
+        event = FactoryGirl.create(:trainer,is_kleerer: true)      
+        event_url= '/api/kleerers.xml'
+        get event_url
+        @parsed= Nokogiri::XML(last_response.body)        
+      end
+    it "XML?" do
+      expect(last_response.status).to eq 200
+      expect(last_response.body).to start_with("<?xml")
+    end
+
+    it "one trainer" do
+      expect(@parsed.xpath('//trainers/trainer').count).to eq 1
+    end
+end
+end

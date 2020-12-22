@@ -1,14 +1,11 @@
 require 'spec_helper'
 
-describe "Events" do
-  describe "API - GET /events" do
-    include Rack::Test::Methods
-
-    def app
-      Rack::Builder.parse_file("config.ru").first
-    end
-    
-    context "event list in XML" do
+describe "API Events GET /events" do
+  include Rack::Test::Methods
+  def app
+    Rack::Builder.parse_file("config.ru").first
+  end
+  context "event list in XML" do
       before(:example) do
         event = FactoryGirl.create(:event)      
         event_url= '/api/events.xml'
@@ -30,6 +27,20 @@ describe "Events" do
     it "course has extra script" do
       expect(@parsed.xpath('//event/extra-script').count).to eq 1
     end
+    it "course event-type has subtitle" do
+      expect(@parsed.xpath('//event/event-type/subtitle').count).to eq 1
+    end
   end
+
+  context "event list in JSON" do
+    before(:example) do
+      event = FactoryGirl.create(:event)      
+      event_url= '/api/events.json'
+      get event_url
+      @json= JSON.parse(last_response.body)
+    end
+    it "JSON?" do
+      expect(@json.count).to be > 0      
+    end
   end
 end
