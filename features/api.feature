@@ -6,18 +6,18 @@ Feature: Inicio
     When I request the v2 event list in "JSON" format
     Then it should have a JSON event
 
-  @selenium
-	Scenario: API para consultar los cursos visibles y públicos con XML
-    Given there is one event
-    When I request the event list in "XML" format
-    Then it should be an XML
-    And it should have an event
+  # @selenium
+	# Scenario: API para consultar los cursos visibles y públicos con XML
+  #   Given there is one event
+  #   When I request the event list in "XML" format
+  #   Then it should be an XML
+  #   And it should have an event
 
-  @selenium
-	Scenario: Events API have trainers
-    Given there is one event
-    When I request the event list in "XML" format
-    Then it should have "//events/event/trainers/trainer"
+  # @selenium
+	# Scenario: Events API have trainers
+  #   Given there is one event
+  #   When I request the event list in "XML" format
+  #   Then it should have "//events/event/trainers/trainer"
 
   @selenium
 	Scenario: API para consultar cursos debe devolver un script extra
