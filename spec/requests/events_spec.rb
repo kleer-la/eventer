@@ -1,26 +1,32 @@
 require 'spec_helper'
 
 describe "Events" do
-  describe "GET /events" do
+  describe "API - GET /events" do
     include Rack::Test::Methods
 
     def app
       Rack::Builder.parse_file("config.ru").first
     end
     
-    it "event list in XML" do
-      event_url= '/api/events.xml'
-      get event_url
+    context "event list in XML" do
+      before(:example) do
+        event = FactoryGirl.create(:event)      
+        event_url= '/api/events.xml'
+        get event_url
+        @parsed= Nokogiri::XML(last_response.body)        
+      end
+    it "XML?" do
       expect(last_response.status).to eq 200
       expect(last_response.body).to start_with("<?xml")
     end
 
-    it "event list public and visible courses in XML" do
-      event = FactoryGirl.create(:event)      
-      event_url= '/api/events.xml'
-      get event_url
-      parsed= Nokogiri::XML(last_response.body)
-      expect(parsed.xpath('//event').count).to eq 1
+    it "one public and visible courses" do
+      expect(@parsed.xpath('//event').count).to eq 1
     end
+
+    it "courses has trainer" do
+      expect(@parsed.xpath('//event/trainers/trainer').count).to eq 1
+    end
+  end
   end
 end
