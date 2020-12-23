@@ -29,7 +29,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.20'
+  gem 'pg', '0.21'
 end
 
 group :production do

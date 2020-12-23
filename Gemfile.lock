@@ -165,7 +165,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
-    pg (0.20.0)
+    pg (0.21.0)
     polyglot (0.3.5)
     power_assert (1.2.0)
     prawn (0.14.0)
@@ -322,7 +322,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri (= 1.6.7.2)
   pdf-inspector
-  pg (= 0.20)
+  pg (= 0.21)
   prawn
   prawn_rails
   rails (~> 3.2.22)
