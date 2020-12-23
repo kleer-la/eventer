@@ -3,7 +3,7 @@
 require "spec_helper"
 describe EventMailer do
     before :each do
-        @participant = FactoryGirl.build(:participant)
+        @participant = FactoryBot.build(:participant)
         @participant.email = "app_test@kleer.la"
         @participant.event.event_type.name = "Concurso de truco"
         ActionMailer::Base.deliveries.clear
@@ -25,7 +25,7 @@ describe EventMailer do
             expect(@email.subject).to eq "Kleer | Concurso de truco"
         end
         it "should send the certificate e-mail" do
-            @participant.influence_zone = FactoryGirl.create(:influence_zone)
+            @participant.influence_zone = FactoryBot.create(:influence_zone)
             @participant.status = "A"
 
             @email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver
@@ -40,7 +40,7 @@ describe EventMailer do
             expect(email.body).to eq ''
         end
         it 'send registration in event with alert email address' do
-            @participant.event = FactoryGirl.create(:event)
+            @participant.event = FactoryBot.create(:event)
             @participant.event.monitor_email = "eventos@k.com"
             @participant.fname = 'Martin'
             @participant.lname = 'Salias'
@@ -177,7 +177,7 @@ end
 
 #     it 'send registration in event with alert email address' do
 #       cpt= CrmPushTransaction.new
-#       cpt.user= FactoryGirl.build(:user)
+#       cpt.user= FactoryBot.build(:user)
 #       email= EventMailer.alert_event_crm_push_finished(cpt)
 
 #       expect(email.subject).to include('CRM finalizado')

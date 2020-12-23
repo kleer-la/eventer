@@ -1,7 +1,7 @@
 # encoding: utf-8
-require 'factory_girl'
+require 'factory_bot'
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :campaign_source do
     codename "source1"
@@ -29,14 +29,14 @@ FactoryGirl.define do
     email 'admin@user.com'
     password 'please'
     password_confirmation 'please'
-    roles [ FactoryGirl.create(:admin_role) ]
+    roles [ FactoryBot.create(:admin_role) ]
   end
 
   factory :comercial, :class => User do
     email 'comercial@user.com'
     password 'please'
     password_confirmation 'please'
-    roles [ FactoryGirl.create(:comercial_role) ]
+    roles [ FactoryBot.create(:comercial_role) ]
   end
 
   factory :country do
@@ -73,11 +73,11 @@ FactoryGirl.define do
      program "El programa del evento"
      learnings "algunas cosas"
      takeaways "un manual"
-     trainers [ FactoryGirl.build(:trainer) ]
+     trainers [ FactoryBot.build(:trainer) ]
    end
 
   factory :event do
-    event_type {FactoryGirl.build(:event_type)}
+    event_type {FactoryBot.build(:event_type)}
     date "23/01/2100"
     duration 2
     start_time "9:00"
@@ -91,14 +91,14 @@ FactoryGirl.define do
     currency_iso_code "ARS"
     mode 'cl'
     cancelled false
-    country FactoryGirl.build(:country)
-    trainer FactoryGirl.build(:trainer)
+    country FactoryBot.build(:country)
+    trainer FactoryBot.build(:trainer)
   end
 
   factory :influence_zone do
     tag_name "ZI-AMS-AR-PAT (Patagonia)"
     zone_name "Rio Negro"
-    country FactoryGirl.build(:country)
+    country FactoryBot.build(:country)
   end
 
   factory :participant do
@@ -108,8 +108,8 @@ FactoryGirl.define do
     email "malaimo@gmail.com"
     phone "5555-5555"
     verification_code "065BECBA36F903CF6PPP"
-    event FactoryGirl.build(:event)
-    influence_zone FactoryGirl.build(:influence_zone)
+    event FactoryBot.build(:event)
+    influence_zone FactoryBot.build(:influence_zone)
   end
   
   factory :setting do

@@ -7,7 +7,7 @@ describe "API Categories GET /categories" do
   end
   context "category list in XML" do
       before(:example) do
-        event = FactoryGirl.create(:category, visible: true)      
+        event = FactoryBot.create(:category, visible: true)      
         event_url= '/api/categories.xml'
         get event_url
         @parsed= Nokogiri::XML(last_response.body)        

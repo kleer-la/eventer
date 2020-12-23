@@ -21,7 +21,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_girl_rails',require: false
+  gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara'
   gem 'shoulda-matchers', '~> 2.8.0' # v3 para ActiveRecord 4

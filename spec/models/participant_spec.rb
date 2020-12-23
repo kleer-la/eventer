@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Participant do
 
   before(:each) do
-    @participant = FactoryGirl.build(:participant)
+    @participant = FactoryBot.build(:participant)
   end
 
   describe "human_status" do
@@ -170,12 +170,12 @@ describe Participant do
   context "given a PDF certificate is generated" do
 
     before(:all) do
-      @participant_pdf = FactoryGirl.build(:participant)
+      @participant_pdf = FactoryBot.build(:participant)
       @participant_pdf.fname= "Antonio Hiram"
       @participant_pdf.lname= "Cuéllar Valencia"
-      @participant_pdf.event = FactoryGirl.create(:event)
+      @participant_pdf.event = FactoryBot.create(:event)
       @participant_pdf.event.event_type.csd_eligible = true
-      @participant_pdf.influence_zone = FactoryGirl.create(:influence_zone)
+      @participant_pdf.influence_zone = FactoryBot.create(:influence_zone)
       @participant_pdf.status = "A"
 
       @filepath_A4 = ParticipantsHelper::generate_certificate(@participant_pdf, "A4")
@@ -218,8 +218,8 @@ describe Participant do
   # context "given a batch load" do
 
   #   before(:each) do
-  #     @event = FactoryGirl.create(:event)
-  #     @influence_zone = FactoryGirl.create(:influence_zone)
+  #     @event = FactoryBot.create(:event)
+  #     @influence_zone = FactoryBot.create(:influence_zone)
   #     @status = "A"
   #   end
 
@@ -290,12 +290,12 @@ describe Participant do
   # context 'search' do
   #   before(:all) do
   #     valid_attributes= {
-  #         :event_id => FactoryGirl.create(:event).id,
+  #         :event_id => FactoryBot.create(:event).id,
   #         :fname => "Pablo",
   #         :lname => "Picasso",
   #         :email => "ppicaso@pintores.org",
   #         :phone => "1234-5678",
-  #         :influence_zone_id => FactoryGirl.create(:influence_zone).id
+  #         :influence_zone_id => FactoryBot.create(:influence_zone).id
   #       }
   #     @participant = Participant.create! valid_attributes
   #   end

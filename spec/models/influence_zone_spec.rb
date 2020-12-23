@@ -3,7 +3,7 @@ require 'spec_helper'
 describe InfluenceZone do
   
   before(:each) do
-    @zi = FactoryGirl.build(:influence_zone)
+    @zi = FactoryBot.build(:influence_zone)
   end
   
     it "should be valid" do
@@ -31,7 +31,7 @@ describe InfluenceZone do
     context "for Argentina" do
       
       before(:each) do
-        @zi.country = FactoryGirl.build(:country)
+        @zi.country = FactoryBot.build(:country)
       end
     
       it "display_name should be 'Argentina' if zone_name = ''" do

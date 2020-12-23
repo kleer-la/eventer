@@ -4,17 +4,17 @@ describe Rating do
 
   before(:each) do
 
-		@event_type = FactoryGirl.create(:event_type)
-		@country = FactoryGirl.create(:country)
+		@event_type = FactoryBot.create(:event_type)
+		@country = FactoryBot.create(:country)
 
-		@event = FactoryGirl.create(:event)
-		@event2 = FactoryGirl.create(:event)
+		@event = FactoryBot.create(:event)
+		@event2 = FactoryBot.create(:event)
 
 		@event.country = @country
 		@event2.country = @country
 
-		@trainer = FactoryGirl.create(:trainer)
-    @trainer2 = FactoryGirl.create(:trainer2)
+		@trainer = FactoryBot.create(:trainer)
+    @trainer2 = FactoryBot.create(:trainer2)
 
 		@event.trainer = @trainer
 		@event2.trainer = @trainer
@@ -23,9 +23,9 @@ describe Rating do
 		@event.event_type = @event_type
 		@event2.event_type = @event_type
 
-		@participant1 = FactoryGirl.build(:participant)
-		@participant2 = FactoryGirl.build(:participant)
-		@participant3 = FactoryGirl.build(:participant)
+		@participant1 = FactoryBot.build(:participant)
+		@participant2 = FactoryBot.build(:participant)
+		@participant3 = FactoryBot.build(:participant)
 
 		@participant1.id = 101
 		@participant2.id = 102

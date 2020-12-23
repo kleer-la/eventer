@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Setting do
   it "existing setting" do
-    setting = FactoryGirl.create(:setting)
+    setting = FactoryBot.create(:setting)
     
     expect(Setting.get "Hi").to eq "Hello"
   end

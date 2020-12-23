@@ -9,7 +9,7 @@ require 'spec_helper'
 #   # Event. As you add validations to Event, be sure to
 #   # update the return value of this method accordingly.
 #   def valid_attributes
-#     { :event_type_id => FactoryGirl.create(:event_type).id,
+#     { :event_type_id => FactoryBot.create(:event_type).id,
 #       :date => "23/01/2100",
 #       :finish_date => "24/01/2100",
 #       :place => "Hotel Conrad",
@@ -20,8 +20,8 @@ require 'spec_helper'
 #       :end_time => "18:00",
 #       :visibility_type => 'pu',
 #       :list_price => 500.00,
-#       :country_id => FactoryGirl.create(:country).id,
-#       :trainer_id => FactoryGirl.create(:trainer).id,
+#       :country_id => FactoryBot.create(:country).id,
+#       :trainer_id => FactoryBot.create(:trainer).id,
 #       :mode => "cl",
 #       :cancelled => false
 #       }
@@ -38,7 +38,7 @@ require 'spec_helper'
   
 #     before(:each) do
 #       @request.env["devise.mapping"] = Devise.mappings[:user]
-#       @user = FactoryGirl.create(:comercial)
+#       @user = FactoryBot.create(:comercial)
 #       sign_in @user
 #     end
 

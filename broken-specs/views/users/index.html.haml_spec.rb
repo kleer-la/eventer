@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "users/index" do
   before(:each) do
-    assign(:users, [FactoryGirl.create(:administrator),FactoryGirl.create(:comercial)])
+    assign(:users, [FactoryBot.create(:administrator),FactoryBot.create(:comercial)])
   end
 
   it "renders a list of users" do

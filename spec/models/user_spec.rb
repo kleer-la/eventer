@@ -6,10 +6,10 @@ describe User do
   context "If it's an administrator" do
 
     before(:each) do
-      user = FactoryGirl.create(:user)
-      user.roles << FactoryGirl.create(:admin_role)
+      user = FactoryBot.create(:user)
+      user.roles << FactoryBot.create(:admin_role)
       @admin = Ability.new user
-#      @admin = Ability.new FactoryGirl.create(:administrator) # doesn't work idk why
+#      @admin = Ability.new FactoryBot.create(:administrator) # doesn't work idk why
     end
   
     it { expect(@admin).to be_able_to(:manage, Role.new)}
@@ -22,8 +22,8 @@ describe User do
   context "If it's a comercial person" do
 
     before(:each) do
-      user = FactoryGirl.create(:user)
-      user.roles << FactoryGirl.create(:comercial_role)
+      user = FactoryBot.create(:user)
+      user.roles << FactoryBot.create(:comercial_role)
       @comercial = Ability.new user
     end
 
