@@ -60,7 +60,7 @@ gem 'eventmachine', '1.2.7'
 gem 'devise', '3.1.0'
 gem 'cancancan', '~> 1.17.0'
 
-gem 'formtastic'
+gem 'formtastic', '~> 2.3'
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'
