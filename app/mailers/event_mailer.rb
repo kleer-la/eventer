@@ -21,7 +21,10 @@ class EventMailer < ActionMailer::Base
   def welcome_new_event_participant(participant)
     @participant = participant
     @markdown_renderer = Redcarpet::Markdown.new( Redcarpet::Render::HTML.new(:hard_wrap => true), :autolink => true)
-    mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}")
+    mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
+      format.text
+      format.html { render :layout => 'event_mailer2' }
+    end
   end
 
   def send_certificate(participant, certificate_url_A4, certificate_url_LETTER )

@@ -20,6 +20,7 @@ describe EventMailer do
         end
         it "should queue and verify a simple email" do
             @email = EventMailer.welcome_new_event_participant(@participant).deliver
+#            File.open("x.html", 'w') { |file| file.write(@email) }
             expect(ActionMailer::Base.deliveries.count).to be 1
             expect(@email.to).to eq ["app_test@kleer.la"]
             expect(@email.subject).to eq "Kleer | Concurso de truco"
