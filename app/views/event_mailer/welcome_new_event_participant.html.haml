@@ -35,7 +35,7 @@
       Formas de pago:
     Tarjeta de crédito.
     %br
-    - if @participant.event.country.iso_code == 'AR'
+    - if @participant.influence_zone.country.iso_code == 'AR'
       %b
         Pago en Argentina:
       Los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.

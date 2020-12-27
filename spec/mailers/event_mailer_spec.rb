@@ -144,14 +144,15 @@ describe EventMailer do
             expect(email.html_part.body.to_s).to include "<strong>texto customizado</strong>: 16"
         end
         it "should NOT show extra info if participant NOT from AR" do
-            @participant.event.country.iso_code = 'CL'
+            @participant.influence_zone.country.iso_code = 'CL'
+            puts @participant
             email = EventMailer.welcome_new_event_participant(@participant).deliver
             
             expect(email.text_part.body.to_s).not_to include AR_TEXT
             expect(email.html_part.body.to_s).not_to include AR_TEXT
         end
         it "should show extra info if participant from AR" do
-            @participant.event.country.iso_code = 'AR'
+            @participant.influence_zone.country.iso_code = 'AR'
             email = EventMailer.welcome_new_event_participant(@participant).deliver
             
             expect(email.text_part.body.to_s).to include AR_TEXT
