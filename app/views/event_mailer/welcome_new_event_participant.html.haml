@@ -12,51 +12,52 @@
   Te enviamos la información de este taller:
   %br
   - if @participant.event.custom_prices_email_text.blank?
-    %b
-      Precios:
-    %br
+    - iso_code= @participant.event.currency_iso_code
+    - currency_symbol = currency_symbol_for(@participant.event.currency_iso_code)
+    - def currency_format(money) sprintf("%.0f", money) end
+    - eb_end_date= @participant.event.eb_end_date&.strftime('%d-%b-%Y')
     %b
       Precio de lista:
-      = "(#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.list_price)}"
-    - if !@participant.event.eb_price.nil? && @participant.event.eb_price > 0
+      = "#{iso_code} #{currency_symbol} #{currency_format(@participant.event.list_price)}"
       %br
+    - if !@participant.event.eb_price.nil? && @participant.event.eb_price > 0
       %b
         Pronto pago:
-      = "(#{@participant.event.currency_iso_code}) #{currency_symbol_for(@participant.event.currency_iso_code)} #{sprintf("%05.2f", @participant.event.eb_price)} abonando antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
-    %br
-    - if !@participant.event.couples_eb_price.nil? || !@participant.event.business_eb_price.nil?
+      = "#{iso_code} #{currency_symbol} #{currency_format(@participant.event.eb_price)} abonando antes del #{eb_end_date}."
       %br
+    - if !@participant.event.couples_eb_price.nil?
       %b
-        Descuentos Grupales:
-      %br
-      - if !@participant.event.couples_eb_price.nil?
-        = "#{sprintf("%05.2f", @participant.event.couples_eb_price)} pagando de a 2 personas antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
-        %br
-      - if !@participant.event.business_eb_price.nil?
-        = "#{sprintf("%05.2f", @participant.event.business_eb_price)} pagando de a 5 personas antes del #{@participant.event.eb_end_date.strftime('%d-%b-%Y')}."
-        %br
-    %br
-    (Promociones no acumulables, aplicadas sobre el precio de lista)
-    %br
+        En parejas:
+        = "#{iso_code} #{currency_symbol} #{currency_format(@participant.event.couples_eb_price)} cada uno abonando antes del #{eb_end_date}."
     %br
     %b
       Formas de pago:
-    - if @participant.event.country.iso_code != 'CL'
-      tarjeta de crédito,
-    transferencia bancaria, depósito o cheque.
-    - if @participant.event.country.iso_code == 'AR'
-      (
-      %a{ :href => "http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina", :target => "_blank" }
-        más información
-      ).
+    tarjeta de crédito.
     %br
     %br
-    Envianos un mensaje a
-    %a{ :href => "mailto:entrenamos@kleer.la" }
-      entrenamos@kleer.la
-    con la forma de pago que prefieras.
     %b
-      Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas.
+      Responde a este mail confirmando tu intención de inscribirte y te enviaremos un link de pago.
+    %br
+    - if !@participant.event.business_eb_price.nil?
+      %br
+      %b
+        Grupos (5 o más):
+        %br
+        = "#{iso_code} #{currency_symbol} #{currency_format(@participant.event.business_eb_price)} cada uno abonando antes del #{eb_end_date}."
+        %br
+        %b
+          Responde a este mail indicando cuantas personas son y si puedes pagar con tarjeta.
+        %br
+    %br
+    %br
+    -# %b
+    -#   Formas de pago:
+    -# - if @participant.event.country.iso_code == 'AR'
+    -#   (
+    -#   %a{ :href => "http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina", :target => "_blank" }
+    -#     más información
+    -#   ).
+    -# %br
   - else
     = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
   %br
