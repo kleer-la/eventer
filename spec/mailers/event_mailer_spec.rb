@@ -33,6 +33,7 @@ describe EventMailer do
         EB_TEXT="Pronto pago:"
         PAIR_TEXT="En parejas:"
         GROUP_TEXT="Grupos (5 o más):"
+        AR_TEXT="Pago en Argentina:"
 
         it "should queue and verify a simple email" do
             @email = EventMailer.welcome_new_event_participant(@participant).deliver
@@ -141,7 +142,21 @@ describe EventMailer do
             email = EventMailer.welcome_new_event_participant(@participant).deliver
             
             expect(email.html_part.body.to_s).to include "<strong>texto customizado</strong>: 16"
-          end
+        end
+        it "should NOT show extra info if participant NOT from AR" do
+            @participant.event.country.iso_code = 'CL'
+            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            
+            expect(email.text_part.body.to_s).not_to include AR_TEXT
+            expect(email.html_part.body.to_s).not_to include AR_TEXT
+        end
+        it "should show extra info if participant from AR" do
+            @participant.event.country.iso_code = 'AR'
+            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            
+            expect(email.text_part.body.to_s).to include AR_TEXT
+            expect(email.html_part.body.to_s).to include AR_TEXT
+        end
     end
 
     it "should send the certificate e-mail" do

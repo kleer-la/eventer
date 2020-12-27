@@ -2,7 +2,7 @@
   %font{ :face => "courier new, courier, monospace", :size => "5" }
     %span{ :style => "line-height: 21.99652862548828px;" }
     = @participant.event.event_type.name
-%div{ :style => "font-family:Verdana;font-size:12px;padding:3px" }
+%div{ :style => "font-family:Verdana;font-size:12px;padding:6px" }
   = "Hola, " + @participant.fname + "."
   %br
   %br
@@ -35,6 +35,11 @@
       Formas de pago:
     Tarjeta de crédito.
     %br
+    - if @participant.event.country.iso_code == 'AR'
+      %b
+        Pago en Argentina:
+      Los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
+      %br
     %br
     %b
       Responde a este mail confirmando tu intención de inscribirte y te enviaremos un link de pago.
@@ -46,18 +51,10 @@
       = "#{iso_code} #{currency_symbol} #{currency_format(@participant.event.business_eb_price)} cada uno abonando antes del #{eb_end_date}."
       %br
       %br
-      Responde a este mail indicando cuantas personas son y si puedes pagar con tarjeta.
+      Para grupos, responde a este mail indicando cuantas personas son y si puedes pagar con tarjeta.
       %br
     %br
     %br
-    -# %b
-    -#   Formas de pago:
-    -# - if @participant.event.country.iso_code == 'AR'
-    -#   (
-    -#   %a{ :href => "http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentina", :target => "_blank" }
-    -#     más información
-    -#   ).
-    -# %br
   - else
     = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
   %br
