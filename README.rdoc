@@ -34,9 +34,12 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 
 Enjoy!
 
-#Ambiente docker
+## Ambiente docker
 - Iniciar el contenedor
     docker-compose run --service-ports eventer bash
 - Ir al directorio de la aplicación
     cd /home/eventer
 - Seguir con las instrucciones previas
+
+## Migrar versiones Rails
+- https://railsbump.org/ compatibilidad de gemas

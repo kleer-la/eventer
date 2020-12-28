@@ -21,7 +21,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_girl_rails',require: false
+  gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara'
   gem 'shoulda-matchers', '~> 2.8.0' # v3 para ActiveRecord 4
@@ -29,7 +29,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.20'
+  gem 'pg', '0.21'  
 end
 
 group :production do
@@ -40,7 +40,7 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
+  gem 'sass-rails',   '~> 3.2.6'
   gem 'coffee-rails', '~> 3.2.1'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
@@ -60,7 +60,7 @@ gem 'eventmachine', '1.2.7'
 gem 'devise', '3.1.0'
 gem 'cancancan', '~> 1.17.0'
 
-gem 'formtastic'
+gem 'formtastic', '~> 2.3'
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'

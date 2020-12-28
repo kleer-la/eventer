@@ -17,9 +17,9 @@ end
 describe Certificate do
 
   before(:each) do
-    @participant = FactoryGirl.build(:participant)
-    @et = FactoryGirl.build(:event_type)
-    @e = FactoryGirl.build(:event)
+    @participant = FactoryBot.build(:participant)
+    @et = FactoryBot.build(:event_type)
+    @e = FactoryBot.build(:event)
     @e.event_type = @et
     @participant.event = @e
   end
@@ -141,7 +141,7 @@ describe "render certificates" do
         allow(pdf).to receive(:bounding_box)
         allow(pdf).to receive(:line_width=)
         allow(pdf).to receive(:stroke)
-        certificate = Certificate.new(FactoryGirl.build(:participant))
+        certificate = Certificate.new(FactoryBot.build(:participant))
 
         expect(pdf).to receive(:text).exactly(6).times
 
@@ -156,9 +156,9 @@ describe "render certificates" do
         allow(pdf).to receive(:line_width=)
         allow(pdf).to receive(:stroke)
 
-        p = FactoryGirl.build(:participant)
-        et = FactoryGirl.build(:event_type)
-        e = FactoryGirl.build(:event)
+        p = FactoryBot.build(:participant)
+        et = FactoryBot.build(:event_type)
+        e = FactoryBot.build(:event)
         e.event_type = et
         p.event = e
         et.csd_eligible = true
@@ -173,10 +173,10 @@ describe "render certificates" do
     it "csd certificate for a 3 days " do
         pdf = PrawnMock.new
 
-        p = FactoryGirl.build(:participant)
-        et = FactoryGirl.build(:event_type)
+        p = FactoryBot.build(:participant)
+        et = FactoryBot.build(:event_type)
         et.duration = 24
-        e = FactoryGirl.build(:event)
+        e = FactoryBot.build(:event)
         e.event_type = et
         p.event = e
         et.csd_eligible = true
@@ -188,7 +188,7 @@ describe "render certificates" do
     end
 
     it "Render one signature" do
-        t = FactoryGirl.build(:trainer)
+        t = FactoryBot.build(:trainer)
         t.signature_image = nil
 
         certificate = Certificate.new(p)

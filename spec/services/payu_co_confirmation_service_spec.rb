@@ -4,9 +4,9 @@ describe PayuCoConfirmationService do
 
 
   before(:each) do
-    @event = FactoryGirl.build(:event)
+    @event = FactoryBot.build(:event)
     @event.id=11
-    @participant = FactoryGirl.build(:participant)
+    @participant = FactoryBot.build(:participant)
     @participant.id=110
     allow(Event).to receive(:find).with(@event.id).and_return(@event)
     allow(Participant).to receive(:find).with(@participant.id).and_return(@participant)

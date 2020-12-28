@@ -6,7 +6,7 @@ describe DashboardController do
   describe "GET 'index'" do
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      @user = FactoryGirl.create(:administrator)
+      @user = FactoryBot.create(:administrator)
       sign_in @user
     end
 
@@ -26,7 +26,7 @@ describe DashboardController do
   describe CountryFilter do
     before(:all) do
       c= Country.find_by_iso_code('AR')
-      @ar_id= !c.nil? ? c.id : FactoryGirl.create(:country).id
+      @ar_id= !c.nil? ? c.id : FactoryBot.create(:country).id
     end
 
     it "Not select a country" do

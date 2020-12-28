@@ -6,12 +6,12 @@ require 'spec_helper'
 #   # Participant. As you add validations to Participant, be sure to
 #   # update the return value of this method accordingly.
 #   def valid_attributes
-#     { :event_id => FactoryGirl.create(:event).id,
+#     { :event_id => FactoryBot.create(:event).id,
 #       :fname => "Pablo",
 #       :lname => "Picasso",
 #       :email => "ppicaso@pintores.org",
 #       :phone => "1234-5678",
-#       :influence_zone_id => FactoryGirl.create(:influence_zone).id}
+#       :influence_zone_id => FactoryBot.create(:influence_zone).id}
 #   end
 
 #   # This should return the minimal set of values that should be in the session
@@ -25,7 +25,7 @@ require 'spec_helper'
 
 #     before(:each) do
 #       @request.env["devise.mapping"] = Devise.mappings[:user]
-#       @user = FactoryGirl.create(:comercial)
+#       @user = FactoryBot.create(:comercial)
 #       sign_in @user
 #     end
 

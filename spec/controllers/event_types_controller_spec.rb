@@ -16,7 +16,7 @@ require 'spec_helper'
 #        :description => "Una descripción",
 #        :recipients => "algunos destinatarios",
 #        :program => "El programa del evento",
-#        :trainer_ids => [ FactoryGirl.create(:trainer).id ]
+#        :trainer_ids => [ FactoryBot.create(:trainer).id ]
 #        }
 #    end
   
@@ -29,7 +29,7 @@ require 'spec_helper'
   
 #   before(:each) do
 #     @request.env["devise.mapping"] = Devise.mappings[:user]
-#     @user = FactoryGirl.create(:administrator)
+#     @user = FactoryBot.create(:administrator)
 #     sign_in @user
 #   end
 

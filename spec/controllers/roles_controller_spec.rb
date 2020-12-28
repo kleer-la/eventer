@@ -23,7 +23,7 @@ require 'spec_helper'
     
 #     before(:each) do
 #       @request.env["devise.mapping"] = Devise.mappings[:user]
-#       @user = FactoryGirl.create(:administrator)
+#       @user = FactoryBot.create(:administrator)
 #       sign_in @user
 #     end
 
@@ -160,7 +160,7 @@ require 'spec_helper'
     
 #     before(:each) do
 #       @request.env["devise.mapping"] = Devise.mappings[:user]
-#       @user = FactoryGirl.create(:user)
+#       @user = FactoryBot.create(:user)
 #       sign_in @user
 #     end
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Trainer do
   it "should require a name" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
     
     t.name = ""
 
@@ -10,7 +10,7 @@ describe Trainer do
   end
 
 	it "should let me set a bio" do
-		t = FactoryGirl.build(:trainer)
+		t = FactoryBot.build(:trainer)
 
 		t.bio = "Mini bio"
 
@@ -18,7 +18,7 @@ describe Trainer do
 	end
 	
 	it "should let me set a gravatar e-mail" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.gravatar_email = "malaimo@gmail.com"
 
@@ -26,7 +26,7 @@ describe Trainer do
   end
   
   it "should let me set a twittwr username" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.twitter_username = "martinalaimo"
 
@@ -34,7 +34,7 @@ describe Trainer do
   end
   
   it "should let me set a linkein url" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.linkedin_url = "http://ar.linkedin.com/in/malaimo"
 
@@ -42,7 +42,7 @@ describe Trainer do
   end  
 
   it "should let me indicate if the trainer is a kleerer" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.is_kleerer = true
 
@@ -50,7 +50,7 @@ describe Trainer do
   end
   
   it "should calculate the gravatar for malaimo e-mail" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.gravatar_email = "malaimo@gmail.com"
 
@@ -58,7 +58,7 @@ describe Trainer do
   end
   
   it "should calculate the gravatar for jgabardini e-mail" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.gravatar_email = "jgabardini@computer.org"
 
@@ -66,7 +66,7 @@ describe Trainer do
   end
   
   it "should handle a nil gravatar e-mail" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
 		t.gravatar_email = nil
 
@@ -74,7 +74,7 @@ describe Trainer do
   end
 
   it "should have a crm tag" do
-    t = FactoryGirl.build(:trainer)
+    t = FactoryBot.build(:trainer)
 
     t.tag_name = "TR-CP (Carlos Peix)"
 

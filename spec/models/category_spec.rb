@@ -4,7 +4,7 @@ describe Category do
   it { should have_and_belong_to_many(:event_types) }
   
   before(:each) do
-    @category = FactoryGirl.build(:category)
+    @category = FactoryBot.build(:category)
   end
   
   it "should be valid" do
@@ -48,20 +48,20 @@ describe Category do
   end
 
   it "should get " do
-    biz = FactoryGirl.build(:category)
+    biz = FactoryBot.build(:category)
     
-    tec = FactoryGirl.build(:category)
+    tec = FactoryBot.build(:category)
     tec.codename = "TEC"
     
-    csm = FactoryGirl.build(:event_type)
+    csm = FactoryBot.build(:event_type)
     csm.categories << biz
     csm.save!
     
-    kanban = FactoryGirl.build(:event_type)
+    kanban = FactoryBot.build(:event_type)
     kanban.categories << biz
     kanban.save!
     
-    tdd = FactoryGirl.build(:event_type)
+    tdd = FactoryBot.build(:event_type)
     tdd.categories << tec
     tdd.save!
     
@@ -69,15 +69,15 @@ describe Category do
   end
   
   it "should have a visible scope" do
-    cat1 = FactoryGirl.build(:category)
+    cat1 = FactoryBot.build(:category)
     cat1.visible = true
     cat1.save!
     
-    cat2 = FactoryGirl.build(:category)
+    cat2 = FactoryBot.build(:category)
     cat2.visible = true
     cat2.save!
     
-    cat3 = FactoryGirl.build(:category)
+    cat3 = FactoryBot.build(:category)
     cat3.visible = false
     cat3.save!
     

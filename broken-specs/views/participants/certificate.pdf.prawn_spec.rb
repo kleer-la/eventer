@@ -14,7 +14,7 @@ RSpec.describe "generate one certificate" do
     expect(texts[0]).to include 'código de verificación'
   end
   it "abort when wrong verification code" do
-    participant= FactoryGirl.create(:participant)
+    participant= FactoryBot.create(:participant)
     assign(:page_size, 'LETTER')
     assign(:verification_code, participant.verification_code)
     assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
@@ -26,7 +26,7 @@ RSpec.describe "generate one certificate" do
   end
 
   it "abort when trainer has no signature" do
-    participant= FactoryGirl.create(:participant)
+    participant= FactoryBot.create(:participant)
     participant.attend!
     participant.save!
     trainer= participant.event.trainer
@@ -43,7 +43,7 @@ RSpec.describe "generate one certificate" do
   end
 
   it "a correct one@participant." do
-    participant= FactoryGirl.create(:participant)
+    participant= FactoryBot.create(:participant)
     participant.attend!
     participant.save!
     trainer= participant.event.trainer

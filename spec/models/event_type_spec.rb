@@ -6,7 +6,7 @@ describe EventType do
   it { should have_and_belong_to_many(:categories) }
   
   before(:each) do
-    @event_type = FactoryGirl.build(:event_type)
+    @event_type = FactoryBot.build(:event_type)
   end
   
   it "should be valid" do

@@ -4,7 +4,7 @@ include ActiveSupport
 describe Event do
 
   before(:each) do
-    @event = FactoryGirl.build(:event)
+    @event = FactoryBot.build(:event)
   end
 
   context "Valid" do
@@ -443,12 +443,12 @@ describe Event do
       expect(@event.trainers.count).to eq 1
     end
     it "should have two trainers" do
-      @event.trainer2 = FactoryGirl.build(:trainer2)
+      @event.trainer2 = FactoryBot.build(:trainer2)
       expect(@event.trainers.count).to eq 2
     end
     it "should have three trainers" do
-      @event.trainer2 = FactoryGirl.build(:trainer2)
-      @event.trainer3 = FactoryGirl.build(:trainer2)
+      @event.trainer2 = FactoryBot.build(:trainer2)
+      @event.trainer3 = FactoryBot.build(:trainer2)
       expect(@event.trainers.count).to eq 3
     end
   end
@@ -457,7 +457,7 @@ describe Event do
     
     it "It should return a completion percentage w/confirmed participant" do
       @event.capacity = 10
-      p= FactoryGirl.create(:participant, event: @event, status: "C")
+      p= FactoryBot.create(:participant, event: @event, status: "C")
       
       expect(@event.completion).to eq 0.1
     end
