@@ -13,9 +13,15 @@ SimpleCov.start 'rails'
 
 require 'cucumber/rails'
 require 'selenium-webdriver'
+require 'webdrivers'
 
 #to run in chrome
-#driver = Selenium::WebDriver.for :chrome
+Webdrivers::Chromedriver.required_version = '87.0.4280.88'
+driver = Selenium::WebDriver.for :chrome, args: [
+  "--headless","--no-sandbox","--disable-dev-shm-usage"
+]
+
+
 #driver.manage.timeouts.implicit_wait = 20
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd
