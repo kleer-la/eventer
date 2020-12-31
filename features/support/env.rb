@@ -17,10 +17,6 @@ require 'webdrivers'
 
 #to run in chrome
 Webdrivers::Chromedriver.required_version = '87.0.4280.88'
-driver = Selenium::WebDriver.for :chrome, args: [
-  "--headless","--no-sandbox","--disable-dev-shm-usage"
-]
-
 
 #driver.manage.timeouts.implicit_wait = 20
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
@@ -28,7 +24,27 @@ driver = Selenium::WebDriver.for :chrome, args: [
 # prefer to use XPath just remove this line and adjust any selectors in your
 # steps to use the XPath syntax.
 Capybara.default_selector = :css
-#Capybara.default_driver = :selenium
+Capybara.javascript_driver = :selenium
+Capybara.run_server = false
+
+Capybara.register_driver :selenium do |app|
+  options = Selenium::WebDriver::Chrome::Options.new(
+    args: %w[--headless --no-sandbox] # --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security --disable-popup-blocking --window-size=1920,1080]
+  )
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end  
+
+=begin
+require 'webdrivers'
+  Webdrivers::Chromedriver.required_version = '87.0.4280.88'
+  options = Selenium::WebDriver::Chrome::Options.new(
+    args: %w[--headless --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security --disable-popup-blocking --window-size=1920,1080]
+  )
+  driver=Selenium::WebDriver.for :chrome, options: options
+  driver.get 'http://www.google.com'
+  p driver
+=end
+
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how
