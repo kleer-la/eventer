@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe "API Trainers GET /trainers" do
   include Rack::Test::Methods

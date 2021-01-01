@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require './lib/country_filter'
 
 describe DashboardController do

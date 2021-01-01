@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe "generate one certificate" do
   it "abort when no page_size" do

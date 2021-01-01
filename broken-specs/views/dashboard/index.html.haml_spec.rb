@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 # describe "dashboard/index.html.haml" do
 #   before(:each) do

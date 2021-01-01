@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe "rendering the attendance list template" do
   it "displays the participant list" do

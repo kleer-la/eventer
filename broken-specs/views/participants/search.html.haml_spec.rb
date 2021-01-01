@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe "rendering the search result template" do
   it "displays the search result" do
