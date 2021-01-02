@@ -7,7 +7,7 @@ describe "categories/show" do
         )
     end
 
-    it "renders the edit category form" do
+    it "renders the show category form" do
         render
 
         expect(rendered).to match(/Name 1/)
