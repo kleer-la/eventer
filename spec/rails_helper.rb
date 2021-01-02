@@ -55,6 +55,15 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
+  # For testing Controllers w/ signin
+  # https://medium.com/@yutafujii_59175/a-simple-login-test-with-rspec-devise-factorybot-in-rails-29aeb2ebc4ab
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+  # v4 config.include Devise::Test::ControllerHelpers, :type => :controller
+  config.include Devise::TestHelpers, type: :controller
+  config.include Warden::Test::Helpers
+
   #FactoryBot
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction

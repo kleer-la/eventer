@@ -1,9 +1,25 @@
-# encoding: utf-8
-
 require 'rails_helper'
+require_relative "../support/devise"
 
+describe EventsController do
+  # This should return the minimal set of values that should be in the session
+  # in order to pass any filters (e.g. authentication) defined in
+  # EventsController. Be sure to keep this updated too.
+  def valid_session
+    nil
+  end
+  context "the user is a admin" do
+    login_admin
+    
+    describe "GET new" do
+      it "assigns a new event as @event" do
+        get :new, {}, valid_session
+        expect(assigns(:event)).to be_a_new(Event)
+      end
+    end
+  end
+end
 
-# describe EventsController do
 
 #   # This should return the minimal set of attributes required to create a valid
 #   # Event. As you add validations to Event, be sure to
@@ -27,12 +43,7 @@ require 'rails_helper'
 #       }
 #   end
   
-#   # This should return the minimal set of values that should be in the session
-#   # in order to pass any filters (e.g. authentication) defined in
-#   # EventsController. Be sure to keep this updated too.
-#   def valid_session
-#     nil
-#   end
+
   
 #   context "the user is a comercial" do
   
