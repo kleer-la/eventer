@@ -5,9 +5,9 @@ describe "users/show" do
     @user = assign(:user, FactoryBot.create(:comercial))
   end
 
-  it "renders attributes in <p>" do
+  it "show attributes " do
     render
-    rendered.should match(/comercial@user.com/)
-    rendered.should match(/comercial/)
+    expect(rendered).to match(/comercial@user.com/)
+    expect(rendered).to match(/comercial/)
   end
 end
