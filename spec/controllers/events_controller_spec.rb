@@ -10,7 +10,7 @@ describe EventsController do
   end
   context "the user is a admin" do
     login_admin
-    
+
     describe "GET new" do
       it "assigns a new event as @event" do
         get :new, {}, valid_session

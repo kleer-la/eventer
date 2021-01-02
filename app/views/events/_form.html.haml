@@ -190,7 +190,9 @@
               .span3
                 .control-group
                   %label.control-label{ :for => :currency_iso_code}= t("formtastic.labels.event.currency_iso_code")
-                  = f.collection_select :currency_iso_code, @currencies.collect{ |c| [ c[1][:iso_code]+" - "+c[1][:name], c[1][:iso_code]] }, :last, :first
+                  - priority_currencies = @currencies.collect{ |c| [ c[1][:iso_code], c[1][:iso_code]+" - "+c[1][:name]]}
+                  - priority_currencies.unshift priority_currencies.find { |c| c[0]=='USD'}
+                  = f.collection_select :currency_iso_code, priority_currencies, :first, :last
               .span9
                 .control-group
                   %label.control-label{ :for => :show_pricing }= t("formtastic.labels.event.show_pricing")
