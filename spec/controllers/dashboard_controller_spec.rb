@@ -1,26 +1,15 @@
 require 'rails_helper'
 require './lib/country_filter'
+require_relative "../support/devise"
 
 describe DashboardController do
 
   describe "GET 'index'" do
-    before(:each) do
-      @request.env["devise.mapping"] = Devise.mappings[:user]
-      @user = FactoryBot.create(:administrator)
-      sign_in @user
+    login_admin
+    it "returns http success" do
+      get 'index'
+      expect(response).to be_success
     end
-
-    # This should return the minimal set of values that should be in the session
-    # in order to pass any filters (e.g. authentication) defined in
-    # CategoriesController. Be sure to keep this updated too.
-    def valid_session
-      nil
-    end
-
-#    it "returns http success" do
-#      get 'index'
-#      expect(response).to be_success
-#    end
   end
 
   describe CountryFilter do
