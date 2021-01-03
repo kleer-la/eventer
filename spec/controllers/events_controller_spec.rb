@@ -19,31 +19,6 @@ describe EventsController do
     end
   end
 end
-
-
-#   # This should return the minimal set of attributes required to create a valid
-#   # Event. As you add validations to Event, be sure to
-#   # update the return value of this method accordingly.
-#   def valid_attributes
-#     { :event_type_id => FactoryBot.create(:event_type).id,
-#       :date => "23/01/2100",
-#       :finish_date => "24/01/2100",
-#       :place => "Hotel Conrad",
-#       :address => "Tucumán 373",
-#       :city => "Punta del Este",
-#       :capacity => 20,
-#       :start_time => "9:00",
-#       :end_time => "18:00",
-#       :visibility_type => 'pu',
-#       :list_price => 500.00,
-#       :country_id => FactoryBot.create(:country).id,
-#       :trainer_id => FactoryBot.create(:trainer).id,
-#       :mode => "cl",
-#       :cancelled => false
-#       }
-#   end
-  
-
   
 #   context "the user is a comercial" do
   
