@@ -33,7 +33,7 @@ class EventTypesController < ApplicationController
   def new
     @event_type = EventType.new
     @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @categories = Category.sorted
     @cancellation_policy_setting = Setting.get("CANCELLATION_POLICY")
 
     respond_to do |format|
@@ -46,7 +46,7 @@ class EventTypesController < ApplicationController
   def edit
     @event_type = EventType.find(params[:id])
     @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @categories = Category.sorted
     @cancellation_policy_setting = Setting.get("CANCELLATION_POLICY")
   end
 
@@ -55,7 +55,7 @@ class EventTypesController < ApplicationController
   def create
     @event_type = EventType.new(params[:event_type])
     @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @categories = Category.sorted
 
     respond_to do |format|
       if @event_type.save
@@ -75,7 +75,7 @@ class EventTypesController < ApplicationController
   def update
     @event_type = EventType.find(params[:id])
     @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @categories = Category.sorted
 
     respond_to do |format|
       if @event_type.update_attributes(params[:event_type])
