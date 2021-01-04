@@ -84,86 +84,76 @@ describe RolesController do
           put :update, {:id => @role.to_param, :role => {'these' => 'params'}}
         end
 
-#         it "assigns the requested role as @role" do
-#           role = Role.create! valid_attributes
-#           put :update, {:id => role.to_param, :role => valid_attributes}, valid_session
-#           assigns(:role).should eq(role)
-#         end
+        it "assigns the requested role as @role" do
+          put :update, {:id => @role.to_param, :role => @role.attributes}
+          expect(assigns(:role)).to eq @role
+        end
 
-#         it "redirects to the role" do
-#           role = Role.create! valid_attributes
-#           put :update, {:id => role.to_param, :role => valid_attributes}, valid_session
-#           response.should redirect_to(role)
-#         end
+        it "redirects to the role" do
+          put :update, {:id => @role.to_param, :role => @role.attributes}
+          expect(response).to redirect_to @role
+        end
       end
 
-#       describe "with invalid params" do
-#         it "assigns the role as @role" do
-#           role = Role.create! valid_attributes
-#           # Trigger the behavior that occurs when invalid params are submitted
-#           Role.any_instance.stub(:save).and_return(false)
-#           put :update, {:id => role.to_param, :role => {}}, valid_session
-#           assigns(:role).should eq(role)
-#         end
+      describe "with invalid params" do
+        before(:each) do 
+          # Trigger the behavior that occurs when invalid params are submitted
+          allow_any_instance_of(Role).to receive(:save).and_return(false)
+          put :update, {:id => @role.to_param, :role => {}}
+        end
+        it "assigns the role as @role" do
+          expect(assigns(:role)).to eq @role
+        end
 
-#         it "re-renders the 'edit' template" do
-#           role = Role.create! valid_attributes
-#           # Trigger the behavior that occurs when invalid params are submitted
-#           Role.any_instance.stub(:save).and_return(false)
-#           put :update, {:id => role.to_param, :role => {}}, valid_session
-#           response.should render_template("edit")
-#         end
-#       end
+        it "re-renders the 'edit' template" do
+          expect(response).to render_template :edit
+        end
+      end
     end
 
-#     describe "DELETE destroy" do
-#       it "destroys the requested role" do
-#         role = Role.create! valid_attributes
-#         expect {
-#           delete :destroy, {:id => role.to_param}, valid_session
-#         }.to change(Role, :count).by(-1)
-#       end
+    describe "DELETE destroy" do
+      it "destroys the requested role" do
+        expect {
+          delete :destroy, {:id => @role.to_param}
+        }.to change(Role, :count).by(-1)
+      end
 
-#       it "redirects to the roles list" do
-#         role = Role.create! valid_attributes
-#         delete :destroy, {:id => role.to_param}, valid_session
-#         response.should redirect_to(roles_url)
-#       end
-#     end
-#   end
+      it "redirects to the roles list" do
+        delete :destroy, {:id => @role.to_param}
+        expect(response).to redirect_to roles_url
+      end
+    end
+  end
   
-#   context "If user is not administrator" do
-    
-#     before(:each) do
-#       @request.env["devise.mapping"] = Devise.mappings[:user]
-#       @user = FactoryBot.create(:user)
-#       sign_in @user
-#     end
+  context "If user is not administrator" do
+    login_comercial
 
-#     describe "GET index" do
-#       it "should raise CanCan::AccessDenied" do
-#         expect{ get :index }.to raise_error CanCan::AccessDenied
-#       end
-#     end
+    before(:each) do
+      @role= FactoryBot.create(:comercial_role)
+    end
+    describe "GET index" do
+      it "should raise CanCan::AccessDenied" do
+        expect{ get :index }.to raise_error CanCan::AccessDenied
+      end
+    end
 
-#     #describe "GET show" do
-#     #  it "should raise CanCan::AccessDenied" do
-#     #    expect{ get :show }.to raise_error CanCan::AccessDenied
-#     #  end
-#     #end
+    describe "GET show" do
+     it "should raise CanCan::AccessDenied" do
+       expect{ get :show, {:id => @role.to_param} }.to raise_error CanCan::AccessDenied
+     end
+    end
 
-#     describe "GET new" do
-#       it "should raise CanCan::AccessDenied" do
-#         expect{ get :new }.to raise_error CanCan::AccessDenied
-        
-#       end
-#     end
+    describe "GET new" do
+      it "should raise CanCan::AccessDenied" do
+        expect{ get :new }.to raise_error CanCan::AccessDenied
+      end
+    end
 
-#     #describe "GET edit" do
-#     #  it "should raise CanCan::AccessDenied" do
-#     #    expect{ get :edit }.to raise_error CanCan::AccessDenied
-#     #  end
-#     #end
+    describe "GET edit" do
+     it "should raise CanCan::AccessDenied" do
+       expect{ get :edit, {:id => @role.to_param} }.to raise_error CanCan::AccessDenied
+     end
+    end
 
   end
 
