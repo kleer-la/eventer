@@ -9,6 +9,7 @@ class Trainer < ActiveRecord::Base
   has_many :cotrained_participants, :through => :cotrained_events, :source => :participants
 
   scope :kleerer, where(:is_kleerer => true)
+  scope :sorted, order("name DESC")  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 
   validates :name, :presence => true
 

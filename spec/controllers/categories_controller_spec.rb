@@ -1,158 +1,132 @@
-require 'spec_helper'
+require 'rails_helper'
+require_relative "../support/devise"
 
+describe CategoriesController do
+  login_admin
 
-# describe CategoriesController do
+  describe "GET index" do
+    it "assigns all categories as @categories" do
+      category = FactoryBot.create(:category)
+      get :index, {}
+      expect(assigns(:categories)).to eq [category]
+    end
+  end
 
-#   # This should return the minimal set of attributes required to create a valid
-#   # Category. As you add validations to Category, be sure to
-#   # update the return value of this method accordingly.
-#   def valid_attributes
-#     {
-#       :name => "Negocios",
-#       :description => "Management y Negocios",
-#       :tagline => "pepep ep pe pe pe pe",
-#       :codename => "BIZ"
-#       }
-#   end
+  describe "GET show" do
+    it "assigns the requested category as @category" do
+      category = FactoryBot.create(:category)
+      get :show, {:id => category.id}
+      expect(assigns(:category)).to eq category
+    end
+  end
 
-#   before(:each) do
-#     @request.env["devise.mapping"] = Devise.mappings[:user]
-#     @user = FactoryBot.create(:administrator)
-#     sign_in @user
-#   end
+  describe "GET new" do
+    it "assigns a new category as @category" do
+      get :new, {}
+      expect(assigns(:category)).to be_a_new(Category)
+    end
+  end
 
-#   # This should return the minimal set of values that should be in the session
-#   # in order to pass any filters (e.g. authentication) defined in
-#   # CategoriesController. Be sure to keep this updated too.
-#   def valid_session
-#     nil
-#   end
+  describe "GET edit" do
+    it "assigns the requested category as @category" do
+      category = FactoryBot.create(:category)
+      get :edit, {:id => category.to_param}
+      expect(assigns(:category)).to eq category
+    end
+  end
 
-#   describe "GET index" do
-#     it "assigns all categories as @categories" do
-#       category = Category.create! valid_attributes
-#       get :index, {}, valid_session
-#       assigns(:categories).should eq([category])
-#     end
-#   end
+  describe "POST create" do
+    describe "with valid params" do
+      it "creates a new Category" do
+        expect {
+          post :create, {:category => FactoryBot.attributes_for(:category)}
+        }.to change(Category, :count).by(1)
+      end
 
-#   describe "GET show" do
-#     it "assigns the requested category as @category" do
-#       category = Category.create! valid_attributes
-#       get :show, {:id => category.to_param}, valid_session
-#       assigns(:category).should eq(category)
-#     end
-#   end
+      it "assigns a newly created category as @category" do
+        post :create, {:category => FactoryBot.attributes_for(:category)}
+        expect(assigns(:category)).to be_a Category
+        expect(assigns(:category)).to be_persisted
+      end
 
-#   describe "GET new" do
-#     it "assigns a new category as @category" do
-#       get :new, {}, valid_session
-#       assigns(:category).should be_a_new(Category)
-#     end
-#   end
+      it "redirects to the created category" do
+        post :create, {:category => FactoryBot.attributes_for(:category)}
+        expect(response).to redirect_to(Category.last)
+      end
+    end
 
-#   describe "GET edit" do
-#     it "assigns the requested category as @category" do
-#       category = Category.create! valid_attributes
-#       get :edit, {:id => category.to_param}, valid_session
-#       assigns(:category).should eq(category)
-#     end
-#   end
+    describe "with invalid params" do
+      it "assigns a newly created but unsaved category as @category" do
+        # Trigger the behavior that occurs when invalid params are submitted
+        allow_any_instance_of(Category).to receive(:save).and_return(false)
+        post :create, {:category => {}}
+        expect(assigns(:category)).to be_a_new(Category)
+      end
 
-#   describe "POST create" do
-#     describe "with valid params" do
-#       it "creates a new Category" do
-#         expect {
-#           post :create, {:category => valid_attributes}, valid_session
-#         }.to change(Category, :count).by(1)
-#       end
+      it "re-renders the 'new' template" do
+        # Trigger the behavior that occurs when invalid params are submitted
+        allow_any_instance_of(Category).to receive(:save).and_return(false)
+        post :create, {:category => {}}
+        expect(response).to render_template(:new)
+      end
+    end
+  end
 
-#       it "assigns a newly created category as @category" do
-#         post :create, {:category => valid_attributes}, valid_session
-#         assigns(:category).should be_a(Category)
-#         assigns(:category).should be_persisted
-#       end
+  describe "PUT update" do
+    describe "with valid params" do
+      before(:each) do
+        @category = FactoryBot.create(:category)
+      end
+      it "updates the requested category" do
+        # Assuming there are no other categories in the database, this
+        # specifies that the Category created on the previous line
+        # receives the :update_attributes message with whatever params are
+        # submitted in the request.
+        expect_any_instance_of(Category).to receive(:update_attributes).with({'these' => 'params'})
+        put :update, {:id => @category.to_param, :category => {'these' => 'params'}}
+      end
 
-#       it "redirects to the created category" do
-#         post :create, {:category => valid_attributes}, valid_session
-#         response.should redirect_to(Category.last)
-#       end
-#     end
+      it "assigns the requested category as @category" do
+        put :update, {:id => @category.to_param, :category => FactoryBot.attributes_for(:category)}
+        expect(assigns(:category)).to eq @category
+      end
 
-#     describe "with invalid params" do
-#       it "assigns a newly created but unsaved category as @category" do
-#         # Trigger the behavior that occurs when invalid params are submitted
-#         Category.any_instance.stub(:save).and_return(false)
-#         post :create, {:category => {}}, valid_session
-#         assigns(:category).should be_a_new(Category)
-#       end
+      it "redirects to the category" do
+        put :update, {:id => @category.to_param, :category => FactoryBot.attributes_for(:category)}
+        expect(response).to redirect_to(@category)
+      end
+    end
 
-#       it "re-renders the 'new' template" do
-#         # Trigger the behavior that occurs when invalid params are submitted
-#         Category.any_instance.stub(:save).and_return(false)
-#         post :create, {:category => {}}, valid_session
-#         response.should render_template("new")
-#       end
-#     end
-#   end
+    describe "with invalid params" do
+      before(:each) do
+        @category = FactoryBot.create(:category)
+        # Trigger the behavior that occurs when invalid params are submitted
+        allow_any_instance_of(Category).to receive(:save).and_return(false)
+        put :update, {:id => @category.to_param, :category => {}}
+      end
+      it "assigns the category as @category" do
+        expect(assigns(:category)).to eq @category
+      end 
+      it "re-renders the 'edit' template" do  
+        expect(response).to render_template(:edit)
+      end
+    end
+  end
+  
+  describe "DELETE destroy" do
+    before(:each) do
+      @category = FactoryBot.create(:category)
+    end
+    it "destroys the requested category" do
+      expect {
+        delete :destroy, {:id => @category.to_param}
+      }.to change(Category, :count).by(-1)
+    end
 
-#   describe "PUT update" do
-#     describe "with valid params" do
-#       it "updates the requested category" do
-#         category = Category.create! valid_attributes
-#         # Assuming there are no other categories in the database, this
-#         # specifies that the Category created on the previous line
-#         # receives the :update_attributes message with whatever params are
-#         # submitted in the request.
-#         Category.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
-#         put :update, {:id => category.to_param, :category => {'these' => 'params'}}, valid_session
-#       end
+    it "redirects to the categories list" do
+      delete :destroy, {:id => @category.to_param}
+      expect(response).to redirect_to(categories_url)
+    end
+  end
 
-#       it "assigns the requested category as @category" do
-#         category = Category.create! valid_attributes
-#         put :update, {:id => category.to_param, :category => valid_attributes}, valid_session
-#         assigns(:category).should eq(category)
-#       end
-
-#       it "redirects to the category" do
-#         category = Category.create! valid_attributes
-#         put :update, {:id => category.to_param, :category => valid_attributes}, valid_session
-#         response.should redirect_to(category)
-#       end
-#     end
-
-#     describe "with invalid params" do
-#       it "assigns the category as @category" do
-#         category = Category.create! valid_attributes
-#         # Trigger the behavior that occurs when invalid params are submitted
-#         Category.any_instance.stub(:save).and_return(false)
-#         put :update, {:id => category.to_param, :category => {}}, valid_session
-#         assigns(:category).should eq(category)
-#       end
-
-#       it "re-renders the 'edit' template" do
-#         category = Category.create! valid_attributes
-#         # Trigger the behavior that occurs when invalid params are submitted
-#         Category.any_instance.stub(:save).and_return(false)
-#         put :update, {:id => category.to_param, :category => {}}, valid_session
-#         response.should render_template("edit")
-#       end
-#     end
-#   end
-
-#   describe "DELETE destroy" do
-#     it "destroys the requested category" do
-#       category = Category.create! valid_attributes
-#       expect {
-#         delete :destroy, {:id => category.to_param}, valid_session
-#       }.to change(Category, :count).by(-1)
-#     end
-
-#     it "redirects to the categories list" do
-#       category = Category.create! valid_attributes
-#       delete :destroy, {:id => category.to_param}, valid_session
-#       response.should redirect_to(categories_url)
-#     end
-#   end
-
-# end
+end

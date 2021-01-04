@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CrmPushTransaction do
     pending "delete - unused  #{__FILE__}"

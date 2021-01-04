@@ -6,4 +6,5 @@ class Category < ActiveRecord::Base
   validates :name, :description, :codename, :tagline, :presence => true
   
   scope :visible_ones, where(:visible => true)
+  scope :sorted, order("name DESC")  # Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 end

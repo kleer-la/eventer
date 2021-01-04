@@ -32,8 +32,8 @@ class EventTypesController < ApplicationController
   # GET /event_types/new.json
   def new
     @event_type = EventType.new
-    @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @trainers = Trainer.sorted
+    @categories = Category.sorted
     @cancellation_policy_setting = Setting.get("CANCELLATION_POLICY")
 
     respond_to do |format|
@@ -45,8 +45,8 @@ class EventTypesController < ApplicationController
   # GET /event_types/1/edit
   def edit
     @event_type = EventType.find(params[:id])
-    @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @trainers = Trainer.sorted
+    @categories = Category.sorted
     @cancellation_policy_setting = Setting.get("CANCELLATION_POLICY")
   end
 
@@ -54,8 +54,8 @@ class EventTypesController < ApplicationController
   # POST /event_types.json
   def create
     @event_type = EventType.new(params[:event_type])
-    @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @trainers = Trainer.sorted
+    @categories = Category.sorted
 
     respond_to do |format|
       if @event_type.save
@@ -74,8 +74,8 @@ class EventTypesController < ApplicationController
   # PUT /event_types/1.json
   def update
     @event_type = EventType.find(params[:id])
-    @trainers = Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
-    @categories = Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+    @trainers = Trainer.sorted
+    @categories = Category.sorted
 
     respond_to do |format|
       if @event_type.update_attributes(params[:event_type])

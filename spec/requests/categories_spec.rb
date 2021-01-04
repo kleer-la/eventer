@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe "API Categories GET /categories" do
   include Rack::Test::Methods

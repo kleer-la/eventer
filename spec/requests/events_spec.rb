@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe "API Events GET /events" do
   include Rack::Test::Methods

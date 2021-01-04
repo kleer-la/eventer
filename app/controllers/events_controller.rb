@@ -63,7 +63,7 @@ class EventsController < ApplicationController
     @event = Event.new(params[:event])
     @timezones = TimeZone.all
     @currencies = Money::Currency.table
-
+    
     respond_to do |format|
       if @event.save
         id= @event.id.to_s
