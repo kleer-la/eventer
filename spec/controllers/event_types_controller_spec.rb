@@ -100,7 +100,7 @@ describe EventTypesController do
       before(:each) do 
         @event_types = FactoryBot.create :event_type
         allow_any_instance_of(EventType).to receive(:save).and_return(false)
-        put :update, {:id => @event_types.to_param, :evemt => {}}
+        put :update, {:id => @event_types.to_param, :event => {}}
       end
       it "assigns the event_type as @event_type" do
         expect(assigns(:event)).to eq @event_type
