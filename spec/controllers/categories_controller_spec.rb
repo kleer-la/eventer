@@ -78,7 +78,6 @@ describe CategoriesController do
         @category = FactoryBot.create(:category)
       end
       it "updates the requested category" do
-        category = FactoryBot.create(:category)
         # Assuming there are no other categories in the database, this
         # specifies that the Category created on the previous line
         # receives the :update_attributes message with whatever params are
