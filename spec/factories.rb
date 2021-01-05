@@ -91,6 +91,7 @@ FactoryBot.define do
     currency_iso_code {"ARS"}
     mode {'cl'}
     cancelled {false}
+    draft {false}
     country {FactoryBot.build(:country)}
     trainer {FactoryBot.build(:trainer)}
   end

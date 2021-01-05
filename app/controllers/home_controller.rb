@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
   def index
-    @events = Event.public_commercial_visible.all(:order => 'date')
+    @events = Event.public_courses
     respond_to do |format|
       format.html
       format.xml { render :xml => @events.to_xml( :include => event_data_to_include,

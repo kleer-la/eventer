@@ -1,42 +1,37 @@
 require 'rails_helper'
+require_relative "../support/devise"
 
 
+describe UsersController do
 
-# describe UsersController do
+    context "If user is not administrator" do
+      login_comercial
 
-#     context "If user is not administrator" do
+      describe "GET index" do
+        it "should raise CanCan::AccessDenied" do
+          expect{ get :index }.to raise_error CanCan::AccessDenied
+        end
+      end
 
-#       before(:each) do
-#         @request.env["devise.mapping"] = Devise.mappings[:user]
-#         @user = FactoryBot.create(:user)
-#         sign_in @user
-#       end
+      describe "GET show" do
+       it "should raise CanCan::AccessDenied" do
+         expect{ get :show, {:id => 1}}.to raise_error CanCan::AccessDenied
+       end
+      end
 
-#       describe "GET index" do
-#         it "should raise CanCan::AccessDenied" do
-#           expect{ get :index }.to raise_error CanCan::AccessDenied
-#         end
-#       end
+      describe "GET new" do
+        it "should raise CanCan::AccessDenied" do
+          expect{ get :new }.to raise_error CanCan::AccessDenied
 
-#       #describe "GET show" do
-#       #  it "should raise CanCan::AccessDenied" do
-#       #    expect{ get :show }.to raise_error CanCan::AccessDenied
-#       #  end
-#       #end
+        end
+      end
 
-#       describe "GET new" do
-#         it "should raise CanCan::AccessDenied" do
-#           expect{ get :new }.to raise_error CanCan::AccessDenied
+      describe "GET edit" do
+       it "should raise CanCan::AccessDenied" do
+         expect{ get :edit, {:id => 1} }.to raise_error CanCan::AccessDenied
+       end
+      end
 
-#         end
-#       end
+    end
 
-#       #describe "GET edit" do
-#       #  it "should raise CanCan::AccessDenied" do
-#       #    expect{ get :edit }.to raise_error CanCan::AccessDenied
-#       #  end
-#       #end
-
-#     end
-
-# end
+end

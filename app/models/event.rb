@@ -18,13 +18,14 @@ class Event < ActiveRecord::Base
   scope :visible, where(:cancelled => false).where("date >= ?", DateTime.now-1)
   scope :past_visible, where(:cancelled => false).where("date <= ?", DateTime.now)
   scope :public_events,  where("visibility_type = 'pu' or visibility_type = 'co'")
-  scope :public_commercial_events,  where(:visibility_type => "pu")
+  scope :public_commercial,  where(:visibility_type => "pu")
   scope :public_community_events,  where(:visibility_type => "co")
-  scope :public_commercial_visible, self.visible.public_commercial_events
+  scope :public_commercial_visible, self.visible.public_commercial
   scope :public_community_visible, self.visible.public_community_events
   scope :public_and_visible, self.visible.public_events
   scope :public_and_past_visible, self.past_visible.public_events
-
+  scope :public_courses, self.visible.public_commercial.where(:draft => false).order('date desc')
+  
   after_initialize :initialize_defaults
 
   attr_accessible :event_type_id, :trainer_id, :trainer2_id, :trainer3_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
