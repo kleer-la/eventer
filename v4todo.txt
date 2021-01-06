@@ -1,0 +1,11 @@
+rspec ./spec/models/category_spec.rb
+rspec ./spec/models/event_type_spec.rb
+rspec ./spec/controllers/participants_controller_spec.rb
+rspec ./spec/controllers/home_controller_spec.rb
+
+sacar rating del menú
+pasar a pending rspec ./spec/models/rating_spec.rb
+warnings
+
+config application.rb - comentar
+-> config.active_record.whitelist_attributes = false
