@@ -10,7 +10,7 @@
     = f.label :email
     = f.text_field :email
   %h3 Roles
-  - for role in Role.find(:all)
+  - for role in Role.all
     %div
       = check_box_tag "user[role_ids][]", role.id, @user.roles.include?(role)
       = role.name

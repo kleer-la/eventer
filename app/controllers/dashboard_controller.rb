@@ -9,7 +9,7 @@ class DashboardController < ApplicationController
     country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
     session[:country_filter]= @country= country_filter.country_iso
 
-    @events = Event.public_and_visible.all(:order => 'date').select{ |ev|
+    @events = Event.public_and_visible.order('date').select{ |ev|
       !ev.event_type.nil? && ev.registration_link == "" && country_filter.select?(ev.country_id)
       }
     @nuevos_registros = 0

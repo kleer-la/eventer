@@ -6,7 +6,7 @@ class TrainersController < ApplicationController
   # GET /trainers
   # GET /trainers.json
   def index
-    @trainers = Trainer.all(:order => 'name')
+    @trainers = Trainer.order('name')
 
     respond_to do |format|
       format.html # index.html.erb

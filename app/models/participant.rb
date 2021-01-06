@@ -188,7 +188,7 @@ class Participant < ActiveRecord::Base
 
   def self.search(searching)
     s= searching.downcase
-    Participant.find(:all).find_all {|p| (p.fname + ' ' + p.lname).downcase.include?(s)}
+    Participant.select {|p| (p.fname + ' ' + p.lname).downcase.include?(s)}
   end
 
   def accept_terms
