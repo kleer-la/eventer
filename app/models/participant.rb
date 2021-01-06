@@ -54,19 +54,19 @@ class Participant < ActiveRecord::Base
     :deposit => "D"
   }
 
-  scope :new_ones, where(:status => STATUS[:new])
-  scope :confirmed, where(:status => STATUS[:confirmed])
-  scope :contacted, where(:status => STATUS[:contacted])
-  scope :cancelled, where(:status => STATUS[:cancelled])
-  scope :deffered, where(:status => STATUS[:deffered])
-  scope :attended, where(:status => STATUS[:attended])
-  scope :confirmed_or_attended, where("status=? OR status=?", STATUS[:confirmed], STATUS[:attended])
+  scope :new_ones, -> {where(:status => STATUS[:new])}
+  scope :confirmed, -> {where(:status => STATUS[:confirmed])}
+  scope :contacted, -> {where(:status => STATUS[:contacted])}
+  scope :cancelled, -> {where(:status => STATUS[:cancelled])}
+  scope :deffered, -> {where(:status => STATUS[:deffered])}
+  scope :attended, -> {where(:status => STATUS[:attended])}
+  scope :confirmed_or_attended, -> {where("status=? OR status=?", STATUS[:confirmed], STATUS[:attended])}
 
-  scope :surveyed, where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1')
-  scope :cotrainer_surveyed, where('trainer2_rating > 0 AND event_rating > 0 and promoter_score > -1')
-  scope :promoter, where('promoter_score >= 9')
-  scope :passive, where('promoter_score <= 8 AND promoter_score >= 7')
-  scope :detractor, where('promoter_score <= 6')
+  scope :surveyed, -> {where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1')}
+  scope :cotrainer_surveyed, -> {where('trainer2_rating > 0 AND event_rating > 0 and promoter_score > -1')}
+  scope :promoter, -> {where('promoter_score >= 9')}
+  scope :passive, -> {where('promoter_score <= 8 AND promoter_score >= 7')}
+  scope :detractor, -> {where('promoter_score <= 6')}
 
   after_initialize :initialize_defaults
 

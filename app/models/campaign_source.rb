@@ -1,8 +1,8 @@
 class CampaignSource < ActiveRecord::Base
   has_many :campaign_views
-  has_many :events, through: :campaign_views, uniq: true
-  has_many :event_types, through: :events, uniq: true
-  has_many :countries, through: :events, uniq: true
+  has_many :events, -> { uniq },through: :campaign_views
+  has_many :event_types, -> { uniq },through: :events
+  has_many :countries, -> { uniq },through: :events
   has_many :participants
 
   attr_accessible :codename
