@@ -30,6 +30,9 @@ describe ParticipantsController do
     it "routes to #destroy" do
       expect(delete("/events/1/participants/1")).to route_to("participants#destroy", :id => "1", :event_id => "1")
     end
+    it "routes to #batch_load" do
+      expect(post("events/1/participants_batch_load")).to route_to("participants#batch_load", :event_id => "1")
+    end
 
   end
 end

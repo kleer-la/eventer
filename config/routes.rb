@@ -78,7 +78,7 @@ Eventer::Application.routes.draw do
   get 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
   get 'events/:event_id/participants_print' => 'participants#print'
   get 'events/:event_id/participants_survey' => 'participants#survey'
-  get 'events/:event_id/participants_batch_load' => 'participants#batch_load'
+  post 'events/:event_id/participants_batch_load' => 'participants#batch_load'
 
   get 'participants/search' => 'participants#search'
 

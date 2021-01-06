@@ -160,6 +160,19 @@ describe ParticipantsController do
       end
     end
 
+    describe "batch load" do
+      it "Load one" do
+        post :batch_load, {:event_id => @participant.event.id,
+          :influence_zone_id => 1,
+          :status => 2,
+          :participants_batch => "tra,la,la@lan.cl,--"
+        }
+
+        expect(response).to redirect_to(event_participants_path)
+        expect(flash[:alert]).to include "0 líneas erroneas"
+        expect(flash[:notice]).to include "1 participantes creados exitosament"
+      end
+    end
   end
 
 end

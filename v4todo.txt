@@ -5,7 +5,9 @@ rspec ./spec/controllers/home_controller_spec.rb
 
 sacar rating del menú
 pasar a pending rspec ./spec/models/rating_spec.rb
-warnings
+X warnings
 
 config application.rb - comentar
 -> config.active_record.whitelist_attributes = false
+
+Revisar routing (puse todo en get los match)
