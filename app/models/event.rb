@@ -24,7 +24,7 @@ class Event < ActiveRecord::Base
   scope :public_community_visible, self.visible.public_community_events
   scope :public_and_visible, self.visible.public_events
   scope :public_and_past_visible, self.past_visible.public_events
-  scope :public_courses, self.visible.public_commercial.where(:draft => false).order('date desc')
+  scope :public_courses, self.visible.public_commercial.where(:draft => false).order('date asc')
   
   after_initialize :initialize_defaults
 

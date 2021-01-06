@@ -13,7 +13,7 @@ group :development, :test do
   gem 'rspec-mocks'
   gem 'simplecov', '~> 0.7.1'
   gem 'coveralls', require: false
-  gem "chromedriver-helper"
+  # gem "chromedriver-helper"
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'database_cleaner-active_record'
@@ -22,9 +22,10 @@ end
 group :test do
   gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', require: false
-  gem 'capybara'
+  gem 'capybara', '~> 2.2' 
   gem 'shoulda-matchers', '~> 2.8.0' # v3 para ActiveRecord 4
-  gem 'selenium-webdriver', '~> 2.53.4'
+  gem 'selenium-webdriver', '~> 3'
+  gem 'webdrivers', '~> 4.0'
 end
 
 group :test, :production do
