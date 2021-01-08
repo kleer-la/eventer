@@ -26,17 +26,20 @@ Eventer::Application.routes.draw do
   resources :events do
     resources :participants
   end
-
+  patch 'events/:id/edit' => 'events#update'
+  
   resources :roles
-
+  
   devise_for :users
   resources :users
+
+
   get 'dashboard' => 'dashboard#index'
   get 'dashboard/pricing' => 'dashboard#pricing'
   get 'dashboard/past_events' => 'dashboard#past_events'
   get 'dashboard/countdown' => 'dashboard#countdown'
   get 'dashboard/funneling' => 'dashboard#funneling'
-  get 'dashboard/ratings' => 'dashboard#ratings'
+  get 'dashboard/ratings' => 'dashboard#ratings' 
   get 'dashboard/calculate_rating' => 'dashboard#calculate_rating'
   get 'dashboard/:country_iso' => 'dashboard#index'
   get 'dashboard/pricing/:country_iso' => 'dashboard#pricing'    

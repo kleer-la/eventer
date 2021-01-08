@@ -2,25 +2,24 @@ require 'rails_helper'
 
 describe "events/edit" do
   before(:each) do
-    @countries = [FactoryBot.build(:country)]
-    @trainers = [FactoryBot.build(:trainer)]
-    @timezones = TimeZone.all
-    @currencies = Money::Currency.table
-
     @event_types= [FactoryBot.create(:event_type,
-        :name => "ET Name",
-        :description => "ET Descripcion",
-        :recipients => "ET Recipients",
-        :program => "ET Program"
+      :name => "ET Name",
+      :description => "ET Descripcion",
+      :recipients => "ET Recipients",
+      :program => "ET Program"
       )]
-    @event = assign(:event, FactoryBot.create(:event,
+      @event = FactoryBot.create(:event,
         :event_type => @event_types[0],
         :place => "EvPlace",
         :date => "2025-01-01",
         :capacity => 12358,
-        :city => "Ev City",
-        :trainer => @trainers[0]
-      ))
+        :city => "Ev City"
+      )
+      assign(:event, @event)
+      @countries = [@event.country]
+      @trainers = [@event.trainer]
+      @timezones = ActiveSupport::TimeZone.all
+      @currencies = Money::Currency.table
     end
   
   it "renders the edit event type form" do

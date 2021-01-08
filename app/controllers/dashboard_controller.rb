@@ -48,6 +48,8 @@ class DashboardController < ApplicationController
     end
   end
 
+=begin
+  # DEPRECATED
   def ratings
     @active_menu = "ratings"
 
@@ -61,6 +63,7 @@ class DashboardController < ApplicationController
     @top_10_events = Event.select{ |e| !e.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
     @top_10_trainers = Trainer.select{ |t| !t.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
   end
+=end
 
   def calculate_rating
 
