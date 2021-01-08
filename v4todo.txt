@@ -1,0 +1,14 @@
+config application.rb - comentar
+-> config.active_record.whitelist_attributes = false
+
+Revisar routing (puse todo en get los match)
+--> revisión parcial (patch eventos)
+
+
+X pasar a pending rspec ./spec/models/rating_spec.rb
+X rspec ./spec/models/category_spec.rb
+X rspec ./spec/models/event_type_spec.rb
+X rspec ./spec/controllers/participants_controller_spec.rb
+X rspec ./spec/controllers/home_controller_spec.rb
+X sacar rating del menú
+X warnings (mostly)

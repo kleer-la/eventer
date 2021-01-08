@@ -1,7 +1,7 @@
 class RolesController < ApplicationController
   before_filter :authenticate_user!
   before_filter :activate_menu
-  load_and_authorize_resource
+  load_and_authorize_resource :except => :create
   
   # GET /roles
   # GET /roles.json
@@ -86,6 +86,10 @@ class RolesController < ApplicationController
   end
   
   private
+  
+  def role_params
+    params.require(:role).permit(:name)
+  end
   
   def activate_menu
     @active_menu = "roles"

@@ -9,7 +9,7 @@ class DashboardController < ApplicationController
     country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
     session[:country_filter]= @country= country_filter.country_iso
 
-    @events = Event.public_and_visible.all(:order => 'date').select{ |ev|
+    @events = Event.public_and_visible.order('date').select{ |ev|
       !ev.event_type.nil? && ev.registration_link == "" && country_filter.select?(ev.country_id)
       }
     @nuevos_registros = 0
@@ -48,6 +48,8 @@ class DashboardController < ApplicationController
     end
   end
 
+=begin
+  # DEPRECATED
   def ratings
     @active_menu = "ratings"
 
@@ -61,6 +63,7 @@ class DashboardController < ApplicationController
     @top_10_events = Event.select{ |e| !e.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
     @top_10_trainers = Trainer.select{ |t| !t.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
   end
+=end
 
   def calculate_rating
 

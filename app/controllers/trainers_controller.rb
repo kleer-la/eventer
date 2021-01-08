@@ -3,11 +3,10 @@ class TrainersController < ApplicationController
   before_filter :activate_menu
   load_and_authorize_resource
 
-
   # GET /trainers
   # GET /trainers.json
   def index
-    @trainers = Trainer.all(:order => 'name')
+    @trainers = Trainer.order('name')
 
     respond_to do |format|
       format.html # index.html.erb
@@ -88,6 +87,10 @@ class TrainersController < ApplicationController
 
   private
 
+  def trainer_params
+    params.require(:trainer).permit(:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name, :signature_image, :signature_credentials, :is_kleerer)
+  end
+  
   def activate_menu
     @active_menu = "trainers"
   end

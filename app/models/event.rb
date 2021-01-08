@@ -15,16 +15,17 @@ class Event < ActiveRecord::Base
 
   has_many :campaign_views
 
-  scope :visible, where(:cancelled => false).where("date >= ?", DateTime.now-1)
-  scope :past_visible, where(:cancelled => false).where("date <= ?", DateTime.now)
-  scope :public_events,  where("visibility_type = 'pu' or visibility_type = 'co'")
-  scope :public_commercial,  where(:visibility_type => "pu")
-  scope :public_community_events,  where(:visibility_type => "co")
-  scope :public_commercial_visible, self.visible.public_commercial
-  scope :public_community_visible, self.visible.public_community_events
-  scope :public_and_visible, self.visible.public_events
-  scope :public_and_past_visible, self.past_visible.public_events
-  scope :public_courses, self.visible.public_commercial.where(:draft => false).order('date asc')
+  
+  scope :visible, -> {where(:cancelled => false).where("date >= ?", DateTime.now-1)}
+  scope :past_visible, -> {where(:cancelled => false).where("date <= ?", DateTime.now)}
+  scope :public_events,  -> {where("visibility_type = 'pu' or visibility_type = 'co'")}
+  scope :public_commercial,  -> {where(:visibility_type => "pu")}
+  scope :public_community_events,  -> {where(:visibility_type => "co")}
+  scope :public_commercial_visible, -> {self.visible.public_commercial}
+  scope :public_community_visible, -> {self.visible.public_community_events}
+  scope :public_and_visible, -> {self.visible.public_events}
+  scope :public_and_past_visible,  -> {self.past_visible.public_events}
+  scope :public_courses, -> {self.visible.public_commercial.where(:draft => false).order('date asc')}
   
   after_initialize :initialize_defaults
 

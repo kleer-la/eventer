@@ -60,7 +60,7 @@ describe TrainersController do
       before(:each) do 
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(Trainer).to receive(:save).and_return(false)
-        post :create, {:trainer => {}}
+        post :create, {:trainer => {"trainer"=>{}}}
       end
       it "assigns a newly created but unsaved trainer as @trainer" do
         expect(assigns(:trainer)).to be_a_new Trainer

@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 ruby '~> 2.3.8'
 
-gem 'rails', '~> 3.2.22'
+gem 'rails', '~> 4.0.0'
 gem 'test-unit', '~> 3.0'
 
 group :development, :test do
@@ -23,7 +23,7 @@ group :test do
   gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara', '~> 2.2' 
-  gem 'shoulda-matchers', '~> 2.8.0' # v3 para ActiveRecord 4
+  gem 'shoulda-matchers', '~> 3.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver', '~> 3'
   gem 'webdrivers', '~> 4.0'
 end
@@ -39,16 +39,13 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.6'
-  gem 'coffee-rails', '~> 3.2.1'
+gem 'sass-rails',   '~> 4.0.0'
+gem 'coffee-rails', '~> 4.0.0'
 
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'execjs'
-  gem "therubyracer"
-  gem 'uglifier', '>= 1.0.3'
-end
-
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+gem 'execjs'
+gem "therubyracer"
+gem 'uglifier', '>= 1.3.0'
 
 gem 'jquery-rails'
 gem 'haml'
@@ -57,8 +54,8 @@ gem 'haml-rails'
 gem 'nokogiri', '1.6.7.2'
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
-gem 'devise', '3.1.0'
-gem 'cancancan', '~> 1.17.0'
+gem 'devise', '~> 3.1'
+gem 'cancancan'
 
 gem 'formtastic', '~> 2.3'
 gem 'formtastic-bootstrap'
@@ -95,3 +92,8 @@ gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate', '~> 3.1.0'
 
+# add these gems to help with the transition:
+gem 'protected_attributes'
+# gem 'rails-observers'
+# gem 'actionpack-page_caching'
+# gem 'actionpack-action_caching'

@@ -1,8 +1,7 @@
 # encoding: utf-8
 
 class AddEuCountries < ActiveRecord::Migration
-  def initialize
-    @eu= [
+    EuCountries = [
       ['GB', 'Gran Bretaña'],
       ['DK', 'Dinamarca'],
       ['IT', 'Italia'],
@@ -27,9 +26,8 @@ class AddEuCountries < ActiveRecord::Migration
       ['CZ', 'Republica Checa'],
       ['HU', 'Hungría'],
     ]
-  end
   def up
-    @eu.each {|c|
+    EuCountries.each {|c|
       country= Country.find_by_iso_code( c[0] )
       InfluenceZone.create( zone_name: "",
       tag_name: "ZI-AMS-#{c[0]} (#{c[1]})",
@@ -41,7 +39,7 @@ class AddEuCountries < ActiveRecord::Migration
   end
 
   def down
-    @eu.each {|c|
+    EuCountries.each {|c|
       country= Country.find_by_iso_code( c[0] )
       InfluenceZone.find_by_country_id(country.id).delete
     }

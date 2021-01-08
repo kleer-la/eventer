@@ -8,10 +8,13 @@ class Trainer < ActiveRecord::Base
   has_many :participants, :through => :events
   has_many :cotrained_participants, :through => :cotrained_events, :source => :participants
 
-  scope :kleerer, where(:is_kleerer => true)
-  scope :sorted, order("name DESC")  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+  scope :kleerer, -> {where(:is_kleerer => true)}
+  scope :sorted, -> {order("name asc")}  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 
   validates :name, :presence => true
+
+  attr_accessible :name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name, :signature_image, :signature_credentials, :is_kleerer
+
 
   def gravatar_picture_url
     hash = "asljasld"
@@ -22,5 +25,4 @@ class Trainer < ActiveRecord::Base
   def to_xml( options )
     super( options.merge(:methods =>  :gravatar_picture_url ) )
   end
-
 end
