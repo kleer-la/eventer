@@ -1299,10 +1299,6 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
-    sprockets_better_errors (0.0.5)
-      actionpack (< 4.1)
-      activesupport (< 4.1)
-      sprockets-rails (>= 1.0.0)
     sqlite3 (1.3.13)
     temple (0.8.2)
     term-ansicolor (1.2.2)
@@ -1385,7 +1381,6 @@ DEPENDENCIES
   selenium-webdriver (~> 3)
   shoulda-matchers (~> 3.0)
   simplecov (~> 0.7.1)
-  sprockets_better_errors
   sqlite3 (~> 1.3.6)
   test-unit (~> 3.0)
   therubyracer
