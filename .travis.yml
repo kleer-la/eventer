@@ -19,6 +19,5 @@ deploy:
     master: keventer
   run:
     - "rake db:migrate"
-    - "RAILS_ENV=production rake assets:precompile"
     - restart
     - "rake clean"
