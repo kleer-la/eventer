@@ -15,9 +15,7 @@ Eventer::Application.routes.draw do
   # Example resource route (maps HTTP verbs to controller actions automatically):
   resources :settings
 
-
   resources :categories
-
 
   resources :event_types
 
