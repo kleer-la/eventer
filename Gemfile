@@ -58,7 +58,7 @@ gem 'eventmachine', '1.2.7'
 gem 'devise', '~> 3.1'
 gem 'cancancan'
 
-gem 'formtastic', '~> 2.3'
+gem 'formtastic' #, '~> 2.3'
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'
