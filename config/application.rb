@@ -41,5 +41,7 @@ module Eventer
     config.assets.initialize_on_precompile = false
     
     # config.serve_static_files = true
+
+    config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
   end
 end
