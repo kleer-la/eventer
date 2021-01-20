@@ -61,9 +61,9 @@ Eventer::Application.routes.draw do
   get 'public_events/:event_id/watch' => 'public_events#watch'
   get 'public_events/:event_id/watch/:participant_id' => 'public_events#watch'
 
-  post 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
-  post 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
-  post 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'
+  get 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
+  get 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
+  get 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'
   get 'events/load_cancellation_policy/:id' => 'ajax#load_cancellation_policy'
 
   get 'events/filter/:country_iso' => 'events#index'
