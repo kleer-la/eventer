@@ -1,5 +1,6 @@
 config application.rb - comentar
 -> config.active_record.whitelist_attributes = false
+https://carreno.me/articles/how-to-upgrade-to-strong-parameters-in-rails
 
 x Revisar routing (puse todo en get los match)
 x--> revisión parcial (patch eventos)
