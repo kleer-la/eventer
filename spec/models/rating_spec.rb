@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-describe Rating do
-
+describe Rating do  
   before(:each) do
 
 		@event_type = FactoryBot.create(:event_type)
@@ -69,8 +68,9 @@ describe Rating do
 		@trainer.reload
     @trainer2.reload
   end
+  pending "Delete functionallity"
 
-  context "for each event" do
+=begin   context "for each event" do
 
     it "should have an average event rating" do
       expect(@event.average_rating).to eq 5.0
@@ -170,5 +170,5 @@ describe Rating do
     end
 
 	end
-
+=end
 end

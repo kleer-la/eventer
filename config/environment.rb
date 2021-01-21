@@ -1,16 +1,5 @@
-# Load the rails application
+# Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
-# Initialize the rails application
+# Initialize the Rails application.
 Eventer::Application.initialize!
-
-=begin 
-#ActionMailer configuration
-ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = {
-  :address => ENV["KEVENTER_SMTP_ADDRESS"] || "smtp.mandrillapp.com",
-  :port => ENV["KEVENTER_SMTP_PORT"]|| 587,
-  :user_name => ENV["KEVENTER_SMTP_USERNAME"],
-  :password => ENV["KEVENTER_SMTP_PASSWORD"]
-} 
-=end

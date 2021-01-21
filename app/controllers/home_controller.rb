@@ -51,7 +51,7 @@ class HomeController < ApplicationController
   end
 
   def trainers
-    @trainers = Trainer.all(:order => ['country_id','name'])
+    @trainers = Trainer.order('country_id','name')
     respond_to do |format|
       format.html
       format.xml { render :xml => @trainers.to_xml(:include => :country ) }
@@ -60,7 +60,7 @@ class HomeController < ApplicationController
   end
 
   def kleerers
-    @trainers = Trainer.kleerer.all(:order => ['country_id','name'])
+    @trainers = Trainer.kleerer.order('country_id','name')
     respond_to do |format|
       format.xml { render :xml => @trainers.to_xml(:include => :country ) }
       format.json { render json: @trainers }

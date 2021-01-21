@@ -10,7 +10,7 @@ describe "API Events GET /events" do
         event = FactoryBot.create(:event)      
         event_url= '/api/events.xml'
         get event_url
-        @parsed= Nokogiri::XML(last_response.body)        
+        @parsed= Nokogiri::XML(last_response.body)
       end
     it "XML?" do
       expect(last_response.status).to eq 200

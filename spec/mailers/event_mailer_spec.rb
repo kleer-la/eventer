@@ -1,6 +1,4 @@
-# encoding: utf-8
-
-require "spec_helper"
+require 'rails_helper'
 
 describe EventMailer do
     before :each do
@@ -33,7 +31,7 @@ describe EventMailer do
         EB_TEXT="Pronto pago:"
         PAIR_TEXT="En parejas:"
         GROUP_TEXT="Grupos (5 o más):"
-        AR_TEXT="Pago en Argentina:"
+        AR_TEXT="pagos desde Argentina"
 
         it "should queue and verify a simple email" do
             @email = EventMailer.welcome_new_event_participant(@participant).deliver
@@ -50,8 +48,8 @@ describe EventMailer do
             
             email = EventMailer.welcome_new_event_participant(@participant).deliver
             
-            expect(email.text_part.body.to_s).to include "ARS $ 200"
-            expect(email.html_part.body.to_s).to include "ARS $ 200"
+            expect(email.text_part.body.to_s).to include "ARS 200"
+            expect(email.html_part.body.to_s).to include "ARS 200"
         end
         it "should not send early bird prices if EB info is empty" do
             email = EventMailer.welcome_new_event_participant(@participant).deliver
@@ -68,8 +66,8 @@ describe EventMailer do
             
             expect(email.text_part.body.to_s).to include EB_TEXT
             expect(email.html_part.body.to_s).to include EB_TEXT
-            expect(email.text_part.body.to_s).to include "ARS $ 180"
-            expect(email.html_part.body.to_s).to include "ARS $ 180"
+            expect(email.text_part.body.to_s).to include "ARS 180"
+            expect(email.html_part.body.to_s).to include "ARS 180"
         end
         
         it "should not show 2 person price if NOT present" do
@@ -85,8 +83,8 @@ describe EventMailer do
             
             expect(email.text_part.body.to_s).to include PAIR_TEXT
             expect(email.html_part.body.to_s).to include PAIR_TEXT
-            expect(email.text_part.body.to_s).to include "ARS $ 950"
-            expect(email.html_part.body.to_s).to include "ARS $ 950"
+            expect(email.text_part.body.to_s).to include "ARS 950"
+            expect(email.html_part.body.to_s).to include "ARS 950"
         end
 
         it "should not show group price if NOT present" do
@@ -102,8 +100,8 @@ describe EventMailer do
     
             expect(email.text_part.body.to_s).to include GROUP_TEXT
             expect(email.html_part.body.to_s).to include GROUP_TEXT
-            expect(email.text_part.body.to_s).to include "ARS $ 850 cada uno abonando antes del"
-            expect(email.html_part.body.to_s).to include "ARS $ 850 cada uno abonando antes del"
+            expect(email.text_part.body.to_s).to include "ARS 850 cada uno abonando antes del"
+            expect(email.html_part.body.to_s).to include "ARS 850 cada uno abonando antes del"
         end
         
         it "should replace all prices if custom text is present" do
@@ -123,14 +121,14 @@ describe EventMailer do
             expect(email.html_part.body.to_s).not_to include PAIR_TEXT
             expect(email.text_part.body.to_s).not_to include GROUP_TEXT
             expect(email.html_part.body.to_s).not_to include GROUP_TEXT
-            expect(email.text_part.body.to_s).not_to include "ARS $ 200"
-            expect(email.html_part.body.to_s).not_to include "ARS $ 200"
-            expect(email.text_part.body.to_s).not_to include "ARS $ 180"
-            expect(email.html_part.body.to_s).not_to include "ARS $ 180"
-            expect(email.text_part.body.to_s).not_to include "ARS $ 100"
-            expect(email.html_part.body.to_s).not_to include "ARS $ 100"
-            expect(email.text_part.body.to_s).not_to include "ARS $ 150"
-            expect(email.html_part.body.to_s).not_to include "ARS $ 150"
+            expect(email.text_part.body.to_s).not_to include "ARS 200"
+            expect(email.html_part.body.to_s).not_to include "ARS 200"
+            expect(email.text_part.body.to_s).not_to include "ARS 180"
+            expect(email.html_part.body.to_s).not_to include "ARS 180"
+            expect(email.text_part.body.to_s).not_to include "ARS 100"
+            expect(email.html_part.body.to_s).not_to include "ARS 100"
+            expect(email.text_part.body.to_s).not_to include "ARS 150"
+            expect(email.html_part.body.to_s).not_to include "ARS 150"
 
             expect(email.text_part.body.to_s).to include "texto customizado"
             expect(email.html_part.body.to_s).to include "texto customizado"
