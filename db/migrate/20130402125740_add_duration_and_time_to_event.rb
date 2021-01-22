@@ -1,7 +1,7 @@
 class AddDurationAndTimeToEvent < ActiveRecord::Migration
   class Event < ActiveRecord::Base
       belongs_to :country
-      scope :visible, where(:cancelled => false).where("date >= ?", DateTime.now)
+      scope :visible,  -> {where(:cancelled => false).where("date >= ?", DateTime.now)}
   end
   
   def up
