@@ -53,8 +53,7 @@ class ParticipantsController < ApplicationController
     @participant = Participant.new
     @event = Event.find(params[:event_id])
     session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
-    @influence_zones = InfluenceZone.all
-    @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
+    @influence_zones = InfluenceZone.all.sort {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
     @nakedform = !params[:nakedform].nil?
     if params[:lang].nil? or params[:lang].downcase == "es"
       I18n.locale=:es
