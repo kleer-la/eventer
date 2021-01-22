@@ -12,7 +12,7 @@ class AddDurationAndTimeToEvent < ActiveRecord::Migration
     end
     
     Event.reset_column_information
-    Event.visible.all.each do |e|
+    Event.visible.each do |e|
       if e.country.iso_code == "CO"
         e.update_attributes!( {:start_time => "8:00", :end_time => "17:00" } )
       else
