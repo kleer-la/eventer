@@ -60,7 +60,7 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-    @event = Event.new(params[:event])
+    @event = Event.new(event_params)
     @timezones = TimeZone.all
     @currencies = Money::Currency.table
     
@@ -86,7 +86,7 @@ class EventsController < ApplicationController
     @currencies = Money::Currency.table
 
     respond_to do |format|
-      if @event.update_attributes(params[:event])
+      if @event.update_attributes(event_params)
         if @event.cancelled
           format.html { redirect_to events_path, notice: t('flash.event.cancel.success') }
         else
@@ -148,7 +148,7 @@ class EventsController < ApplicationController
     @notifications = 0
 
     respond_to do |format|
-      if @event.update_attributes(params[:event])
+      if @event.update_attributes(event_params)
         if @event.is_webinar?
 
           @event.start_webinar!
@@ -187,5 +187,15 @@ class EventsController < ApplicationController
   def activate_menu
     @active_menu = "events"
   end
-
+  def event_params
+    params.require(:event).permit :event_type_id, :trainer_id, :trainer2_id, :trainer3_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
+                  :event_type, :country, :trainer, :duration,
+                  :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants,
+                  :start_time, :end_time, :sepyme_enabled, :mode, :time_zone_name, :embedded_player, :twitter_embedded_search,
+                  :notify_webinar_start, :webinar_started, :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
+                  :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
+                  :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
+                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :mailchimp_workflow_for_warmup, :mailchimp_workflow_for_warmup_call, :banner_text, :banner_type, :registration_ends,
+                  :cancellation_policy, :enable_online_payment, :online_course_codename, :online_cohort_codename, :specific_subtitle
+  end
 end

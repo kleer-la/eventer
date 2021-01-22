@@ -92,6 +92,3 @@ gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate', '~> 3.1.0'
-
-# add these gems to help with the transition:
-gem 'protected_attributes'

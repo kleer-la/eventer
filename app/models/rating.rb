@@ -1,8 +1,5 @@
 class Rating < ActiveRecord::Base
   belongs_to :user
-  attr_accessible 	:global_nps, :global_nps_count,
-  					:global_event_rating, :global_event_rating_count,
-  					:global_trainer_rating, :global_trainer_rating_count
 
   def self.calculate( author = User.first )
 

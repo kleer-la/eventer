@@ -57,33 +57,21 @@ describe RolesController do
         end
       end
 
-      describe "with invalid params" do
-        before(:each) do 
-          # Trigger the behavior that occurs when invalid params are submitted
-          allow_any_instance_of(Role).to receive(:save).and_return(false)
+      it "invalid params raise error" do
+        expect {
           post :create, {:role => {}}
-        end
-        it "assigns a newly created but unsaved role as @role" do
-          expect(assigns(:role)).to be_a_new Role
-        end
-
-        it "re-renders the 'new' template" do
-          expect(response).to render_template("new")
-        end
+        }.to raise_error ActionController::ParameterMissing
+      end
+      it "assigns a newly created but unsaved role as @role" do
+        allow_any_instance_of(Role).to receive(:save).and_return(false)
+        post :create, {:role => @role.attributes}
+        expect(assigns(:role)).to be_a_new Role
+        expect(response).to render_template("new")
       end
     end
 
     describe "PUT update" do
       describe "with valid params" do
-        it "updates the requested role" do
-          # Assuming there are no other roles in the database, this
-          # specifies that the Role created on the previous line
-          # receives the :update_attributes message with whatever params are
-          # submitted in the request.
-          expect_any_instance_of(Role).to receive(:update_attributes).with({'these' => 'params'})
-          put :update, {:id => @role.to_param, :role => {'these' => 'params'}}
-        end
-
         it "assigns the requested role as @role" do
           put :update, {:id => @role.to_param, :role => @role.attributes}
           expect(assigns(:role)).to eq @role
@@ -99,7 +87,7 @@ describe RolesController do
         before(:each) do 
           # Trigger the behavior that occurs when invalid params are submitted
           allow_any_instance_of(Role).to receive(:save).and_return(false)
-          put :update, {:id => @role.to_param, :role => {}}
+          put :update, {:id => @role.to_param, :role => @role.attributes}
         end
         it "assigns the role as @role" do
           expect(assigns(:role)).to eq @role

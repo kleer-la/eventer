@@ -59,14 +59,14 @@ describe CategoriesController do
       it "assigns a newly created but unsaved category as @category" do
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(Category).to receive(:save).and_return(false)
-        post :create, {:category => {}}
+        post :create, {:category => FactoryBot.attributes_for(:category)}
         expect(assigns(:category)).to be_a_new(Category)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(Category).to receive(:save).and_return(false)
-        post :create, {:category => {}}
+        post :create, {:category => FactoryBot.attributes_for(:category)}
         expect(response).to render_template(:new)
       end
     end
@@ -77,15 +77,7 @@ describe CategoriesController do
       before(:each) do
         @category = FactoryBot.create(:category)
       end
-      it "updates the requested category" do
-        # Assuming there are no other categories in the database, this
-        # specifies that the Category created on the previous line
-        # receives the :update_attributes message with whatever params are
-        # submitted in the request.
-        expect_any_instance_of(Category).to receive(:update_attributes).with({'these' => 'params'})
-        put :update, {:id => @category.to_param, :category => {'these' => 'params'}}
-      end
-
+      
       it "assigns the requested category as @category" do
         put :update, {:id => @category.to_param, :category => FactoryBot.attributes_for(:category)}
         expect(assigns(:category)).to eq @category
@@ -102,7 +94,7 @@ describe CategoriesController do
         @category = FactoryBot.create(:category)
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(Category).to receive(:save).and_return(false)
-        put :update, {:id => @category.to_param, :category => {}}
+        put :update, {:id => @category.to_param, :category => FactoryBot.attributes_for(:category)}
       end
       it "assigns the category as @category" do
         expect(assigns(:category)).to eq @category

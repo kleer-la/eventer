@@ -87,7 +87,7 @@ describe EventsController do
         before(:each) do 
           # Trigger the behavior that occurs when invalid params are submitted
           allow_any_instance_of(Event).to receive(:save).and_return(false)
-          post :create, {:event => {}}          
+          post :create, {:event => FactoryBot.attributes_for(:event)}
         end
         it "assigns a newly created but unsaved event as @event" do
           expect(assigns(:event)).to be_a_new(Event)
@@ -104,13 +104,9 @@ describe EventsController do
         before(:each) do 
           @event = FactoryBot.create :event
         end
-        it "updates the requested event" do
-          expect_any_instance_of(Event).to receive(:update_attributes).with({'these' => 'params'})
-          put :update, {:id => @event.to_param, :event => {'these' => 'params'}}
-        end
-        
+          
         it "ok w/o change" do
-          put :update, {:id => @event.to_param, :event => {}}
+          put :update, {:id => @event.to_param, :event => @event.attributes}
           expect(assigns(:event)).to eq @event
           expect(response).to redirect_to(events_path)
           expect(flash[:notice]).to include "modificado"
@@ -126,7 +122,7 @@ describe EventsController do
         before(:each) do 
           @event = FactoryBot.create :event
           allow_any_instance_of(Event).to receive(:save).and_return(false)
-          put :update, {:id => @event.to_param, :evemt => {}}
+          put :update, {:id => @event.to_param, :event => FactoryBot.attributes_for(:event)}
         end
         it "assigns the event as @event" do
           expect(assigns(:event)).to eq @event

@@ -44,7 +44,7 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
 
     respond_to do |format|
       if @user.save
@@ -63,7 +63,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(user_params)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { head :no_content }
       else
@@ -89,5 +89,9 @@ class UsersController < ApplicationController
   
   def activate_menu
     @active_menu = "users"
+  end
+
+  def user_params
+    params.require(:user).permit :email, :password, :password_confirmation, :remember_me, :role_ids
   end
 end
