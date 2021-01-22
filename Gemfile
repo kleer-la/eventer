@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 ruby '~> 2.3.8'
 
 gem 'rails', '~> 4.1'
-gem 'test-unit', '~> 3.0'
+# gem 'test-unit', '~> 3.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
@@ -35,7 +35,6 @@ end
 group :production do
   gem 'rails_12factor'
   gem 'thin'
-  # gem 'sprockets_better_errors'   # only for Rails 4.0.x !!!!
 end
 
 # Gems used only for assets and not required
@@ -44,7 +43,6 @@ gem 'sass-rails',   '~> 5.0' # or 4.0.2?
 gem 'coffee-rails', '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'execjs'
 gem "therubyracer"
 gem 'uglifier', '>= 1.3.0'
 

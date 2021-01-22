@@ -1213,7 +1213,6 @@ GEM
       ruby-rc4
       ttfunk
     pg (0.21.0)
-    power_assert (1.2.0)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
       ttfunk (~> 1.5)
@@ -1311,8 +1310,6 @@ GEM
     temple (0.8.2)
     term-ansicolor (1.2.2)
       tins (~> 0.8)
-    test-unit (3.3.9)
-      power_assert
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -1389,7 +1386,6 @@ DEPENDENCIES
   shoulda-matchers (~> 3.0)
   simplecov (~> 0.7.1)
   sqlite3 (~> 1.3.6)
-  test-unit (~> 3.0)
   therubyracer
   thin
   uglifier (>= 1.3.0)
