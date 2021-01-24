@@ -32,13 +32,14 @@ class DashboardController < ApplicationController
     country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
     session[:country_filter]= @country= country_filter.country_iso
 
-    @events = Event.public_commercial_visible.all(:order => 'date').select{ |ev|
-      !ev.event_type.nil? && ev.registration_link == "" && country_filter.select?(ev.country_id)
-      }
+    @events = Event.public_commercial_visible.order(:date).
+      where.not(event_type_id: nil).
+      where(registration_link: "").
+      select{|ev| country_filter.select?(ev.country_id)}
   end
 
   def countdown
-    @events = Event.public_and_visible.all(:order => 'date').select{ |ev| !ev.event_type.nil? }
+    @events = Event.public_and_visible.order(:date).where.not(event_type_id: nil)
   end
 
   def funneling
