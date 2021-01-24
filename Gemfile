@@ -21,7 +21,7 @@ end
 group :test do
   gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', require: false
-  gem 'capybara' #, '~> 2.2' 
+  gem 'capybara' #, '~> 3.0'  depends on ruby (>= 2.4.0)
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver', '~> 3'
   gem 'webdrivers', '~> 4.0'
@@ -49,7 +49,7 @@ gem 'jquery-rails'
 gem 'haml'
 gem 'haml-rails'
 
-gem 'nokogiri', '1.6.7.2'
+gem 'nokogiri' # (was 1.6.7.2)
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
 gem 'devise', '~> 3.1'
