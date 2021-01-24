@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 ruby '~> 2.3.8'
 
 gem 'rails', '~> 4.1'
-# gem 'test-unit', '~> 3.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
@@ -23,7 +22,7 @@ group :test do
   gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', require: false
   gem 'capybara', '~> 2.2' 
-  gem 'shoulda-matchers', '~> 3.0' # v3 para ActiveRecord 4
+  gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver', '~> 3'
   gem 'webdrivers', '~> 4.0'
 end
