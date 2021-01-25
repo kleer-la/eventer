@@ -188,14 +188,15 @@ module ParticipantsHelper
     certificate_filename
   end
 
-  def self.upload_certificate( certificate_filename )
+  def self.upload_certificate( certificate_filename, access_key_id: nil, secret_access_key: nil)
 
   	s3 = AWS::S3.new(
-  		:access_key_id => ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
-  		:secret_access_key => ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
+  		:access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
+  		:secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
 
   	key = File.basename(certificate_filename)
-  	bucket = s3.buckets['Keventer']
+    bucket = s3.buckets['Keventer']
+    p bucket.objects["certificates/#{key}"]
   	bucket.objects["certificates/#{key}"].write(:file => certificate_filename )
   	bucket.objects["certificates/#{key}"].acl = :public_read
 
