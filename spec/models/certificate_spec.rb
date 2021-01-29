@@ -187,13 +187,4 @@ describe "render certificates" do
         expect(pdf.history).to include "duration of 3"
     end
 
-    it "Render one signature" do
-        t = FactoryBot.build(:trainer)
-        t.signature_image = nil
-
-        certificate = Certificate.new(p)
-        expect{ParticipantsHelper::render_one_signature( nil, [0,0], t)
-        }.to_not raise_error
-    end
-
   end

@@ -4,6 +4,12 @@ module ParticipantsHelper
   class Certificate
     def initialize(participant)
       @participant=participant
+      if !valid?
+        raise ArgumentError,'No signature available for the first trainer'
+      end
+    end
+    def valid?
+      trainers[0].signature_image.present? 
     end
     def name
       @participant.fname + ' ' + @participant.lname
@@ -42,6 +48,9 @@ module ParticipantsHelper
     def event_year
       @participant.event.date.year.to_s
     end
+    def event_duration_hours
+      @participant.event.event_type.duration
+    end
     def event_duration
       d = @participant.event.event_type.duration
       if (d % 8)>0 || @participant.event.is_online?
@@ -55,6 +64,9 @@ module ParticipantsHelper
     end
     def human_event_finish_date
       @participant.event.human_finish_date
+    end
+    def date
+      @participant.event.human_date + ' ' + @participant.event.date.year.to_s
     end
     def trainer
       @participant.event.trainers[0].name
@@ -77,6 +89,95 @@ module ParticipantsHelper
     :InnerBox => {"LETTER" => [[-20, 560], 760, 575], "A4" => [[-20, 543], 810, 560]}
   }
 
+  class PdfCertificate
+    include Prawn::View
+    TOP_RIGHT= [400,500]
+    def initialize(doc, data)
+      @data= data
+      @doc= doc
+      font_families.update("Raleway" => {
+        :normal => Rails.root.join("vendor/assets/fonts/Raleway-Regular.ttf"),
+        :italic => Rails.root.join("vendor/assets/fonts/Raleway-Italic.ttf"),
+        :bold => Rails.root.join("vendor/assets/fonts/Raleway-Bold.ttf"),
+        :bold_italic => Rails.root.join("vendor/assets/fonts/Raleway-BoldItalic.ttf")
+      })
+      @kcolor= '39a2da'
+      # fallback_fonts = ['Raleway']
+    end
+    def document
+      @doc
+    end
+    def background
+      image 'cert2020.png', at: [-41,559], height: 598
+      stroke_axis
+    end
+    def event_name
+      fill_color'000000'
+      font "Raleway", style: :bold
+      text_box @data.event_name,
+                at: [0,TOP_RIGHT[1]], width: TOP_RIGHT[0], height: 90, :align => :left, 
+                :size => 40,
+                overflow: :shrink_to_fit
+    end
+    def participant_name
+      font "Raleway"
+      text_box @data.name,
+                  at: [0,390], width: TOP_RIGHT[0],  height: 30, :align => :left, 
+                  :size => 26,
+                  overflow: :shrink_to_fit
+      line_width = 2
+      stroke {horizontal_line 0,TOP_RIGHT[0], at: 355 }
+    end
+    def certificate_description description
+      text_box description,  
+                  at: [0,340], width: TOP_RIGHT[0], :align => :left, 
+                  :size => 18,
+                  overflow: :shrink_to_fit
+    end
+    def certificate_info
+      text_box "<color rgb='#{@kcolor}'><b>MODALIDAD:</b></color> Online<br>"+
+                   "<color rgb='#{@kcolor}'><b>REALIZADO:</b></color> #{@data.date}<br>"+
+                   "<color rgb='#{@kcolor}'><b>DEDICACIÓN:</b></color> #{@data.event_duration_hours} hs",
+                at: [0,250], :align => :left, 
+                :size => 14,
+                inline_format: true
+    end
+    def verification_code
+      fill_color @kcolor
+      text_box "Código verificación de la certificación:#{@data.verification_code}",
+                at: [0,180], :align => :left, 
+                :size => 10
+    end
+    def trainers
+      line_width = 1
+      stroke {horizontal_line 280,420, at: 60 }
+      stroke {horizontal_line 100,240, at: 60 }
+      
+      text_box "Pedro Máximo Belaustegui Arana<br>Facilitador",
+                at: [100,55],  width: 140, :align => :center, 
+                :size => 12,
+                inline_format: true
+      text_box "Pablo Picapiedra<br>Facilitador",
+                at: [280,55],  width: 140, :align => :center, 
+                :size => 12,
+                inline_format: true
+  
+      # self.render_one_signature2020(pdf, [580,60], certificate.trainers[0])
+    end
+    def render
+      background
+      bounding_box [300,TOP_RIGHT[1]], width: TOP_RIGHT[0], height: 500 do
+        event_name
+        participant_name
+        certificate_description "Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias."
+        certificate_info  
+        verification_code
+        trainers
+      end
+    end
+  
+  end
+
   def self.render_signature(pdf, certificate, page_size)
     trainers= certificate.trainers
     signature_position = PageConfig[:SignPos][page_size].dup
@@ -98,6 +199,24 @@ module ParticipantsHelper
         pdf.text "#{trainer.signature_credentials}", :align => :center, :size => 14
     end
   end
+
+  def self.render_one_signature2020(pdf, pos, trainer)
+    if trainer.signature_image.to_s==''
+      return
+    end
+    trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + trainer.signature_image
+    delta=((200-30)-Dimensions.height(trainer_signature_path))*0.7
+    pdf.line_width = 1
+    pdf.stroke {pdf.horizontal_line pos[0], pos[0]+140, at: pos[1] }
+    pdf.text_box "<b>#{trainer.name}</b><br>#{trainer.signature_credentials}",
+    #           at: [580,55],  width: 140,
+    pdf.bounding_box([pos[0],pos[1]-delta], :width => 200, :height => 120) do
+        pdf.image trainer_signature_path, :position => :center, :scale => 0.7
+        pdf.text "<b>#{trainer.name}</b><br>" +
+                 "#{trainer.signature_credentials}", :align => :center, :size => 12, :inline_format => true
+    end
+  end
+
 
   def self.render_certificate( pdf, certificate, page_size )
     rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
@@ -180,10 +299,16 @@ module ParticipantsHelper
 
     certificate_filename = "#{temp_dir}/#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
 
+    certificate = Certificate.new(participant)
     Prawn::Document.generate(certificate_filename,
       :page_layout => :landscape, :page_size => page_size) do |pdf|
-      self.render_certificate( pdf, Certificate.new(participant), page_size )
-    end
+        if certificate.kleer_cert_seal_image == 'cert2021.png'
+          # self.render_certificate_2020( pdf, certificate, page_size )
+          PdfCertificate.new(pdf, certificate).render
+        else
+          self.render_certificate( pdf, certificate, page_size )
+        end
+      end
 
     certificate_filename
   end
