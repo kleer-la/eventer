@@ -12,6 +12,36 @@ describe DashboardController do
     end
   end
 
+  describe "GET 'pricing'" do
+    login_admin
+    it "no event" do
+      get 'pricing'
+      expect(assigns(:events)).to eq []
+      expect(response).to be_success
+    end
+    it "one event" do
+      event = FactoryBot.create(:event, registration_link: "")
+      get 'pricing'
+      expect(assigns(:events)).to eq [event]
+      expect(response).to be_success
+    end
+  end
+  
+  describe "GET 'countdown'" do
+    login_admin
+    it "no event" do
+      get 'pricing'
+      expect(assigns(:events)).to eq []
+      expect(response).to be_success
+    end
+    it "one event" do
+      event = FactoryBot.create(:event, registration_link: "")
+      get 'pricing'
+      expect(assigns(:events)).to eq [event]
+      expect(response).to be_success
+    end
+  end
+  
   describe CountryFilter do
     before(:all) do
       c= Country.find_by_iso_code('AR')

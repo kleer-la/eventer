@@ -72,7 +72,7 @@ describe ParticipantsController do
         before(:each) do 
           # Trigger the behavior that occurs when invalid params are submitted
           allow_any_instance_of(Participant).to receive(:save).and_return(false)
-          post :create, {:participant => {}, :event_id => @participant.event.id}
+          post :create, {:participant => FactoryBot.attributes_for(:participant), :event_id => @participant.event.id}
         end
         it "assigns a newly created but unsaved participant as @participant" do
           expect(assigns(:participant)).to be_a_new Participant
@@ -90,15 +90,6 @@ describe ParticipantsController do
           %w(id created_at updated_at verification_code campaign_id campaign_source_id konline_po_number pay_notes).include? k}
       end
       describe "with valid params" do
-        it "updates the requested participant" do
-          # Assuming there are no other participants in the database, this
-          # specifies that the Participant created on the previous line
-          # receives the :update_attributes message with whatever params are
-          # submitted in the request.
-          expect_any_instance_of(Participant).to receive(:update_attributes).with({'these' => 'params'})
-          put :update, {:id => @participant.to_param, :participant => {'these' => 'params'}, :event_id => @participant.event.id }
-        end
-
         it "assigns the requested participant as @participant" do
           put :update, {:id => @participant.to_param, :participant => @participant_attr, :event_id => @participant.event.id}
           expect(assigns(:participant)).to eq @participant
@@ -113,7 +104,7 @@ describe ParticipantsController do
       describe "with invalid params" do
         before(:each) do 
           allow_any_instance_of(Participant).to receive(:save).and_return(false)
-          put :update, {:id => @participant.to_param, :participant => {}, :event_id => @participant.event}
+          put :update, {:id => @participant.to_param, :participant => FactoryBot.attributes_for(:participant), :event_id => @participant.event}
         end
         it "assigns the participant as @participant" do
           expect(assigns(:participant)).to eq @participant

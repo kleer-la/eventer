@@ -7,8 +7,6 @@ class CrmPushTransactionItem < ActiveRecord::Base
   belongs_to :crm_push_transaction
   belongs_to :participant
 
-  attr_accessible :crm_push_transaction, :log, :participant, :result
-
   def push!
   	self.result = "Errored/Halted"
 

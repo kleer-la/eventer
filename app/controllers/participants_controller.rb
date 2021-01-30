@@ -53,8 +53,7 @@ class ParticipantsController < ApplicationController
     @participant = Participant.new
     @event = Event.find(params[:event_id])
     session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
-    @influence_zones = InfluenceZone.all
-    @influence_zones.sort! {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
+    @influence_zones = InfluenceZone.all.sort {|a,b| a.display_name.sub('Republica ','') <=> b.display_name.sub('Republica ','')}
     @nakedform = !params[:nakedform].nil?
     if params[:lang].nil? or params[:lang].downcase == "es"
       I18n.locale=:es
@@ -106,7 +105,7 @@ class ParticipantsController < ApplicationController
   def create
     @event = Event.find(params[:event_id])
     @influence_zones = InfluenceZone.all
-    @participant = Participant.new(params[:participant])
+    @participant = Participant.new(participant_params)
     @participant.event = @event
     if verify_recaptcha
 
@@ -201,9 +200,8 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.all
     respond_to do |format|
       original_participant_status = @participant.status
-      participant_parameter = params[:participant]
-      if @participant.update_attributes(participant_parameter)
-        new_participant_status = participant_parameter[:status]
+      if @participant.update_attributes(participant_params)
+        new_participant_status = participant_params[:status]
         @event = Event.find(params[:event_id])
         if @event.mailchimp_workflow_for_warmup && new_participant_status == "C" && new_participant_status != original_participant_status
           mailChimp_service = MailChimpService.new
@@ -286,5 +284,16 @@ class ParticipantsController < ApplicationController
       format.html # search.html.erb
     end
   end
+
+  private
+
+  def participant_params
+    params.require(:participant).permit :email, :fname, :lname, :phone, :event_id,
+    :status, :notes, :influence_zone_id, :influence_zone,
+    :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
+    :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
+    :campaign_source, :campaign, :accept_terms, :id_number, :address
+  end
+    
 
 end

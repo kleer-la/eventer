@@ -49,7 +49,7 @@
             .span12
               .control-group
                 %label.control-label{ :for => :event_id } Evento
-                = f.collection_select :event_id, Event.find(:all).sort{|p1,p2| p1.unique_name <=> p2.unique_name}, :id, :unique_name, {include_blank: 'Selecciona uno...'}, {:style => "width:500px"}
+                = f.collection_select :event_id, Event.all.sort{|p1,p2| p1.unique_name <=> p2.unique_name}, :id, :unique_name, {include_blank: 'Selecciona uno...'}, {:style => "width:500px"}
           %hr
           .row-fluid
             .span3

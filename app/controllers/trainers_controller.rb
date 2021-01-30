@@ -44,7 +44,7 @@ class TrainersController < ApplicationController
   # POST /trainers
   # POST /trainers.json
   def create
-    @trainer = Trainer.new(params[:trainer])
+    @trainer = Trainer.new(trainer_params)
 
     respond_to do |format|
       if @trainer.save
@@ -63,7 +63,7 @@ class TrainersController < ApplicationController
     @trainer = Trainer.find(params[:id])
 
     respond_to do |format|
-      if @trainer.update_attributes(params[:trainer])
+      if @trainer.update_attributes(trainer_params)
         format.html { redirect_to trainers_path, notice: t('flash.trainer.update.success') }
         format.json { head :no_content }
       else
@@ -86,12 +86,11 @@ class TrainersController < ApplicationController
   end
 
   private
-
-  def trainer_params
-    params.require(:trainer).permit(:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name, :signature_image, :signature_credentials, :is_kleerer)
-  end
   
   def activate_menu
     @active_menu = "trainers"
+  end
+  def trainer_params
+    params.require(:trainer).permit :name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name, :signature_image, :signature_credentials, :is_kleerer
   end
 end

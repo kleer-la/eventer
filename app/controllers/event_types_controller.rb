@@ -53,7 +53,7 @@ class EventTypesController < ApplicationController
   # POST /event_types
   # POST /event_types.json
   def create
-    @event_type = EventType.new(params[:event_type])
+    @event_type = EventType.new(event_type_params)
     @trainers = Trainer.sorted
     @categories = Category.sorted
 
@@ -78,7 +78,7 @@ class EventTypesController < ApplicationController
     @categories = Category.sorted
 
     respond_to do |format|
-      if @event_type.update_attributes(params[:event_type])
+      if @event_type.update_attributes(event_type_params)
         format.html { redirect_to event_types_path, notice: t('flash.event_type.update.success') }
         format.json { head :no_content }
       else
@@ -104,5 +104,12 @@ class EventTypesController < ApplicationController
 
   def activate_menu
     @active_menu = "event_types"
+  end
+
+  def event_type_params
+    params.require(:event_type).permit :name, :subtitle, :duration, :goal, :description, :recipients, :program, {trainer_ids: []},
+                  :faq, :materials, {category_ids: []}, :events, :include_in_catalog, :elevator_pitch,
+                  :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification,
+                  :kleer_cert_seal_image, :external_site_url
   end
 end

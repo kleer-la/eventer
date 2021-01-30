@@ -1,7 +1,7 @@
 class AddDurationAndTimeToEvent < ActiveRecord::Migration
   class Event < ActiveRecord::Base
       belongs_to :country
-      scope :visible, where(:cancelled => false).where("date >= ?", DateTime.now)
+      scope :visible,  -> {where(:cancelled => false).where("date >= ?", DateTime.now)}
   end
   
   def up
@@ -12,7 +12,7 @@ class AddDurationAndTimeToEvent < ActiveRecord::Migration
     end
     
     Event.reset_column_information
-    Event.visible.all.each do |e|
+    Event.visible.each do |e|
       if e.country.iso_code == "CO"
         e.update_attributes!( {:start_time => "8:00", :end_time => "17:00" } )
       else

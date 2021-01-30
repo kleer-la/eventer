@@ -44,7 +44,7 @@ class RolesController < ApplicationController
   # POST /roles
   # POST /roles.json
   def create
-    @role = Role.new(params[:role])
+    @role = Role.new(role_params)
 
     respond_to do |format|
       if @role.save
@@ -63,7 +63,7 @@ class RolesController < ApplicationController
     @role = Role.find(params[:id])
 
     respond_to do |format|
-      if @role.update_attributes(params[:role])
+      if @role.update_attributes(role_params)
         format.html { redirect_to @role, notice: 'Role was successfully updated.' }
         format.json { head :no_content }
       else
@@ -87,11 +87,11 @@ class RolesController < ApplicationController
   
   private
   
-  def role_params
-    params.require(:role).permit(:name)
-  end
-  
   def activate_menu
     @active_menu = "roles"
+  end
+
+  def role_params
+    params.require(:role).permit :name
   end
 end

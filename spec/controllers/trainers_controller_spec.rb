@@ -74,15 +74,6 @@ describe TrainersController do
 
   describe "PUT update" do
     describe "with valid params" do
-      it "updates the requested trainer" do
-        # Assuming there are no other trainers in the database, this
-        # specifies that the Trainer created on the previous line
-        # receives the :update_attributes message with whatever params are
-        # submitted in the request.
-        expect_any_instance_of(Trainer).to receive(:update_attributes).with({'these' => 'params'})
-        put :update, {:id => @trainer.to_param, :trainer => {'these' => 'params'}}
-      end
-
       it "assigns the requested trainer as @trainer" do
         put :update, {:id => @trainer.to_param, :trainer => @trainer.attributes}
         expect(assigns(:trainer)).to eq @trainer
@@ -98,7 +89,7 @@ describe TrainersController do
       before(:each) do 
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(Trainer).to receive(:save).and_return(false)
-        put :update, {:id => @trainer.to_param, :trainer => {}}
+        put :update, {:id => @trainer.to_param, :trainer => @trainer.attributes}
       end
       it "assigns the trainer as @trainer" do
         expect(assigns(:trainer)).to eq @trainer

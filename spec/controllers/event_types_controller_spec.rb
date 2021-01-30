@@ -38,10 +38,12 @@ describe EventTypesController do
   describe "POST create" do
     before(:each) do
       trainer= FactoryBot.create(:trainer)
-      event_type= FactoryBot.build(:event_type)
+      category= FactoryBot.create(:category)
+      event_type= FactoryBot.build(:event_type, trainer_ids: [trainer.id.to_s], category_ids:[] )
       @event_type_att= event_type.attributes.reject {|k,v| 
         %w(id created_at updated_at average_rating net_promoter_score surveyed_count promoter_count).include? k}
       @event_type_att[:trainer_ids] = [trainer.id.to_s]
+      @event_type_att[:category_ids] = [category.id.to_s]
     end
     describe "with valid params" do
       it "creates a new EventType" do
@@ -64,9 +66,10 @@ describe EventTypesController do
 
     describe "with invalid params" do
       before(:each) do 
+        event_type = FactoryBot.create(:event_type)
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(EventType).to receive(:save).and_return(false)
-        post :create, {:event_type => {}}          
+        post :create, {:event_type => event_type.attributes}
       end
       it "assigns a newly created but unsaved event_type as @event_type" do
         expect(assigns(:event_type)).to be_a_new(EventType)
@@ -83,13 +86,9 @@ describe EventTypesController do
       before(:each) do 
         @event_type = FactoryBot.create :event_type
       end
-      it "updates the requested event_type" do
-          expect_any_instance_of(EventType).to receive(:update_attributes).with({'these' => 'params'})
-          put :update, {:id => @event_type.to_param, :event_type => {'these' => 'params'}}
-      end
 
       it "assigns the requested event_type as @event_type" do
-        put :update, {:id => @event_type.to_param, :event_type => {}}
+        put :update, {:id => @event_type.to_param, :event_type => @event_type.attributes}
         expect(assigns(:event_type)).to eq @event_type
         expect(response).to redirect_to(event_types_path)
         expect(flash[:notice]).to include "modificado"
@@ -100,7 +99,7 @@ describe EventTypesController do
       before(:each) do 
         @event_type = FactoryBot.create :event_type
         allow_any_instance_of(EventType).to receive(:save).and_return(false)
-        put :update, {:id => @event_type.to_param, :event => {}}
+        put :update, {:id => @event_type.to_param, :event_type => @event_type.attributes}
       end
       it "assigns the event_type as @event_type" do
         expect(assigns(:event_type)).to eq @event_type

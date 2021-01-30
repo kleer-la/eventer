@@ -57,4 +57,13 @@ RSpec.describe "generate one certificate" do
     texts= PDF::Inspector::Text.analyze(rendered).strings
     expect(texts.join ' ').to include 'Juan Carlos Perez Luasó attended'
   end
+
+  it 'fail to persist a certificate file. Wrong credentials' do
+    participant= FactoryBot.create(:participant)
+    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4' )
+    expect {ParticipantsHelper::upload_certificate( 
+      certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
+    }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
+  end
+
 end

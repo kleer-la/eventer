@@ -2,7 +2,6 @@ class Campaign < ActiveRecord::Base
   has_many :campaign_views
   has_many :countries, -> { uniq }, through: :events
   has_many :participants
-  attr_accessible :codename, :description
 
   scope :real, -> {where("codename <> ''")}
   scope :fake, -> {where("codename == NULL")}
