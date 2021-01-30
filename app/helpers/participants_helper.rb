@@ -51,7 +51,8 @@ module ParticipantsHelper
     def event_duration_hours
       @participant.event.event_type.duration
     end
-    def event_duration
+    # Deprecated: online trainings are better described by hours
+    def event_duration 
       d = @participant.event.event_type.duration
       if (d % 8)>0 || @participant.event.is_online?
         unit = "hour"
@@ -68,17 +69,20 @@ module ParticipantsHelper
     def date
       @participant.event.human_date + ' ' + @participant.event.date.year.to_s
     end
-    def trainer
-      @participant.event.trainers[0].name
+    def trainer(t=0)
+      @participant.event.trainers[t]&.name
     end
-    def trainer_credentials
-      @participant.event.trainers[0].signature_credentials
+    def trainer_credentials(t=0)
+      @participant.event.trainers[t]&.signature_credentials
     end
-    def trainer_signature
-      @participant.event.trainers[0].signature_image
+    def trainer_signature(t=0)
+      @participant.event.trainers[t]&.signature_image
     end
     def trainers
         @participant.event.trainers
+    end
+    def v2021?
+      kleer_cert_seal_image.to_s.include? '2021'
     end
   end
 
@@ -149,20 +153,20 @@ module ParticipantsHelper
                 :size => 10
     end
     def trainers
+      trainer(0)
+      trainer(1) if @data.trainer(1).present?
+    end
+    def trainer(t)
+      trainer_width=140
+      trainer_x = [280,100][t]
+
       line_width = 1
-      stroke {horizontal_line 280,420, at: 60 }
-      stroke {horizontal_line 100,240, at: 60 }
+      stroke {horizontal_line trainer_x,trainer_x+trainer_width, at: 60 }
       
-      text_box "Pedro Máximo Belaustegui Arana<br>Facilitador",
-                at: [100,55],  width: 140, :align => :center, 
+      text_box "#{@data.trainer(t)}<br>#{@data.trainer_credentials(t)}",
+                at: [trainer_x,55],  width: trainer_width, :align => :center, 
                 :size => 12,
-                inline_format: true
-      text_box "Pablo Picapiedra<br>Facilitador",
-                at: [280,55],  width: 140, :align => :center, 
-                :size => 12,
-                inline_format: true
-  
-      # self.render_one_signature2020(pdf, [580,60], certificate.trainers[0])
+                inline_format: true  
     end
     def render
       background
@@ -199,24 +203,6 @@ module ParticipantsHelper
         pdf.text "#{trainer.signature_credentials}", :align => :center, :size => 14
     end
   end
-
-  def self.render_one_signature2020(pdf, pos, trainer)
-    if trainer.signature_image.to_s==''
-      return
-    end
-    trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + trainer.signature_image
-    delta=((200-30)-Dimensions.height(trainer_signature_path))*0.7
-    pdf.line_width = 1
-    pdf.stroke {pdf.horizontal_line pos[0], pos[0]+140, at: pos[1] }
-    pdf.text_box "<b>#{trainer.name}</b><br>#{trainer.signature_credentials}",
-    #           at: [580,55],  width: 140,
-    pdf.bounding_box([pos[0],pos[1]-delta], :width => 200, :height => 120) do
-        pdf.image trainer_signature_path, :position => :center, :scale => 0.7
-        pdf.text "<b>#{trainer.name}</b><br>" +
-                 "#{trainer.signature_credentials}", :align => :center, :size => 12, :inline_format => true
-    end
-  end
-
 
   def self.render_certificate( pdf, certificate, page_size )
     rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
@@ -302,8 +288,7 @@ module ParticipantsHelper
     certificate = Certificate.new(participant)
     Prawn::Document.generate(certificate_filename,
       :page_layout => :landscape, :page_size => page_size) do |pdf|
-        if certificate.kleer_cert_seal_image == 'cert2021.png'
-          # self.render_certificate_2020( pdf, certificate, page_size )
+        if certificate.v2021?
           PdfCertificate.new(pdf, certificate).render
         else
           self.render_certificate( pdf, certificate, page_size )
