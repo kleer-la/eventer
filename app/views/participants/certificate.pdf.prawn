@@ -16,9 +16,9 @@ elsif @participant.event.trainer.signature_image.to_s == ''
   end
 else
 
-  rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
-  kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
-  trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + @participant.event.trainer.signature_image
+  # rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
+  # kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
+  # trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + @participant.event.trainer.signature_image
 
   prawn_document(:page_layout => :landscape, :page_size => @page_size) do |pdf|
     ParticipantsHelper::render_certificate( pdf, @certificate, @page_size )

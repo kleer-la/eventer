@@ -48,14 +48,14 @@ RSpec.describe "generate one certificate" do
       certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
     }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
   end
-  it 'new (2020) certificate file' do
+  it 'new (2021) certificate file' do
     participant= FactoryBot.create(:participant)
-    participant.event.event_type.kleer_cert_seal_image = '2021/cert2021.png'
-    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4' )
+    participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
+    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'LETTER' )
   end
   
-  context 'PdfCertificate' do
-    it 'invalid, no signature  for 2nd trainer' do
+  context 'Certificate' do
+    it 'invalid, no signature for 2nd trainer' do
       participant= FactoryBot.create(:participant)
       participant.event.trainers[0].signature_image= ''
       participant.attend!
@@ -72,6 +72,16 @@ RSpec.describe "generate one certificate" do
       expect {
         ParticipantsHelper::Certificate.new(participant)
       }.not_to raise_error
+    end
+  end
+  context 'PdfCertificate' do
+    it '' do 
+      # participant= FactoryBot.create(:participant)
+      # participant.event.event_type.kleer_cert_seal_image= ''
+      # ParticipantsHelper::Certificate.new(participant)
+      # Prawn::Document.generate(nil,
+      #   :page_layout => :landscape, :page_size => 'A4') do |pdf|
+      #     PdfCertificate.new(pdf, certificate, store)      
     end
   end
 end

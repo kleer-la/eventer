@@ -26,6 +26,9 @@ module ParticipantsHelper
     def kleer_cert_seal_image
       @participant.event.event_type.kleer_cert_seal_image
     end
+    def background_file
+      kleer_cert_seal_image if v2021?
+    end
     def event_name
       @participant.event.event_type.name
     end
@@ -95,8 +98,7 @@ module ParticipantsHelper
 
   class PdfCertificate
     include Prawn::View
-    TOP_RIGHT= [400,500]
-    def initialize(doc, data)
+    def initialize(doc, data, store=nil)
       @data= data
       @doc= doc
       font_families.update("Raleway" => {
@@ -104,37 +106,47 @@ module ParticipantsHelper
         :italic => Rails.root.join("vendor/assets/fonts/Raleway-Italic.ttf"),
         :bold => Rails.root.join("vendor/assets/fonts/Raleway-Bold.ttf"),
         :bold_italic => Rails.root.join("vendor/assets/fonts/Raleway-BoldItalic.ttf")
-      })
-      @kcolor= '39a2da'
-      # fallback_fonts = ['Raleway']
+        })
+        @store=store
+        @kcolor= '39a2da'
+        # fallback_fonts = ['Raleway']
+        @top_right= {'A4'   => [400,500],
+                  'LETTER' => [380,510] }[ @doc.page.size]
     end
     def document
       @doc
     end
     def background
-      image 'cert2020.png', at: [-41,559], height: 598
-      stroke_axis
+      if @data.background_file.present?
+        offset= {'A4'   => [-41,559],
+               'LETTER' => [-38,576] }[ @doc.page.size]
+        height= {'A4'   => 598,
+                'LETTER' => 613 }[ @doc.page.size]
+        image @store.read( @data.background_file, @doc.page.size), 
+        at: offset, height: height
+        # stroke_axis
+      end
     end
     def event_name
       fill_color'000000'
       font "Raleway", style: :bold
       text_box @data.event_name,
-                at: [0,TOP_RIGHT[1]], width: TOP_RIGHT[0], height: 90, :align => :left, 
+                at: [0,@top_right[1]], width: @top_right[0], height: 90, :align => :left, 
                 :size => 40,
                 overflow: :shrink_to_fit
     end
     def participant_name
       font "Raleway"
       text_box @data.name,
-                  at: [0,390], width: TOP_RIGHT[0],  height: 30, :align => :left, 
+                  at: [0,390], width: @top_right[0],  height: 30, :align => :left, 
                   :size => 26,
                   overflow: :shrink_to_fit
       line_width = 2
-      stroke {horizontal_line 0,TOP_RIGHT[0], at: 355 }
+      stroke {horizontal_line 0,@top_right[0], at: 355 }
     end
     def certificate_description description
       text_box description,  
-                  at: [0,340], width: TOP_RIGHT[0], :align => :left, 
+                  at: [0,340], width: @top_right[0], :align => :left, 
                   :size => 18,
                   overflow: :shrink_to_fit
     end
@@ -157,8 +169,9 @@ module ParticipantsHelper
       trainer(1) if @data.trainer(1).present?
     end
     def trainer(t)
-      trainer_width=140
-      trainer_x = [280,100][t]
+      trainer_width=130
+      trainer_x = [@top_right[0]-trainer_width,
+                   @top_right[0]-2*trainer_width-20][t]
 
       line_width = 1
       stroke {horizontal_line trainer_x,trainer_x+trainer_width, at: 60 }
@@ -167,10 +180,12 @@ module ParticipantsHelper
                 at: [trainer_x,55],  width: trainer_width, :align => :center, 
                 :size => 12,
                 inline_format: true  
+      image @store.read( @data.trainer_signature(t),nil, "certificate-signatures"), 
+      at: [trainer_x, 60+100], height: 130
     end
     def render
       background
-      bounding_box [300,TOP_RIGHT[1]], width: TOP_RIGHT[0], height: 500 do
+      bounding_box [300,@top_right[1]], width: @top_right[0], height: 500 do
         event_name
         participant_name
         certificate_description "Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias."
@@ -204,7 +219,11 @@ module ParticipantsHelper
     end
   end
 
-  def self.render_certificate( pdf, certificate, page_size )
+  def self.render_certificate( pdf, certificate, page_size, store= nil )
+    if certificate.v2021?
+      return PdfCertificate.new(pdf, certificate, store || CertificateStore.new).render
+    end
+
     rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
     kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
     kleer_certification_seals_path = "#{Rails.root}/app/assets/images/seals/"
@@ -276,25 +295,18 @@ module ParticipantsHelper
 
       pdf.line_width = 1
       pdf.stroke {pdf.rectangle *PageConfig[:InnerBox][page_size] }
-
   end
 
   def self.generate_certificate( participant, page_size )
-    temp_dir = "#{Rails.root}/tmp"
-    Dir.mkdir( temp_dir ) unless Dir.exist?( temp_dir )
-
-    certificate_filename = "#{temp_dir}/#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
-
+    store= CertificateStore.new
     certificate = Certificate.new(participant)
+    
+    certificate_filename = store.absolute_path "#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
     Prawn::Document.generate(certificate_filename,
       :page_layout => :landscape, :page_size => page_size) do |pdf|
-        if certificate.v2021?
-          PdfCertificate.new(pdf, certificate).render
-        else
-          self.render_certificate( pdf, certificate, page_size )
-        end
+        self.render_certificate( pdf, certificate, page_size, store)
       end
-
+#   store.write certificate_filename
     certificate_filename
   end
 
@@ -306,11 +318,43 @@ module ParticipantsHelper
 
   	key = File.basename(certificate_filename)
     bucket = s3.buckets['Keventer']
-    p bucket.objects["certificates/#{key}"]
   	bucket.objects["certificates/#{key}"].write(:file => certificate_filename )
   	bucket.objects["certificates/#{key}"].acl = :public_read
 
   	"https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
 
+  class CertificateStore
+    def initialize (access_key_id: nil, secret_access_key: nil)
+      s3 = AWS::S3.new(
+        :access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
+        :secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
+      @bucket = s3.buckets['Keventer']
+    end
+
+    def absolute_path basename
+      temp_dir = "#{Rails.root}/tmp"
+      Dir.mkdir( temp_dir ) unless Dir.exist?( temp_dir )
+      temp_dir+'/'+basename
+    end
+    def write(certificate_filename)
+      key = File.basename(certificate_filename)
+      @bucket.objects["certificates/#{key}"].write(:file => certificate_filename )
+      @bucket.objects["certificates/#{key}"].acl = :public_read
+
+      "https://s3.amazonaws.com/Keventer/certificates/#{key}"
+    end
+    def read(filename, suffix, folder='certificate-images')
+      suffix = ('-' + suffix) if suffix.present?
+      key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
+      # image_name= File.basename('base2021.png','.*')+'-'+ @doc.page.size + File.extname('base2021.png')
+      tmp_filename= absolute_path filename
+      File.open(tmp_filename, 'wb') do |file|
+        @bucket.objects["#{folder}/#{key}"].read do |chunk|
+          file.write(chunk)
+        end
+      end
+      tmp_filename
+    end
+  end
 end
