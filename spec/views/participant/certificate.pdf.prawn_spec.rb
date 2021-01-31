@@ -51,7 +51,7 @@ RSpec.describe "generate one certificate" do
   it 'new (2021) certificate file' do
     participant= FactoryBot.create(:participant)
     participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
-    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'LETTER' )
+    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4', ParticipantsHelper::CertificateStore::createNull )
   end
   
   context 'Certificate' do

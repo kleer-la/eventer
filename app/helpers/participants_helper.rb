@@ -297,8 +297,8 @@ module ParticipantsHelper
       pdf.stroke {pdf.rectangle *PageConfig[:InnerBox][page_size] }
   end
 
-  def self.generate_certificate( participant, page_size )
-    store= CertificateStore.new
+  def self.generate_certificate( participant, page_size, store=nil )
+    store ||= CertificateStore.new
     certificate = Certificate.new(participant)
     
     certificate_filename = store.absolute_path "#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
@@ -325,11 +325,26 @@ module ParticipantsHelper
   end
 
   class CertificateStore
-    def initialize (access_key_id: nil, secret_access_key: nil)
+    def self.createNull
+      obj= CertificateStore.new
+      obj.init_null
+    end
+    def initialize(access_key_id: nil, secret_access_key: nil)
       s3 = AWS::S3.new(
         :access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
         :secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
       @bucket = s3.buckets['Keventer']
+    end
+    def objects(key)
+      if @bucket.present?
+        @bucket.objects[key]
+      else
+        StoreObject::createNull     
+      end
+    end
+    def init_null
+      @bucket = nil
+      self
     end
 
     def absolute_path basename
@@ -339,8 +354,8 @@ module ParticipantsHelper
     end
     def write(certificate_filename)
       key = File.basename(certificate_filename)
-      @bucket.objects["certificates/#{key}"].write(:file => certificate_filename )
-      @bucket.objects["certificates/#{key}"].acl = :public_read
+      objects("certificates/#{key}").write(:file => certificate_filename )
+      objects("certificates/#{key}").acl = :public_read
 
       "https://s3.amazonaws.com/Keventer/certificates/#{key}"
     end
@@ -350,11 +365,23 @@ module ParticipantsHelper
       # image_name= File.basename('base2021.png','.*')+'-'+ @doc.page.size + File.extname('base2021.png')
       tmp_filename= absolute_path filename
       File.open(tmp_filename, 'wb') do |file|
-        @bucket.objects["#{folder}/#{key}"].read do |chunk|
+        objects("#{folder}/#{key}").read do |chunk|
           file.write(chunk)
         end
       end
       tmp_filename
+    end
+  end
+
+  class StoreObject
+    attr_writer :key, :acl
+    def self.createNull
+        StoreObject.new
+    end
+    def read
+      yield File.open("./spec/views/participant/base2021-A4.png").read
+    end
+    def write n
     end
   end
 end
