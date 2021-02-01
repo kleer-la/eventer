@@ -2,11 +2,11 @@ source 'http://rubygems.org'
 
 ruby '~> 2.3.8'
 
-gem 'rails', '~> 4.1'
+gem 'rails', '~> 4.2.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.9'
   gem 'pdf-inspector', :require => "pdf/inspector"
 
   gem 'rspec-mocks'
@@ -52,7 +52,7 @@ gem 'haml-rails'
 gem 'nokogiri' # (was 1.6.7.2)
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
-gem 'devise', '~> 3.1'
+gem 'devise', '~> 3'
 gem 'cancancan'
 
 gem 'formtastic' #, '~> 2.3'
