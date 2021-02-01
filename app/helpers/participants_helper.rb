@@ -87,6 +87,12 @@ module ParticipantsHelper
     def v2021?
       kleer_cert_seal_image.to_s.include? '2021'
     end
+    def description
+      [ (Setting.get("CERTIFICATE_SCRUM_ALLIANCE") if is_csd_eligible?),
+        (Setting.get("CERTIFICATE_KLEER") if is_kleer_certification? && !is_csd_eligible?),
+        Setting.get("CERTIFICATE_BASE"),
+        "Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias."].find(&:present?)
+    end
   end
 
   PageConfig = {
@@ -144,8 +150,8 @@ module ParticipantsHelper
       line_width = 2
       stroke {horizontal_line 0,@top_right[0], at: 355 }
     end
-    def certificate_description description
-      text_box description,  
+    def certificate_description
+      text_box @data.description,  
                   at: [0,340], width: @top_right[0], :align => :left, 
                   :size => 18,
                   overflow: :shrink_to_fit
@@ -179,16 +185,18 @@ module ParticipantsHelper
       text_box "#{@data.trainer(t)}<br>#{@data.trainer_credentials(t)}",
                 at: [trainer_x,55],  width: trainer_width, :align => :center, 
                 :size => 12,
-                inline_format: true  
-      image @store.read( @data.trainer_signature(t),nil, "certificate-signatures"), 
-      at: [trainer_x, 60+100], height: 130
+                inline_format: true
+      signature_file= @store.read( @data.trainer_signature(t),nil, "certificate-signatures")
+      if signature_file.present?
+        image signature_file, at: [trainer_x, 60+100], height: 130
+      end
     end
     def render
       background
       bounding_box [300,@top_right[1]], width: @top_right[0], height: 500 do
         event_name
         participant_name
-        certificate_description "Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias."
+        certificate_description
         certificate_info  
         verification_code
         trainers
@@ -326,8 +334,7 @@ module ParticipantsHelper
 
   class CertificateStore
     def self.createNull
-      obj= CertificateStore.new
-      obj.init_null
+      CertificateStore.new.init_null
     end
     def initialize(access_key_id: nil, secret_access_key: nil)
       s3 = AWS::S3.new(
@@ -362,7 +369,10 @@ module ParticipantsHelper
     def read(filename, suffix, folder='certificate-images')
       suffix = ('-' + suffix) if suffix.present?
       key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
-      # image_name= File.basename('base2021.png','.*')+'-'+ @doc.page.size + File.extname('base2021.png')
+
+      if !objects("#{folder}/#{key}").exist?
+        return nil
+      end
       tmp_filename= absolute_path filename
       File.open(tmp_filename, 'wb') do |file|
         objects("#{folder}/#{key}").read do |chunk|
@@ -382,6 +392,9 @@ module ParticipantsHelper
       yield File.open("./spec/views/participant/base2021-A4.png").read
     end
     def write n
+    end
+    def exist?
+      true
     end
   end
 end
