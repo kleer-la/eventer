@@ -5,7 +5,7 @@ class CreateCampaignViews < ActiveRecord::Migration
       t.references :campaign
       t.references :event
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

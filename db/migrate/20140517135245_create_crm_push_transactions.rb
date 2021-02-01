@@ -4,7 +4,7 @@ class CreateCrmPushTransactions < ActiveRecord::Migration
       t.references :event
       t.references :user
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

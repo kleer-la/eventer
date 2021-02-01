@@ -2,7 +2,7 @@ class CreateCampaignSources < ActiveRecord::Migration
   def change
     create_table :campaign_sources do |t|
       t.string :codename
-      t.timestamps
+      t.timestamps null: true
     end
 
     add_column :campaign_views, :campaign_source_id, :integer, :index => true

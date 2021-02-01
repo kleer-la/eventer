@@ -4,7 +4,6 @@ ruby '~> 2.3.8'
 
 gem 'rails', '~> 4.2.0'
 
-
 gem 'web-console', '~> 2.0', group: :development
 
 group :development, :test do

@@ -7,7 +7,7 @@ class CreateParticipants < ActiveRecord::Migration
       t.string :phone
       t.references :event
 
-      t.timestamps
+      t.timestamps null: true
     end
     add_index :participants, :event_id
   end
