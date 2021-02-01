@@ -370,7 +370,7 @@ module ParticipantsHelper
       suffix = ('-' + suffix) if suffix.present?
       key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
 
-      if !objects("#{folder}/#{key}").exist?
+      if !objects("#{folder}/#{key}").exists?
         return nil
       end
       tmp_filename= absolute_path filename
@@ -393,7 +393,7 @@ module ParticipantsHelper
     end
     def write n
     end
-    def exist?
+    def exists?
       true
     end
   end
