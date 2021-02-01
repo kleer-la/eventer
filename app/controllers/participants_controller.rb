@@ -235,8 +235,13 @@ class ParticipantsController < ApplicationController
     @verification_code = params[:verification_code]
 
     @participant = Participant.find(params[:id])
-    @certificate = ParticipantsHelper::Certificate.new(@participant)
 
+    begin
+      @certificate = ParticipantsHelper::Certificate.new(@participant)
+    rescue ArgumentError
+      flash[:alert] = t('flash.event.send_certificate.signature_failure')
+      redirect_to event_participants_path
+    end
   end
 
   def batch_load
@@ -271,7 +276,6 @@ class ParticipantsController < ApplicationController
     flash[:notice] = t('flash.event.batch_load.success', :success_loads => success_loads)
 
     redirect_to event_participants_path
-
   end
 
   def search

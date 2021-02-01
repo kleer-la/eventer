@@ -25,23 +25,6 @@ RSpec.describe "generate one certificate" do
     expect(texts[0]).to include 'no estuvo presente'
   end
 
-  it "abort when trainer has no signature" do
-    participant= FactoryBot.create(:participant)
-    participant.attend!
-    participant.save!
-    trainer= participant.event.trainer
-    trainer.signature_image= nil
-#    trainer.save!
-    assign(:page_size, 'LETTER')
-    assign(:verification_code, participant.verification_code)
-    assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
-    assign(:participant, participant )
-
-    render :template => "participants/certificate", format: :pdf
-    texts= PDF::Inspector::Text.analyze(rendered).strings
-    expect(texts.join ' ').to include 'Firma del trainer'
-  end
-
   it "a correct one@participant." do
     participant= FactoryBot.create(:participant)
     participant.attend!
@@ -65,5 +48,40 @@ RSpec.describe "generate one certificate" do
       certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
     }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
   end
-
+  it 'new (2021) certificate file' do
+    participant= FactoryBot.create(:participant)
+    participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
+    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4', ParticipantsHelper::CertificateStore::createNull )
+  end
+  
+  context 'Certificate' do
+    it 'invalid, no signature for 2nd trainer' do
+      participant= FactoryBot.create(:participant)
+      participant.event.trainers[0].signature_image= ''
+      participant.attend!
+      participant.save!
+      expect {
+        ParticipantsHelper::Certificate.new(participant)
+      }.to raise_error 'No signature available for the first trainer'
+    end
+    it 'valid, no signature  for 2nd trainer' do
+      participant= FactoryBot.create(:participant)
+      participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
+      participant.attend!
+      participant.save!
+      expect {
+        ParticipantsHelper::Certificate.new(participant)
+      }.not_to raise_error
+    end
+  end
+  context 'PdfCertificate' do
+    it '' do 
+      # participant= FactoryBot.create(:participant)
+      # participant.event.event_type.kleer_cert_seal_image= ''
+      # ParticipantsHelper::Certificate.new(participant)
+      # Prawn::Document.generate(nil,
+      #   :page_layout => :landscape, :page_size => 'A4') do |pdf|
+      #     PdfCertificate.new(pdf, certificate, store)      
+    end
+  end
 end

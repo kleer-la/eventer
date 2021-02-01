@@ -12,13 +12,9 @@ elsif !@participant.is_confirmed_or_present?
   end
 elsif @participant.event.trainer.signature_image.to_s == ''
   prawn_document(:page_layout => :landscape, :page_size => "LETTER") do |pdf|
-    pdf.text "Firma del trainer no accesible. Por favor, contáctanos a entrenamos@kleer.la"
+    pdf.text "El trainer no tiene firma definida o no es accesible. Por favor, contáctanos a entrenamos@kleer.la"
   end
 else
-
-  rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
-  kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
-  trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + @participant.event.trainer.signature_image
 
   prawn_document(:page_layout => :landscape, :page_size => @page_size) do |pdf|
     ParticipantsHelper::render_certificate( pdf, @certificate, @page_size )
