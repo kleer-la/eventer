@@ -8,7 +8,7 @@ gem 'web-console', '~> 2.0', group: :development
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
-  gem 'rspec-rails', '~> 3.9'
+  gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
   gem 'simplecov', '~> 0.7.1'
