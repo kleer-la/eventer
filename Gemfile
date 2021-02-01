@@ -4,15 +4,16 @@ ruby '~> 2.3.8'
 
 gem 'rails', '~> 4.2.0'
 
+
+gem 'web-console', '~> 2.0', group: :development
+
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
   gem 'rspec-rails', '~> 3.9'
   gem 'pdf-inspector', :require => "pdf/inspector"
-
   gem 'rspec-mocks'
   gem 'simplecov', '~> 0.7.1'
   gem 'coveralls', require: false
-  # gem "chromedriver-helper"
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'database_cleaner-active_record'
@@ -89,3 +90,6 @@ gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate', '~> 3'
+
+# Gem for respond_to at the class level (Rails 4.2) used(?) in application_controller
+gem 'responders', '~> 2.0'
