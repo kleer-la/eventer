@@ -20,7 +20,7 @@ end
 
 group :test do
   gem 'factory_bot_rails',require: false
-  gem 'cucumber-rails', require: false
+  gem 'cucumber-rails', '< 2.1', require: false
   gem 'capybara' #, '~> 3.0'  depends on ruby (>= 2.4.0)
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver' #, '~> 3'
