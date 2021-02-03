@@ -1,6 +1,6 @@
 class AddMarketingIndexes < ActiveRecord::Migration
   def up
-    add_index :campaigns, :codename
+    # add_index :campaigns, :codename
     add_index :campaign_sources, :codename
     add_index :campaign_views, :campaign_id
     add_index :campaign_views, :event_id
@@ -9,7 +9,7 @@ class AddMarketingIndexes < ActiveRecord::Migration
   end
 
   def down
-    remove_index :campaigns, :codename
+    # remove_index :campaigns, :codename
     remove_index :campaign_sources, :codename
     remove_index :campaign_views, :campaign_id
     remove_index :campaign_views, :event_id

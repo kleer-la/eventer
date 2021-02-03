@@ -4,7 +4,7 @@ class CreateCampaigns < ActiveRecord::Migration
       t.string :codename, :index => true
       t.text :description
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

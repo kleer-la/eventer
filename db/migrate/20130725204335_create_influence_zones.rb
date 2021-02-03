@@ -5,7 +5,7 @@ class CreateInfluenceZones < ActiveRecord::Migration
       t.string :tag_name
       t.references :country
             
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

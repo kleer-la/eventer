@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 describe Category do
-  it { pending "Not working :(";should have_and_belong_to_many(:event_types) }
-  
   before(:each) do
     @category = FactoryBot.build(:category)
   end
   
+  it 'HABTM event_types' do
+    expect(Category.has_and_belongs_to_many :event_types).to include "event_types"
+  end
+
   it "should be valid" do
     expect(@category.valid?).to be true
   end

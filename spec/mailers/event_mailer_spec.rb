@@ -34,7 +34,7 @@ describe EventMailer do
         AR_TEXT="pagos desde Argentina"
 
         it "should queue and verify a simple email" do
-            @email = EventMailer.welcome_new_event_participant(@participant).deliver
+            @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             # File.open("x.html", 'w') { |file| file.write(@email) }
             expect(ActionMailer::Base.deliveries.count).to be 1
             expect(@email.to).to eq ["app_test@kleer.la"]
@@ -46,13 +46,13 @@ describe EventMailer do
         it "should send standard prices text info if custom prices text is empty" do
             @participant.event.list_price = 200
             
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).to include "ARS 200"
             expect(email.html_part.body.to_s).to include "ARS 200"
         end
         it "should not send early bird prices if EB info is empty" do
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).not_to include EB_TEXT
             expect(email.html_part.body.to_s).not_to include EB_TEXT
@@ -62,7 +62,7 @@ describe EventMailer do
             @participant.event.eb_end_date = Date.today
             @participant.event.eb_price = 180
             
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).to include EB_TEXT
             expect(email.html_part.body.to_s).to include EB_TEXT
@@ -71,7 +71,7 @@ describe EventMailer do
         end
         
         it "should not show 2 person price if NOT present" do
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).not_to include PAIR_TEXT
             expect(email.html_part.body.to_s).not_to include PAIR_TEXT
@@ -79,7 +79,7 @@ describe EventMailer do
         it "should show 2 person price if present" do
             @participant.event.couples_eb_price = 950
             
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).to include PAIR_TEXT
             expect(email.html_part.body.to_s).to include PAIR_TEXT
@@ -88,7 +88,7 @@ describe EventMailer do
         end
 
         it "should not show group price if NOT present" do
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).not_to include GROUP_TEXT
             expect(email.html_part.body.to_s).not_to include GROUP_TEXT
@@ -96,7 +96,7 @@ describe EventMailer do
         it "should show group price if present" do
             @participant.event.business_eb_price = 850
     
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
     
             expect(email.text_part.body.to_s).to include GROUP_TEXT
             expect(email.html_part.body.to_s).to include GROUP_TEXT
@@ -113,7 +113,7 @@ describe EventMailer do
 
             @participant.event.custom_prices_email_text = "texto customizado"
 
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
 
             expect(email.text_part.body.to_s).not_to include EB_TEXT
             expect(email.html_part.body.to_s).not_to include EB_TEXT
@@ -137,21 +137,21 @@ describe EventMailer do
         it "should send the custom text in HTML format if custom text markdown is present" do
             @participant.event.custom_prices_email_text = "**texto customizado**: 16"
             
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.html_part.body.to_s).to include "<strong>texto customizado</strong>: 16"
         end
         it "should NOT show extra info if participant NOT from AR" do
             @participant.influence_zone.country.iso_code = 'CL'
             puts @participant
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).not_to include AR_TEXT
             expect(email.html_part.body.to_s).not_to include AR_TEXT
         end
         it "should show extra info if participant from AR" do
             @participant.influence_zone.country.iso_code = 'AR'
-            email = EventMailer.welcome_new_event_participant(@participant).deliver
+            email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).to include AR_TEXT
             expect(email.html_part.body.to_s).to include AR_TEXT
@@ -162,7 +162,7 @@ describe EventMailer do
         @participant.influence_zone = FactoryBot.create(:influence_zone)
         @participant.status = "A"
         
-        @email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver
+        @email = EventMailer.send_certificate(@participant, 'http://pepe.com/A4.pdf', 'http://pepe.com/LETTER.pdf').deliver_now
         
         expect(ActionMailer::Base.deliveries.count).to be 1
         expect(@email.from).to eq ["entrenamos@kleer.la"]

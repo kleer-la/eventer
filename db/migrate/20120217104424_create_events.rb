@@ -23,7 +23,7 @@ class CreateEvents < ActiveRecord::Migration
       t.boolean :draft
       t.boolean :cancelled
 
-      t.timestamps
+      t.timestamps null: true
     end
     add_index :events, :country_id
     add_index :events, :trainer_id

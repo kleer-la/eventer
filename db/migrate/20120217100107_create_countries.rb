@@ -4,7 +4,7 @@ class CreateCountries < ActiveRecord::Migration
       t.string :name
       t.string :iso_code
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end
