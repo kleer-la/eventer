@@ -1,8 +1,8 @@
 source 'http://rubygems.org'
 
-ruby '~> 2.3.8'
+ruby '~> 2.4'
 
-gem 'rails', '~> 4.2.0'
+gem 'rails', '~> 4.2'
 
 gem 'web-console', '~> 2.0', group: :development
 
@@ -23,8 +23,8 @@ group :test do
   gem 'cucumber-rails', require: false
   gem 'capybara' #, '~> 3.0'  depends on ruby (>= 2.4.0)
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
-  gem 'selenium-webdriver', '~> 3'
-  gem 'webdrivers', '~> 4.0'
+  gem 'selenium-webdriver' #, '~> 3'
+  gem 'webdrivers' #, '~> 4.0'
 end
 
 group :test, :production do
