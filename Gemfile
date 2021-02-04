@@ -28,7 +28,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.21'
+  gem 'pg', '0.21' # wait until Rails  5.1.5 to upgrato to pg 1.x
 end
 
 group :production do
@@ -38,7 +38,7 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sass-rails',   '~> 5.0' # or 4.0.2?
+gem 'sassc-rails' # 'sass-rails', '~> 5.0' # or 4.0.2?
 gem 'coffee-rails', '~> 4'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
