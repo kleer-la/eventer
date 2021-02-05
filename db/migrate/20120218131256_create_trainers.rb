@@ -3,7 +3,7 @@ class CreateTrainers < ActiveRecord::Migration
     create_table :trainers do |t|
       t.string :name
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

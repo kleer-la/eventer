@@ -6,7 +6,7 @@ class CreateCrmPushTransactionItems < ActiveRecord::Migration
       t.text :log
       t.string :result
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

@@ -1,18 +1,18 @@
 source 'http://rubygems.org'
 
-ruby '~> 2.3.8'
+ruby '~> 2.4'
 
-gem 'rails', '~> 4.1'
+gem 'rails', '~> 4.2'
+
+gem 'web-console', '~> 2.0', group: :development
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
-
   gem 'rspec-mocks'
   gem 'simplecov', '~> 0.7.1'
   gem 'coveralls', require: false
-  # gem "chromedriver-helper"
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'database_cleaner-active_record'
@@ -20,15 +20,15 @@ end
 
 group :test do
   gem 'factory_bot_rails',require: false
-  gem 'cucumber-rails', require: false
+  gem 'cucumber-rails', '< 2.1', require: false
   gem 'capybara' #, '~> 3.0'  depends on ruby (>= 2.4.0)
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
-  gem 'selenium-webdriver', '~> 3'
-  gem 'webdrivers', '~> 4.0'
+  gem 'selenium-webdriver' #, '~> 3'
+  gem 'webdrivers' #, '~> 4.0'
 end
 
 group :test, :production do
-  gem 'pg', '0.21'
+  gem 'pg', '0.21' # wait until Rails  5.1.5 to upgrato to pg 1.x
 end
 
 group :production do
@@ -38,7 +38,7 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sass-rails',   '~> 5.0' # or 4.0.2?
+gem 'sassc-rails' # 'sass-rails', '~> 5.0' # or 4.0.2?
 gem 'coffee-rails', '~> 4'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
@@ -52,7 +52,7 @@ gem 'haml-rails'
 gem 'nokogiri' # (was 1.6.7.2)
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
-gem 'devise', '~> 3.1'
+gem 'devise', '~> 3'
 gem 'cancancan'
 
 gem 'formtastic' #, '~> 2.3'
@@ -89,3 +89,6 @@ gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate', '~> 3'
+
+# Gem for respond_to at the class level (Rails 4.2) used(?) in application_controller
+gem 'responders', '~> 2.0'

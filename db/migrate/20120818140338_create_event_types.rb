@@ -6,7 +6,7 @@ class CreateEventTypes < ActiveRecord::Migration
       t.text :recipients
       t.text :program
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 end

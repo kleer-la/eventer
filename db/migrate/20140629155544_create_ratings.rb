@@ -12,7 +12,7 @@ class CreateRatings < ActiveRecord::Migration
       t.decimal :global_event_rating, :precision => 4, :scale => 2
       t.integer :global_event_rating_count
 
-      t.timestamps
+      t.timestamps null: true
     end
     add_index :ratings, :user_id
   end
