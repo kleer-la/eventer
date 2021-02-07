@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '~> 2.4'
+ruby '~> 2.5'
 
 gem 'rails', '~> 4.2'
 
@@ -28,7 +28,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.21' # wait until Rails  5.1.5 to upgrato to pg 1.x
+  gem 'pg', '0.21' # wait until Rails 5.1.5 to upgrade to pg 1.x
 end
 
 group :production do
