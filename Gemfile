@@ -52,7 +52,7 @@ gem 'haml-rails'
 gem 'nokogiri' # (was 1.6.7.2)
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
-gem 'devise', '~> 3'
+gem 'devise', '~> 4'
 gem 'cancancan'
 
 gem 'formtastic' #, '~> 2.3'
