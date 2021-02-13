@@ -32,6 +32,8 @@
   .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
     .box-header.green-background
       .title Lista de Participantes Presentes (Estado = Presente)
+    - if @participants.count ==0
+      %h3 No hay participantes Presentes
     .box-content.box-no-padding
       .responsive-table
         .scrollable-area
@@ -55,15 +57,15 @@
                       = " "
                       = participant.lname
                   %td{ :style => "white-space:normal;"}
-                    = best_in_place participant, :event_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
+                    = best_in_place participant, :event_rating, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
-                    = best_in_place participant, :trainer_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
+                    = best_in_place participant, :trainer_rating, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
-                    = best_in_place participant, :trainer2_rating, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => rating_options
+                    = best_in_place participant, :trainer2_rating, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
-                    = best_in_place participant, :promoter_score, :type => :select, :path => path, :classes => ['editable','editable-click'], :collection => promoter_options
+                    = best_in_place participant, :promoter_score, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => promoter_options
                   %td{ :style => "white-space:pre-line;"}
-                    = best_in_place participant, :testimony, :type => :textarea, :path => path, :classes => ['editable','editable-click']
+                    = best_in_place participant, :testimony, :as => :textarea, :url => path, :class => ['editable','editable-click']
 
 :javascript
 

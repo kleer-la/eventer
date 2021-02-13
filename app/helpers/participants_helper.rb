@@ -389,7 +389,7 @@ module ParticipantsHelper
         StoreObject.new
     end
     def read
-      yield File.open("./spec/views/participant/base2021-A4.png").read
+      yield File.open("./spec/views/participants/base2021-A4.png").read
     end
     def write n
     end
