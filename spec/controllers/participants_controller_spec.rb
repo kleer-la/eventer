@@ -166,6 +166,19 @@ describe ParticipantsController do
         expect(flash[:notice]).to include "1 participantes creados exitosament"
       end
     end
+
+    describe "Survey" do
+      it "w/o attended participant" do 
+        get :survey,  {:event_id => @participant.event.id}
+        expect(assigns(:participants)).to match_array([])
+      end
+      it "w/o an attended participant" do
+        @participant.attend!
+        @participant.save! 
+        get :survey,  {:event_id => @participant.event.id}
+        expect(assigns(:participants)).to match_array([@participant])
+      end
+    end
   end
 
 end
