@@ -55,6 +55,7 @@ RSpec.describe "generate one certificate" do
       assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
       assign(:participant, participant )
       
+      allow(ParticipantsHelper::CertificateStore).to receive(:new).and_return(ParticipantsHelper::CertificateStore.createNull)
       allow_any_instance_of(ParticipantsHelper::StoreObject).to receive(:exists?).and_return(false)
       expect {
         render :template => "participants/certificate", format: :pdf
