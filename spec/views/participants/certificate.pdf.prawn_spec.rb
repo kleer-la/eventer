@@ -55,10 +55,10 @@ RSpec.describe "generate one certificate" do
       assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
       assign(:participant, participant )
       
-      allow_any_instance_of(ParticipantsHelper::CertificateStore).to receive(:read).and_return(nil)
+      allow_any_instance_of(ParticipantsHelper::StoreObject).to receive(:exists?).and_return(false)
       expect {
         render :template => "participants/certificate", format: :pdf
-      }.to raise_error(ActionView::Template::Error,/2021.png/)
+      }.to raise_error(ActionView::Template::Error,/2021/)
     end
 end
 end

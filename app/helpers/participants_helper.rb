@@ -129,9 +129,6 @@ module ParticipantsHelper
         height= {'A4'   => 598,
                 'LETTER' => 613 }[ @doc.page.size]
         bk_image= @store.read( @data.background_file, @doc.page.size)
-        if !bk_image.present?
-          raise ArgumentError,"Seal image not found: #{@data.background_file}"
-        end
         image bk_image, at: offset, height: height
         # stroke_axis
       end
@@ -374,7 +371,7 @@ module ParticipantsHelper
       key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
 
       if !objects("#{folder}/#{key}").exists?
-        return nil
+        raise ArgumentError,"#{key} image not found"
       end
       tmp_filename= absolute_path filename
       File.open(tmp_filename, 'wb') do |file|
