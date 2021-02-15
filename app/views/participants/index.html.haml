@@ -182,18 +182,18 @@
                   %td{ :style => "white-space:normal;"}
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-user
-                      = best_in_place participant, :fname, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                      = best_in_place participant, :fname, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                       = " "
-                      = best_in_place participant, :lname, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                      = best_in_place participant, :lname, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                     %br
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-envelope-alt
-                      = best_in_place participant, :email, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                      = best_in_place participant, :email, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                     %br
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-barcode
                       = "ID: "
-                      = best_in_place participant, :id_number, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                      = best_in_place participant, :id_number, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                     %br
                     - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
                       %br
@@ -203,11 +203,11 @@
                   %td{ :style => "white-space:normal;"}
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-phone-sign
-                      = best_in_place participant, :phone, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                      = best_in_place participant, :phone, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                     %br
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-globe
-                      = best_in_place participant, :influence_zone_id, :as => :select, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => @influence_zones.map{ |i| [i.id, "#{i.display_name}"] }, :classes => ['editable','editable-click']
+                      = best_in_place participant, :influence_zone_id, :as => :select, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => @influence_zones.map{ |i| [i.id, "#{i.display_name}"] }, :class => ['editable','editable-click']
                     %br
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-tag
@@ -215,11 +215,11 @@
                     %br
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-home
-                      = best_in_place participant, :address, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                      = best_in_place participant, :address, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                   %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
-                    = best_in_place participant, :status, :as => :select, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["N", "Nuevo"], ["T", "Contactado"], ["C", "Confirmado"], ["A", "Presente"], ["X", "Cancelado"], ["D", "Postergado"]], :classes => ['color_on_success','editable','editable-click']
+                    = best_in_place participant, :status, :as => :select, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["N", "Nuevo"], ["T", "Contactado"], ["C", "Confirmado"], ["A", "Presente"], ["X", "Cancelado"], ["D", "Postergado"]], :class => ['color_on_success','editable','editable-click']
                   %td{ :style => "white-space:pre-line;"}
-                    = best_in_place participant, :notes, :as => :textarea, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :classes => ['editable','editable-click']
+                    = best_in_place participant, :notes, :as => :textarea, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                     = participant.pay_notes
                   %td
                     %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }

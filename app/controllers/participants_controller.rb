@@ -238,8 +238,9 @@ class ParticipantsController < ApplicationController
 
     begin
       @certificate = ParticipantsHelper::Certificate.new(@participant)
-    rescue ArgumentError
-      flash[:alert] = t('flash.event.send_certificate.signature_failure')
+      render
+    rescue ArgumentError, ActionView::Template::Error => e
+      flash[:alert] = e.message
       redirect_to event_participants_path
     end
   end

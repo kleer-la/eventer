@@ -61,7 +61,7 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
   # v4 config.include Devise::Test::ControllerHelpers, :type => :controller
-  config.include Devise::TestHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Warden::Test::Helpers
 
   #FactoryBot

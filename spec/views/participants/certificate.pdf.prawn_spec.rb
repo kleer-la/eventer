@@ -41,47 +41,25 @@ RSpec.describe "generate one certificate" do
     expect(texts.join ' ').to include 'Juan Carlos Perez Luasó attended'
   end
 
-  it 'fail to persist a certificate file. Wrong credentials' do
-    participant= FactoryBot.create(:participant)
-    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4' )
-    expect {ParticipantsHelper::upload_certificate( 
-      certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
-    }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
-  end
-  it 'new (2021) certificate file' do
-    participant= FactoryBot.create(:participant)
-    participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
-    certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4', ParticipantsHelper::CertificateStore::createNull )
-  end
-  
-  context 'Certificate' do
-    it 'invalid, no signature for 2nd trainer' do
-      participant= FactoryBot.create(:participant)
-      participant.event.trainers[0].signature_image= ''
-      participant.attend!
-      participant.save!
-      expect {
-        ParticipantsHelper::Certificate.new(participant)
-      }.to raise_error 'No signature available for the first trainer'
-    end
-    it 'valid, no signature  for 2nd trainer' do
-      participant= FactoryBot.create(:participant)
-      participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
-      participant.attend!
-      participant.save!
-      expect {
-        ParticipantsHelper::Certificate.new(participant)
-      }.not_to raise_error
-    end
-  end
+
   context 'PdfCertificate' do
-    it '' do 
-      # participant= FactoryBot.create(:participant)
-      # participant.event.event_type.kleer_cert_seal_image= ''
-      # ParticipantsHelper::Certificate.new(participant)
-      # Prawn::Document.generate(nil,
-      #   :page_layout => :landscape, :page_size => 'A4') do |pdf|
-      #     PdfCertificate.new(pdf, certificate, store)      
+    it "seal image not found" do
+      participant= FactoryBot.create(:participant)
+      participant.attend!
+      participant.save!
+      ev= participant.event.event_type
+      ev.kleer_cert_seal_image='2021.png' # to signal a 2021 version
+      ev.save!
+      assign(:page_size, 'LETTER')
+      assign(:verification_code, participant.verification_code)
+      assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
+      assign(:participant, participant )
+      
+      allow(ParticipantsHelper::CertificateStore).to receive(:new).and_return(ParticipantsHelper::CertificateStore.createNull)
+      allow_any_instance_of(ParticipantsHelper::StoreObject).to receive(:exists?).and_return(false)
+      expect {
+        render :template => "participants/certificate", format: :pdf
+      }.to raise_error(ActionView::Template::Error,/2021/)
     end
-  end
+end
 end

@@ -128,8 +128,8 @@ module ParticipantsHelper
                'LETTER' => [-38,576] }[ @doc.page.size]
         height= {'A4'   => 598,
                 'LETTER' => 613 }[ @doc.page.size]
-        image @store.read( @data.background_file, @doc.page.size), 
-        at: offset, height: height
+        bk_image= @store.read( @data.background_file, @doc.page.size)
+        image bk_image, at: offset, height: height
         # stroke_axis
       end
     end
@@ -371,7 +371,7 @@ module ParticipantsHelper
       key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
 
       if !objects("#{folder}/#{key}").exists?
-        return nil
+        raise ArgumentError,"#{key} image not found"
       end
       tmp_filename= absolute_path filename
       File.open(tmp_filename, 'wb') do |file|
@@ -389,7 +389,7 @@ module ParticipantsHelper
         StoreObject.new
     end
     def read
-      yield File.open("./spec/views/participant/base2021-A4.png").read
+      yield File.open("./spec/views/participants/base2021-A4.png").read
     end
     def write n
     end
