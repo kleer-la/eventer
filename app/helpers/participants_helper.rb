@@ -128,8 +128,11 @@ module ParticipantsHelper
                'LETTER' => [-38,576] }[ @doc.page.size]
         height= {'A4'   => 598,
                 'LETTER' => 613 }[ @doc.page.size]
-        image @store.read( @data.background_file, @doc.page.size), 
-        at: offset, height: height
+        bk_image= @store.read( @data.background_file, @doc.page.size)
+        if !bk_image.present?
+          raise ArgumentError,"Seal image not found: #{@data.background_file}"
+        end
+        image bk_image, at: offset, height: height
         # stroke_axis
       end
     end

@@ -231,4 +231,38 @@ describe "render certificates" do
         expect(pdf.history).to include "duration of 3"
     end
 
+    it 'fail to persist a certificate file. Wrong credentials' do
+        participant= FactoryBot.create(:participant)
+        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4' )
+        expect {ParticipantsHelper::upload_certificate( 
+          certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
+        }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
+      end
+      it 'new (2021) certificate file' do
+        participant= FactoryBot.create(:participant)
+        participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
+        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4', ParticipantsHelper::CertificateStore::createNull )
+      end
+      
+      context 'Certificate' do
+        it 'invalid, no signature for 1st trainer' do
+          participant= FactoryBot.create(:participant)
+          participant.event.trainers[0].signature_image= ''
+          participant.attend!
+          participant.save!
+          expect {
+            ParticipantsHelper::Certificate.new(participant)
+          }.to raise_error 'No signature available for the first trainer'
+        end
+        it 'valid, no signature  for 2nd trainer' do
+          participant= FactoryBot.create(:participant)
+          participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
+          participant.attend!
+          participant.save!
+          expect {
+            ParticipantsHelper::Certificate.new(participant)
+          }.not_to raise_error
+        end
+      end
+
   end
