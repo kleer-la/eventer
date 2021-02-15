@@ -20,8 +20,8 @@ end
 
 group :test do
   gem 'factory_bot_rails',require: false
-  gem 'cucumber-rails', '< 2.1', require: false
-  gem 'capybara' #, '~> 3.0'  depends on ruby (>= 2.4.0)
+  gem 'cucumber-rails', '< 2.1', require: false  # 2.2 if rails >= 5.0
+  gem 'capybara'
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver' #, '~> 3'
   gem 'webdrivers' #, '~> 4.0'
@@ -38,7 +38,7 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sassc-rails' # 'sass-rails', '~> 5.0' # or 4.0.2?
+gem 'sassc-rails'
 gem 'coffee-rails', '~> 4'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
@@ -49,13 +49,13 @@ gem 'jquery-rails'
 gem 'haml'
 gem 'haml-rails'
 
-gem 'nokogiri' # (was 1.6.7.2)
+gem 'nokogiri'
 gem 'eventmachine', '1.2.7'
 # Gemas para idetificación y autorización de usuarios
 gem 'devise', '~> 4'
 gem 'cancancan'
 
-gem 'formtastic' #, '~> 2.3'
+gem 'formtastic'
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'
