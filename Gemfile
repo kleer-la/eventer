@@ -19,7 +19,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_bot_rails',require: false
+  gem 'factory_bot_rails',require: false         # wait until rails 5.0 to update to 6.x
   gem 'cucumber-rails', '< 2.1', require: false  # 2.2 if rails >= 5.0
   gem 'capybara'
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
@@ -39,7 +39,7 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 gem 'sassc-rails'
-gem 'coffee-rails', '~> 4'
+gem 'coffee-rails', '~> 4' # wait until rails 5.0 to update to 5.0
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem "therubyracer"
@@ -55,7 +55,7 @@ gem 'eventmachine', '1.2.7'
 gem 'devise', '~> 4'
 gem 'cancancan'
 
-gem 'formtastic'
+gem 'formtastic'           # wait until rails 5.0 to update to 4.0
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'
@@ -66,10 +66,6 @@ gem 'prawn'
 gem 'prawn_rails'
 gem 'dimensions' # knowing the heigt of an image
 gem 'redcarpet'
-
-
-# Gemas necesarias para la comunicación con CapsuleCRM
-gem 'curb', '0.9.10'
 
 # Edición en el lugar
 gem 'best_in_place'

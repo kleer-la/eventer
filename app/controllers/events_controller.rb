@@ -112,15 +112,6 @@ class EventsController < ApplicationController
     end
   end
 
-  def push_to_crm
-    @event = Event.find(params[:id])
-
-    crm_push = CrmPushTransaction.create( :event => @event, :user => current_user )
-    crm_push.delay.start!
-
-    flash.now[:notice] = t('flash.event.pushing_to_crm')
-  end
-
   def send_certificate
     @event = Event.find(params[:id])
 

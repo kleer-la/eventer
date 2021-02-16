@@ -57,14 +57,6 @@ class EventMailer < ActionMailer::Base
         ) unless event.monitor_email.to_s == ""    ## nil? || ''
   end
 
-  def alert_event_crm_push_finished(crm_push_transaction)
-    mail(to: crm_push_transaction.user.email,
-        from: "Keventer <eventos@kleerer.com>",
-        subject: "[Keventer] Envío al CRM finalizado",
-        body: "El último push al CRM que solicitaste ya ha finalizado."
-        ) unless crm_push_transaction.user.nil? || crm_push_transaction.user.email.to_s == ''
-  end
-
   def payment_process_result(participant,result,status)
 
     puts "------------------SENDING MAIL FOR PAYU CONFIRMATION ------------------"

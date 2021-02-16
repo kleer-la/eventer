@@ -10,22 +10,6 @@ describe EventMailer do
     
     it "welcome_new_webinar_participant", :pending => "Deprecated - should remove" do fail;end
     it "notify_webinar_start" , :pending => "Deprecated - should remove"  do fail;end
-    it "alert_event_crm_push_finished" , :pending => "Deprecated - should remove" do fail;end
-    #   context 'alert_event_crm_push_finished' do
-    #     it 'dont send notification when PushTransation dont have email address' do
-    #       email= EventMailer.alert_event_crm_push_finished(CrmPushTransaction.new)
-    #       expect(email.body).to eq ''
-    #     end
-    
-    #     it 'send registration in event with alert email address' do
-    #       cpt= CrmPushTransaction.new
-    #       cpt.user= FactoryBot.build(:user)
-    #       email= EventMailer.alert_event_crm_push_finished(cpt)
-    
-    #       expect(email.subject).to include('CRM finalizado')
-    #       expect(email.body).to include('finalizado')
-    #     end
-    #   end 
     
     context 'welcome_new_event_participant' do
         EB_TEXT="Pronto pago:"
