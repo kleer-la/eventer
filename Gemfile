@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '~> 2.5'
+ruby '~> 2.6'
 
 gem 'rails', '~> 4.2'
 
@@ -11,15 +11,15 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
-  gem 'simplecov', '~> 0.7.1'
+  gem 'simplecov', '~> 0.7.1' # 0.7.1
   gem 'coveralls', require: false
   gem 'debase'
   gem 'ruby-debug-ide'
-  gem 'database_cleaner-active_record'
+  gem 'database_cleaner-active_record' # wait until Rails 5.x to upgrade to 2.0
 end
 
 group :test do
-  gem 'factory_bot_rails',require: false
+  gem 'factory_bot_rails',require: false         # wait until rails 5.0 to update to 6.x
   gem 'cucumber-rails', '< 2.1', require: false  # 2.2 if rails >= 5.0
   gem 'capybara'
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
@@ -28,7 +28,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.21' # wait until Rails 5.1.5 to upgrade to pg 1.x
+  gem 'pg', '0.21'    # wait until Rails 5.1.5 to upgrade to pg 1.x
 end
 
 group :production do
@@ -39,14 +39,14 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 gem 'sassc-rails'
-gem 'coffee-rails', '~> 4'
+gem 'coffee-rails', '~> 4' # wait until rails 5.0 to update to 5.0
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem "therubyracer"
 gem 'uglifier', '>= 1.3.0'
 
 gem 'jquery-rails'
-gem 'haml'
+gem 'haml'            # wait until rails 5.1 to update to 2.0
 gem 'haml-rails'
 
 gem 'nokogiri'
@@ -55,7 +55,7 @@ gem 'eventmachine', '1.2.7'
 gem 'devise', '~> 4'
 gem 'cancancan'
 
-gem 'formtastic'
+gem 'formtastic'           # wait until rails 5.0 to update to 4.0
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'
@@ -66,10 +66,6 @@ gem 'prawn'
 gem 'prawn_rails'
 gem 'dimensions' # knowing the heigt of an image
 gem 'redcarpet'
-
-
-# Gemas necesarias para la comunicación con CapsuleCRM
-gem 'curb', '0.9.10'
 
 # Edición en el lugar
 gem 'best_in_place'

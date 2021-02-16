@@ -33,7 +33,10 @@ class EventMailer < ActionMailer::Base
     @certificate_link_LETTER = certificate_url_LETTER
     @markdown_renderer = Redcarpet::Markdown.new( Redcarpet::Render::HTML.new(:hard_wrap => true), :autolink => true)
     mail( to: @participant.email,
-          subject: "Kleer | Certificado del #{@participant.event.event_type.name}")
+          subject: "Kleer | Certificado del #{@participant.event.event_type.name}") do |format|
+            format.text
+            format.html { render :layout => 'event_mailer2' }
+          end
   end
 
   def alert_event_monitor(participant, edit_registration_link)
@@ -55,14 +58,6 @@ class EventMailer < ActionMailer::Base
         subject: "[Keventer] Nuevo registro a #{event_title} del #{event.human_date}: " + newbie,
         body: body
         ) unless event.monitor_email.to_s == ""    ## nil? || ''
-  end
-
-  def alert_event_crm_push_finished(crm_push_transaction)
-    mail(to: crm_push_transaction.user.email,
-        from: "Keventer <eventos@kleerer.com>",
-        subject: "[Keventer] Envío al CRM finalizado",
-        body: "El último push al CRM que solicitaste ya ha finalizado."
-        ) unless crm_push_transaction.user.nil? || crm_push_transaction.user.email.to_s == ''
   end
 
   def payment_process_result(participant,result,status)
