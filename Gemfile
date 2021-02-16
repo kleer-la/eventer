@@ -11,11 +11,11 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
-  gem 'simplecov', '~> 0.8' # 0.7.1
+  gem 'simplecov', '~> 0.7.1' # 0.7.1
   gem 'coveralls', require: false
   gem 'debase'
   gem 'ruby-debug-ide'
-  gem 'database_cleaner-active_record'
+  gem 'database_cleaner-active_record' # wait until Rails 5.x to upgrade to 2.0
 end
 
 group :test do
@@ -28,7 +28,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.21' # wait until Rails 5.1.5 to upgrade to pg 1.x
+  gem 'pg', '0.21'    # wait until Rails 5.1.5 to upgrade to pg 1.x
 end
 
 group :production do
@@ -46,7 +46,7 @@ gem "therubyracer"
 gem 'uglifier', '>= 1.3.0'
 
 gem 'jquery-rails'
-gem 'haml'
+gem 'haml'            # wait until rails 5.1 to update to 2.0
 gem 'haml-rails'
 
 gem 'nokogiri'
