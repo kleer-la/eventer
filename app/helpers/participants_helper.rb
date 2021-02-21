@@ -305,11 +305,10 @@ module ParticipantsHelper
       pdf.stroke {pdf.rectangle *PageConfig[:InnerBox][page_size] }
   end
 
-  def self.generate_certificate( participant, page_size, store=nil )
-    store ||= CertificateStore.new
+  def self.generate_certificate( participant, page_size, store)
     certificate = Certificate.new(participant)
     
-    certificate_filename = store.absolute_path "#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
+    certificate_filename = store.tmp_path "#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
     Prawn::Document.generate(certificate_filename,
       :page_layout => :landscape, :page_size => page_size) do |pdf|
         self.render_certificate( pdf, certificate, page_size, store)
@@ -332,69 +331,69 @@ module ParticipantsHelper
   	"https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
 
-  class CertificateStore
-    def self.createNull
-      CertificateStore.new.init_null
-    end
-    def initialize(access_key_id: nil, secret_access_key: nil)
-      s3 = AWS::S3.new(
-        :access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
-        :secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
-      @bucket = s3.buckets['Keventer']
-    end
-    def objects(key)
-      if @bucket.present?
-        @bucket.objects[key]
-      else
-        StoreObject::createNull     
-      end
-    end
-    def init_null
-      @bucket = nil
-      self
-    end
+  # class CertificateStore
+  #   def self.createNull
+  #     CertificateStore.new.init_null
+  #   end
+  #   def initialize(access_key_id: nil, secret_access_key: nil)
+  #     s3 = AWS::S3.new(
+  #       :access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
+  #       :secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
+  #     @bucket = s3.buckets['Keventer']
+  #   end
+  #   def objects(key)
+  #     if @bucket.present?
+  #       @bucket.objects[key]
+  #     else
+  #       StoreObject::createNull     
+  #     end
+  #   end
+  #   def init_null
+  #     @bucket = nil
+  #     self
+  #   end
 
-    def absolute_path basename
-      temp_dir = "#{Rails.root}/tmp"
-      Dir.mkdir( temp_dir ) unless Dir.exist?( temp_dir )
-      temp_dir+'/'+basename
-    end
-    def write(certificate_filename)
-      key = File.basename(certificate_filename)
-      objects("certificates/#{key}").write(:file => certificate_filename )
-      objects("certificates/#{key}").acl = :public_read
+  #   def absolute_path basename
+  #     temp_dir = "#{Rails.root}/tmp"
+  #     Dir.mkdir( temp_dir ) unless Dir.exist?( temp_dir )
+  #     temp_dir+'/'+basename
+  #   end
+  #   def write(certificate_filename)
+  #     key = File.basename(certificate_filename)
+  #     objects("certificates/#{key}").write(:file => certificate_filename )
+  #     objects("certificates/#{key}").acl = :public_read
 
-      "https://s3.amazonaws.com/Keventer/certificates/#{key}"
-    end
-    def read(filename, suffix, folder='certificate-images')
-      suffix = ('-' + suffix) if suffix.present?
-      key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
+  #     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
+  #   end
+  #   def read(filename, suffix, folder='certificate-images')
+  #     suffix = ('-' + suffix) if suffix.present?
+  #     key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
 
-      if !objects("#{folder}/#{key}").exists?
-        raise ArgumentError,"#{key} image not found"
-      end
-      tmp_filename= absolute_path filename
-      File.open(tmp_filename, 'wb') do |file|
-        objects("#{folder}/#{key}").read do |chunk|
-          file.write(chunk)
-        end
-      end
-      tmp_filename
-    end
-  end
+  #     if !objects("#{folder}/#{key}").exists?
+  #       raise ArgumentError,"#{key} image not found"
+  #     end
+  #     tmp_filename= absolute_path filename
+  #     File.open(tmp_filename, 'wb') do |file|
+  #       objects("#{folder}/#{key}").read do |chunk|
+  #         file.write(chunk)
+  #       end
+  #     end
+  #     tmp_filename
+  #   end
+  # end
 
-  class StoreObject
-    attr_writer :key, :acl
-    def self.createNull
-        StoreObject.new
-    end
-    def read
-      yield File.open("./spec/views/participants/base2021-A4.png").read
-    end
-    def write n
-    end
-    def exists?
-      true
-    end
-  end
+  # class StoreObject
+  #   attr_writer :key, :acl
+  #   def self.createNull
+  #       StoreObject.new
+  #   end
+  #   def read
+  #     yield File.open("./spec/views/participants/base2021-A4.png").read
+  #   end
+  #   def write n
+  #   end
+  #   def exists?
+  #     true
+  #   end
+  # end
 end

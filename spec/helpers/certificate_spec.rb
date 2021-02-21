@@ -179,7 +179,7 @@ end
 
 describe "render certificates" do
     before(:each) do
-        @certificate_store=ParticipantsHelper::CertificateStore.createNull 
+        @certificate_store= FileStoreService.createNull 
     end
 
     it "non csd certificate have 6 text lines" do
@@ -237,16 +237,17 @@ describe "render certificates" do
 
     it 'fail to persist a certificate file. Wrong credentials' do
         participant= FactoryBot.create(:participant)
-        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4' )
+        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4',  @certificate_store )
         expect {ParticipantsHelper::upload_certificate( 
           certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
         }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
-      end
-      it 'new (2021) certificate file' do
+    end
+
+    it 'new (2021) certificate file' do
         participant= FactoryBot.create(:participant)
         participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
-        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4', ParticipantsHelper::CertificateStore::createNull )
-      end
+        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4',  @certificate_store )
+    end
       
       context 'Certificate' do
         it 'invalid, no signature for 1st trainer' do
