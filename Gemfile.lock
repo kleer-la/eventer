@@ -382,7 +382,6 @@ DEPENDENCIES
   sassc-rails
   selenium-webdriver
   shoulda-matchers
-  simplecov
   sqlite3 (~> 1.3.6)
   therubyracer
   thin

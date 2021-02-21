@@ -4,12 +4,8 @@
 # instead of editing this one. Cucumber will automatically load all features/**/*.rb
 # files.
 
-require 'simplecov'
-
 require 'coveralls'
 Coveralls.wear!('rails')
-
-SimpleCov.start 'rails'
 
 require 'cucumber/rails'
 require 'selenium-webdriver'

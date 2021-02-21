@@ -11,7 +11,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
-  gem 'simplecov'                       #, '~> 0.7.1'
   gem 'coveralls', require: false
   gem 'debase'
   gem 'ruby-debug-ide'
