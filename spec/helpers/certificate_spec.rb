@@ -178,6 +178,10 @@ describe Certificate do
 end
 
 describe "render certificates" do
+    before(:each) do
+        @certificate_store=ParticipantsHelper::CertificateStore.createNull 
+    end
+
     it "non csd certificate have 6 text lines" do
         pdf = double()
         allow(pdf).to receive(:move_down)
@@ -189,7 +193,7 @@ describe "render certificates" do
 
         expect(pdf).to receive(:text).exactly(6).times
 
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store)
     end
 
     it "csd certificate have 9 text lines" do
@@ -211,7 +215,7 @@ describe "render certificates" do
 
         expect(pdf).to receive(:text).exactly(9).times
 
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store)
     end
 
     it "csd certificate for a 3 days " do
@@ -226,7 +230,7 @@ describe "render certificates" do
         et.csd_eligible = true
 
         certificate = Certificate.new(p)
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store )
 
         expect(pdf.history).to include "duration of 3"
     end

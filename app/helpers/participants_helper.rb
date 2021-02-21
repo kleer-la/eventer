@@ -227,9 +227,9 @@ module ParticipantsHelper
     end
   end
 
-  def self.render_certificate( pdf, certificate, page_size, store= nil )
+  def self.render_certificate( pdf, certificate, page_size, store )
     if certificate.v2021?
-      return PdfCertificate.new(pdf, certificate, store || CertificateStore.new).render
+      return PdfCertificate.new(pdf, certificate, store).render
     end
 
     rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
