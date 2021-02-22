@@ -177,9 +177,10 @@ describe Participant do
       @participant_pdf.event.event_type.csd_eligible = true
       @participant_pdf.influence_zone = FactoryBot.create(:influence_zone)
       @participant_pdf.status = "A"
+      store= FileStoreService.createNull
 
-      @filepath_A4 = ParticipantsHelper::generate_certificate(@participant_pdf, "A4")
-      @filepath_LETTER = ParticipantsHelper::generate_certificate(@participant_pdf, "LETTER")
+      @filepath_A4 = ParticipantsHelper::generate_certificate(@participant_pdf, "A4", store)
+      @filepath_LETTER = ParticipantsHelper::generate_certificate(@participant_pdf, "LETTER", store)
     end
 
     before(:each) do

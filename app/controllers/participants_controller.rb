@@ -235,6 +235,7 @@ class ParticipantsController < ApplicationController
     @verification_code = params[:verification_code]
 
     @participant = Participant.find(params[:id])
+    @certificate_store= FileStoreService.createS3
 
     begin
       @certificate = ParticipantsHelper::Certificate.new(@participant)

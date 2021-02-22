@@ -54,9 +54,9 @@ RSpec.describe "generate one certificate" do
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
       assign(:participant, participant )
-      
-      allow(ParticipantsHelper::CertificateStore).to receive(:new).and_return(ParticipantsHelper::CertificateStore.createNull)
-      allow_any_instance_of(ParticipantsHelper::StoreObject).to receive(:exists?).and_return(false)
+
+      certificate_store= FileStoreService.createNull exists: {"certificate-images/2021-LETTER.png" => false}
+      assign(:certificate_store, certificate_store)
       expect {
         render :template => "participants/certificate", format: :pdf
       }.to raise_error(ActionView::Template::Error,/2021/)

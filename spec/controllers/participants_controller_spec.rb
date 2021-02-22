@@ -194,6 +194,7 @@ describe ParticipantsController do
           :format => :pdf
         }
         expect(assigns(:certificate).name).to eq 'Juan Carlos Perez Luasó'
+        expect(assigns(:certificate_store)).not_to be_nil
       end
       it "w/o signature" do
         t=@participant.event.trainers[0]

@@ -127,7 +127,6 @@ describe EventMailer do
         end
         it "should NOT show extra info if participant NOT from AR" do
             @participant.influence_zone.country.iso_code = 'CL'
-            puts @participant
             email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
             expect(email.text_part.body.to_s).not_to include AR_TEXT

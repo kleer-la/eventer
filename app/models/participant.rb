@@ -140,8 +140,9 @@ class Participant < ActiveRecord::Base
 
   def generate_certificate
     certificate_url={}
+    store= FileStoreService.createS3
     ['A4', 'LETTER'].each { |s|
-      certificate_filename = ParticipantsHelper::generate_certificate( self, s )
+      certificate_filename = ParticipantsHelper::generate_certificate( self, s, store)
       certificate_url[s] = ParticipantsHelper::upload_certificate( certificate_filename )
     }
     certificate_url

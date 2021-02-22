@@ -1,7 +1,6 @@
-require "spec_helper"
+require 'rails_helper'
 
 describe PayuCoConfirmationService do
-
 
   before(:each) do
     @event = FactoryBot.build(:event)

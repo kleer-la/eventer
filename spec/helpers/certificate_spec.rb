@@ -178,6 +178,10 @@ describe Certificate do
 end
 
 describe "render certificates" do
+    before(:each) do
+        @certificate_store= FileStoreService.createNull 
+    end
+
     it "non csd certificate have 6 text lines" do
         pdf = double()
         allow(pdf).to receive(:move_down)
@@ -189,7 +193,7 @@ describe "render certificates" do
 
         expect(pdf).to receive(:text).exactly(6).times
 
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store)
     end
 
     it "csd certificate have 9 text lines" do
@@ -211,7 +215,7 @@ describe "render certificates" do
 
         expect(pdf).to receive(:text).exactly(9).times
 
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store)
     end
 
     it "csd certificate for a 3 days " do
@@ -226,23 +230,24 @@ describe "render certificates" do
         et.csd_eligible = true
 
         certificate = Certificate.new(p)
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4" )
+        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store )
 
         expect(pdf.history).to include "duration of 3"
     end
 
     it 'fail to persist a certificate file. Wrong credentials' do
         participant= FactoryBot.create(:participant)
-        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4' )
+        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4',  @certificate_store )
         expect {ParticipantsHelper::upload_certificate( 
           certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
         }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
-      end
-      it 'new (2021) certificate file' do
+    end
+
+    it 'new (2021) certificate file' do
         participant= FactoryBot.create(:participant)
         participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
-        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4', ParticipantsHelper::CertificateStore::createNull )
-      end
+        certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4',  @certificate_store )
+    end
       
       context 'Certificate' do
         it 'invalid, no signature for 1st trainer' do
