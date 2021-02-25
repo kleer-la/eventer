@@ -4,7 +4,7 @@
       = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
   - if @participant.errors.full_messages.count > 0 || @captcha_error
     .alert.alert-danger{:id => "validation_msg"}
-      = "Todos los campos son requeridos"
+      = "Lcampos son requeridos (salvo los opcionales)"
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
@@ -36,15 +36,15 @@
     .row-fluid
       .span12
         .control-group
+          = f.text_field :phone, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")
+    .row-fluid
+      .span12
+        .control-group
           = f.text_field :id_number, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.id_number")
     .row-fluid
       .span12
         .control-group
           = f.text_field :address, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.address")
-    .row-fluid
-      .span12
-        .control-group
-          = f.text_field :phone, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")
     - if @event.should_ask_for_referer_code
       .row-fluid
         .span12
