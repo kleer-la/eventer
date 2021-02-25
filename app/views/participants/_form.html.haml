@@ -4,7 +4,7 @@
       = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
   - if @participant.errors.full_messages.count > 0 || @captcha_error
     .alert.alert-danger{:id => "validation_msg"}
-      = "Lcampos son requeridos (salvo los opcionales)"
+      = "Todos los campos son requeridos"
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
