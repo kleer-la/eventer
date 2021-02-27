@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class Event < ActiveRecord::Base
+class Event < ApplicationRecord
   include ActiveSupport
 
   self.per_page = 20

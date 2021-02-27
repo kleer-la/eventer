@@ -1,4 +1,4 @@
-class CampaignSource < ActiveRecord::Base
+class CampaignSource < ApplicationRecord
   has_many :campaign_views
   has_many :events, -> { uniq },through: :campaign_views
   has_many :event_types, -> { uniq },through: :events

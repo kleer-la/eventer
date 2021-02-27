@@ -1,4 +1,4 @@
-class EventType < ActiveRecord::Base
+class EventType < ApplicationRecord
 
   has_and_belongs_to_many :trainers
   has_and_belongs_to_many :categories

@@ -1,4 +1,4 @@
-class Campaign < ActiveRecord::Base
+class Campaign < ApplicationRecord
   has_many :campaign_views
   has_many :countries, -> { uniq }, through: :events
   has_many :participants

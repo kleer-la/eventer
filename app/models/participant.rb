@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'valid_email'
 
-class Participant < ActiveRecord::Base
+class Participant < ApplicationRecord
   belongs_to :event
   belongs_to :influence_zone
   belongs_to :campaign
