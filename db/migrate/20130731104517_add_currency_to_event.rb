@@ -1,4 +1,4 @@
-class AddCurrencyToEvent < ActiveRecord::Migration
+class AddCurrencyToEvent < ActiveRecord::Migration[5.0]
   def up
 		add_column :events, :currency_iso_code, :string
 	end

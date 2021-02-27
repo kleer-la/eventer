@@ -1,4 +1,4 @@
-class FixMultipleTrainersEventTypeAssociation < ActiveRecord::Migration
+class FixMultipleTrainersEventTypeAssociation < ActiveRecord::Migration[5.0]
   def self.up
       drop_table :trainers_event_types
       create_table :event_types_trainers, :id => false do |t|

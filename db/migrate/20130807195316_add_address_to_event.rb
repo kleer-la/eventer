@@ -1,4 +1,4 @@
-class AddAddressToEvent < ActiveRecord::Migration
+class AddAddressToEvent < ActiveRecord::Migration[5.0]
   def up
 		add_column :events, :address, :string
 	end

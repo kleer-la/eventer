@@ -1,4 +1,4 @@
-class AddTwitterUsernameToTrainer < ActiveRecord::Migration
+class AddTwitterUsernameToTrainer < ActiveRecord::Migration[5.0]
   def up
 		add_column :trainers, :twitter_username, :string
 	end

@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class SeedInfluenceZones < ActiveRecord::Migration
+class SeedInfluenceZones < ActiveRecord::Migration[5.0]
   def up
     if (Country.count == 0)
       Country.create([

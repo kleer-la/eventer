@@ -1,4 +1,4 @@
-class AddNotesToParticipant < ActiveRecord::Migration
+class AddNotesToParticipant < ActiveRecord::Migration[5.0]
   def up
 		add_column :participants, :notes, :text
 	end

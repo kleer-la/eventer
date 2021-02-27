@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class AddEuCountries < ActiveRecord::Migration
+class AddEuCountries < ActiveRecord::Migration[5.0]
     EuCountries = [
       ['GB', 'Gran Bretaña'],
       ['DK', 'Dinamarca'],

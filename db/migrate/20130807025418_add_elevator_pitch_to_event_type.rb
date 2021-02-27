@@ -1,4 +1,4 @@
-class AddElevatorPitchToEventType < ActiveRecord::Migration
+class AddElevatorPitchToEventType < ActiveRecord::Migration[5.0]
   def up
 		add_column :event_types, :elevator_pitch, :text
 	end

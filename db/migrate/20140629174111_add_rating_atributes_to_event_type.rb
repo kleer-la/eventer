@@ -1,4 +1,4 @@
-class AddRatingAtributesToEventType < ActiveRecord::Migration
+class AddRatingAtributesToEventType < ActiveRecord::Migration[5.0]
   def change
   	add_column :event_types, :average_rating, :decimal, :precision => 4, :scale => 2
   	add_column :event_types, :net_promoter_score, :integer

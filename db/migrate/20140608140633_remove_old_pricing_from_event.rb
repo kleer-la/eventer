@@ -1,4 +1,4 @@
-class RemoveOldPricingFromEvent < ActiveRecord::Migration
+class RemoveOldPricingFromEvent < ActiveRecord::Migration[5.0]
   def up
   	remove_column :events, :list_price_plus_tax
   	remove_column :events, :list_price_2_pax_discount
