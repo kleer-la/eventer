@@ -35,7 +35,8 @@ module Eventer
     # On config/application.rb forcing your application to not access the DB or load models when precompiling your assets.
     config.assets.initialize_on_precompile = false
     
-    config.serve_static_files = true # Rails >= 4.2
+    config.public_file_server.enabled = true
+    
     # config.serve_static_assets = true
 
     # config.assets.paths << Rails.root.join('app', 'assets')

@@ -6,7 +6,7 @@ describe Category do
   end
   
   it 'HABTM event_types' do
-    expect(Category.has_and_belongs_to_many :event_types).to include "event_types"
+    expect((Category.has_and_belongs_to_many :event_types).name).to eq :event_types
   end
 
   it "should be valid" do

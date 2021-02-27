@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-class EventMailer < ActionMailer::Base
-  default from: "entrenamos@kleer.la"
-
+class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
 
   #TODO: quitar funcionalidad de webinars

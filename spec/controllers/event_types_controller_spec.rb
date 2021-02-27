@@ -7,7 +7,7 @@ describe EventTypesController do
   describe "GET index" do
     it "assigns all event_types as @event_types" do
       event_type = FactoryBot.create(:event_type)
-      get :index, {}
+      get :index
       expect(assigns(:event_types)).to eq [event_type]
     end
   end
@@ -15,14 +15,14 @@ describe EventTypesController do
   describe "GET show" do
     it "assigns the requested event_type as @event_type" do
       event_type = FactoryBot.create(:event_type)
-      get :show, {:id => event_type.to_param}
+      get :show, params: {:id => event_type.to_param}
       expect(assigns(:event_type)).to eq event_type
     end
   end
   
   describe "GET new" do
     it "assigns a new event_type as @event_type" do
-      get :new, {}
+      get :new
       expect(assigns(:event_type)).to be_a_new(EventType)
     end
   end
@@ -30,7 +30,7 @@ describe EventTypesController do
   describe "GET edit" do
     it "assigns the requested event_type as @event_type" do
       event_type = FactoryBot.create(:event_type)
-      get :edit, {:id => event_type.to_param}
+      get :edit, params: {:id => event_type.to_param}
       expect(assigns(:event_type)).to eq event_type
     end
   end
@@ -48,18 +48,18 @@ describe EventTypesController do
     describe "with valid params" do
       it "creates a new EventType" do
         expect {
-          post :create, {:event_type => @event_type_att}
+          post :create, params: {:event_type => @event_type_att}
         }.to change(EventType, :count).by(1)
       end
 
       it "assigns a newly created event_type as @event_type" do
-        post :create, {:event_type => @event_type_att}
+        post :create, params: {:event_type => @event_type_att}
         expect(assigns(:event_type)).to be_a EventType
         expect(assigns(:event_type)).to be_persisted
       end
       
       it "redirects to the created event_type" do
-        post :create, {:event_type => @event_type_att}
+        post :create, params: {:event_type => @event_type_att}
         expect(response).to redirect_to EventType
       end
     end
@@ -69,7 +69,7 @@ describe EventTypesController do
         event_type = FactoryBot.create(:event_type)
         # Trigger the behavior that occurs when invalid params are submitted
         allow_any_instance_of(EventType).to receive(:save).and_return(false)
-        post :create, {:event_type => event_type.attributes}
+        post :create, params: {:event_type => event_type.attributes}
       end
       it "assigns a newly created but unsaved event_type as @event_type" do
         expect(assigns(:event_type)).to be_a_new(EventType)
@@ -88,7 +88,7 @@ describe EventTypesController do
       end
 
       it "assigns the requested event_type as @event_type" do
-        put :update, {:id => @event_type.to_param, :event_type => @event_type.attributes}
+        put :update, params: {:id => @event_type.to_param, :event_type => @event_type.attributes}
         expect(assigns(:event_type)).to eq @event_type
         expect(response).to redirect_to(event_types_path)
         expect(flash[:notice]).to include "modificado"
@@ -99,7 +99,7 @@ describe EventTypesController do
       before(:each) do 
         @event_type = FactoryBot.create :event_type
         allow_any_instance_of(EventType).to receive(:save).and_return(false)
-        put :update, {:id => @event_type.to_param, :event_type => @event_type.attributes}
+        put :update, params: {:id => @event_type.to_param, :event_type => @event_type.attributes}
       end
       it "assigns the event_type as @event_type" do
         expect(assigns(:event_type)).to eq @event_type
@@ -117,12 +117,12 @@ describe EventTypesController do
     end
     it "destroys the requested event_type" do
       expect {
-        delete :destroy, {:id => @event_type.to_param}
+        delete :destroy, params: {:id => @event_type.to_param}
       }.to change(EventType, :count).by(-1)
     end
 
     it "redirects to the event_types list" do
-      delete :destroy, {:id => @event_type.to_param}
+      delete :destroy, params: {:id => @event_type.to_param}
       expect(response).to redirect_to(event_types_url)
     end
   end

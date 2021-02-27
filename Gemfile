@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 ruby '~> 2.6'
 
-gem 'rails', '~> 4.2'
+gem 'rails', '~> 5.0', '< 5.1'
 
 gem 'web-console', '~> 2.0', group: :development
 
@@ -88,3 +88,6 @@ gem 'will_paginate', '~> 3'
 
 # Gem for respond_to at the class level (Rails 4.2) used(?) in application_controller
 gem 'responders', '~> 2.0'
+
+gem 'activemodel-serializers-xml' # to_xml
+gem 'rails-controller-testing'    # assigns

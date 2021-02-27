@@ -8,8 +8,8 @@ describe EventType do
   end
 
   it 'HABTM trainers & categories' do
-    expect(EventType.has_and_belongs_to_many :trainers).to include "trainers"
-    expect(EventType.has_and_belongs_to_many :categories).to include "categories"
+    expect((EventType.has_and_belongs_to_many :trainers).name).to eq :trainers
+    expect((EventType.has_and_belongs_to_many :categories).name).to eq :categories
   end
   
   it "should be valid" do
