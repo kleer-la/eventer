@@ -1,4 +1,4 @@
-class AddRecommendsToParticipant < ActiveRecord::Migration[5.0]
+class AddRecommendsToParticipant < ActiveRecord::Migration
   def change
   	add_column :participants, :promoter_score, :integer
   end

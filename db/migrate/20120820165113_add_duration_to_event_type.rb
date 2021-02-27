@@ -1,4 +1,4 @@
-class AddDurationToEventType < ActiveRecord::Migration[5.0]
+class AddDurationToEventType < ActiveRecord::Migration
   def up
 		add_column :event_types, :duration, :integer
 	end

@@ -1,4 +1,4 @@
-class CreateSettings < ActiveRecord::Migration[5.0]
+class CreateSettings < ActiveRecord::Migration
   def change
     create_table :settings do |t|
       t.string :key

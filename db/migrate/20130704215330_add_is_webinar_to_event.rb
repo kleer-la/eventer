@@ -1,4 +1,4 @@
-class AddIsWebinarToEvent < ActiveRecord::Migration[5.0]
+class AddIsWebinarToEvent < ActiveRecord::Migration
   def up
 		add_column :events, :is_webinar, :boolean, :default => false
 	end

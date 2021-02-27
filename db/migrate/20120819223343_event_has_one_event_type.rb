@@ -1,4 +1,4 @@
-class EventHasOneEventType < ActiveRecord::Migration[5.0]
+class EventHasOneEventType < ActiveRecord::Migration
   def up
 		add_column :events, :event_type_id, :integer
   end

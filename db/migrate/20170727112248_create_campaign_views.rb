@@ -1,4 +1,4 @@
-class CreateCampaignViews < ActiveRecord::Migration[5.0]
+class CreateCampaignViews < ActiveRecord::Migration
   def change
     create_table :campaign_views do |t|
       t.string :source

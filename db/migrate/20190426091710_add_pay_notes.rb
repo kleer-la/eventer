@@ -1,4 +1,4 @@
-class AddPayNotes < ActiveRecord::Migration[5.0]
+class AddPayNotes < ActiveRecord::Migration
   def change
     add_column :participants, :pay_notes, :string
   end

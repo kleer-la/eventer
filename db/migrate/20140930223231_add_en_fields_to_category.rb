@@ -1,4 +1,4 @@
-class AddEnFieldsToCategory < ActiveRecord::Migration[5.0]
+class AddEnFieldsToCategory < ActiveRecord::Migration
   def up
     add_column :categories, :name_en, :string
     add_column :categories, :description_en, :string

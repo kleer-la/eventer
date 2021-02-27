@@ -1,4 +1,4 @@
-class AddStatusToParticipants < ActiveRecord::Migration[5.0]
+class AddStatusToParticipants < ActiveRecord::Migration
   def up
 		add_column :participants, :status, :string
 	end

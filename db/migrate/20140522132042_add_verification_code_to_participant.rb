@@ -1,4 +1,4 @@
-class AddVerificationCodeToParticipant < ActiveRecord::Migration[5.0]
+class AddVerificationCodeToParticipant < ActiveRecord::Migration
   def change
   	add_column :participants, :verification_code, :string
 

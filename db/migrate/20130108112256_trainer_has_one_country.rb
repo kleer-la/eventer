@@ -1,4 +1,4 @@
-class TrainerHasOneCountry < ActiveRecord::Migration[5.0]
+class TrainerHasOneCountry < ActiveRecord::Migration
   def up
 		add_column :trainers, :country_id, :integer
   end

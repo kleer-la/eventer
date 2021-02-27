@@ -1,4 +1,4 @@
-class AddTagNameToEventType < ActiveRecord::Migration[5.0]
+class AddTagNameToEventType < ActiveRecord::Migration
   def change
   	add_column :event_types, :tag_name, :string
   end

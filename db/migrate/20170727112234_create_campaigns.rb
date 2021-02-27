@@ -1,4 +1,4 @@
-class CreateCampaigns < ActiveRecord::Migration[5.0]
+class CreateCampaigns < ActiveRecord::Migration
   def change
     create_table :campaigns do |t|
       t.string :codename, :index => true

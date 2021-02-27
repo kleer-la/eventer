@@ -1,4 +1,4 @@
-class AddLinkedInUrlToTrainer < ActiveRecord::Migration[5.0]
+class AddLinkedInUrlToTrainer < ActiveRecord::Migration
   def up
 		add_column :trainers, :linkedin_url, :string
 	end

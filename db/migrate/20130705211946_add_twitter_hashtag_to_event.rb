@@ -1,4 +1,4 @@
-class AddTwitterHashtagToEvent < ActiveRecord::Migration[5.0]
+class AddTwitterHashtagToEvent < ActiveRecord::Migration
   def up
 		add_column :events, :twitter_hashtag, :string
 	end

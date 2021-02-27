@@ -1,4 +1,4 @@
-class AddTwitterEmbeddedSearchToEvent < ActiveRecord::Migration[5.0]
+class AddTwitterEmbeddedSearchToEvent < ActiveRecord::Migration
   def up
 		add_column :events, :twitter_embedded_search, :text
 		remove_column :events, :twitter_hashtag

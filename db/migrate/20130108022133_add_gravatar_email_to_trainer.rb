@@ -1,4 +1,4 @@
-class AddGravatarEmailToTrainer < ActiveRecord::Migration[5.0]
+class AddGravatarEmailToTrainer < ActiveRecord::Migration
   def up
 		add_column :trainers, :gravatar_email, :string
 	end

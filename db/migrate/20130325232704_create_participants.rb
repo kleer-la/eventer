@@ -1,4 +1,4 @@
-class CreateParticipants < ActiveRecord::Migration[5.0]
+class CreateParticipants < ActiveRecord::Migration
   def change
     create_table :participants do |t|
       t.string :fname

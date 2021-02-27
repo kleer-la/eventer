@@ -1,4 +1,4 @@
-class AddIncludeInCatalogToEventType < ActiveRecord::Migration[5.0]
+class AddIncludeInCatalogToEventType < ActiveRecord::Migration
   def up
 		add_column :event_types, :include_in_catalog, :boolean
 	end

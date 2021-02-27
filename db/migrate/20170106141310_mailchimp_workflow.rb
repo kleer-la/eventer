@@ -1,4 +1,4 @@
-class MailchimpWorkflow < ActiveRecord::Migration[5.0]
+class MailchimpWorkflow < ActiveRecord::Migration
   def up
 		add_column :events, :mailchimp_workflow, :boolean
 		add_column :events, :mailchimp_workflow_call, :string

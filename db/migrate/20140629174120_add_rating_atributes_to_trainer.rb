@@ -1,4 +1,4 @@
-class AddRatingAtributesToTrainer < ActiveRecord::Migration[5.0]
+class AddRatingAtributesToTrainer < ActiveRecord::Migration
   def change
   	add_column :trainers, :average_rating, :decimal, :precision => 4, :scale => 2
   	add_column :trainers, :net_promoter_score, :integer

@@ -1,4 +1,4 @@
-class CreateRatings < ActiveRecord::Migration[5.0]
+class CreateRatings < ActiveRecord::Migration
   def change
     create_table :ratings do |t|
       t.references :user

@@ -1,4 +1,4 @@
-class AddPaymentTypeAndFlagToParticipant < ActiveRecord::Migration[5.0]
+class AddPaymentTypeAndFlagToParticipant < ActiveRecord::Migration
   def change
     add_column :participants, :is_payed, :boolean, default: false
     add_column :participants, :payment_type, :string

@@ -1,4 +1,4 @@
-class RemoveIsWebinarFlagFromEvent < ActiveRecord::Migration[5.0]
+class RemoveIsWebinarFlagFromEvent < ActiveRecord::Migration
   def up
   	remove_column :events, :is_webinar
   end

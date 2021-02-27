@@ -1,4 +1,4 @@
-class AddIsSoldOutToEvent < ActiveRecord::Migration[5.0]
+class AddIsSoldOutToEvent < ActiveRecord::Migration
   def up
 		add_column :events, :is_sold_out, :boolean
 	end

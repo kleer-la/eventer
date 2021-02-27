@@ -1,4 +1,4 @@
-class AddKindToView < ActiveRecord::Migration[5.0]
+class AddKindToView < ActiveRecord::Migration
   def change
     add_column :campaign_views, :element_viewed, :string
 

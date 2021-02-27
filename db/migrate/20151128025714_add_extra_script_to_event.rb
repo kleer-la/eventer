@@ -1,4 +1,4 @@
-class AddExtraScriptToEvent < ActiveRecord::Migration[5.0]
+class AddExtraScriptToEvent < ActiveRecord::Migration
   def change
     add_column :events, :extra_script, :text
   end

@@ -1,4 +1,4 @@
-class AddIsKleererToTrainer < ActiveRecord::Migration[5.0]
+class AddIsKleererToTrainer < ActiveRecord::Migration
   def up
 		add_column :trainers, :is_kleerer, :boolean
 	end

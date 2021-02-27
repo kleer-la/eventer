@@ -1,4 +1,4 @@
-class AddSepymeToEvent < ActiveRecord::Migration[5.0]
+class AddSepymeToEvent < ActiveRecord::Migration
   def up
 		add_column :events, :sepyme_enabled, :boolean
 	end

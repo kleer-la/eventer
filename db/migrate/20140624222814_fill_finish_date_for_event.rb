@@ -1,4 +1,4 @@
-class FillFinishDateForEvent < ActiveRecord::Migration[5.0]
+class FillFinishDateForEvent < ActiveRecord::Migration
   def up
   	Event.all.each do |ev|
   		if !ev.duration.nil? && ev.duration > 0

@@ -1,4 +1,4 @@
-class Add2ndTrainerRefEvent < ActiveRecord::Migration[5.0]
+class Add2ndTrainerRefEvent < ActiveRecord::Migration
   def up
     add_column :events, :trainer2_id, :integer, null: true
   end

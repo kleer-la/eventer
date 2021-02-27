@@ -1,4 +1,4 @@
-class AddTimeZoneNameToEvent < ActiveRecord::Migration[5.0]
+class AddTimeZoneNameToEvent < ActiveRecord::Migration
   def up
 		add_column :events, :time_zone_name, :string
 	end

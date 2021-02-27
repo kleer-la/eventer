@@ -1,4 +1,4 @@
-class AddEventTypeToCampaignView < ActiveRecord::Migration[5.0]
+class AddEventTypeToCampaignView < ActiveRecord::Migration
   def change
     add_column :campaign_views, :event_type_id, :integer, index: true
     add_index :campaign_views, :event_type_id

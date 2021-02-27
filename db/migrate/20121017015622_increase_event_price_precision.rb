@@ -1,4 +1,4 @@
-class IncreaseEventPricePrecision < ActiveRecord::Migration[5.0]
+class IncreaseEventPricePrecision < ActiveRecord::Migration
   def up
     change_column :events, :list_price, :decimal, :precision => 10, :scale => 2
     change_column :events, :eb_price, :decimal, :precision => 10, :scale => 2

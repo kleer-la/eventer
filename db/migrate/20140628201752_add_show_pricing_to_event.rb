@@ -1,4 +1,4 @@
-class AddShowPricingToEvent < ActiveRecord::Migration[5.0]
+class AddShowPricingToEvent < ActiveRecord::Migration
   def change
   	add_column :events, :show_pricing, :boolean, :default => false
   end

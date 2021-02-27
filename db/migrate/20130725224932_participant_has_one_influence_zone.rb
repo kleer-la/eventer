@@ -1,4 +1,4 @@
-class ParticipantHasOneInfluenceZone < ActiveRecord::Migration[5.0]
+class ParticipantHasOneInfluenceZone < ActiveRecord::Migration
   def up
 		add_column :participants, :influence_zone_id, :integer
   end

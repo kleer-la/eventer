@@ -1,4 +1,4 @@
-class ChangeCategoryDecriptionEnToText < ActiveRecord::Migration[5.0]
+class ChangeCategoryDecriptionEnToText < ActiveRecord::Migration
   def change
     change_column :categories, :description_en, :text
   end

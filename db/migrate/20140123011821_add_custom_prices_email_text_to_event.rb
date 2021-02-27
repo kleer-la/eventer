@@ -1,4 +1,4 @@
-class AddCustomPricesEmailTextToEvent < ActiveRecord::Migration[5.0]
+class AddCustomPricesEmailTextToEvent < ActiveRecord::Migration
   def change
     add_column :events, :custom_prices_email_text, :string
   end

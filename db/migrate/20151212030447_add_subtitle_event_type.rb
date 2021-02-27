@@ -1,4 +1,4 @@
-class AddSubtitleEventType < ActiveRecord::Migration[5.0]
+class AddSubtitleEventType < ActiveRecord::Migration
   def change
     add_column :event_types, :subtitle, :string
   end

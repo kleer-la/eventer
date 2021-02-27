@@ -1,4 +1,4 @@
-class AddBannerAndRegistrationEndDateToEvent < ActiveRecord::Migration[5.0]
+class AddBannerAndRegistrationEndDateToEvent < ActiveRecord::Migration
   def change
     add_column :events, :banner_text, :string
     add_column :events, :banner_type, :string
