@@ -77,7 +77,7 @@ FactoryBot.define do
    end
 
   factory :event do
-    event_type {FactoryBot.build(:event_type)}
+    event_type
     date {"23/01/2100"}
     duration {2}
     start_time {"9:00"}
@@ -92,14 +92,14 @@ FactoryBot.define do
     mode {'cl'}
     cancelled {false}
     draft {false}
-    country {FactoryBot.build(:country)}
-    trainer {FactoryBot.build(:trainer)}
+    country
+    trainer
   end
 
   factory :influence_zone do
     tag_name {"ZI-AMS-AR-PAT (Patagonia)"}
     zone_name {"Rio Negro"}
-    country {FactoryBot.build(:country)}
+    country
   end
 
   factory :participant do
@@ -109,8 +109,8 @@ FactoryBot.define do
     email {"malaimo@gmail.com"}
     phone {"5555-5555"}
     verification_code {"065BECBA36F903CF6PPP"}
-    event {FactoryBot.build(:event)}
-    influence_zone {FactoryBot.build(:influence_zone)}
+    event
+    influence_zone
   end
   
   factory :setting do
