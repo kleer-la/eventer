@@ -138,14 +138,14 @@ describe ParticipantsController do
 
     describe "print attendance sheet" do
       it "A message is shown when no participant is confirmed" do
-        get :print, {:event_id => @participant.event.id}
+        get :print,params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to eq []
       end
 
       it "A confirmed participant is shown" do
         @participant.confirm!
         @participant.save!
-        get :print, {:event_id => @participant.event.id}
+        get :print, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to eq [@participant]
         expect(response).to render_template("print")
       end
@@ -169,13 +169,13 @@ describe ParticipantsController do
 
     describe "Survey" do
       it "w/o attended participant" do 
-        get :survey,  params: {:event_id => @participant.event.id}
+        get :survey, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to match_array([])
       end
       it "w/o an attended participant" do
         @participant.attend!
         @participant.save! 
-        get :survey,  {:event_id => @participant.event.id}
+        get :survey, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to match_array([@participant])
       end
     end

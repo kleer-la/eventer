@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -17,9 +16,8 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.string   "codename"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["codename"], name: "index_campaign_sources_on_codename"
   end
-
-  add_index "campaign_sources", ["codename"], name: "index_campaign_sources_on_codename"
 
   create_table "campaign_views", force: :cascade do |t|
     t.integer  "campaign_id"
@@ -29,22 +27,20 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.integer  "campaign_source_id"
     t.string   "element_viewed"
     t.integer  "event_type_id"
+    t.index ["campaign_id"], name: "index_campaign_views_on_campaign_id"
+    t.index ["campaign_source_id"], name: "index_campaign_views_on_campaign_source_id"
+    t.index ["element_viewed"], name: "index_campaign_views_on_element_viewed"
+    t.index ["event_id"], name: "index_campaign_views_on_event_id"
+    t.index ["event_type_id"], name: "index_campaign_views_on_event_type_id"
   end
-
-  add_index "campaign_views", ["campaign_id"], name: "index_campaign_views_on_campaign_id"
-  add_index "campaign_views", ["campaign_source_id"], name: "index_campaign_views_on_campaign_source_id"
-  add_index "campaign_views", ["element_viewed"], name: "index_campaign_views_on_element_viewed"
-  add_index "campaign_views", ["event_id"], name: "index_campaign_views_on_event_id"
-  add_index "campaign_views", ["event_type_id"], name: "index_campaign_views_on_event_type_id"
 
   create_table "campaigns", force: :cascade do |t|
     t.string   "codename"
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["codename"], name: "index_campaigns_on_codename"
   end
-
-  add_index "campaigns", ["codename"], name: "index_campaigns_on_codename"
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -100,9 +96,8 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.string   "queue"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
-
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
   create_table "event_types", force: :cascade do |t|
     t.string   "name"
@@ -196,10 +191,9 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.string   "online_cohort_codename"
     t.boolean  "mailchimp_workflow_for_warmup"
     t.string   "mailchimp_workflow_for_warmup_call"
+    t.index ["country_id"], name: "index_events_on_country_id"
+    t.index ["trainer_id"], name: "index_events_on_trainer_id"
   end
-
-  add_index "events", ["country_id"], name: "index_events_on_country_id"
-  add_index "events", ["trainer_id"], name: "index_events_on_trainer_id"
 
   create_table "influence_zones", force: :cascade do |t|
     t.string   "zone_name"
@@ -238,9 +232,8 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.string   "id_number"
     t.string   "address"
     t.text     "pay_notes"
+    t.index ["event_id"], name: "index_participants_on_event_id"
   end
-
-  add_index "participants", ["event_id"], name: "index_participants_on_event_id"
 
   create_table "ratings", force: :cascade do |t|
     t.integer  "user_id"
@@ -252,9 +245,8 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.integer  "global_event_rating_count"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["user_id"], name: "index_ratings_on_user_id"
   end
-
-  add_index "ratings", ["user_id"], name: "index_ratings_on_user_id"
 
   create_table "roles", force: :cascade do |t|
     t.string   "name"
@@ -307,9 +299,8 @@ ActiveRecord::Schema.define(version: 20190521141710) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
-
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
 end

@@ -28,7 +28,7 @@ describe HomeController do
     end
     it "illegal course not found" do
       expect{
-        get :show, {:id => 1}
+        get :show, params: {:id => 1}
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
     it "draft course found" do

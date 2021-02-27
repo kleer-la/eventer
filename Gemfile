@@ -11,8 +11,8 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
-#  gem 'coveralls_reborn', '~> 0.20.0', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
-  gem 'coveralls', '~> 0.7.2', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
+  # gem 'coveralls_reborn', '~> 0.20.0', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
+  gem 'coveralls', '~> 0.7', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'database_cleaner-active_record' # wait until Rails 5.x to upgrade to 2.0
@@ -89,5 +89,5 @@ gem 'will_paginate', '~> 3'
 # Gem for respond_to at the class level (Rails 4.2) used(?) in application_controller
 gem 'responders', '~> 2.0'
 
-gem 'activemodel-serializers-xml' # to_xml
-gem 'rails-controller-testing'    # assigns
+gem 'activemodel-serializers-xml' # to_xml  (rails 5)
+gem 'rails-controller-testing'    # assigns (rails 5)
