@@ -22,18 +22,23 @@ describe FileStoreService do
     end
   end
 
-  describe "S3", :slow => true do      
-      it "try to read from a S3 store - doesn't exists" do
-        store= FileStoreService.createS3
-        fname= "12345.png"
-        File.open(fname, "w") { |f| f.write "xxx" }
-        store.write fname
-        File.delete fname
-        filename= store.read fname, "","certificates"
+  describe "S3", :slow => true do
+    before(:all) do
+      @fname= "12345.png"
+      File.open(@fname, "w") { |f| f.write "xxx" }      
+    end
+    after(:all) do
+      File.delete(@filename) if @filename.present?     
+      File.delete(@fname)      
+    end
+    it "try to read from a S3 store - doesn't exists" do
+      store= FileStoreService.createS3
+      store.write @fname
+      File.delete @fname
+      @filename= store.read fname, "","certificates"
 
-        expect(File.new(filename).read).to eq "xxx"
-        File.delete filename
-      end
+      expect(File.new(@filename).read).to eq "xxx"
+    end
   end
 
 end
