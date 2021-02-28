@@ -19,7 +19,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_bot_rails',require: false         # wait until rails 5.0 to update to 6.x
+  gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', '< 2.1', require: false  # 2.2 if rails >= 5.0
   gem 'capybara'
   gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
@@ -29,11 +29,6 @@ end
 
 group :test, :production do
   gem 'pg', '0.21'    # wait until Rails 5.1.5 to upgrade to pg 1.x
-end
-
-group :production do
-  gem 'rails_12factor'
-  gem 'thin'
 end
 
 # Gems used only for assets and not required
