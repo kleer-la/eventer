@@ -214,6 +214,8 @@ GEM
       prawn (>= 0.11.1)
       railties (>= 3.0.0)
     public_suffix (4.0.6)
+    puma (5.2.1)
+      nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-test (0.6.3)
@@ -377,6 +379,7 @@ DEPENDENCIES
   pg (= 0.21)
   prawn
   prawn_rails
+  puma
   rails (~> 5.0, < 5.1)
   rails-controller-testing
   recaptcha

@@ -86,3 +86,4 @@ gem 'responders', '~> 2.0'
 
 gem 'activemodel-serializers-xml' # to_xml  (rails 5)
 gem 'rails-controller-testing'    # assigns (rails 5)
+gem 'puma'
