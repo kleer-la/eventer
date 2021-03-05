@@ -130,7 +130,6 @@ module ParticipantsHelper
                 'LETTER' => 613 }[ @doc.page.size]
         bk_image= @store.read( @data.background_file, @doc.page.size)
         image bk_image, at: offset, height: height
-        # stroke_axis
       end
     end
     def event_name
@@ -166,7 +165,7 @@ module ParticipantsHelper
     end
     def verification_code
       fill_color @kcolor
-      text_box "Código verificación de la certificación:#{@data.verification_code}",
+      text_box "Código de verificación de la certificación:#{@data.verification_code}",
                 at: [0,180], :align => :left, 
                 :size => 10
     end
@@ -192,7 +191,7 @@ module ParticipantsHelper
       end
     end
     def render
-      background
+      # stroke_axis
       bounding_box [300,@top_right[1]], width: @top_right[0], height: 500 do
         event_name
         participant_name
@@ -201,6 +200,7 @@ module ParticipantsHelper
         verification_code
         trainers
       end
+      background
     end
   
   end
