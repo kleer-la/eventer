@@ -129,8 +129,6 @@ module ParticipantsHelper
       @doc
     end
     def before
-      fill_color 'FFFFFF'
-      fill {rectangle [0,0], @top_right[0], @top_right[1]}
       fill_image(@data.background_file) if @data.background_file.present?
     end
     def after
