@@ -27,7 +27,10 @@ module ParticipantsHelper
       @participant.event.event_type.kleer_cert_seal_image
     end
     def background_file
-      kleer_cert_seal_image if v2021?
+      kleer_cert_seal_image if v2021? and not foreground?
+    end
+    def foreground_file
+      kleer_cert_seal_image if v2021? and foreground?
     end
     def event_name
       @participant.event.event_type.name
@@ -87,6 +90,9 @@ module ParticipantsHelper
     def v2021?
       kleer_cert_seal_image.to_s.include? '2021'
     end
+    def foreground?
+      kleer_cert_seal_image.to_s.include? 'fg'
+    end
     def description
       [ (Setting.get("CERTIFICATE_SCRUM_ALLIANCE") if is_csd_eligible?),
         (Setting.get("CERTIFICATE_KLEER") if is_kleer_certification? && !is_csd_eligible?),
@@ -122,18 +128,26 @@ module ParticipantsHelper
     def document
       @doc
     end
-    def background
-      if @data.background_file.present?
-        offset= {'A4'   => [-41,559],
-               'LETTER' => [-38,576] }[ @doc.page.size]
-        height= {'A4'   => 598,
-                'LETTER' => 613 }[ @doc.page.size]
-        bk_image= @store.read( @data.background_file, @doc.page.size)
-        image bk_image, at: offset, height: height
-      end
+    def before
+      fill_color 'FFFFFF'
+      fill {rectangle [0,0], @top_right[0], @top_right[1]}
+      fill_image(@data.background_file) if @data.background_file.present?
     end
+    def after
+      fill_image(@data.foreground_file) if @data.foreground_file.present?
+    end
+    
+    def fill_image(img_file)
+      offset= {'A4'   => [-41,559],
+             'LETTER' => [-38,576] }[ @doc.page.size]
+      height= {'A4'   => 598,
+              'LETTER' => 613 }[ @doc.page.size]
+      bk_image= @store.read( @data.background_file, @doc.page.size)
+      image bk_image, at: offset, height: height
+    end
+
     def event_name
-      fill_color'000000'
+      fill_color '000000'
       font "Raleway", style: :bold
       text_box @data.event_name,
                 at: [0,@top_right[1]], width: @top_right[0], height: 90, :align => :left, 
@@ -192,6 +206,7 @@ module ParticipantsHelper
     end
     def render
       # stroke_axis
+      before
       bounding_box [300,@top_right[1]], width: @top_right[0], height: 500 do
         event_name
         participant_name
@@ -200,7 +215,7 @@ module ParticipantsHelper
         verification_code
         trainers
       end
-      background
+      after
     end
   
   end
