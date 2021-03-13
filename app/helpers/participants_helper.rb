@@ -27,7 +27,10 @@ module ParticipantsHelper
       @participant.event.event_type.kleer_cert_seal_image
     end
     def background_file
-      kleer_cert_seal_image if v2021?
+      kleer_cert_seal_image if v2021? and not foreground?
+    end
+    def foreground_file
+      kleer_cert_seal_image if v2021? and foreground?
     end
     def event_name
       @participant.event.event_type.name
@@ -87,6 +90,9 @@ module ParticipantsHelper
     def v2021?
       kleer_cert_seal_image.to_s.include? '2021'
     end
+    def foreground?
+      kleer_cert_seal_image.to_s.include? 'fg'
+    end
     def description
       [ (Setting.get("CERTIFICATE_SCRUM_ALLIANCE") if is_csd_eligible?),
         (Setting.get("CERTIFICATE_KLEER") if is_kleer_certification? && !is_csd_eligible?),
@@ -122,19 +128,24 @@ module ParticipantsHelper
     def document
       @doc
     end
-    def background
-      if @data.background_file.present?
-        offset= {'A4'   => [-41,559],
-               'LETTER' => [-38,576] }[ @doc.page.size]
-        height= {'A4'   => 598,
-                'LETTER' => 613 }[ @doc.page.size]
-        bk_image= @store.read( @data.background_file, @doc.page.size)
-        image bk_image, at: offset, height: height
-        # stroke_axis
-      end
+    def before
+      fill_image(@data.background_file) if @data.background_file.present?
     end
+    def after
+      fill_image(@data.foreground_file) if @data.foreground_file.present?
+    end
+    
+    def fill_image(img_file)
+      offset= {'A4'   => [-41,559],
+             'LETTER' => [-38,576] }[ @doc.page.size]
+      height= {'A4'   => 598,
+              'LETTER' => 613 }[ @doc.page.size]
+      bk_image= @store.read( @data.background_file, @doc.page.size)
+      image bk_image, at: offset, height: height
+    end
+
     def event_name
-      fill_color'000000'
+      fill_color '000000'
       font "Raleway", style: :bold
       text_box @data.event_name,
                 at: [0,@top_right[1]], width: @top_right[0], height: 90, :align => :left, 
@@ -166,7 +177,7 @@ module ParticipantsHelper
     end
     def verification_code
       fill_color @kcolor
-      text_box "Código verificación de la certificación:#{@data.verification_code}",
+      text_box "Código de verificación de la certificación:#{@data.verification_code}",
                 at: [0,180], :align => :left, 
                 :size => 10
     end
@@ -192,7 +203,8 @@ module ParticipantsHelper
       end
     end
     def render
-      background
+      # stroke_axis
+      before
       bounding_box [300,@top_right[1]], width: @top_right[0], height: 500 do
         event_name
         participant_name
@@ -201,6 +213,7 @@ module ParticipantsHelper
         verification_code
         trainers
       end
+      after
     end
   
   end
@@ -331,69 +344,4 @@ module ParticipantsHelper
   	"https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
 
-  # class CertificateStore
-  #   def self.createNull
-  #     CertificateStore.new.init_null
-  #   end
-  #   def initialize(access_key_id: nil, secret_access_key: nil)
-  #     s3 = AWS::S3.new(
-  #       :access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
-  #       :secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
-  #     @bucket = s3.buckets['Keventer']
-  #   end
-  #   def objects(key)
-  #     if @bucket.present?
-  #       @bucket.objects[key]
-  #     else
-  #       StoreObject::createNull     
-  #     end
-  #   end
-  #   def init_null
-  #     @bucket = nil
-  #     self
-  #   end
-
-  #   def absolute_path basename
-  #     temp_dir = "#{Rails.root}/tmp"
-  #     Dir.mkdir( temp_dir ) unless Dir.exist?( temp_dir )
-  #     temp_dir+'/'+basename
-  #   end
-  #   def write(certificate_filename)
-  #     key = File.basename(certificate_filename)
-  #     objects("certificates/#{key}").write(:file => certificate_filename )
-  #     objects("certificates/#{key}").acl = :public_read
-
-  #     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
-  #   end
-  #   def read(filename, suffix, folder='certificate-images')
-  #     suffix = ('-' + suffix) if suffix.present?
-  #     key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
-
-  #     if !objects("#{folder}/#{key}").exists?
-  #       raise ArgumentError,"#{key} image not found"
-  #     end
-  #     tmp_filename= absolute_path filename
-  #     File.open(tmp_filename, 'wb') do |file|
-  #       objects("#{folder}/#{key}").read do |chunk|
-  #         file.write(chunk)
-  #       end
-  #     end
-  #     tmp_filename
-  #   end
-  # end
-
-  # class StoreObject
-  #   attr_writer :key, :acl
-  #   def self.createNull
-  #       StoreObject.new
-  #   end
-  #   def read
-  #     yield File.open("./spec/views/participants/base2021-A4.png").read
-  #   end
-  #   def write n
-  #   end
-  #   def exists?
-  #     true
-  #   end
-  # end
 end

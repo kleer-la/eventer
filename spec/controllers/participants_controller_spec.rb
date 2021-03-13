@@ -10,28 +10,28 @@ describe ParticipantsController do
     end
     describe "GET index" do
       it "assigns all participants as @participants" do
-        get :index, {:event_id => @participant.event.id}
+        get :index, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to eq [@participant]
       end
     end
 
     describe "GET show" do
       it "assigns the requested participant as @participant" do
-        get :show, {:id => @participant.to_param, :event_id => @participant.event.id}
+        get :show, params: {:id => @participant.to_param, :event_id => @participant.event.id}
         expect(assigns(:participant)).to eq @participant
       end
     end
 
     describe "GET new" do
       it "assigns a new participant as @participant" do
-        get :new, {:event_id => @participant.event.id}
+        get :new, params: {:event_id => @participant.event.id}
         expect(assigns(:participant)).to be_a_new(Participant)
       end
     end
 
     describe "GET edit" do
       it "assigns the requested participant as @participant" do
-        get :edit, {:id => @participant.to_param, :event_id => @participant.event.id}
+        get :edit, params: {:id => @participant.to_param, :event_id => @participant.event.id}
         expect(assigns(:participant)).to eq @participant
       end
     end
@@ -44,25 +44,25 @@ describe ParticipantsController do
       describe "with valid params" do
         it "creates a new Participant" do
           expect {
-            post :create, {:participant => @participant_attr, :event_id => @participant.event.id}
+            post :create, params: {:participant => @participant_attr, :event_id => @participant.event.id}
           }.to change(Participant, :count).by(1)
         end
 
         it "assigns a newly created participant as @participant" do
-          post :create, {:participant => @participant_attr, :event_id => @participant.event.id}
+          post :create, params: {:participant => @participant_attr, :event_id => @participant.event.id}
           expect(assigns(:participant)).to be_a Participant
           expect(assigns(:participant)).to be_persisted
         end
 
         it "redirects to the created participant" do
-          post :create, :participant => @participant_attr, :event_id => @participant.event.id
+          post :create, params: {:participant => @participant_attr, :event_id => @participant.event.id}
           expect(response).to redirect_to( "/events/" + Participant.last.event.id.to_s + "/participant_confirmed" )
         end
 
         it "persist comment has the first note" do
           @participant_attr[:notes] = "Some question"
           expect {
-            post :create, :participant => @participant_attr, :event_id => @participant.event.id
+            post :create, params: {:participant => @participant_attr, :event_id => @participant.event.id}
           }.to change(Participant, :count).by(1)
           expect(assigns(:participant)[:notes]).to match /^Some question$/
         end
@@ -72,7 +72,7 @@ describe ParticipantsController do
         before(:each) do 
           # Trigger the behavior that occurs when invalid params are submitted
           allow_any_instance_of(Participant).to receive(:save).and_return(false)
-          post :create, {:participant => FactoryBot.attributes_for(:participant), :event_id => @participant.event.id}
+          post :create, params: {:participant => FactoryBot.attributes_for(:participant), :event_id => @participant.event.id}
         end
         it "assigns a newly created but unsaved participant as @participant" do
           expect(assigns(:participant)).to be_a_new Participant
@@ -91,12 +91,12 @@ describe ParticipantsController do
       end
       describe "with valid params" do
         it "assigns the requested participant as @participant" do
-          put :update, {:id => @participant.to_param, :participant => @participant_attr, :event_id => @participant.event.id}
+          put :update, params: {:id => @participant.to_param, :participant => @participant_attr, :event_id => @participant.event.id}
           expect(assigns(:participant)).to eq @participant
         end
 
         it "redirects to the participant" do
-          put :update, {:id => @participant.to_param, :participant => @participant_attr, :event_id => @participant.event.id}
+          put :update, params: {:id => @participant.to_param, :participant => @participant_attr, :event_id => @participant.event.id}
           expect(response).to redirect_to( "/events/" + Participant.last.event.id.to_s + "/participants" )
         end
       end
@@ -104,7 +104,7 @@ describe ParticipantsController do
       describe "with invalid params" do
         before(:each) do 
           allow_any_instance_of(Participant).to receive(:save).and_return(false)
-          put :update, {:id => @participant.to_param, :participant => FactoryBot.attributes_for(:participant), :event_id => @participant.event}
+          put :update, params: {:id => @participant.to_param, :participant => FactoryBot.attributes_for(:participant), :event_id => @participant.event}
         end
         it "assigns the participant as @participant" do
           expect(assigns(:participant)).to eq @participant
@@ -119,33 +119,33 @@ describe ParticipantsController do
     describe "DELETE destroy" do
       it "destroys the requested participant" do
         expect {
-          delete :destroy, {:id => @participant.to_param, :event_id => @participant.event.id}
+          delete :destroy, params: {:id => @participant.to_param, :event_id => @participant.event.id}
         }.to change(Participant, :count).by(-1)
       end
 
       it "redirects to the participants list" do
-        delete :destroy, {:id => @participant.to_param, :event_id => @participant.event.id}
+        delete :destroy, params: {:id => @participant.to_param, :event_id => @participant.event.id}
         expect(response).to redirect_to( "/events/" + @participant.event.id.to_s + "/participants")
       end
     end
 
     describe "search a participant" do
       it 'By last name' do
-        get :search, {:name => @participant[:fname]}
+        get :search, params: {:name => @participant[:fname]}
         expect(assigns(:participants)).to eq [@participant]
       end
     end
 
     describe "print attendance sheet" do
       it "A message is shown when no participant is confirmed" do
-        get :print, {:event_id => @participant.event.id}
+        get :print,params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to eq []
       end
 
       it "A confirmed participant is shown" do
         @participant.confirm!
         @participant.save!
-        get :print, {:event_id => @participant.event.id}
+        get :print, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to eq [@participant]
         expect(response).to render_template("print")
       end
@@ -154,7 +154,7 @@ describe ParticipantsController do
     describe "batch load" do
       it "Load one" do
         expect {
-          post :batch_load, {:event_id => @participant.event.id,
+          post :batch_load, params: {:event_id => @participant.event.id,
             :influence_zone_id => 1,
             :status => 2,
             :participants_batch => "tra,la,la@lan.cl,--"
@@ -169,13 +169,13 @@ describe ParticipantsController do
 
     describe "Survey" do
       it "w/o attended participant" do 
-        get :survey,  {:event_id => @participant.event.id}
+        get :survey, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to match_array([])
       end
       it "w/o an attended participant" do
         @participant.attend!
         @participant.save! 
-        get :survey,  {:event_id => @participant.event.id}
+        get :survey, params: {:event_id => @participant.event.id}
         expect(assigns(:participants)).to match_array([@participant])
       end
     end
@@ -188,7 +188,7 @@ describe ParticipantsController do
         @participant.save! 
       end
       it "show one certifcate" do 
-        get :certificate,  {
+        get :certificate,  params: {
           :event_id => @participant.event.id, :id => @participant.id,
           :page_size => "A4", :verification_code => "5BA4365B443ED1801C57",
           :format => :pdf
@@ -200,7 +200,7 @@ describe ParticipantsController do
         t=@participant.event.trainers[0]
         t.signature_image="" 
         t.save!
-        get :certificate,  {
+        get :certificate,  params: {
           :event_id => @participant.event.id, :id => @participant.id,
           :page_size => "A4", :verification_code => "5BA4365B443ED1801C57",
           :format => :pdf

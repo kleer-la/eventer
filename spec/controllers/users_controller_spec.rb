@@ -15,7 +15,7 @@ describe UsersController do
 
       describe "GET show" do
        it "should raise CanCan::AccessDenied" do
-         expect{ get :show, {:id => 1}}.to raise_error CanCan::AccessDenied
+         expect{ get :show, params: {:id => 1}}.to raise_error CanCan::AccessDenied
        end
       end
 
@@ -28,7 +28,7 @@ describe UsersController do
 
       describe "GET edit" do
        it "should raise CanCan::AccessDenied" do
-         expect{ get :edit, {:id => 1} }.to raise_error CanCan::AccessDenied
+         expect{ get :edit, params: {:id => 1} }.to raise_error CanCan::AccessDenied
        end
       end
 

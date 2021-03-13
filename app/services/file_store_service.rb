@@ -19,9 +19,6 @@ class FileStoreService
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
 
-  def read key
-    @store.read key
-  end
   def read(filename, suffix, folder='certificate-images')
     suffix = ('-' + suffix) if suffix.present?
     key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)

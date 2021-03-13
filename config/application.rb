@@ -23,21 +23,5 @@ module Eventer
     I18n.default_locale = :es
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
-
-    # Enable the asset pipeline
-    # config.assets.enabled = true
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
-    
-    # Devise: If you are deploying Rails 3.1 on Heroku, you may want to set:
-    # config.assets.initialize_on_precompile = false
-    # On config/application.rb forcing your application to not access the DB or load models when precompiling your assets.
-    config.assets.initialize_on_precompile = false
-    
-    config.serve_static_files = true # Rails >= 4.2
-    # config.serve_static_assets = true
-
-    # config.assets.paths << Rails.root.join('app', 'assets')
   end
 end

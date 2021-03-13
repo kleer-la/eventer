@@ -2,14 +2,15 @@ require 'rails_helper'
 
 describe EventType do
   
-  
   before(:each) do
     @event_type = FactoryBot.create(:event_type)
   end
 
-  it 'HABTM trainers & categories' do
-    expect(EventType.has_and_belongs_to_many :trainers).to include "trainers"
-    expect(EventType.has_and_belongs_to_many :categories).to include "categories"
+  it 'HABTM trainers' do
+    expect( @event_type.trainers[0].name).to eq "Juan Alberto"
+  end
+  it 'HABTM categories' do
+    expect( @event_type.categories).to eq []
   end
   
   it "should be valid" do

@@ -1,6 +1,6 @@
 class MarketingController < ApplicationController
-  before_filter :authenticate_user!, :except => [:viewed]
-  before_filter :activate_menu
+  before_action:authenticate_user!, :except => [:viewed]
+  before_action:activate_menu
 
   def viewed
     @event = Event.find(params[:id])

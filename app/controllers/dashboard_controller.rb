@@ -1,8 +1,8 @@
 require './lib/country_filter'
 
 class DashboardController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :activate_menu
+  before_action:authenticate_user!
+  before_action:activate_menu
 
   def index
     @active_menu = "dashboard"

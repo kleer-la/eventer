@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 ruby '~> 2.6'
 
-gem 'rails', '~> 4.2'
+gem 'rails', '~> 5.0', '< 5.1'
 
 gem 'web-console', '~> 2.0', group: :development
 
@@ -11,18 +11,17 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
-#  gem 'coveralls_reborn', '~> 0.20.0', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
-  gem 'coveralls', '~> 0.7.2', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
+  # gem 'coveralls_reborn', '~> 0.20.0', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
+  gem 'coveralls', '~> 0.7', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'database_cleaner-active_record' # wait until Rails 5.x to upgrade to 2.0
 end
 
 group :test do
-  gem 'factory_bot_rails',require: false         # wait until rails 5.0 to update to 6.x
+  gem 'factory_bot_rails',require: false
   gem 'cucumber-rails', '< 2.1', require: false  # 2.2 if rails >= 5.0
   gem 'capybara'
-  gem 'shoulda-matchers' #, '~> 3.0' # v3 para ActiveRecord 4
   gem 'selenium-webdriver' #, '~> 3'
   gem 'webdrivers' #, '~> 4.0'
 end
@@ -31,15 +30,12 @@ group :test, :production do
   gem 'pg', '0.21'    # wait until Rails 5.1.5 to upgrade to pg 1.x
 end
 
-group :production do
-  gem 'rails_12factor'
-  gem 'thin'
-end
-
 # Gems used only for assets and not required
 # in production environments by default.
 gem 'sassc-rails'
-gem 'coffee-rails', '~> 4' # wait until rails 5.0 to update to 5.0
+gem 'coffee-rails', '~> 4' # wait until rails 5.2 to update to 5.0 
+                          # cant remove: cannot load such file -- coffee_script sprockets/autoload/coffee_script
+
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem "therubyracer"
@@ -88,3 +84,7 @@ gem 'will_paginate', '~> 3'
 
 # Gem for respond_to at the class level (Rails 4.2) used(?) in application_controller
 gem 'responders', '~> 2.0'
+
+gem 'activemodel-serializers-xml' # to_xml  (rails 5)
+gem 'rails-controller-testing'    # assigns (rails 5)
+gem 'puma'

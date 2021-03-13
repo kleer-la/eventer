@@ -13,13 +13,19 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Creá la base de dates: bundle exec rake db:migrate
 - Cargá los datos iniciales: bundle exec rake db:seed
 
-- Ejecutar las pruebas: bundle exec rake
+- Ejecutar todas las pruebas: bundle exec rake
     NOTA: en este momento no funciona cucumber + selenium en ambiente desarrollo
     para nuevas versiones de firefox, descargar geckodriver y ubicarlos en /usr/local/bin
     para el captcha usar:
 
     #export RECAPTCHA_SITE_KEY="6Ld_iSIUAAAAAC2VRB5HPMSoEvQb4UGREvqbxGbQ"
     #export RECAPTCHA_SECRET_KEY="6Ld_iSIUAAAAAClJtl3YV7HfT4B4idylgMrBLQ9k"
+
+- Ejecutar pruebas rápidas: bundle exec rake ci
+- Ejecutar pruebas lentas: bundle exec rake slow_tests
+    #export KEVENTER_AWS_ACCESS_KEY_ID="..."
+    #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
+
 
 - Tambien es importante setear las variables, by default hay datos para abientes de prueba:
 
@@ -30,16 +36,16 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     PAYU_CO_TEST_OPTION=1
     PUBLIC_DOMAIN=http://localhost:3000
 
-- Inicia la aplicación: bundle exec rails s
+- Inicia la aplicación: bundle exec rails s -b 0
 
 Enjoy!
 
-## Ambiente docker
+== Ambiente docker
 - Iniciar el contenedor
     docker-compose run --service-ports eventer bash
 - Ir al directorio de la aplicación
     cd /home/eventer
 - Seguir con las instrucciones previas
 
-## Migrar versiones Rails
+== Migrar versiones Rails
 - https://railsbump.org/ compatibilidad de gemas

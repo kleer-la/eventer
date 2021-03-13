@@ -1,4 +1,4 @@
-class CampaignView < ActiveRecord::Base
+class CampaignView < ApplicationRecord
   belongs_to :event
   belongs_to :event_type
   belongs_to :campaign

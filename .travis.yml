@@ -8,8 +8,8 @@ before_script:
 - export DISPLAY=:99.0
 
 script:
-- bundle exec rake --trace db:migrate
-- bundle exec rake ci
+- bundle exec rails --trace db:migrate
+- bundle exec rails ci
 deploy:
   provider: heroku
   api_key:
@@ -18,6 +18,6 @@ deploy:
     develop: keventer-test
     master: keventer
   run:
-    - "rake db:migrate"
+    - "rails db:migrate"
     - restart
-    - "rake clean"
+    # - "rails clean"

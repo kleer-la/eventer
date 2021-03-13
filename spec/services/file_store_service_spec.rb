@@ -22,30 +22,23 @@ describe FileStoreService do
     end
   end
 
-  describe "S3" do
-    it 'write to a S3 store' do
-      store= FileStoreService.createS3
-      fname= store.tmp_path "12345.png"
-      File.open(fname, "w") { |f| f.write " " }
-      begin
-        filename= store.write fname
-      rescue AWS::Errors::MissingCredentialsError
-        pending "Export AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to ENV"
-      end
-
-      expect(filename).to include "12345.png"
+  describe "S3", :slow => true do
+    before(:all) do
+      @fname= "12345.png"
+      File.open(@fname, "w") { |f| f.write "xxx" }      
     end
+    after(:all) do
+      File.delete(@filename) if @filename.present?     
+      File.delete(@fname)      
+    end
+    it "try to read from a S3 store - doesn't exists" do
+      store= FileStoreService.createS3
+      store.write @fname
+      File.delete @fname
+      @filename= store.read fname, "","certificates"
 
-    # it "try to read from a S3 store - doesn't exists" do
-    #   store= FileStoreService.createS3
-    #   begin
-    #   expect {
-    #     filename= store.read "12345.png", ""
-    #   }.to raise_error ArgumentError
-    #   rescue AWS::Errors::MissingCredentialsError
-    #     pending "Export  #AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to ENV"
-    #   end
-    # end
+      expect(File.new(@filename).read).to eq "xxx"
+    end
   end
 
 end

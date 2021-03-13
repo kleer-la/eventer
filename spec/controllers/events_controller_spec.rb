@@ -8,7 +8,7 @@ describe EventsController do
 
     describe "GET new" do
       it "assigns a new event as @event" do
-        get :new, {}
+        get :new
         expect(assigns(:event)).to be_a_new(Event)
       end
     end
@@ -20,7 +20,7 @@ describe EventsController do
     describe "GET index" do
       it "assigns all events as @events" do
         event = FactoryBot.create(:event)
-        get :index, {}
+        get :index
         expect(assigns(:events)).to eq [event]
       end
     end
@@ -28,14 +28,14 @@ describe EventsController do
     describe "GET show" do
       it "assigns the requested event as @event" do
         event = FactoryBot.create(:event)
-        get :show, {:id => event.to_param}
+        get :show, params: {:id => event.to_param}
         expect(assigns(:event)).to eq event
       end
     end
 
     describe "GET new" do
       it "assigns a new event as @event" do
-        get :new, {}
+        get :new
         expect(assigns(:event)).to be_a_new(Event)
       end
     end
@@ -43,7 +43,7 @@ describe EventsController do
     describe "GET edit" do
       it "assigns the requested event as @event" do
         event = FactoryBot.create(:event)
-        get :edit, {:id => event.to_param}
+        get :edit, params: {:id => event.to_param}
         expect(assigns(:event)).to eq event
       end
     end
@@ -67,18 +67,18 @@ describe EventsController do
         end
         it "creates a new Event" do
           expect {
-            post :create, :event => @event_attr
+            post :create, params: {:event => @event_attr}
           }.to change(Event, :count).by(1)
         end
 
         it "assigns a newly created event as @event" do
-          post :create, {:event => @event_attr}
+          post :create, params: {:event => @event_attr}
           expect(assigns(:event)).to be_a Event
           expect(assigns(:event)).to be_persisted
         end
 
         it "redirects to the created event" do
-          post :create, {:event => @event_attr}
+          post :create, params: {:event => @event_attr}
           expect(response).to redirect_to(events_path)
         end
       end
@@ -87,7 +87,7 @@ describe EventsController do
         before(:each) do 
           # Trigger the behavior that occurs when invalid params are submitted
           allow_any_instance_of(Event).to receive(:save).and_return(false)
-          post :create, {:event => FactoryBot.attributes_for(:event)}
+          post :create, params: {:event => FactoryBot.attributes_for(:event)}
         end
         it "assigns a newly created but unsaved event as @event" do
           expect(assigns(:event)).to be_a_new(Event)
@@ -106,13 +106,13 @@ describe EventsController do
         end
           
         it "ok w/o change" do
-          put :update, {:id => @event.to_param, :event => @event.attributes}
+          put :update, params: {:id => @event.to_param, :event => @event.attributes}
           expect(assigns(:event)).to eq @event
           expect(response).to redirect_to(events_path)
           expect(flash[:notice]).to include "modificado"
         end
         it "@event cancelled" do
-          put :update, {:id => @event.to_param, :event => {:cancelled => true}}
+          put :update, params: {:id => @event.to_param, :event => {:cancelled => true}}
           expect(response).to redirect_to(events_path)
           expect(flash[:notice]).to include "cancelado"
         end
@@ -122,7 +122,7 @@ describe EventsController do
         before(:each) do 
           @event = FactoryBot.create :event
           allow_any_instance_of(Event).to receive(:save).and_return(false)
-          put :update, {:id => @event.to_param, :event => FactoryBot.attributes_for(:event)}
+          put :update, params: {:id => @event.to_param, :event => FactoryBot.attributes_for(:event)}
         end
         it "assigns the event as @event" do
           expect(assigns(:event)).to eq @event
@@ -140,12 +140,12 @@ describe EventsController do
       end
       it "destroys the requested event" do
         expect {
-          delete :destroy, {:id => @event.to_param}
+          delete :destroy, params: {:id => @event.to_param}
         }.to change(Event, :count).by(-1)
       end
 
       it "redirects to the events list" do
-        delete :destroy, {:id => @event.to_param}
+        delete :destroy, params: {:id => @event.to_param}
         expect(response).to redirect_to(events_url)
       end
     end
@@ -159,7 +159,7 @@ describe EventsController do
       participant.attend!
       participant.save!
       
-      get :send_certificate, {:id => participant.event.to_param}
+      get :send_certificate, params: {:id => participant.event.to_param}
       expect(response).to have_http_status :ok
     end
     # it "abort when trainer has no signature" do

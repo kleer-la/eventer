@@ -1,4 +1,4 @@
-class InfluenceZone < ActiveRecord::Base
+class InfluenceZone < ApplicationRecord
   belongs_to :country
   default_scope -> {order('country_id, zone_name ASC')}
 

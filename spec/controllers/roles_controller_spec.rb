@@ -11,28 +11,28 @@ describe RolesController do
     end
     describe "GET index" do
       it "assigns all roles as @roles" do
-        get :index, {}
+        get :index
         expect(assigns(:roles).map(&:name)).to match_array ["administrator","comercial"]
       end
     end
 
     describe "GET show" do
       it "assigns the requested role as @role" do
-        get :show, {:id => @role.to_param}
+        get :show, params: {:id => @role.to_param}
         expect(assigns(:role)).to eq @role
       end
     end
 
     describe "GET new" do
       it "assigns a new role as @role" do
-        get :new, {}
+        get :new
         expect(assigns(:role)).to be_a_new Role
       end
     end
 
     describe "GET edit" do
       it "assigns the requested role as @role" do
-        get :edit, {:id => @role.to_param}
+        get :edit, params: {:id => @role.to_param}
         expect(assigns(:role)).to eq @role
       end
     end
@@ -41,30 +41,30 @@ describe RolesController do
       describe "with valid params" do
         it "creates a new Role" do
           expect {
-            post :create, {:role => @role.attributes}
+            post :create, params: {:role => @role.attributes}
           }.to change(Role, :count).by(1)
         end
 
         it "assigns a newly created role as @role" do
-          post :create, {:role => @role.attributes}
+          post :create, params: {:role => @role.attributes}
           expect(assigns(:role)).to be_a Role
           expect(assigns(:role)).to be_persisted
         end
 
         it "redirects to the created role" do
-          post :create, {:role => @role.attributes}
+          post :create, params: {:role => @role.attributes}
           expect(response).to redirect_to(Role.last)
         end
       end
 
       it "invalid params raise error" do
         expect {
-          post :create, {:role => {}}
+          post :create, params: {:role => {}}
         }.to raise_error ActionController::ParameterMissing
       end
       it "assigns a newly created but unsaved role as @role" do
         allow_any_instance_of(Role).to receive(:save).and_return(false)
-        post :create, {:role => @role.attributes}
+        post :create, params: {:role => @role.attributes}
         expect(assigns(:role)).to be_a_new Role
         expect(response).to render_template("new")
       end
@@ -73,12 +73,12 @@ describe RolesController do
     describe "PUT update" do
       describe "with valid params" do
         it "assigns the requested role as @role" do
-          put :update, {:id => @role.to_param, :role => @role.attributes}
+          put :update, params: {:id => @role.to_param, :role => @role.attributes}
           expect(assigns(:role)).to eq @role
         end
 
         it "redirects to the role" do
-          put :update, {:id => @role.to_param, :role => @role.attributes}
+          put :update, params: {:id => @role.to_param, :role => @role.attributes}
           expect(response).to redirect_to @role
         end
       end
@@ -87,7 +87,7 @@ describe RolesController do
         before(:each) do 
           # Trigger the behavior that occurs when invalid params are submitted
           allow_any_instance_of(Role).to receive(:save).and_return(false)
-          put :update, {:id => @role.to_param, :role => @role.attributes}
+          put :update, params: {:id => @role.to_param, :role => @role.attributes}
         end
         it "assigns the role as @role" do
           expect(assigns(:role)).to eq @role
@@ -102,12 +102,12 @@ describe RolesController do
     describe "DELETE destroy" do
       it "destroys the requested role" do
         expect {
-          delete :destroy, {:id => @role.to_param}
+          delete :destroy, params: {:id => @role.to_param}
         }.to change(Role, :count).by(-1)
       end
 
       it "redirects to the roles list" do
-        delete :destroy, {:id => @role.to_param}
+        delete :destroy, params: {:id => @role.to_param}
         expect(response).to redirect_to roles_url
       end
     end
@@ -127,7 +127,7 @@ describe RolesController do
 
     describe "GET show" do
      it "should raise CanCan::AccessDenied" do
-       expect{ get :show, {:id => @role.to_param} }.to raise_error CanCan::AccessDenied
+       expect{ get :show, params: {:id => @role.to_param} }.to raise_error CanCan::AccessDenied
      end
     end
 
@@ -139,7 +139,7 @@ describe RolesController do
 
     describe "GET edit" do
      it "should raise CanCan::AccessDenied" do
-       expect{ get :edit, {:id => @role.to_param} }.to raise_error CanCan::AccessDenied
+       expect{ get :edit, params: {:id => @role.to_param} }.to raise_error CanCan::AccessDenied
      end
     end
 
