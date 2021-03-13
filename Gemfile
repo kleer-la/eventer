@@ -33,7 +33,9 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 gem 'sassc-rails'
-gem 'coffee-rails', '~> 4' # wait until rails 5.0 to update to 5.0
+gem 'coffee-rails', '~> 4' # wait until rails 5.2 to update to 5.0 
+                          # cant remove: cannot load such file -- coffee_script sprockets/autoload/coffee_script
+
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem "therubyracer"
