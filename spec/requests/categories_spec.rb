@@ -7,9 +7,9 @@ describe "API Categories GET /categories" do
   end
   context "category list in XML" do
       before(:example) do
-        event = FactoryBot.create(:category, visible: true)      
-        event_url= '/api/categories.xml'
-        get event_url
+        @category = FactoryBot.create(:category, visible: true)      
+        @url= '/api/categories.xml'
+        get @url
         @parsed= Nokogiri::XML(last_response.body)        
       end
     it "XML?" do
@@ -19,6 +19,17 @@ describe "API Categories GET /categories" do
 
     it "one visible category" do
       expect(@parsed.xpath('/categories/category').count).to eq 1
+    end
+
+    it "category w/one event_type" do
+      @category.event_types << FactoryBot.create(:event_type, name: 'Hello, Joe')
+      @category.save!
+
+      get @url
+      parsed= Nokogiri::XML(last_response.body)
+
+      expect(parsed.xpath('/categories/category/event-types/event-type').count).to eq 1
+      expect(parsed.xpath('//event-type/name').inner_text).to eq 'Hello, Joe'
     end
 end
 end
