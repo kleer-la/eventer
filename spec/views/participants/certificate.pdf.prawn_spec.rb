@@ -35,12 +35,12 @@ RSpec.describe "generate one certificate" do
     assign(:verification_code, participant.verification_code)
     assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
     assign(:participant, participant )
+    assign(:certificate_store, FileStoreService.createNull)
 
     render :template => "participants/certificate", format: :pdf
     texts= PDF::Inspector::Text.analyze(rendered).strings
-    expect(texts.join ' ').to include 'Juan Carlos Perez Luasó attended'
+    expect(texts.join ' ').to include 'Juan Carlos Perez Luasó'
   end
-
 
   context 'PdfCertificate' do
     it "seal image not found" do
@@ -55,11 +55,11 @@ RSpec.describe "generate one certificate" do
       assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
       assign(:participant, participant )
 
-      certificate_store= FileStoreService.createNull exists: {"certificate-images/2021-LETTER.png" => false}
+      certificate_store= FileStoreService.createNull exists: {"certificate-images/base2021-LETTER.png" => false}
       assign(:certificate_store, certificate_store)
       expect {
         render :template => "participants/certificate", format: :pdf
       }.to raise_error(ActionView::Template::Error,/2021/)
     end
-end
+  end
 end
