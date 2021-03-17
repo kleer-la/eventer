@@ -178,19 +178,18 @@ describe Participant do
       @participant_pdf.influence_zone = FactoryBot.create(:influence_zone)
       @participant_pdf.status = "A"
       store= FileStoreService.createNull
+      @participant_pdf.filestore store
 
       @filepath_A4 = ParticipantsHelper::generate_certificate(@participant_pdf, "A4", store)
       @filepath_LETTER = ParticipantsHelper::generate_certificate(@participant_pdf, "LETTER", store)
     end
 
     before(:each) do
-
       @reader_A4 = PDF::Reader.new(@filepath_A4)
       @reader_LETTER = PDF::Reader.new(@filepath_LETTER)
-
     end
 
-    it "basic generate cert should works wo/errors" do
+    it "basic cert should works wo/errors" do
       allow(ParticipantsHelper).to receive(:upload_certificate).and_return('')
       rslt= @participant_pdf.generate_certificate
       expect(rslt.count).to eq 2

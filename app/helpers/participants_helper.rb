@@ -27,6 +27,7 @@ module ParticipantsHelper
       @participant.event.event_type.kleer_cert_seal_image
     end
     def background_file
+      kleer_cert_seal_image= 'base2021.png' if not kleer_cert_seal_image.present?
       kleer_cert_seal_image if v2021? and not foreground?
     end
     def foreground_file
@@ -88,7 +89,7 @@ module ParticipantsHelper
         @participant.event.trainers
     end
     def v2021?
-      kleer_cert_seal_image.to_s.include? '2021'
+      true #kleer_cert_seal_image.to_s.include? '2021'
     end
     def foreground?
       kleer_cert_seal_image.to_s.include? 'fg'
