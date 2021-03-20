@@ -24,16 +24,9 @@ describe Certificate do
     @participant.event = @e
   end
  
-  it 'new (2021) certificate bkgd' do
-    @participant.event.event_type.kleer_cert_seal_image = 'base.png'
-    cert= Certificate.new(@participant)
-    expect(cert.v2021?).to be true
-  end
-
   it 'new (2021) certificate wo/file' do
     @participant.event.event_type.kleer_cert_seal_image = ''
     cert= Certificate.new(@participant)
-    expect(cert.v2021?).to be true
     expect(cert.background_file).to eq 'base2021.png'
   end
 
@@ -194,62 +187,6 @@ end
 describe "render certificates" do
     before(:each) do
         @certificate_store= FileStoreService.createNull 
-    end
-
-    it "non csd certificate have 6 text lines" do
-        pending("remove when v2021 certificates are ready")
-        pdf = double()
-        allow(pdf).to receive(:move_down)
-        allow(pdf).to receive(:image)
-        allow(pdf).to receive(:bounding_box)
-        allow(pdf).to receive(:line_width=)
-        allow(pdf).to receive(:stroke)
-        certificate = Certificate.new(FactoryBot.build(:participant))
-
-        expect(pdf).to receive(:text).exactly(6).times
-
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store)
-    end
-
-    it "csd certificate have 9 text lines" do
-        pending("remove when v2021 certificates are ready")
-        pdf = double()
-        allow(pdf).to receive(:move_down)
-        allow(pdf).to receive(:image)
-        allow(pdf).to receive(:bounding_box)
-        allow(pdf).to receive(:line_width=)
-        allow(pdf).to receive(:stroke)
-
-        p = FactoryBot.build(:participant)
-        et = FactoryBot.build(:event_type)
-        e = FactoryBot.build(:event)
-        e.event_type = et
-        p.event = e
-        et.csd_eligible = true
-
-        certificate = Certificate.new(p)
-
-        expect(pdf).to receive(:text).exactly(9).times
-
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store)
-    end
-
-    it "csd certificate for a 3 days " do
-        pending("remove when v2021 certificates are ready")
-        pdf = PrawnMock.new
-
-        p = FactoryBot.build(:participant)
-        et = FactoryBot.build(:event_type)
-        et.duration = 24
-        e = FactoryBot.build(:event)
-        e.event_type = et
-        p.event = e
-        et.csd_eligible = true
-
-        certificate = Certificate.new(p)
-        filename= ParticipantsHelper::render_certificate( pdf, certificate, "A4", @certificate_store )
-
-        expect(pdf.history).to include "duration of 3"
     end
 
     it 'fail to persist a certificate file. Wrong credentials' do

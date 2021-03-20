@@ -88,9 +88,7 @@ module ParticipantsHelper
     def trainers
         @participant.event.trainers
     end
-    def v2021?
-      true #kleer_cert_seal_image.to_s.include? '2021'
-    end
+
     def foreground?
       kleer_cert_seal_image.to_s.include? 'fg'
     end
@@ -217,28 +215,6 @@ module ParticipantsHelper
       after
     end
   
-  end
-
-  def self.render_signature(pdf, certificate, page_size)
-    trainers= certificate.trainers
-    signature_position = PageConfig[:SignPos][page_size].dup
-    (0...trainers.count).each {|i|
-      render_one_signature(pdf, signature_position, trainers[i])
-      signature_position[0] -= 205 # ancho + 5
-    }
-  end
-
-  def self.render_one_signature(pdf, pos, trainer)
-    if trainer.signature_image.to_s==''
-      return
-    end
-    trainer_signature_path = "#{Rails.root}/app/assets/images/firmas/" + trainer.signature_image
-    delta=((200-30)-Dimensions.height(trainer_signature_path))*0.7
-    pdf.bounding_box([pos[0],pos[1]-delta], :width => 200, :height => 120) do
-        pdf.image trainer_signature_path, :position => :center, :scale => 0.7
-        pdf.text "<b>#{trainer.name}</b>", :align => :center, :size => 14, :inline_format => true
-        pdf.text "#{trainer.signature_credentials}", :align => :center, :size => 14
-    end
   end
 
   def self.render_certificate( pdf, certificate, page_size, store )
