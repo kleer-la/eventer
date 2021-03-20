@@ -28,10 +28,10 @@ module ParticipantsHelper
     end
     def background_file
       kleer_cert_seal_image= 'base2021.png' if not kleer_cert_seal_image.present?
-      kleer_cert_seal_image if v2021? and not foreground?
+      kleer_cert_seal_image if not foreground?
     end
     def foreground_file
-      kleer_cert_seal_image if v2021? and foreground?
+      kleer_cert_seal_image if foreground?
     end
     def event_name
       @participant.event.event_type.name
@@ -242,81 +242,7 @@ module ParticipantsHelper
   end
 
   def self.render_certificate( pdf, certificate, page_size, store )
-    if certificate.v2021?
-      return PdfCertificate.new(pdf, certificate, store).render
-    end
-
-    rep_logo_path = "#{Rails.root}/app/assets/images/rep-logo-transparent.png"
-    kleer_logo_path = "#{Rails.root}/app/assets/images/K-kleer_horizontal_negro_1color-01.png"
-    kleer_certification_seals_path = "#{Rails.root}/app/assets/images/seals/"
-
-      if certificate.is_csd_eligible?
-          pdf.image rep_logo_path, :width => 150, :position => :right
-      elsif certificate.is_kleer_certification?
-          this_seal_path = "#{kleer_certification_seals_path}/#{certificate.kleer_cert_seal_image}"
-          pdf.image this_seal_path, :width => 150, :position => :right
-      else
-          pdf.move_down 100
-      end
-
-      pdf.image kleer_logo_path, :width => 300, :at => PageConfig[:LogoPos][page_size]
-
-      pdf.move_down 50
-
-      pdf.text "<b>Kleer</b> certifies that", :align => :center, :size => 14, :inline_format => true
-
-      pdf.move_down 20
-
-      pdf.text  "<b><i>#{certificate.name}</i></b>",
-            :align => :center, :size => 48, :inline_format => true
-
-      if certificate.is_kleer_certification?
-        pdf.text "is awarded the designation", :align => :center, :size => 14
-        pdf.move_down 10
-        pdf.text "<b>#{certificate.event_name}</b>", :align => :center, :size => 24, :inline_format => true
-        pdf.move_down 10
-        pdf.text "on this day, #{certificate.human_event_finish_date} #{certificate.event_year}, for completing the prescribed requirements for this certification.", :align => :center, :size => 14
-      else
-        pdf.text "attended the course named", :align => :center, :size => 14
-
-        pdf.move_down 10
-
-        pdf.text    "<b><i>#{certificate.event_name}</i></b>",
-                    :align => :center, :size => 24, :inline_format => true
-
-        pdf.move_down 10
-
-        pdf.text  "delivered in <b>#{certificate.place}</b>, " +
-              "on <b>#{certificate.event_date} #{certificate.event_year}</b>, " +
-                    "with a duration of #{certificate.event_duration}.",
-              :align => :center, :size => 14, :inline_format => true
-
-        if certificate.is_csd_eligible?
-            pdf.text    "This course has been approved by the <b>Scrum Alliance</b> as a CSD-eligible one,",
-                        :align => :center, :size => 14, :inline_format => true
-
-            pdf.text    "therefore valid for the <b>Certified Scrum Developer</b> certification.",
-                        :align => :center, :size => 14, :inline_format => true
-        end
-      end
-
-      pdf.move_down 10
-      pdf.text    "<i>Certificate verification code: #{certificate.verification_code}.</i>",
-                  :align => :center, :size => 9, :inline_format => true
-
-      self.render_signature(pdf, certificate, page_size)
-
-      if certificate.is_csd_eligible?
-          pdf.text    "Kleer is a Scrum Alliance Registered Education Provider. " +
-                      "SCRUM ALLIANCE REP(SM) is a service mark of Scrum Alliance, Inc. " +
-                      "Any unauthorized use is strictly prohibited.", :valign => :bottom, :size => 9
-      end
-
-      pdf.line_width = 3
-      pdf.stroke {pdf.rectangle *PageConfig[:OuterBox][page_size] }
-
-      pdf.line_width = 1
-      pdf.stroke {pdf.rectangle *PageConfig[:InnerBox][page_size] }
+    PdfCertificate.new(pdf, certificate, store).render
   end
 
   def self.generate_certificate( participant, page_size, store)
