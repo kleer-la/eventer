@@ -1,4 +1,4 @@
-class AddMultipleTrainersToAnEventType < ActiveRecord::Migration
+class AddMultipleTrainersToAnEventType < ActiveRecord::Migration[4.2]
   def self.up
       create_table :trainers_event_types, :id => false do |t|
         t.references :trainer, :event_type

@@ -1,4 +1,4 @@
-class AddMaterialsToEventType < ActiveRecord::Migration
+class AddMaterialsToEventType < ActiveRecord::Migration[4.2]
   def up
 		add_column :event_types, :materials, :text
 	end

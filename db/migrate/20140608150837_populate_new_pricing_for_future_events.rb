@@ -1,4 +1,4 @@
-class PopulateNewPricingForFutureEvents < ActiveRecord::Migration
+class PopulateNewPricingForFutureEvents < ActiveRecord::Migration[4.2]
   
   def up
 

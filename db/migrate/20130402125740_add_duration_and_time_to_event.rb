@@ -1,4 +1,4 @@
-class AddDurationAndTimeToEvent < ActiveRecord::Migration
+class AddDurationAndTimeToEvent < ActiveRecord::Migration[4.2]
   class Event < ApplicationRecord
       belongs_to :country
       scope :visible,  -> {where(:cancelled => false).where("date >= ?", DateTime.now)}

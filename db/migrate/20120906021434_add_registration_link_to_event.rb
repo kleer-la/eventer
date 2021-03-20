@@ -1,4 +1,4 @@
-class AddRegistrationLinkToEvent < ActiveRecord::Migration
+class AddRegistrationLinkToEvent < ActiveRecord::Migration[4.2]
   def up
 		add_column :events, :registration_link, :string
 	end

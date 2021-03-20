@@ -1,4 +1,4 @@
-class EventHasNoNameDescRecipAndProgramAnyMore < ActiveRecord::Migration
+class EventHasNoNameDescRecipAndProgramAnyMore < ActiveRecord::Migration[4.2]
   def up
     remove_column :events, :name
     remove_column :events, :description

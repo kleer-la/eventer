@@ -1,4 +1,4 @@
-class AddMarketingInfoToParticipant < ActiveRecord::Migration
+class AddMarketingInfoToParticipant < ActiveRecord::Migration[4.2]
   def change
     add_column :participants, :campaign_id, :integer, :index => true
     add_column :participants, :campaign_source_id, :integer, :index => true

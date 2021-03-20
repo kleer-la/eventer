@@ -1,4 +1,4 @@
-class RemoveSuperEarlyBirdPriceFromEvents < ActiveRecord::Migration
+class RemoveSuperEarlyBirdPriceFromEvents < ActiveRecord::Migration[4.2]
   def up
   	remove_column :events, :seb_price
   	remove_column :events, :seb_end_date

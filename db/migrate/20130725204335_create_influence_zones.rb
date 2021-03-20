@@ -1,4 +1,4 @@
-class CreateInfluenceZones < ActiveRecord::Migration
+class CreateInfluenceZones < ActiveRecord::Migration[4.2]
   def change
     create_table :influence_zones do |t|
       t.string :zone_name

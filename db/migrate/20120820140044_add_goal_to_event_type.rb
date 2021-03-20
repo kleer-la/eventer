@@ -1,4 +1,4 @@
-class AddGoalToEventType < ActiveRecord::Migration
+class AddGoalToEventType < ActiveRecord::Migration[4.2]
   def up
 		add_column :event_types, :goal, :text
 	end

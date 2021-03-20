@@ -1,4 +1,4 @@
-class AddTaglineToCategory < ActiveRecord::Migration
+class AddTaglineToCategory < ActiveRecord::Migration[4.2]
   def up
 		add_column :categories, :tagline, :string
 	end
