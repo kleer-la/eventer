@@ -68,8 +68,6 @@ Eventer::Application.routes.draw do
 
   get 'events/filter/:country_iso' => 'events#index'
 
-  get 'events/:id/start_webinar' => 'events#start_webinar'
-  get 'events/:id/broadcast_webinar' => 'events#broadcast_webinar'
   get 'events/:id/send_certificate' => 'events#send_certificate'
 
   get 'events/:event_id/participant_confirmed' => 'participants#confirm'

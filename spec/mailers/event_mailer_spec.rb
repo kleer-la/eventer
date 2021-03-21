@@ -8,9 +8,6 @@ describe EventMailer do
         ActionMailer::Base.deliveries.clear
     end
     
-    it "welcome_new_webinar_participant", :pending => "Deprecated - should remove" do fail;end
-    it "notify_webinar_start" , :pending => "Deprecated - should remove"  do fail;end
-    
     context 'welcome_new_event_participant' do
         EB_TEXT="Pronto pago:"
         PAIR_TEXT="En parejas:"
