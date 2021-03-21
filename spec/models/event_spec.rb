@@ -231,28 +231,6 @@ describe Event do
     expect(@event.webinar_started?).to be true
   end
   
-  it "should express if a webinar already finished (based on end_time in time_zone)" do
-    @event.mode = 'ol'
-    @event.visibility_type = 'co'
-    @event.start_time = Time.now-3600
-    @event.end_time = Time.now+3600
-    @event.start_webinar!
-    expect(@event.webinar_finished?).to be false
-    @event.end_time = Time.now-3500
-    expect(@event.webinar_finished?).to be true
-  end
-  
-  it "should express if a webinar already finished (based on end_time in time_zone)" do
-    @event.mode = 'ol'
-    @event.visibility_type = 'co'
-    @event.time_zone_name = "Buenos Aires"
-    @event.start_time = Time.now-3600
-    @event.end_time = Time.now+3600
-    @event.start_webinar!
-    expect(@event.webinar_finished?).to be false
-    @event.end_time = Time.now-3500
-    expect(@event.webinar_finished?).to be true
-  end
   
   it "should require a time zone name if event is webinar" do
     @event.time_zone_name = ""
