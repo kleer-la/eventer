@@ -1,4 +1,4 @@
-class ChangeDefaultValueForEventWelcomeEmail < ActiveRecord::Migration
+class ChangeDefaultValueForEventWelcomeEmail < ActiveRecord::Migration[4.2]
   def up
   	change_column :events, :should_welcome_email, :boolean, :default => true
   end

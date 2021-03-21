@@ -1,4 +1,4 @@
-class AddBioToTrainer < ActiveRecord::Migration
+class AddBioToTrainer < ActiveRecord::Migration[4.2]
   def up
 		add_column :trainers, :bio, :text
   end

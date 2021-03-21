@@ -1,4 +1,4 @@
-class AddLearningAndTakeawayToEventType < ActiveRecord::Migration
+class AddLearningAndTakeawayToEventType < ActiveRecord::Migration[4.2]
   def up
 		add_column :event_types, :learnings, :text
 		add_column :event_types, :takeaways, :text

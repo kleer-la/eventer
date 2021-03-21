@@ -1,4 +1,4 @@
-class OpenInfluenceZonesForChile < ActiveRecord::Migration
+class OpenInfluenceZonesForChile < ActiveRecord::Migration[4.2]
   def up
     chile = Country.find_by_iso_code("CL")
     InfluenceZone.where(:country_id => chile).destroy_all

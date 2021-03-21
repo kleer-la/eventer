@@ -1,4 +1,4 @@
-class MigrateEventPricing < ActiveRecord::Migration
+class MigrateEventPricing < ActiveRecord::Migration[4.2]
   def up
 
   	Event.all.each do |ev|

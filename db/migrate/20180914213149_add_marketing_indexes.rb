@@ -1,4 +1,4 @@
-class AddMarketingIndexes < ActiveRecord::Migration
+class AddMarketingIndexes < ActiveRecord::Migration[4.2]
   def up
     # add_index :campaigns, :codename
     add_index :campaign_sources, :codename

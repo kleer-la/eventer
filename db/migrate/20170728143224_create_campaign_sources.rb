@@ -1,4 +1,4 @@
-class CreateCampaignSources < ActiveRecord::Migration
+class CreateCampaignSources < ActiveRecord::Migration[4.2]
   def change
     create_table :campaign_sources do |t|
       t.string :codename

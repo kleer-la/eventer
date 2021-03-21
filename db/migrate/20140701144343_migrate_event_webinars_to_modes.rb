@@ -1,4 +1,4 @@
-class MigrateEventWebinarsToModes < ActiveRecord::Migration
+class MigrateEventWebinarsToModes < ActiveRecord::Migration[4.2]
   def up
   	Event.where( "is_webinar = 't'" ).each do |e|
       if e.list_price > 0.0

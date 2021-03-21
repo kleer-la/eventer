@@ -3,19 +3,6 @@
 class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
 
-  #TODO: quitar funcionalidad de webinars
-  def welcome_new_webinar_participant(participant)
-    @participant = participant
-    mail(to: @participant.email, from: "Eventos <eventos@kleerer.com>", subject: "Kleer | #{@participant.event.event_type.name}" )
-  end
-
-  #TODO: quitar funcionalidad de webinars
-  def notify_webinar_start(participant, webinar_link)
-    @participant = participant
-    @webinar_link = webinar_link
-    mail(to: @participant.email, from: "Eventos <eventos@kleerer.com>", subject: "Kleer | Estamos iniciando! Sumate al webinar #{@participant.event.event_type.name}" )
-  end
-
   def welcome_new_event_participant(participant)
     @participant = participant
     @markdown_renderer = Redcarpet::Markdown.new( Redcarpet::Render::HTML.new(:hard_wrap => true), :autolink => true)

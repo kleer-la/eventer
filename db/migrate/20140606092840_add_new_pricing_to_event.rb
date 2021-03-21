@@ -1,4 +1,4 @@
-class AddNewPricingToEvent < ActiveRecord::Migration
+class AddNewPricingToEvent < ActiveRecord::Migration[4.2]
   def change
   	add_column :events, :couples_eb_price, :decimal, :precision => 10, :scale => 2
   	add_column :events, :business_price, :decimal, :precision => 10, :scale => 2

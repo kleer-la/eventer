@@ -1,4 +1,4 @@
-class AddMultipleCategoriesToAnEventType < ActiveRecord::Migration
+class AddMultipleCategoriesToAnEventType < ActiveRecord::Migration[4.2]
   def self.up
       create_table :categories_event_types, :id => false do |t|
         t.references :category, :event_type

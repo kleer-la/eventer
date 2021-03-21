@@ -125,32 +125,22 @@ class ParticipantsController < ApplicationController
         if @participant.save
           @participant.update_attribute( :campaign_source, source)
           @participant.update_attribute( :campaign, campaign)
-          if @event.is_webinar?
-            if @event.webinar_started?
-              format.html { redirect_to "/public_events/#{@event.id.to_s}/watch/#{@participant.id.to_s}" }
-            else
-              EventMailer.delay.welcome_new_webinar_participant(@participant)
-            end
-          else
-            if @event.list_price != 0.0
-              @participant.contact!
-              @participant.save
-            end
-
-            if @event.mailchimp_workflow
-              mailchimp_service = MailChimpService.new
-              mailchimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_call, @participant
-            end
-
-            if @event.should_welcome_email and !session[:payment_on_eventer]
-              EventMailer.delay.welcome_new_event_participant(@participant)
-            end
-
-            edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
-            EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
-
+          if @event.list_price != 0.0
+            @participant.contact!
+            @participant.save
           end
 
+          if @event.mailchimp_workflow
+            mailchimp_service = MailChimpService.new
+            mailchimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_call, @participant
+          end
+
+          if @event.should_welcome_email and !session[:payment_on_eventer]
+            EventMailer.delay.welcome_new_event_participant(@participant)
+          end
+
+          edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
+          EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
 
           if session[:payment_on_eventer]
             webCheckout = PayuCoWebcheckoutService.new

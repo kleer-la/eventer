@@ -1,4 +1,4 @@
-class AddEmbeddedPlayerToEvent < ActiveRecord::Migration
+class AddEmbeddedPlayerToEvent < ActiveRecord::Migration[4.2]
   def up
 		add_column :events, :embedded_player, :text
 	end

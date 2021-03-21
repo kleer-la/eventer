@@ -1,4 +1,4 @@
-class AddFaqToEventType < ActiveRecord::Migration
+class AddFaqToEventType < ActiveRecord::Migration[4.2]
   def up
 		add_column :event_types, :faq, :text
 	end
