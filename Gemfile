@@ -12,7 +12,7 @@ group :development, :test do
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
   # gem 'coveralls_reborn', '~> 0.20.0', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
-  gem 'coveralls', '~> 0.7', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
+  gem 'coveralls' #, '~> 0.7', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'database_cleaner-active_record' # wait until Rails 5.x to upgrade to 2.0
