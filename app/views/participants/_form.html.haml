@@ -4,7 +4,7 @@
       = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
   - if @participant.errors.full_messages.count > 0 || @captcha_error
     .alert.alert-danger{:id => "validation_msg"}
-      = "Todos los campos son requeridos"
+      = "Todos los campos son requeridos excepto observaciones"
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
@@ -30,8 +30,7 @@
       .span12
         .control-group
           - email_placeholder = I18n.t("formtastic.labels.participant.email")
-          - if @event.is_webinar? && @event.list_price == 0.0
-            - email_placeholder += " (confirmaremos tu registro en este email)"
+          - email_placeholder += " (confirmaremos tu registro en este email)"
           = f.text_field :email, :class => "span12", :placeholder => email_placeholder
     .row-fluid
       .span12

@@ -7,7 +7,7 @@ class Participant < ApplicationRecord
   belongs_to :campaign
   belongs_to :campaign_source
 
-  validates :email, :fname, :lname, :phone, :event, :influence_zone, :presence => true
+  validates :email, :fname, :lname, :phone, :event, :influence_zone, :id_number, :address, :presence => true
 
   validates :email, :email => true
   validates_acceptance_of :accept_terms, message: 'No podemos contactarlo si no acepta los términos.'
@@ -173,6 +173,8 @@ class Participant < ApplicationRecord
         :lname => attributes[0].strip,
         :email => attributes[2].strip,
         :phone => (attributes[3] || "N/A").strip,
+        :id_number => "Batch load",
+        :address => "Batch load",
         :event_id => event.id,
         :notes => "Batch load",
         :influence_zone_id => influence_zone.id,

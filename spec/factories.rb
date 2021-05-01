@@ -111,6 +111,8 @@ FactoryBot.define do
     verification_code {"065BECBA36F903CF6PPP"}
     event
     influence_zone
+    id_number {"12345678"}
+    address {"Pago Largo 123"}
   end
   
   factory :setting do
