@@ -2,18 +2,13 @@
   .controls
     .form-wrapper
       = render '/commons/notice'
-      - if @event.is_webinar?
-        %p ¡Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
+      - if @event.should_welcome_email
+        = I18n.t("formtastic.labels.participant.confirm_with_mail")
       - else
-        - if @event.should_welcome_email
-          %p ¡Gracias! Te hemos enviado un e-mail con información importante.
-        - else
-          %p ¡Gracias! En breve un asesor se comunicará contigo con la información del evento.
+        = I18n.t("formtastic.labels.participant.confirm_without_mail")
 - else
   :css
     body {bgcolor:#FFFFFF;}
   = render '/commons/notice'
-  - if @event.is_webinar?
-    %p ¡Gracias! Te hemos enviado un e-mail con la confirmación de tu registro.
-  - else
-    %p ¡Gracias! Te hemos enviado un e-mail con información importante.
+  %p 
+    = I18n.t("formtastic.labels.participant.confirm_with_mail")

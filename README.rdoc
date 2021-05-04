@@ -21,8 +21,10 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     #export RECAPTCHA_SITE_KEY="6Ld_iSIUAAAAAC2VRB5HPMSoEvQb4UGREvqbxGbQ"
     #export RECAPTCHA_SECRET_KEY="6Ld_iSIUAAAAAClJtl3YV7HfT4B4idylgMrBLQ9k"
 
-- Ejecutar pruebas rápidas: bundle exec rake ci
-- Ejecutar pruebas lentas: bundle exec rake slow_tests
+- Ejecutar pruebas rápidas: bundle exec rails ci
+- Ejecutar pruebas lentas: bundle exec rails slow_tests
+- Ejecutar alguna prueba: bundle exec rails spec SPEC=<path relativo>
+
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
     #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
 

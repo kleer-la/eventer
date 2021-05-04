@@ -99,7 +99,7 @@ es:
       participant:
         register: "¡Registrarme!"
         pay: "¡Pagar ahora!"
-        more_info: "¡Me interesa!"
+        more_info: "Comprar"
     labels:
       name: "Nombre"
       date: "Fecha"
@@ -112,8 +112,8 @@ es:
         fname: "Nombre"
         lname: "Apellido"
         phone: "Teléfono de contacto"
-        id_number: "Opcional: Número de identificación (Para facturación)"
-        address: "Opcional: Dirección (Para facturación)"
+        id_number: "Número tributario para facturación"
+        address: "Dirección de facturación"
         email: "E-Mail"
         status: "Estado"
         influence_zone: "Zona de Influencia"
@@ -123,6 +123,9 @@ es:
         payment_type: "Forma de Pago"
         is_payed: "Pagado"
         accept_terms: "He leído y aceptado <a href='http://www.kleer.la/es/privacy'>la política de privacidad</a>."
+        is_payed: "Pagado"
+        confirm_with_mail: "¡Gracias! Te hemos enviado un e-mail con la información para el pago. Tu vacante se reservara al realizar el pago."
+        confirm_without_mail: "¡Gracias! En breve un asesor se comunicará contigo con la información del evento."
       trainer:
         new_title: "Nuevo Entrenador"
         bio_en: "Bio EN"
