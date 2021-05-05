@@ -36,7 +36,7 @@
                 = f.text_field :email
             .span4
               .control-group
-                %label.control-label{ :for => :status }= t("formtastic.labels.participant.influence_zone")
+                %label.control-label{ :for => :influence_zone_id }= t("formtastic.labels.participant.influence_zone")
                 = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: 'Tu lugar más próximo ...'}
                 %br
                 = @participant.influence_zone.nil? ? "N/A" : @participant.influence_zone.tag_name
@@ -44,6 +44,16 @@
               .control-group
                 %label.control-label{ :for => :status }= t("formtastic.labels.participant.status")
                 = f.collection_select :status, [["Nuevo", "N"], ["Contactado", "T"], ["Confirmado", "C"], ["Presente", "A"], ["Cancelado", "X"], ["Pospuesto", "D"]], :last, :first
+
+          .row-fluid
+            .span4
+              .control-group
+                %label.control-label{ :for => :id_number }= I18n.t("formtastic.labels.participant.id_number")
+                = f.text_field :id_number, required: true
+            .span4
+              .control-group
+                %label.control-label{ :for => :address }= I18n.t("formtastic.labels.participant.address")
+                = f.text_field :address, required: true
           %hr
           .row-fluid
             .span12
