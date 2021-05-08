@@ -76,7 +76,7 @@
         .control-label
           Estado (aplica a todos)
         .controls
-          = select_tag :status, options_from_collection_for_select( [["Nuevo", "N"], ["Contactado", "T"], ["Confirmado", "C"], ["Presente", "A"], ["Cancelado", "X"], ["Pospuesto", "D"]], :last, :first )
+          = select_tag :status, options_from_collection_for_select( @status_valuekey, :last, :first )
       .control-group
         .control-label
           Zona de Influencia (aplica a todos)
@@ -217,7 +217,7 @@
                       %i.icon-home
                       = best_in_place participant, :address, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                   %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
-                    = best_in_place participant, :status, :as => :select, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => [["N", "Nuevo"], ["T", "Contactado"], ["C", "Confirmado"], ["A", "Presente"], ["X", "Cancelado"], ["D", "Postergado"]], :class => ['color_on_success','editable','editable-click']
+                    = best_in_place participant, :status, :as => :select, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :collection => @status_keyvalue, :class => ['color_on_success','editable','editable-click']
                   %td{ :style => "white-space:pre-line;"}
                     = best_in_place participant, :notes, :as => :textarea, :url => "/events/#{participant.event.id}/participants/#{participant.id}", :class => ['editable','editable-click']
                     = participant.pay_notes
@@ -258,6 +258,9 @@
         break;
       case "Presente":
         return "#49bf67";
+        break;
+      case "Certificado":
+        return "#00b0b0";
         break;
       case "Cancelado":
         return "#f8a326";

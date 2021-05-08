@@ -15,6 +15,10 @@ describe Participant do
       @participant.status = "A"
       expect(@participant.human_status).to eq "Presente"
     end
+    it "should be Certified when status is K" do
+      @participant.status = "K"
+      expect(@participant.human_status).to eq "Certificado"
+    end
   end
 
   describe "status_sort_order" do
@@ -27,7 +31,7 @@ describe Participant do
     end
     it "should be 7 when status is q (unknown)" do
       @participant.status = "q"
-      expect(@participant.status_sort_order).to eq 7
+      expect(@participant.status_sort_order).to eq 8
     end
   end
 
@@ -200,14 +204,6 @@ describe Participant do
       expect(@filepath_LETTER).to eq "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-LETTER.pdf"
     end
 
-    # it "should have left a temp file in A4 format" do
-    #   File.exist?(@filepath_A4).should be_true
-    # end
-
-    # it "should have left a temp file in LETTER format" do
-    #   File.exist?(@filepath_LETTER).should be_true
-    # end
-
     it "should be a single page certificate" do
       expect(@reader_A4.page_count).to eq 1
       expect(@reader_LETTER.page_count).to eq 1
@@ -215,109 +211,118 @@ describe Participant do
 
   end
 
-  # context "given a batch load" do
+  context "given a batch load" do
 
-  #   before(:each) do
-  #     @event = FactoryBot.create(:event)
-  #     @influence_zone = FactoryBot.create(:influence_zone)
-  #     @status = "A"
-  #   end
+    before(:each) do
+      @event = FactoryBot.create(:event)
+      @influence_zone = FactoryBot.create(:influence_zone)
+      @status = "A"
+    end
 
-  #   it "sould allow a participant to be created from a batch line using commas" do
-  #     participant_data_line = "Alaimo, Martin, malaimo@gmail.com, 1234-5678"
+    it "sould allow a participant to be created from a batch line using commas" do
+      participant_data_line = "Alaimo, Martin, malaimo@gmail.com, 1234-5678"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status )
+      ).to be true
+      expect(Participant.all.count).to eq 1
 
-  #     Participant.all.count.should == 1
-  #     created_participant = Participant.first
-  #     created_participant.fname.should == "Martin"
-  #     created_participant.lname.should == "Alaimo"
-  #     created_participant.email.should == "malaimo@gmail.com"
-  #     created_participant.phone.should == "1234-5678"
-  #   end
+      created_participant = Participant.first
+      expect(created_participant.fname).to eq "Martin"
+      expect(created_participant.lname).to eq "Alaimo"
+      expect(created_participant.email).to eq "malaimo@gmail.com"
+      expect(created_participant.phone).to eq "1234-5678"
+    end
 
-  #   it "sould allow a participant to be created from a batch line using tabs" do
-  #     participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com\t1234-5678"
+    it "sould allow a participant to be created from a batch line using tabs" do
+      participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com\t1234-5678"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status )
+      ).to be true
 
-  #     Participant.all.count.should == 1
-  #     created_participant = Participant.first
-  #     created_participant.fname.should == "Martin"
-  #     created_participant.lname.should == "Alaimo"
-  #     created_participant.email.should == "malaimo@gmail.com"
-  #     created_participant.phone.should == "1234-5678"
-  #   end
+      expect(Participant.all.count).to eq 1
+      created_participant = Participant.first
+      expect(created_participant.fname).to eq "Martin"
+      expect(created_participant.lname).to eq "Alaimo"
+      expect(created_participant.email).to eq "malaimo@gmail.com"
+      expect(created_participant.phone).to eq "1234-5678"
+    end
 
-  #   it "sould allow a participant to be created from a batch line without a telephone number" do
-  #     participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com"
+    it "sould allow a participant to be created from a batch line without a telephone number" do
+      participant_data_line = "Alaimo\tMartin\tmalaimo@gmail.com"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be true
-  #     Participant.all.count.should == 1
-  #     Participant.first.phone.should == "N/A"
-  #   end
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status )
+      ).to be true
+      expect(Participant.all.count).to eq 1
+      expect(Participant.first.phone).to eq "N/A"
+    end
 
-  #   it "sould not allow a participant to be created from a batch line without fname" do
-  #     participant_data_line = "Alaimo,,malaimo@gmail.com"
+    it "sould not allow a participant to be created from a batch line without fname" do
+      participant_data_line = "Alaimo,,malaimo@gmail.com"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-  #     Participant.all.count.should == 0
-  #   end
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status )
+      ).to be false
+      expect(Participant.all.count).to be 0
+    end
 
-  #   it "sould not allow a participant to be created from a batch line without lname" do
-  #     participant_data_line = ",Martin,malaimo@gmail.com"
+    it "sould not allow a participant to be created from a batch line without lname" do
+      participant_data_line = ",Martin,malaimo@gmail.com"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-  #     Participant.all.count.should == 0
-  #   end
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ) 
+      ).to be false
+      expect(Participant.all.count).to be  0
+    end
 
-  #   it "sould not allow a participant to be created from a batch line with a malformed e-mail" do
-  #     participant_data_line = "Alaimo, Martin, ksjdhaSDJHasf"
+    it "sould not allow a participant to be created from a batch line with a malformed e-mail" do
+      participant_data_line = "Alaimo, Martin, ksjdhaSDJHasf"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-  #     Participant.all.count.should == 0
-  #   end
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status )
+      ).to be false
+      expect(Participant.all.count).to be 0
+    end
 
-  #   it "sould not allow a participant to be created from a batch line with less than 3 parameters" do
-  #     participant_data_line = "Alaimo, Martin"
+    it "sould not allow a participant to be created from a batch line with less than 3 parameters" do
+      participant_data_line = "Alaimo, Martin"
 
-  #     Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status ).should be false
-  #     Participant.all.count.should == 0
-  #   end
+      expect(
+        Participant.create_from_batch_line( participant_data_line, @event, @influence_zone, @status )
+      ).to be false
+      expect(Participant.all.count).to be 0
+    end
 
-  # end
+  end
 
-  # context 'search' do
-  #   before(:all) do
-  #     valid_attributes= {
-  #         :event_id => FactoryBot.create(:event).id,
-  #         :fname => "Pablo",
-  #         :lname => "Picasso",
-  #         :email => "ppicaso@pintores.org",
-  #         :phone => "1234-5678",
-  #         :influence_zone_id => FactoryBot.create(:influence_zone).id
-  #       }
-  #     @participant = Participant.create! valid_attributes
-  #   end
-  #   it 'By last name' do
-  #     found= Participant.search 'Pica'
-  #     found.count.should == 1
-  #     found[0].lname.should == 'Picasso'
-  #   end
-  #   it 'Not found' do
-  #     found= Participant.search 'Ramanaya'
-  #     found.should eq([])
-  #   end
-  #   it 'By first name' do
-  #     found= Participant.search 'Pabl'
-  #     found.count.should == 1
-  #     found[0].lname.should == 'Picasso'
-  #   end
-  #   it 'By first name lowercase' do
-  #     found= Participant.search 'pabl'
-  #     found.count.should == 1
-  #     found[0].lname.should == 'Picasso'
-  #   end
-  # end
+  context 'search' do
+    before(:each) do
+      @participant = FactoryBot.create(:participant, 
+        fname: "Pablo",
+        lname: "Picasso"        
+    )
+    end
+    it 'By last name' do
+      found= Participant.search 'Pica'
+      expect(found.count).to be 1
+      expect(found[0].lname).to eq 'Picasso'
+    end
+    it 'Not found' do
+      found= Participant.search 'Ramanaya'
+      expect(found).to eq []
+    end
+    it 'By first name' do
+      found= Participant.search 'Pabl'
+      expect(found.count).to eq 1
+      expect(found[0].lname).to eq 'Picasso'
+    end
+    it 'By first name lowercase' do
+      found= Participant.search 'pabl'
+      expect(found.count).to be 1
+      expect(found[0].lname).to eq 'Picasso'
+    end
+  end
 
 end
