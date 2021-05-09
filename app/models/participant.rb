@@ -36,6 +36,7 @@ class Participant < ApplicationRecord
     :contacted => "T",
     :confirmed => "C",
     :attended => "A",
+    :certified => "K",
     :deffered => "D",
     :cancelled => "X"
   }
@@ -123,12 +124,19 @@ class Participant < ApplicationRecord
     self.status = STATUS[:attended]
   end
 
+  def certify!
+    self.status = STATUS[:certified]
+  end
+
   def is_present?
     self.status == STATUS[:attended]
   end
 
   def is_confirmed_or_present?
-    self.status == STATUS[:confirmed] || self.status == STATUS[:attended]
+    self.status == STATUS[:confirmed] || is_present?
+  end
+  def could_receive_certificate?
+    is_confirmed_or_present? || self.status == STATUS[:certified]
   end
 
   def influence_zone_tag

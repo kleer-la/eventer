@@ -224,19 +224,26 @@ class ParticipantsController < ApplicationController
   end
 
   def certificate
-
     @page_size = params[:page_size]
     @verification_code = params[:verification_code]
-
     @participant = Participant.find(params[:id])
-    @certificate_store= FileStoreService.createS3
 
-    begin
-      @certificate = ParticipantsHelper::Certificate.new(@participant)
-      render
-    rescue ArgumentError, ActionView::Template::Error => e
-      flash[:alert] = e.message
+    error_msg=  ParticipantsHelper::validate_page_size(@page_size) ||
+                ParticipantsHelper::validate_event(@participant.event) ||
+                ParticipantsHelper::validation_participant(@participant, @verification_code)
+
+    if error_msg.present?
+      flash[:alert] = error_msg
       redirect_to event_participants_path
+    else
+      @certificate_store= FileStoreService.createS3
+      begin
+        @certificate = ParticipantsHelper::Certificate.new(@participant)
+        render
+      rescue ArgumentError, ActionView::Template::Error => e
+        flash[:alert] = e.message
+        redirect_to event_participants_path
+      end
     end
   end
 

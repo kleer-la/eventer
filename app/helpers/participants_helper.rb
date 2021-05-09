@@ -1,6 +1,25 @@
 require 'dimensions'
 
 module ParticipantsHelper
+
+  def self.validate_page_size(page_size)
+    if page_size.nil? || (page_size != "LETTER" && page_size != "A4")
+      "Solo puedes generar certificados en tamaño carta (LETTER) o A4 (A4). Por favor, contáctanos a entrenamos@kleer.la"
+    end
+  end
+  def self.validate_event(event)
+    if !event.trainer.signature_image.present?
+      'Trainer sin firma o no es accesible. Por favor, contáctanos a entrenamos@kleer.la'
+    end
+  end
+  def self.validation_participant(participant, verification_code)
+    if verification_code != participant.verification_code
+      "El código de verificación #{@verification_code} no es válido. Por favor, contáctanos a entrenamos@kleer.la"
+    elsif !participant.could_receive_certificate?
+      "El participante no puede recibir un certificado (Confirmado, presente o certificado). Por favor, contáctanos a entrenamos@kleer.la"
+    end
+  end
+
   class Certificate
     def initialize(participant)
       @participant=participant
