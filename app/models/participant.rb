@@ -136,7 +136,7 @@ class Participant < ApplicationRecord
     self.status == STATUS[:confirmed] || is_present?
   end
   def could_receive_certificate?
-    is_confirmed_or_present? || self.status == STATUS[:certified]
+    is_present? || self.status == STATUS[:certified]
   end
 
   def influence_zone_tag

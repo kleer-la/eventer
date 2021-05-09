@@ -154,13 +154,23 @@ describe EventsController do
 
   describe "GET send_certificate" do
     login_admin
-    it "ok" do
+    it "one present" do
       participant= FactoryBot.create(:participant)
       participant.attend!
       participant.save!
       
       get :send_certificate, params: {:id => participant.event.to_param}
       expect(response).to have_http_status :ok
+      expect(flash[:notice]).to include "1 certificados"
+    end
+    it "one certified" do
+      participant= FactoryBot.create(:participant)
+      participant.certify!
+      participant.save!
+      
+      get :send_certificate, params: {:id => participant.event.to_param}
+      expect(response).to have_http_status :ok
+      expect(flash[:notice]).to include "1 certificados"
     end
     # it "abort when trainer has no signature" do
     #   participant= FactoryBot.create(:participant)
