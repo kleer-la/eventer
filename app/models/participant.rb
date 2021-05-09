@@ -132,9 +132,6 @@ class Participant < ApplicationRecord
     self.status == STATUS[:attended]
   end
 
-  def is_confirmed_or_present?
-    self.status == STATUS[:confirmed] || is_present?
-  end
   def could_receive_certificate?
     is_present? || self.status == STATUS[:certified]
   end
