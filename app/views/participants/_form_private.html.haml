@@ -43,7 +43,7 @@
             .span4
               .control-group
                 %label.control-label{ :for => :status }= t("formtastic.labels.participant.status")
-                = f.collection_select :status, [["Nuevo", "N"], ["Contactado", "T"], ["Confirmado", "C"], ["Presente", "A"], ["Cancelado", "X"], ["Pospuesto", "D"]], :last, :first
+                = f.collection_select :status, @status_valuekey, :last, :first
 
           .row-fluid
             .span4

@@ -3,12 +3,15 @@
 class ParticipantsController < ApplicationController
   before_action:authenticate_user!, :except => [:new, :create, :confirm, :certificate, :payuco_confirmation, :payuco_response]
 
+  STATUS_LIST= [["Nuevo", "N"], ["Contactado", "T"], ["Confirmado", "C"], ["Presente", "A"],["Certificado", "K"], ["Cancelado", "X"], ["Pospuesto", "D"]]
   # GET /participants
   # GET /participants.json
   def index
     @event = Event.find(params[:event_id])
     @participants = @event.participants.sort_by(&:status_sort_order)
     @influence_zones = InfluenceZone.all
+    @status_valuekey= STATUS_LIST
+    @status_keyvalue= STATUS_LIST.map {|s| [s[1],s[0]]}
 
     respond_to do |format|
       format.html # index.html.erb
@@ -98,6 +101,7 @@ class ParticipantsController < ApplicationController
     @participant = Participant.find(params[:id])
     @event = Event.find(params[:event_id])
     @influence_zones = InfluenceZone.all
+    @status_valuekey= STATUS_LIST
   end
 
   # POST /participants
@@ -220,19 +224,26 @@ class ParticipantsController < ApplicationController
   end
 
   def certificate
-
     @page_size = params[:page_size]
     @verification_code = params[:verification_code]
-
     @participant = Participant.find(params[:id])
-    @certificate_store= FileStoreService.createS3
 
-    begin
-      @certificate = ParticipantsHelper::Certificate.new(@participant)
-      render
-    rescue ArgumentError, ActionView::Template::Error => e
-      flash[:alert] = e.message
+    error_msg=  ParticipantsHelper::validate_page_size(@page_size) ||
+                ParticipantsHelper::validate_event(@participant.event) ||
+                ParticipantsHelper::validation_participant(@participant, @verification_code)
+
+    if error_msg.present?
+      flash[:alert] = error_msg
       redirect_to event_participants_path
+    else
+      @certificate_store= FileStoreService.createS3
+      begin
+        @certificate = ParticipantsHelper::Certificate.new(@participant)
+        render
+      rescue ArgumentError, ActionView::Template::Error => e
+        flash[:alert] = e.message
+        redirect_to event_participants_path
+      end
     end
   end
 

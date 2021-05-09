@@ -182,33 +182,88 @@ describe ParticipantsController do
     describe "certificate" do
       before(:each) do
         ev= @participant.event.event_type
-        ev.kleer_cert_seal_image='base2021.png'
-        ev.save!
         @participant.attend!
         @participant.save! 
       end
       it "show one certifcate" do 
         get :certificate,  params: {
           :event_id => @participant.event.id, :id => @participant.id,
-          :page_size => "A4", :verification_code => "5BA4365B443ED1801C57",
+          :page_size => "A4", :verification_code => @participant.verification_code,
           :format => :pdf
         }
         expect(assigns(:certificate).name).to eq 'Juan Carlos Perez Luasó'
         expect(assigns(:certificate_store)).not_to be_nil
       end
-      it "w/o signature" do
-        t=@participant.event.trainers[0]
-        t.signature_image="" 
-        t.save!
+      it "a certified participant certifcate" do 
+        @participant.certify!
+        @participant.save!
         get :certificate,  params: {
           :event_id => @participant.event.id, :id => @participant.id,
-          :page_size => "A4", :verification_code => "5BA4365B443ED1801C57",
+          :page_size => "A4", :verification_code => @participant.verification_code,
           :format => :pdf
         }
-        # expect(assigns(:certificate).name).to be_nil
-        expect(response).to redirect_to event_participants_path
-        expect(flash[:alert]).to include "No signature"
+        expect(assigns(:certificate).name).to eq 'Juan Carlos Perez Luasó'
       end
+      context 'invalid' do
+        it "w/o signature" do
+          t=@participant.event.trainers[0]
+          t.signature_image="" 
+          t.save!
+          get :certificate,  params: {
+            :event_id => @participant.event.id, :id => @participant.id,
+            :page_size => "A4", :verification_code => @participant.verification_code,
+            :format => :pdf
+          }
+          expect(response).to redirect_to event_participants_path
+          expect(flash[:alert]).to include "sin firma"
+        end
+
+        it "no page size" do
+          get :certificate,  params: {
+            :event_id => @participant.event.id, :id => @participant.id,
+            # :page_size => "A4",
+             :verification_code => @participant.verification_code,
+            :format => :pdf
+          }
+          expect(response).to redirect_to event_participants_path
+          expect(flash[:alert]).to include "carta"
+        end
+        it "wrong page size" do
+          get :certificate,  params: {
+            :event_id => @participant.event.id, :id => @participant.id,
+            :page_size => "pepepepe",
+             :verification_code => @participant.verification_code,
+            :format => :pdf
+          }
+          expect(response).to redirect_to event_participants_path
+          expect(flash[:alert]).to include "carta"
+        end
+        it "wrong verification code" do
+          get :certificate,  params: {
+            :event_id => @participant.event.id, :id => @participant.id,
+            :page_size => "A4",
+             :verification_code => "5BA4365pepeB443ED1801C57",
+            :format => :pdf
+          }
+          expect(response).to redirect_to event_participants_path
+          expect(flash[:alert]).to include "verificación"
+        end
+  
+        it "not present (contacted)" do
+          @participant.status='N'
+          @participant.save! 
+  
+          get :certificate,  params: {
+            :event_id => @participant.event.id, :id => @participant.id,
+            :page_size => "A4",
+             :verification_code => @participant.verification_code,
+            :format => :pdf
+          }
+          expect(response).to redirect_to event_participants_path
+          expect(flash[:alert]).to include "presente"
+        end
+      end
+
     end
   end
 

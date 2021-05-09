@@ -164,7 +164,7 @@ describe Certificate do
       before(:each) do
       end
 
-      it 'the place is OnLine' do
+      it 'the place is not OnLine' do
         cert = Certificate.new(@participant)
         expect(cert.place).to eq "Punta del Este, Argentina"
       end
@@ -203,25 +203,25 @@ describe "render certificates" do
         certificate_filename = ParticipantsHelper::generate_certificate( participant, 'A4',  @certificate_store )
     end
       
-      context 'Certificate' do
+    context 'ParticipantsHelper::Certificate' do
         it 'invalid, no signature for 1st trainer' do
-          participant= FactoryBot.create(:participant)
-          participant.event.trainers[0].signature_image= ''
-          participant.attend!
-          participant.save!
-          expect {
-            ParticipantsHelper::Certificate.new(participant)
-          }.to raise_error 'No signature available for the first trainer'
+            participant= FactoryBot.create(:participant)
+            participant.event.trainers[0].signature_image= ''
+            participant.attend!
+            participant.save!
+            expect {
+                ParticipantsHelper::Certificate.new(participant)
+            }.to raise_error 'No signature available for the first trainer'
         end
         it 'valid, no signature  for 2nd trainer' do
-          participant= FactoryBot.create(:participant)
-          participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
-          participant.attend!
-          participant.save!
-          expect {
-            ParticipantsHelper::Certificate.new(participant)
-          }.not_to raise_error
+            participant= FactoryBot.create(:participant)
+            participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
+            participant.attend!
+            participant.save!
+            expect {
+                ParticipantsHelper::Certificate.new(participant)
+            }.not_to raise_error
         end
-      end
+    end
 
   end

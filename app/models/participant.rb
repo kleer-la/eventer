@@ -33,11 +33,22 @@ class Participant < ApplicationRecord
 
   STATUS= {
     :new => "N",
-    :confirmed => "C",
     :contacted => "T",
-    :cancelled => "X",
+    :confirmed => "C",
+    :attended => "A",
+    :certified => "K",
     :deffered => "D",
-    :attended => "A"
+    :cancelled => "X"
+  }
+
+  STATUS_DESC= {
+    "N" => 'Nuevo',
+    "T" => 'Contactado',
+    "C" => 'Confirmado',
+    "A"  => 'Presente',
+    "K"  => 'Certificado',
+    "D" => 'Pospuesto',
+    "X" => 'Cancelado'
   }
 
   PAYMENT_TYPE= {
@@ -88,12 +99,11 @@ class Participant < ApplicationRecord
   end
 
   def human_status
-    desc = %w(Nuevo Contactado Confirmado Presente Pospuesto Cancelado --?--)
-    return desc[status_sort_order-1]
+    STATUS_DESC[self.status] || '--?--'
   end
 
   def status_sort_order
-    ("NTCADX".index(self.status) || 6)+1
+    ("NTCAKDX".index(self.status) || 7)+1
   end
 
   def confirm!
@@ -114,12 +124,16 @@ class Participant < ApplicationRecord
     self.status = STATUS[:attended]
   end
 
+  def certify!
+    self.status = STATUS[:certified]
+  end
+
   def is_present?
     self.status == STATUS[:attended]
   end
 
-  def is_confirmed_or_present?
-    self.status == STATUS[:confirmed] || self.status == STATUS[:attended]
+  def could_receive_certificate?
+    is_present? || self.status == STATUS[:certified]
   end
 
   def influence_zone_tag

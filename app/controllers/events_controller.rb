@@ -118,14 +118,16 @@ class EventsController < ApplicationController
     if @event.trainer.signature_image.nil? || @event.trainer.signature_image == ""
       flash.now[:alert] = t('flash.event.send_certificate.signature_failure')
     else
+      sent= 0
 
       @event.participants.each do |participant|
-        if participant.is_present?
+        if participant.could_receive_certificate?
           participant.delay.generate_certificate_and_notify
+          sent += 1
         end
       end
 
-      flash.now[:notice] = t('flash.event.send_certificate.success')
+      flash.now[:notice] = t('flash.event.send_certificate.success') + "Se están enviando #{sent} certificados."
     end
 
   end
