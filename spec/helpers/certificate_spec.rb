@@ -222,14 +222,52 @@ describe "render certificates" do
 
         it 'default Background image' do
             cert= ParticipantsHelper::Certificate.new(@participant)
-            expect(cert.background_file). to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+            expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+            expect(cert.foreground_file).to be nil
         end
         it 'custom Background image' do
             @participant.event.event_type.kleer_cert_seal_image = 'shamrock.png'
             
             cert= ParticipantsHelper::Certificate.new(@participant)
-            expect(cert.background_file). to eq 'shamrock.png'
+            expect(cert.background_file).to eq 'shamrock.png'
+            expect(cert.foreground_file).to be nil
+        end
+        it 'custom Foreground image' do
+            @participant.event.event_type.kleer_cert_seal_image = 'fgshamrock.png'
+            
+            cert= ParticipantsHelper::Certificate.new(@participant)
+            expect(cert.background_file).to be nil
+            expect(cert.foreground_file).to eq 'fgshamrock.png'
+        end
+
+        context 'Kleer Certification' do
+            before(:each) do
+                @participant.event.event_type.is_kleer_certification = true
+            end
+            it 'Present - custom image' do
+                @participant.attend!
+                @participant.event.event_type.kleer_cert_seal_image = 'shamrock.png'
+                cert= ParticipantsHelper::Certificate.new(@participant)
+                expect(cert.background_file).to eq 'shamrock.png'
+            end
+            it 'Present - no custom image' do
+                @participant.attend!
+                @participant.event.event_type.kleer_cert_seal_image = ''
+                cert= ParticipantsHelper::Certificate.new(@participant)
+                expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+            end
+            it 'Certified - custom image' do
+                @participant.certify!
+                @participant.event.event_type.kleer_cert_seal_image = 'shamrock.png'
+                cert= ParticipantsHelper::Certificate.new(@participant)
+                expect(cert.background_file).to eq 'shamrock.png'
+            end
+            it 'Certified - no custom image' do
+                @participant.certify!
+                @participant.event.event_type.kleer_cert_seal_image = ''
+                cert= ParticipantsHelper::Certificate.new(@participant)
+                expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+            end
         end
     end
-
-  end
+end
