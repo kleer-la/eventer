@@ -24,9 +24,6 @@ RSpec.describe "generate one certificate" do
       participant= FactoryBot.create(:participant)
       participant.attend!
       participant.save!
-      ev= participant.event.event_type
-      ev.kleer_cert_seal_image='2021.png' # to signal a 2021 version
-      ev.save!
       assign(:page_size, 'LETTER')
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant) )

@@ -1,6 +1,7 @@
 require 'dimensions'
 
 module ParticipantsHelper
+  DEFAULT_BACKGROUND_IMAGE= 'base2021.png'
 
   def self.validate_page_size(page_size)
     if page_size.nil? || (page_size != "LETTER" && page_size != "A4")
@@ -46,8 +47,12 @@ module ParticipantsHelper
       @participant.event.event_type.kleer_cert_seal_image
     end
     def background_file
-      kleer_cert_seal_image= 'base2021.png' if not kleer_cert_seal_image.present?
-      kleer_cert_seal_image if not foreground?
+      if kleer_cert_seal_image.present?
+        bg_image= kleer_cert_seal_image
+      else
+        bg_image= ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+      end
+      bg_image if not foreground?
     end
     def foreground_file
       kleer_cert_seal_image if foreground?
