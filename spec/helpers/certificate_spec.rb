@@ -199,7 +199,7 @@ describe "render certificates" do
     it 'new (2021) certificate file' do
         @participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
         certificate_filename = ParticipantsHelper::generate_certificate( @participant, 'A4',  @certificate_store )
-        expect(certificate_filename).to eq "/app/tmp/#{@participant.verification_code}p#{@participant.id}-A4.pdf"
+        expect(certificate_filename).to include "/tmp/#{@participant.verification_code}p#{@participant.id}-A4.pdf"
     end
       
     context 'ParticipantsHelper::Certificate' do
