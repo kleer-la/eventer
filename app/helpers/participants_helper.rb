@@ -47,7 +47,7 @@ module ParticipantsHelper
       @participant.event.event_type.kleer_cert_seal_image
     end
     def background_file
-      if kleer_cert_seal_image.present?
+      if kleer_cert_seal_image.present? && (! is_kleer_certification? || @participant.is_certified?)
         bg_image= kleer_cert_seal_image
       else
         bg_image= ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE

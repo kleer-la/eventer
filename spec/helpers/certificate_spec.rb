@@ -248,7 +248,7 @@ describe "render certificates" do
                 @participant.attend!
                 @participant.event.event_type.kleer_cert_seal_image = 'shamrock.png'
                 cert= ParticipantsHelper::Certificate.new(@participant)
-                expect(cert.background_file).to eq 'shamrock.png'
+                expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
             end
             it 'Present - no custom image' do
                 @participant.attend!
