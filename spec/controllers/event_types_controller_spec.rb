@@ -118,7 +118,7 @@ describe EventTypesController do
     it "destroys the requested event_type" do
       expect {
         delete :destroy, params: {:id => @event_type.to_param}
-      }.to change(EventType, :count).by(-1)
+      }.to change(EventType, :count).by(0)  # -1
     end
 
     it "redirects to the event_types list" do
