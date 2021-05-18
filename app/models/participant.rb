@@ -206,7 +206,7 @@ class Participant < ApplicationRecord
 
   def self.search(searching)
     s= searching.downcase
-    Participant.select {|p| (p.fname + ' ' + p.lname).downcase.include?(s)}
+    Participant.select {|p| (p.fname + ' ' + p.lname + p.verification_code).downcase.include?(s)}
   end
 
   def accept_terms
