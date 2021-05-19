@@ -234,21 +234,6 @@ describe Event do
     expect(@event.webinar_started?).to be true
   end
   
-  
-  it "should require a time zone name if event is webinar" do
-    @event.time_zone_name = ""
-    @event.mode = 'ol'
-    @event.visibility_type = 'pu'
-    expect(@event.valid?).to be true
-    
-    @event.mode = 'ol'
-    @event.visibility_type = 'co'
-    expect(@event.valid?).to be false
-    
-    @event.time_zone_name = "Buenos Aires"
-    expect(@event.valid?).to be true
-  end
-  
   it "should allow custom e-mail prices overrite" do
     @event.custom_prices_email_text = "PL: 300, EB: 200, BN: 100"
     expect(@event.custom_prices_email_text).to eq "PL: 300, EB: 200, BN: 100"
