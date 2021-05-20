@@ -5,7 +5,7 @@ describe HomeController do
   describe "GET 'index' (/api/events.<format>)" do
     it "returns http success" do
       get :index, params: {format: "xml"}
-      expect(response).to be_success
+      expect(response).to be_successful
     end
     it "returns events" do
       event = FactoryBot.create(:event)

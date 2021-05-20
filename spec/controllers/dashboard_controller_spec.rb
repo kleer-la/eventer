@@ -8,7 +8,7 @@ describe DashboardController do
     login_admin
     it "returns http success" do
       get 'index'
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -17,13 +17,13 @@ describe DashboardController do
     it "no event" do
       get 'pricing'
       expect(assigns(:events)).to eq []
-      expect(response).to be_success
+      expect(response).to be_successful
     end
     it "one event" do
       event = FactoryBot.create(:event, registration_link: "")
       get 'pricing'
       expect(assigns(:events)).to eq [event]
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   
@@ -32,13 +32,13 @@ describe DashboardController do
     it "no event" do
       get 'pricing'
       expect(assigns(:events)).to eq []
-      expect(response).to be_success
+      expect(response).to be_successful
     end
     it "one event" do
       event = FactoryBot.create(:event, registration_link: "")
       get 'pricing'
       expect(assigns(:events)).to eq [event]
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
   
