@@ -134,11 +134,6 @@ class ParticipantsController < ApplicationController
             @participant.save
           end
 
-          if @event.mailchimp_workflow
-            mailchimp_service = MailChimpService.new
-            mailchimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_call, @participant
-          end
-
           if @event.should_welcome_email and !session[:payment_on_eventer]
             EventMailer.delay.welcome_new_event_participant(@participant)
           end
@@ -197,10 +192,6 @@ class ParticipantsController < ApplicationController
       if @participant.update_attributes(participant_params)
         new_participant_status = participant_params[:status]
         @event = Event.find(params[:event_id])
-        if @event.mailchimp_workflow_for_warmup && new_participant_status == "C" && new_participant_status != original_participant_status
-          mailChimp_service = MailChimpService.new
-          mailChimp_service.subscribe_email_to_workflow_using_automation_workflow_list @event.mailchimp_workflow_for_warmup_call, @participant
-        end
         format.html { redirect_to event_participants_path(@participant.event), notice: 'Participant was successfully updated.' }
         format.json { respond_with_bip(@participant) }
       else

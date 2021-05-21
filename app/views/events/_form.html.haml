@@ -249,9 +249,9 @@
                   %br
                   (Promociones no acumulables, aplicadas sobre el precio de lista)
                   %br
-                  **Formas de pago:** tarjeta de crédito, transferencia bancaria, depósito o cheque. ( [más información](http://www.kleer.la/es/preguntas-frecuentes/facturacion-pagos-argentinas) ).
+                  **Formas de pago:** tarjeta de crédito.
                   %br
-                  Envianos un mensaje a <entrenamos@kleer.la> con la forma de pago que prefieras. Mientras tanto te reservaremos el orden de inscripción para este evento por las próximas 48 horas.
+                  La vacante se reserva con el pago.
           .row-fuid
             .span12
               .control-group
@@ -311,26 +311,6 @@
                   Este texto soporta
                   %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML.
-          .row-fuid
-            .span12
-              .control-group
-                %label.control-label{ :for => :mailchimp_workflow }= t("formtastic.labels.event.mailchimp_workflow")
-                = f.check_box :mailchimp_workflow
-          .row-fuid
-            .span12
-              .control-group
-                %label.control-label{ :for => :mailchimp_workflow_call }= t("formtastic.labels.event.mailchimp_workflow_call")
-                = f.text_field :mailchimp_workflow_call, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.mailchimp_workflow_call")
-          .row-fuid
-            .span12
-              .control-group
-                %label.control-label{ :for => :mailchimp_workflow_for_warmup }= t("formtastic.labels.event.mailchimp_workflow_for_warmup")
-                = f.check_box :mailchimp_workflow_for_warmup
-          .row-fuid
-            .span12
-              .control-group
-                %label.control-label{ :for => :mailchimp_workflow_for_warmup_call }= t("formtastic.labels.event.mailchimp_workflow_for_warmup_call")
-                = f.text_field :mailchimp_workflow_for_warmup_call, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.mailchimp_workflow_for_warmup_call")
           .row-fuid
             .span3
               .control-group

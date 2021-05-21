@@ -323,6 +323,11 @@ describe Participant do
       expect(found.count).to be 1
       expect(found[0].lname).to eq 'Picasso'
     end
+    it 'By verification code' do
+      found= Participant.search '065BECBA36F903CF6ppp'
+      expect(found.count).to be 1
+      expect(found[0].verification_code).to eq '065BECBA36F903CF6PPP'
+    end
   end
 
 end

@@ -68,29 +68,6 @@ class Event < ApplicationRecord
     self.discount_on_private(record, attr, value)
   end
 
-  validates_each :time_zone_name do |record, attr, value|
-    if record.is_webinar? && (value == "" || value.nil?)
-      record.errors.add(attr, :time_zone_name_is_required_for_a_webinar)
-    end
-  end
-
-  validate :mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
-
-  validate :mailchimp_workflow_for_warmup_call_cannot_be_empty_when_mailchimp_warmup_is_checked
-
-
-  def mailchimp_workflow_call_cannot_be_empty_when_mailchimp_is_checked
-    if mailchimp_workflow? && (mailchimp_workflow_call == "" || mailchimp_workflow_call.nil?)
-      errors.add(:mailchimp_workflow_call, "can't be null or empty when Mailchimp Workflow is checked")
-    end
-  end
-
-  def mailchimp_workflow_for_warmup_call_cannot_be_empty_when_mailchimp_warmup_is_checked
-    if mailchimp_workflow_for_warmup && (mailchimp_workflow_for_warmup_call == "" || mailchimp_workflow_for_warmup_call.nil?)
-      errors.add(:mailchimp_workflow_for_warmup_call, "can't be null or empty when Mailchimp Workflow for Warmup is checked")
-    end
-  end
-
   comma do
     self.visibility_type 'Visibilidad'
     self.id 'Event ID'

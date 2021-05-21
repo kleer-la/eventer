@@ -91,13 +91,15 @@ class EventTypesController < ApplicationController
   # DELETE /event_types/1
   # DELETE /event_types/1.json
   def destroy
-    @event_type = EventType.find(params[:id])
-    @event_type.destroy
+    redirect_to event_types_path, notice: 'Event type delete is disable. Contact entrenamos@kleer.la'
+    
+    # @event_type = EventType.find(params[:id])
+    # @event_type.destroy
 
-    respond_to do |format|
-      format.html { redirect_to event_types_url }
-      format.json { head :no_content }
-    end
+    # respond_to do |format|
+    #   format.html { redirect_to event_types_url }
+    #   format.json { head :no_content }
+    # end
   end
 
   private
