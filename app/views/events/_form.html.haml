@@ -341,10 +341,10 @@
 
 :javascript
 
-  $event_country_id_before_webinar = "";
-  $event_city_before_webinar = "";
-  $event_place_before_webinar = "";
-  $event_address_before_webinar = "";
+  $event_country_id_before_ol = "";
+  $event_city_before_ol = "";
+  $event_place_before_ol = "";
+  $event_address_before_ol = "";
 
   $event_type_cancellation_policy = "#{ (@event_type_cancellation_policy.nil? ? "" : escape_javascript(@event_type_cancellation_policy) ) }";
 
@@ -478,15 +478,15 @@
      if ( $("#event_mode").val() == "ol" ) {
          eventOnLineConfigure();
      } else {
-         $("#event_city").val( $event_city_before_webinar );
+         $("#event_city").val( $event_city_before_ol );
          $("#event_city").removeAttr('readonly');
 
-         $("#event_country_id").val( $event_country_id_before_webinar );
+         $("#event_country_id").val( $event_country_id_before_ol );
 
-         $("#event_place").val( $event_place_before_webinar );
+         $("#event_place").val( $event_place_before_ol );
          $("#event_place").removeAttr('readonly');
 
-         $("#event_address").val( $event_address_before_webinar );
+         $("#event_address").val( $event_address_before_ol );
          $("#event_address").removeAttr('readonly');
 
          $("#event_time_zone_name").val( "" );
@@ -502,15 +502,15 @@
 
   function eventOnLineConfigure() {
      if ( $("#event_mode").val() == "ol" ) {
-         $event_city_before_webinar = $("#event_city").val();
+         $event_city_before_ol = $("#event_city").val();
          $("#event_city").val( "Online" );
          $("#event_city").attr('readonly','readonly');
 
-         $event_address_before_webinar = $("#event_address").val();
+         $event_address_before_ol = $("#event_address").val();
          $("#event_address").val( "Online" );
          $("#event_address").attr('readonly','readonly');
 
-         $event_country_id_before_webinar = $("#event_country_id").val();
+         $event_country_id_before_ol = $("#event_country_id").val();
          $("#event_country_id option:contains('-- OnLine --')").attr('selected', true);
          $("#event_time_zone_name_input").show();
 

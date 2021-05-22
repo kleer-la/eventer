@@ -49,11 +49,6 @@
                   .row-fluid
                     .span1
                       = event.human_date
-                      %br
-                      -if event.is_webinar? && false
-                        %img{:src => "/assets/icons/webinar.png", :style => "vertical-align:middle; width:50%"}
-                      - elsif false
-                        %img{:src => "/assets/icons/presencial.png", :style => "vertical-align:middle; width:50%"}
                     .span11
                       .task
                         %span.pull-left
