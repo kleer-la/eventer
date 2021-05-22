@@ -38,41 +38,11 @@ class DashboardController < ApplicationController
       select{|ev| country_filter.select?(ev.country_id)}
   end
 
-  def countdown
-    @events = Event.public_and_visible.order(:date).where.not(event_type_id: nil)
-  end
-
   def funneling
     @events = Event.all(:order => 'date')
     respond_to do |format|
       format.csv { render :csv => @events, :filename => "funelling" }
     end
-  end
-
-=begin
-  # DEPRECATED
-  def ratings
-    @active_menu = "ratings"
-
-    @rating = Rating.first
-
-    @top_5_nps_event_types = EventType.select{ |et| !et.net_promoter_score.nil? }.sort_by(&:net_promoter_score).reverse![0..4]
-    @top_5_nps_trainers = Trainer.select{ |t| !t.net_promoter_score.nil? }.sort_by(&:net_promoter_score).reverse![0..4]
-
-
-    @top_10_event_types = EventType.select{ |et| !et.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
-    @top_10_events = Event.select{ |e| !e.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
-    @top_10_trainers = Trainer.select{ |t| !t.average_rating.nil? }.sort_by(&:average_rating).reverse![0..9]
-  end
-=end
-
-  def calculate_rating
-
-    Rating.delay.calculate( current_user )
-
-    flash[:notice] = t('flash.rating.calculating')
-
-    redirect_to dashboard_ratings_path
   end
 
   private
