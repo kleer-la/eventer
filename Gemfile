@@ -2,9 +2,10 @@ source 'http://rubygems.org'
 
 ruby '~> 2.6'
 
-gem 'rails', '~> 5.1.0'
+gem 'rails', '~> 5.2.0'
 
 gem 'web-console', '~> 2.0', group: :development
+gem 'listen', group: :development
 
 group :development, :test do
   gem 'sqlite3', '~> 1.3.6' # '1.4.2'
@@ -72,8 +73,7 @@ gem 'aws-sdk', '< 2' # v2 change to Aws instead of AWS
 gem 'newrelic_rpm'
 
 # Gemas necesarias para integracion con mailchimp workflow
-gem 'httparty'
-gem 'json', '1.8.6'
+gem 'json'
 
 #reCaptcha
 gem "recaptcha", require: "recaptcha/rails"  #, :github => "ambethia/recaptcha"

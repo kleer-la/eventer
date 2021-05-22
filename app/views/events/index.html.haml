@@ -38,14 +38,12 @@
                   - else
                     %td= link_to event.event_type.short_name, event
                   %td{ :style => "white-space:normal;"}
-                    -if event.is_webinar?
-                      %img{:src => "/assets/online.png", :style => "vertical-align:middle"}
-                    -elsif !event.country.nil?
+                    -if !event.country.nil?
                       %i{ :class => "flag flag-#{event.country.iso_code.downcase}"}
                     = event.city
                     %br
                     = event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
-                    -if !event.is_webinar? && !event.address.nil?
+                    -if !event.address.nil?
                       = ", " + event.address
                   %td
                     -if event.visibility_type == "pu"
@@ -63,9 +61,5 @@
                     .text-right
                       - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
                       - #  %i.icon-eye-open
-                      -if event.is_webinar?
-                        %a.btn.btn-success.btn-mini{ :href => "/events/#{event.id}/start_webinar" }
-                          %i.icon-play
-                          Iniciar
                       %a.btn.btn-warning.btn-mini{ :href => edit_event_path(event) }
                         %i.icon-edit

@@ -419,8 +419,7 @@ describe Event do
     end
   end
  
-  context "Capacity" do
-    
+  context "Capacity" do  
     it "It should return a completion percentage w/confirmed participant" do
       @event.capacity = 10
       p= FactoryBot.create(:participant, event: @event, status: "C")
@@ -431,6 +430,30 @@ describe Event do
     it "It should return a 100% completion when capacity==0" do
       @event.capacity = 0
       expect(@event.completion).to eq 1
+    end
+  end
+  context "Attendance" do  
+    it "0 attendance wo/attended or certified participant" do
+      @event.capacity = 10
+      p= FactoryBot.create(:participant, event: @event, status: "C")
+      
+      expect(@event.attendance_counts[:attendance]).to eq 0
+      expect(@event.attendance_counts[:total]).to eq 1
+    end
+    
+    it "1 attendance w/ one attended participant" do
+      @event.capacity = 10
+      p= FactoryBot.create(:participant, event: @event, status: "A")
+      
+      expect(@event.attendance_counts[:attendance]).to eq 1
+      expect(@event.attendance_counts[:total]).to eq 1
+    end
+    it "1 attendance w/ one certified participant" do
+      @event.capacity = 10
+      p= FactoryBot.create(:participant, event: @event, status: "K")
+      
+      expect(@event.attendance_counts[:attendance]).to eq 1
+      expect(@event.attendance_counts[:total]).to eq 1
     end
   end
 end

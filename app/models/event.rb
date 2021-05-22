@@ -104,6 +104,14 @@ class Event < ApplicationRecord
     end
   end
 
+  def attendance_counts
+    con= self.participants.confirmed.count
+    att= self.participants.attended.count
+    cer= self.participants.certified.count
+    {attendance: att+cer, total: con+att+cer}
+  end
+
+
   def weeks_from(now=Date.today)
     from_date = now.beginning_of_week
     to_date = self.date.beginning_of_week

@@ -21,3 +21,4 @@ chromedriver.log
 
 .DS_Store
 .idea/
+/config/master.key

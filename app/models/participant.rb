@@ -65,6 +65,7 @@ class Participant < ApplicationRecord
   scope :cancelled, -> {where(:status => STATUS[:cancelled])}
   scope :deffered, -> {where(:status => STATUS[:deffered])}
   scope :attended, -> {where(:status => STATUS[:attended])}
+  scope :certified, -> {where(:status => STATUS[:certified])}
   scope :confirmed_or_attended, -> {where("status=? OR status=?", STATUS[:confirmed], STATUS[:attended])}
 
   scope :surveyed, -> {where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1')}

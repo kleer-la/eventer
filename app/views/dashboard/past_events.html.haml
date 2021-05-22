@@ -70,7 +70,11 @@
             - printed_year = -1
             - @events.each do |event|
               - if !event.event_type.nil?
-                - event_people_count = event.participants.attended.count.to_f + event.participants.confirmed.count.to_f
+                - att_counts= event.attendance_counts
+                - if att_counts[:total] > 0
+                  - event_attended_percent = (att_counts[:attendance]*100.0 / att_counts[:total]).round
+                - else
+                  - event_attended_percent = 100
                 - if printed_year != event.date.year
                   %li
                     .span12.box.bordered-box.blue-border.blue-background{ :style => "margin-bottom:0;" }
@@ -82,11 +86,6 @@
                     .span1
                       &nbsp;
                       = event.human_date
-                      %br
-                      -if event.is_webinar? && false
-                        %img{:src => "/assets/icons/webinar.png", :style => "vertical-align:middle; width:50%"}
-                      - elsif false
-                        %img{:src => "/assets/icons/presencial.png", :style => "vertical-align:middle; width:50%"}
                     .span11
                       .task
                         %span.pull-left
@@ -94,30 +93,13 @@
                             %b= event.event_type.name
                             = "| " + event.city + " | " + event.place
                         %small.pull-right
+                          Presentes / Confirmados:
+                          %b= "#{event_attended_percent}% (#{att_counts[:attendance]}/#{att_counts[:total]})"
+                          &nbsp; &nbsp; &nbsp;
                           %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
                             %i.icon-group
                           &nbsp;
                           %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants_survey" }
                             %i.icon-check
-                      - if event_people_count > 0
-                        - event_attended_percent = event.participants.attended.count.to_f / event_people_count
-                      - else
-                        - event_attended_percent = 0
-
-                      Porcentaje de Asistentes Presentes:
-                      = "#{(event_attended_percent*100).round.to_s}% (#{event.participants.attended.count.to_s}/#{event_people_count.to_i})"
-                      - if event_attended_percent < 0.2
-                        .progress.progress-small.progress-danger
-                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-                      - elsif event_attended_percent >= 0.2 && event_attended_percent < 0.5
-                        .progress.progress-small.progress-info
-                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-                      - elsif event_attended_percent >= 0.5 && event_attended_percent < 0.8
-                        .progress.progress-small
-                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-                      - elsif event_attended_percent >= 0.8
-                        .progress.progress-small.progress-success
-                          .bar{ :style => "width: #{(event_attended_percent*100).round.to_s}%" }
-
             .digg_pagination
               = will_paginate @events

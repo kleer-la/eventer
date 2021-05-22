@@ -4,18 +4,11 @@
     %span
       %a(href='/dashboard') Dashboard:
       = render partial: '/commons/country_menu', locals: {top: '/dashboard'}
-
+ 
 = render '/commons/notice'
 
 .row-fluid
   .span12.box
-    .box-header
-      .title
-        .icon-group
-        Registros
-      .actions
-        %a.btn.box-collapse.btn-mini.btn-link
-          %i
     .row-fluid
       .span6
         .box-content.box-statistic
@@ -30,56 +23,59 @@
           %small Contactados (Recordá Hacer Seguimiento)
           .text-warning.icon-check.align-right
 
-.row-fluid
-  .span12
-    .row-fluid
-      .span12.box.box-nomargin
-        .box-header.green-background
-          .title
-            .icon-tasks
-            Completitud de Próximos Cursos (Participantes Confirmados)
-          .actions
-            %a.btn.box-collapse.btn-mini.btn-link
-              %i
-        .box-content
-          %ul.unstyled.tasks
-            - @events.select{ |ev| !ev.event_type.nil? }.each do |event|
-              %li
-                .row-fluid
-                  .span1
-                    = event.human_date
-                    %br
-                    -if event.is_webinar? && false
-                      %img{:src => "/assets/icons/webinar.png", :style => "vertical-align:middle; width:50%"}
-                    - elsif false
-                      %img{:src => "/assets/icons/presencial.png", :style => "vertical-align:middle; width:50%"}
-                  .span11
-                    .task
-                      %span.pull-left
-                        %a{ :href => "/events/#{event.id}/participants" }
-                          %b= event.event_type.name
-                          = "| " + event.city + " | " + event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
-                      %small.pull-right
-                        - if event.registration_link == ""
-                          = "#{(event.completion*100).round.to_s}% (#{event.participants.confirmed.count.to_s}/#{event.capacity.to_s}) "
-                          - if event.participants.new_ones.count > 0
-                            %img{:src => "/assets/alert.png", :style => "vertical-align:middle"}
-                            %strong= link_to event.participants.new_ones.count.to_s + " nuevos", event_participants_path(event)
-                          %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
-                            %i.icon-group
-                          &nbsp;
-                        - else
-                          N/A
-                    - if event.registration_link == ""
-                      - if event.completion < 0.2
-                        .progress.progress-small.progress-danger
-                          .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
-                      - elsif event.completion >= 0.2 && event.completion < 0.5
-                        .progress.progress-small.progress-info
-                          .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
-                      - elsif event.completion >= 0.5 && event.completion < 0.8
-                        .progress.progress-small
-                          .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
-                      - elsif event.completion >= 0.8
-                        .progress.progress-small.progress-success
-                          .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
+- event_groups= []
+- event_groups << [2, @events.select{ |ev| (ev.date.cweek-Date.today.cweek)<=2 }]
+- event_groups << [4, @events.select{ |ev| (ev.date.cweek-Date.today.cweek).between?(3,4) }]
+- event_groups << [6, @events.select{ |ev| (ev.date.cweek-Date.today.cweek).between?(5,6) }]
+- event_groups << ['+6', @events.select{ |ev| (ev.date.cweek-Date.today.cweek)>6 }]
+- event_groups.each do |event_group|
+  .row-fluid
+    .span12
+      .row-fluid
+        .span12.box.box-nomargin
+          .box-header.green-background
+            .title
+              .icon-tasks
+              Cursos en las próximas 
+              = event_group[0]
+              semanas 
+            .actions
+              %a.btn.box-collapse.btn-mini.btn-link
+                %i
+          .box-content
+            %ul.unstyled.tasks
+              - event_group[1].each do |event|
+                %li
+                  .row-fluid
+                    .span1
+                      = event.human_date
+                    .span11
+                      .task
+                        %span.pull-left
+                          %a{ :href => "/events/#{event.id}/participants" }
+                            %b= event.event_type.name
+                            = "| " + event.city + " | " + event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
+                        %small.pull-right
+                          - if event.registration_link == ""
+                            = "#{(event.completion*100).round.to_s}% (#{event.participants.confirmed.count.to_s}/#{event.capacity.to_s}) "
+                            - if event.participants.new_ones.count > 0
+                              %img{:src => "/assets/alert.png", :style => "vertical-align:middle"}
+                              %strong= link_to event.participants.new_ones.count.to_s + " nuevos", event_participants_path(event)
+                            %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
+                              %i.icon-group
+                            &nbsp;
+                          - else
+                            N/A
+                      - if event.registration_link == ""
+                        - if event.completion < 0.2
+                          .progress.progress-small.progress-danger
+                            .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
+                        - elsif event.completion >= 0.2 && event.completion < 0.5
+                          .progress.progress-small.progress-info
+                            .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
+                        - elsif event.completion >= 0.5 && event.completion < 0.8
+                          .progress.progress-small
+                            .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
+                        - elsif event.completion >= 0.8
+                          .progress.progress-small.progress-success
+                            .bar{ :style => "width: #{(event.completion*100).round.to_s}%" }
