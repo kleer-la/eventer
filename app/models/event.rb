@@ -108,7 +108,7 @@ class Event < ApplicationRecord
     con= self.participants.confirmed.count
     att= self.participants.attended.count
     cer= self.participants.certified.count
-    [con, att+cer]
+    {attendance: att+cer, total: con+att+cer}
   end
 
 

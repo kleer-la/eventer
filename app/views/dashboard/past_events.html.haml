@@ -71,9 +71,8 @@
             - @events.each do |event|
               - if !event.event_type.nil?
                 - att_counts= event.attendance_counts
-                - event_people_count = att_counts[0] + att_counts[1]
-                - if event_people_count > 0
-                  - event_attended_percent = (att_counts[1]*100.0 / event_people_count).round
+                - if att_counts[:total] > 0
+                  - event_attended_percent = (att_counts[:attendance]*100.0 / att_counts[:total]).round
                 - else
                   - event_attended_percent = 100
                 - if printed_year != event.date.year
@@ -95,7 +94,7 @@
                             = "| " + event.city + " | " + event.place
                         %small.pull-right
                           Presentes / Confirmados:
-                          %b= "#{event_attended_percent}% (#{att_counts[1]}/#{event_people_count})"
+                          %b= "#{event_attended_percent}% (#{att_counts[:attendance]}/#{att_counts[:total]})"
                           &nbsp; &nbsp; &nbsp;
                           %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
                             %i.icon-group
