@@ -53,12 +53,6 @@
 		Then I should see public prices
 
 	@selenium
-	Scenario: Se debe mostrar timezone y ciudad=Webinar si es el evento es un webinar
-	  Given Im a logged in user
-		When I choose to create a Webinar event
-		Then I should see the webinar setup
-
-	@selenium
 	Scenario: SEB=30 días antes de la fecha del evento y EB=10 días antes de la fecha del evento
 	  Given Im a logged in user
 		When I create a public event on "15-01-2015"
