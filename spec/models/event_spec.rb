@@ -8,8 +8,8 @@ describe Event do
   end
 
   context "Valid" do
-    pending 'deprecate is_webinar?' do
-      expect { @event.is_webinar? }.to raise_error(NoMethodError)
+    pending 'deprecate is_webinar' do
+      expect { @event.is_webinar }.to raise_error(NoMethodError)
     end
     it "should be valid" do
       expect(@event.valid?).to be true

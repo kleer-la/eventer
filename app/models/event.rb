@@ -180,11 +180,6 @@ class Event < ApplicationRecord
     is_online? && is_community_event?
   end
 
-  # backward compatibility
-  def is_webinar?
-    is_webinar
-  end
-
   def trainers
     t= [trainer]
     if !trainer2.nil?
