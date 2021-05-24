@@ -148,12 +148,6 @@ class Event < ApplicationRecord
     end
   end
 
-  def start_webinar!
-    if self.is_webinar?
-      self.webinar_started = true
-    end
-  end
-
   def finished?
     timezone = TimeZone.new( self.time_zone_name ) unless self.time_zone_name.nil?
 
@@ -164,12 +158,6 @@ class Event < ApplicationRecord
     end
 
     (Time.parse( self.end_time.strftime("%Y/%m/%d %H:%M") ) < timezone_current_time )
-  end
-
-  def webinar_finished?
-    if self.is_webinar? && self.webinar_started?
-      finished?
-    end
   end
 
   def is_community_event?
