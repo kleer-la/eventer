@@ -57,11 +57,6 @@ Rails.application.routes.draw do
   get 'api/2/upcoming_events' => 'api#index'
   get 'api/2/participants/synch' => 'api#participants_synch'
 
-
-  get 'public_events/:id' => 'public_events#show'
-  get 'public_events/:event_id/watch' => 'public_events#watch'
-  get 'public_events/:event_id/watch/:participant_id' => 'public_events#watch'
-
   get 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
   get 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
   get 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'

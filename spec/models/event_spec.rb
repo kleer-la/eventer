@@ -8,8 +8,8 @@ describe Event do
   end
 
   context "Valid" do
-    pending 'deprecate is_webinar?' do
-      expect { @event.is_webinar? }.to raise_error(NoMethodError)
+    pending 'deprecate is_webinar' do
+      expect { @event.is_webinar }.to raise_error(NoMethodError)
     end
     it "should be valid" do
       expect(@event.valid?).to be true
@@ -175,30 +175,6 @@ describe Event do
     expect(@event.is_blended_learning?).to be true
   end
   
-  it "should have a webinar indicator for online community events" do
-    @event.mode = 'ol'
-    @event.visibility_type = 'co'
-    expect(@event.is_online?).to be true
-    expect(@event.is_community_event?).to be true
-    expect(@event.is_webinar?).to be true
-  end
-  
-  it "should not have a webinar indicator for online payed events" do
-    @event.mode = 'ol'
-    @event.visibility_type = 'pu'
-    expect(@event.is_online?).to be true
-    expect(@event.is_community_event?).to be false
-    expect(@event.is_webinar?).to be false
-  end
-  
-  it "should not have a webinar indicator for classroom community events" do
-    @event.mode = 'cl'
-    @event.visibility_type = 'co'
-    expect(@event.is_classroom?).to be true
-    expect(@event.is_community_event?).to be true
-    expect(@event.is_webinar?).to be false
-  end
-  
   it "should have a show_pricing flag" do
     @event.show_pricing = true
     expect(@event.show_pricing?).to be true
@@ -220,19 +196,6 @@ describe Event do
     expect(@event.twitter_embedded_search).to eq "hhhh"
   end
   
-  it "should have a confirmed participants notification flag" do
-    expect(@event.notify_webinar_start).to be false
-    @event.notify_webinar_start = true
-    expect(@event.notify_webinar_start).to be true
-  end
-  
-  it "should express if a webinar was started" do
-    expect(@event.webinar_started).to be false
-    @event.mode = 'ol'
-    @event.visibility_type = 'co'
-    @event.start_webinar!
-    expect(@event.webinar_started?).to be true
-  end
   
   it "should allow custom e-mail prices overrite" do
     @event.custom_prices_email_text = "PL: 300, EB: 200, BN: 100"

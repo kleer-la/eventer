@@ -112,18 +112,6 @@ Then /^I should see public prices$/ do
   page.find_field('event_eb_price').visible?.should be true
 end
 
-When /^I choose to create a Webinar event$/ do
-  visit "/events/new"
-  create_valid_event_inputs 'Tipo de Evento de Prueba'
-  select 'Online', :from => 'event_mode'
-  choose 'event_visibility_type_co'
-end
-
-Then /^I should see the webinar setup$/ do
-  page.find_field('event_city').value.should == "Online"
-  page.find_field('event_country_id').find('option[selected]').text.should == "-- OnLine --"
-end
-
 Then /^EB date should be "([^\"]*)"$/ do |value|
   page.should have_field('event_eb_end_date', with: value)
 end
