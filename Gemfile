@@ -67,7 +67,7 @@ gem 'redcarpet'
 gem 'best_in_place'
 
 # Amazon AWS API Client
-gem 'aws-sdk', '< 2' # v2 change to Aws instead of AWS
+gem 'aws-sdk', '~> 2' # v2 change to Aws instead of AWS
 
 # App Monitoring Heroku Plug-In
 gem 'newrelic_rpm'

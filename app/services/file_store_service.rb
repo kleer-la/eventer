@@ -1,3 +1,5 @@
+require 'aws-sdk'
+
 class FileStoreService
   def self.createNull(exists: {})
     FileStoreService.new NullFileStore.new(exists: exists)
@@ -13,8 +15,9 @@ class FileStoreService
 
   def write filename
     key = File.basename(filename)
-    @store.objects("certificates/#{key}").write(:file => filename )
-    @store.objects("certificates/#{key}").acl = :public_read
+    object= @store.objects("certificates/#{key}")
+    object.upload_file( filename )
+  	object.acl = :public_read
 
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
@@ -63,7 +66,7 @@ class NullStoreObject
   def read
     yield File.open("./spec/views/participants/base2021-A4.png").read
   end
-  def write file:
+  def upload_file file
   end
   def exists?
     @exists[@key].nil? ? true : @exists[@key]
@@ -72,14 +75,15 @@ end
 
 class S3FileStore
   def initialize(access_key_id: nil, secret_access_key: nil)
-    s3 = AWS::S3.new(
+    client = Aws::S3::Client.new(
       :access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
       :secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
-    @bucket = s3.buckets['Keventer']
+    resource = Aws::S3::Resource.new(client: client)
+    @bucket = resource.bucket('Keventer')
   end
 
   def objects key
-    @bucket.objects[key]
+    @bucket.object(key)
   end
  end
  

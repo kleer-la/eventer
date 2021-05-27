@@ -27,7 +27,8 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
     #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
-
+    #export AWS_REGION="us-east-1"
+    
 
 - Tambien es importante setear las variables, by default hay datos para abientes de prueba:
 
