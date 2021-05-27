@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :categories
 
   resources :event_types
+  get 'event_types/:id/testimonies', to: 'event_types#testimonies'
 
   resources :trainers
 
