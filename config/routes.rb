@@ -39,8 +39,6 @@ Rails.application.routes.draw do
   get 'dashboard/past_events' => 'dashboard#past_events'
   get 'dashboard/countdown' => 'dashboard#countdown'
   get 'dashboard/funneling' => 'dashboard#funneling'
-  get 'dashboard/ratings' => 'dashboard#ratings' 
-  get 'dashboard/calculate_rating' => 'dashboard#calculate_rating'
   get 'dashboard/:country_iso' => 'dashboard#index'
   get 'dashboard/pricing/:country_iso' => 'dashboard#pricing'    
 
