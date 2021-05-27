@@ -1,7 +1,8 @@
 require 'rails_helper'
 
-describe "events/edit" do
-  before(:each) do
+describe "events/edit" do  
+  it "renders the edit event form" do
+    pending "rendering partial _form"
     event_types= [FactoryBot.create(:event_type,
       :name => "ET Name",
       :description => "ET Descripcion",
@@ -21,10 +22,7 @@ describe "events/edit" do
     @timezones = ActiveSupport::TimeZone.all
     @currencies = Money::Currency.table
     @event_type_cancellation_policy = @event.event_type.cancellation_policy
-  end
-  
-  it "renders the edit event form" do
-    pending "Not working. Fixed in Rails 4? https://github.com/rails/rails/issues/4401"
+
     render
 
     expect(rendered).to match(/ET Name/)

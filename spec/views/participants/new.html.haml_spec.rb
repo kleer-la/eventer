@@ -1,19 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe "rendering new participant form" do
+describe "rendering new participant form" do
   pending "Buy button" do
-    @event= FactoryBot.create(:event)
     @participant= Participant.new
-    @influence_zones= [FactoryBot.create(:influence_zone)]
+    @participant.event= FactoryBot.create(:event)
     @nakedform= false
+    assign(:event, @participant.event)
+    assign(:influence_zones, [FactoryBot.create(:influence_zone)])
 
-    render 
-    # (
-    #     :template => "/participants/new", 
-    #     :formats=> :html )
+    render :template => "participants/new" #, :action => 'new',:layout => "empty_layout"
 
-
-    # expect(rendered).to match /Juan Carlos/
+    expect(rendered).to match /Juan Carlos/
   end
  
 end
