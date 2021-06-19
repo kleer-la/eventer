@@ -27,8 +27,9 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Ejecutar alguna prueba: bundle exec rails spec SPEC=<path relativo>
 
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
-    #export KEVENTER_AWS_SECRET_ACCESS_KEY="..."
-
+    #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
+    #export AWS_REGION="us-east-1"
+    
 - Tambien es importante setear las variables, by default hay datos para abientes de prueba:
 
     PAYU_CO_API_KEY=4Vj8eK4rloUd272L48hsrarnUA
