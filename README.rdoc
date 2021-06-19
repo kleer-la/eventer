@@ -7,13 +7,14 @@ KEventer es una aplicación de administración de cursos, calendarios e inscripc
 Esta aplicación está basada en Rails 3.2.22. Estamos en proceso de actualización.
 
 Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá los siguientes pasos para poner a andar tu ambiente de desarrollo:
-(ver alrnativa docker m-as abajo)
+(ver alternativa docker m-as abajo)
 
 - Instalá las dependencias: bundle install
-- Creá la base de dates: bundle exec rake db:migrate
-- Cargá los datos iniciales: bundle exec rake db:seed
+- Creá la base de dates: rails db:migrate
+- Cargá los datos iniciales: rails db:seed
+- Preparar db de prueba: rails db:test:prepare
 
-- Ejecutar todas las pruebas: bundle exec rake
+- Ejecutar todas las pruebas: rails spec;rails feature
     NOTA: en este momento no funciona cucumber + selenium en ambiente desarrollo
     para nuevas versiones de firefox, descargar geckodriver y ubicarlos en /usr/local/bin
     para el captcha usar:
@@ -26,9 +27,7 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Ejecutar alguna prueba: bundle exec rails spec SPEC=<path relativo>
 
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
-    #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
-    #export AWS_REGION="us-east-1"
-    
+    #export KEVENTER_AWS_SECRET_ACCESS_KEY="..."
 
 - Tambien es importante setear las variables, by default hay datos para abientes de prueba:
 

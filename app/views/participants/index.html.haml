@@ -224,11 +224,15 @@
                     = participant.pay_notes
                   %td
                     %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
-                      %i.icon-edit
+                      %i.icon-edit{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Editar participante"}
                     - if "AK".include? participant.status
+                      - cert_url= "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}"
                       &nbsp;
-                      %a.btn.btn-warning.btn-mini{ :href => "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}", :id => "modificar" }
-                        %i.icon-certificate
+                      %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}", :id => "modificar" }
+                        %i.icon-certificate{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Ver certificado"}
+                      &nbsp;
+                      %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}&download=true", :id => "download"}
+                        %i.icon-chevron-down{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Descargar certificado"}
 
 :javascript
 

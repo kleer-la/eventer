@@ -218,11 +218,12 @@ class ParticipantsController < ApplicationController
     @page_size = params[:page_size]
     @verification_code = params[:verification_code]
     @participant = Participant.find(params[:id])
-
+    @is_download = ('true' == params[:download] )
+    
     error_msg=  ParticipantsHelper::validate_page_size(@page_size) ||
-                ParticipantsHelper::validate_event(@participant.event) ||
-                ParticipantsHelper::validation_participant(@participant, @verification_code)
-
+    ParticipantsHelper::validate_event(@participant.event) ||
+    ParticipantsHelper::validation_participant(@participant, @verification_code)
+    
     if error_msg.present?
       flash[:alert] = error_msg
       redirect_to event_participants_path
