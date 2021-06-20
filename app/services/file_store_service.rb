@@ -60,6 +60,7 @@ class NullStoreObject
   end
 
   def download_file file
+    FileUtils.cp './spec/views/participants/base2021-A4.png', file
   end
   def upload_file file
   end
