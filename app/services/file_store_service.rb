@@ -30,11 +30,7 @@ class FileStoreService
       raise ArgumentError,"#{key} image not found"
     end
     tmp_filename= tmp_path filename
-    File.open(tmp_filename, 'wb') do |file|
-      @store.objects("#{folder}/#{key}").read do |chunk|
-        file.write(chunk)
-      end
-    end
+    @store.objects("#{folder}/#{key}").download_file tmp_filename
     tmp_filename
   end
 
@@ -63,8 +59,7 @@ class NullStoreObject
     @exists= exists
   end
 
-  def read
-    yield File.open("./spec/views/participants/base2021-A4.png").read
+  def download_file file
   end
   def upload_file file
   end
