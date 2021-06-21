@@ -253,12 +253,10 @@ module ParticipantsHelper
       :page_layout => :landscape, :page_size => page_size) do |pdf|
         self.render_certificate( pdf, certificate, page_size, store)
       end
-#   store.write certificate_filename
     certificate_filename
   end
 
   def self.upload_certificate( certificate_filename, access_key_id: nil, secret_access_key: nil)
-
   	client = Aws::S3::Client.new(
   		:access_key_id => access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
   		:secret_access_key => secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY'])
@@ -266,8 +264,8 @@ module ParticipantsHelper
   	key = File.basename(certificate_filename)
     bucket= resource.bucket('Keventer')
   	object= bucket.object("certificates/#{key}")
+  	object.acl.put({ acl: "public-read" })
     object.upload_file( certificate_filename )
-  	object.acl = :public_read
 
   	"https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end

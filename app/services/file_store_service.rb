@@ -16,8 +16,8 @@ class FileStoreService
   def write filename
     key = File.basename(filename)
     object= @store.objects("certificates/#{key}")
+  	object.acl.put({ acl: "public-read" })
     object.upload_file( filename )
-  	object.acl = :public_read
 
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
@@ -67,7 +67,17 @@ class NullStoreObject
   def exists?
     @exists[@key].nil? ? true : @exists[@key]
   end
+  def acl 
+    NullStoreObjectAcl.new
+  end
 end
+
+class NullStoreObjectAcl
+  def put hash
+  end
+end
+
+
 
 class S3FileStore
   def initialize(access_key_id: nil, secret_access_key: nil)

@@ -29,13 +29,13 @@ describe FileStoreService do
     end
     after(:all) do
       File.delete(@filename) if @filename.present?     
-      File.delete(@fname)      
+      File.delete(@fname)    if File.exist? @fname
     end
     it "try to read from a S3 store - doesn't exists" do
       store= FileStoreService.createS3
       store.write @fname
       File.delete @fname
-      @filename= store.read fname, "","certificates"
+      @filename= store.read @fname, "","certificates"
 
       expect(File.new(@filename).read).to eq "xxx"
     end
