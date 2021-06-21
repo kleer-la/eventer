@@ -21,29 +21,29 @@
     .row-fluid
       .span12
         .control-group
-          = f.text_field :fname, required: true, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.fname")
+          = f.text_field :fname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.fname")
     .row-fluid
       .span12
         .control-group
-          = f.text_field :lname, required: true, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.lname")
+          = f.text_field :lname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.lname")
     .row-fluid
       .span12
         .control-group
-          - email_placeholder = I18n.t("formtastic.labels.participant.email")
+          - email_placeholder = '* '+ I18n.t("formtastic.labels.participant.email")
           - email_placeholder += " (confirmaremos tu registro en este email)"
           = f.text_field :email, required: true, :class => "span12", :placeholder => email_placeholder
     .row-fluid
       .span12
         .control-group
-          = f.text_field :phone, required: true, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")
+          = f.text_field :phone, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.phone")
     .row-fluid
       .span12
         .control-group
-          = f.text_field :id_number, required: true, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.id_number")
+          = f.text_field :id_number, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.id_number")
     .row-fluid
       .span12
         .control-group
-          = f.text_field :address, required: true, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.address")
+          = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
     - if @event.should_ask_for_referer_code
       .row-fluid
         .span12
@@ -54,13 +54,13 @@
         .control-group
           = f.text_area :notes, :class => "span12 autogrow", :placeholder => I18n.t("formtastic.labels.participant.notes"), :rows => 2
     .row_fluid
-      = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: I18n.t("formtastic.labels.participant.zone"), :required => true }
+      = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: '* '+ I18n.t("formtastic.labels.participant.zone"), :required => true }
     .row-fluid
       .span12
         .control-group
           %label.checkbox
             = f.check_box :accept_terms, :required => true
-            %label.control-label{ :for => :accept_terms }= I18n.t("formtastic.labels.participant.accept_terms").html_safe
+            %label.control-label{ :for => :accept_terms }= ('* '+ I18n.t("formtastic.labels.participant.accept_terms")).html_safe
     .row-fluid
       .span12
         = recaptcha_tags

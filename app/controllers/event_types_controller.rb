@@ -102,6 +102,11 @@ class EventTypesController < ApplicationController
     # end
   end
 
+  def testimonies
+    @event_type = EventType.find(params[:id])
+    @participants= @event_type.testimonies
+  end
+
   private
 
   def activate_menu

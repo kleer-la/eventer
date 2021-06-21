@@ -127,4 +127,13 @@ describe EventTypesController do
     end
   end
 
+  describe "GET testimonies" do
+    it "@event_type && @participants" do
+      event_type = FactoryBot.create(:event_type)
+      get :testimonies, params: {:id => event_type.to_param}
+      expect(assigns(:event_type)).to eq event_type
+      expect(assigns(:participants)).to eq []
+    end
+  end
+
 end

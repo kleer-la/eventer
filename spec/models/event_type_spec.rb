@@ -67,5 +67,35 @@ describe EventType do
     @event_type.tag_name = "TR-CP (Carlos Peix)"
     expect(@event_type.valid?).to  be true
   end
-  
+
+  context "Testimonies" do  
+    it "no event no testimony" do
+      expect(@event_type.testimonies.count).to eq 0
+    end
+    it "no participant no testimony" do
+      ev= FactoryBot.create(:event, event_type: @event_type)
+      expect(@event_type.testimonies.count).to eq 0
+    end
+    it "no participant no testimony" do
+      ev= FactoryBot.create(:event, event_type: @event_type)
+      expect(@event_type.testimonies.count).to eq 0
+    end
+    it "participant wo/ testimony" do
+      ev= FactoryBot.create(:event, event_type: @event_type)
+      p= FactoryBot.create(:participant, event: ev)
+      expect(@event_type.testimonies.count).to eq 0
+    end
+    it "participant w/ testimony" do
+      ev= FactoryBot.create(:event, event_type: @event_type)
+      p= FactoryBot.create(:participant, event: ev, testimony: "Hello, Joe")
+      expect(@event_type.testimonies.count).to eq 1
+    end
+    it "shouldn't include participant other event type" do
+      et= FactoryBot.create(:event_type)
+      ev= FactoryBot.create(:event, event_type: et)
+      p= FactoryBot.create(:participant, event: ev, testimony: "Hello, Joe")
+      expect(@event_type.testimonies.count).to eq 0
+    end
+    
+  end
 end

@@ -1,0 +1,35 @@
+.page-header
+  %h1.pull-left
+    %i.icon-group
+    %span 
+      Comentarios de 
+      = @event_type.name
+
+= render '/commons/notice'
+
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .responsive-table
+      .scrollable-area
+        %table.table
+          %thead
+            %tr
+              %th Fecha
+              %th Nombre
+              %th Apellido
+              %th Comentario
+            %tbody
+              - @participants.each do |participant|
+                %tr
+                  %td
+                    %a{ :href => "/events/#{participant.event.id}/participants" }
+                      = participant.event.date
+                  %td
+                    %a{ :href => "/events/#{participant.event.id}/participants_survey" }
+                      = participant.fname
+                  %td
+                    %a{ :href => "/events/#{participant.event.id}/participants_survey" }
+                      =participant.lname
+                  %td
+                    %a{ :href => "/events/#{participant.event.id}/participants_survey" }
+                      =participant.testimony

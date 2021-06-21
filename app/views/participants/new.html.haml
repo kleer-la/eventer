@@ -1,3 +1,5 @@
+- content_for  :title do
+  = "Compra de #{@event.event_type.name}"
 .controls
   - if !@nakedform
     .form-wrapper

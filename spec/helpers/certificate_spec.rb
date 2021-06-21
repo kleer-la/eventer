@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'aws-sdk'
 include ParticipantsHelper  
 
 class PrawnMock
@@ -193,7 +194,7 @@ describe "render certificates" do
         certificate_filename = ParticipantsHelper::generate_certificate( @participant, 'A4',  @certificate_store )
         expect {ParticipantsHelper::upload_certificate( 
           certificate_filename, access_key_id: 'fail', secret_access_key: 'fail')
-        }.to raise_error AWS::S3::Errors::InvalidAccessKeyId
+        }.to raise_error Aws::S3::Errors::InvalidAccessKeyId
     end
 
     it 'new (2021) certificate file' do

@@ -16,4 +16,12 @@ class EventType < ApplicationRecord
     end
   end
 
+  def testimonies
+    part= []
+    events.all.each do |e|
+      part +=e.participants.select {|p| !p.testimony.nil?}
+    end
+    part
+  end
+
 end
