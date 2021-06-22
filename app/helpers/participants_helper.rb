@@ -264,8 +264,8 @@ module ParticipantsHelper
   	key = File.basename(certificate_filename)
     bucket= resource.bucket('Keventer')
   	object= bucket.object("certificates/#{key}")
-  	object.acl.put({ acl: "public-read" })
     object.upload_file( certificate_filename )
+  	object.acl.put({ acl: "public-read" })
 
   	"https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end

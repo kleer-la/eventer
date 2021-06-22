@@ -16,8 +16,8 @@ class FileStoreService
   def write filename
     key = File.basename(filename)
     object= @store.objects("certificates/#{key}")
-  	object.acl.put({ acl: "public-read" })
     object.upload_file( filename )
+  	object.acl.put({ acl: "public-read" })
 
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
