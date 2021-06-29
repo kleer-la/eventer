@@ -18,10 +18,11 @@
           .text-error.icon-inbox.align-right
       .span6
         .box-content.box-statistic
-          %h3.title.text-warning
-            = @participantes_contactados
-          %small Contactados (Recordá Hacer Seguimiento)
-          .text-warning.icon-check.align-right
+          %a{ :href => "/participants/followup" }
+            %h3.title.text-warning
+              = @participantes_contactados
+            %small Contactados (Beta)
+            .text-warning.icon-check.align-right
 
 - event_groups= []
 - event_groups << [2, @events.select{ |ev| (ev.date.cweek-Date.today.cweek)<=2 }]
