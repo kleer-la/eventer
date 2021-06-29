@@ -86,7 +86,7 @@
                       %i.icon-tag
                       = participant.influence_zone.nil? ? "N/A" : participant.influence_zone.tag_name
                     %br
-                    %span{ :style => "white-space:nowrap;"}
+                    %span
                       %i.icon-home
                       = best_in_place participant, :address, :url => url, :class => ['editable','editable-click']
                   %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
