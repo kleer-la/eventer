@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   post 'events/:event_id/participants_batch_load' => 'participants#batch_load'
 
   get 'participants/search' => 'participants#search'
+  get 'participants/followup' => 'participants#followup'
 
   get "marketing" => 'marketing#index'
   get "marketing/:time_segment" => 'marketing#index'

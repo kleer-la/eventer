@@ -1,0 +1,151 @@
+:css
+  .purr {
+    position: fixed;
+    top: 30px;
+    right: 100px;
+    width: 250px;
+    padding: 20px;
+    background-color: #FCC;
+    border: solid 2px #C66;
+    &:first-letter { text-transform: uppercase; }
+  }
+
+.page-header
+  %h1.pull-left
+    %i.icon-group
+    %span Seguimiento de Inscriptos
+= render '/commons/notice'
+.row-fluid
+  .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
+    .box-header.green-background
+      .title Lista de Inscriptos
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th Modificado
+                %th Creado
+                %th Evento
+                %th Participante
+                %th
+                %th Estado
+                %th Notas
+                %th
+            %tbody
+              :ruby
+                status_color= {
+                  "N" => "#f34541", 
+                  "T" => "#9564e2", 
+                  "C" => "#00acec", 
+                  "A" => "#49bf67", 
+                  "N" => "#f34541", 
+                  "K" => "#00b0b0", 
+                  "X" => "#f8a326", 
+                  "D" => "#f8a326" 
+                }
+              - @participants.each do |participant|
+                - url= "/events/#{participant.event.id}/participants/#{participant.id}"
+                - cell_background_color = status_color[participant.status] || "#f34541"
+                %tr
+                  %td{ :style => "white-space:normal;"}= l participant.updated_at, :format => :short
+                  %td{ :style => "white-space:normal;"}= l participant.created_at, :format => :short
+                  %td{ :style => "white-space:normal;"}= @event_names[participant.event.id]
+                  %td{ :style => "white-space:normal;"}
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-user
+                      = best_in_place participant, :fname, :url => url, :class => ['editable','editable-click']
+                      = " "
+                      = best_in_place participant, :lname, :url => url, :class => ['editable','editable-click']
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-envelope-alt
+                      = best_in_place participant, :email, :url => url, :class => ['editable','editable-click']
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-barcode
+                      = "ID: "
+                      = best_in_place participant, :id_number, :url => url, :class => ['editable','editable-click']
+                    %br
+                    - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
+                      %br
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-key
+                        = participant.referer_code
+                  %td{ :style => "white-space:normal;"}
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-phone-sign
+                      = best_in_place participant, :phone, :url => url, :class => ['editable','editable-click']
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-globe
+                      = best_in_place participant, :influence_zone_id, :as => :select, :url => url, :collection => @influence_zones.map{ |i| [i.id, "#{i.display_name}"] }, :class => ['editable','editable-click']
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-tag
+                      = participant.influence_zone.nil? ? "N/A" : participant.influence_zone.tag_name
+                    %br
+                    %span{ :style => "white-space:nowrap;"}
+                      %i.icon-home
+                      = best_in_place participant, :address, :url => url, :class => ['editable','editable-click']
+                  %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
+                    = best_in_place participant, :status, :as => :select, :url => url, :collection => @status_keyvalue, :class => ['color_on_success','editable','editable-click']
+                  %td{ :style => "white-space:pre-line;"}
+                    = best_in_place participant, :notes, :as => :textarea, :url => url, :class => ['editable','editable-click']
+                    = participant.pay_notes
+                  %td
+                    %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
+                      %i.icon-edit{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Editar participante"}
+                    - if "AK".include? participant.status
+                      - cert_url= "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}"
+                      &nbsp;
+                      %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}", :id => "modificar" }
+                        %i.icon-certificate{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Ver certificado"}
+                      &nbsp;
+                      %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}&download=true", :id => "download"}
+                        %i.icon-chevron-down{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Descargar certificado"}
+
+:javascript
+
+  $(document).ready(function() {
+    /* Activating Best In Place */
+    jQuery(".best_in_place").best_in_place();
+  });
+
+  $('#bulk_submit_btn').click(function() {
+    $('#bulk_form').submit();
+  });
+
+  $('.color_on_success').bind("ajax:success", function() {
+    cellBackgroundColor = getCellBackgroundColor( $(this).html() );
+    $(this).closest('td').css('background', cellBackgroundColor );
+  });
+
+  function getCellBackgroundColor(cellValue) {
+    switch( cellValue ) {
+      case "Nuevo":
+        return "#f34541";
+        break;
+      case "Contactado":
+        return "#9564e2";
+        break;
+      case "Confirmado":
+        return "#00acec";
+        break;
+      case "Presente":
+        return "#49bf67";
+        break;
+      case "Certificado":
+        return "#00b0b0";
+        break;
+      case "Cancelado":
+        return "#f8a326";
+        break;
+      case "Postergado":
+        return "#f8a326";
+        break;
+      default:
+        return "#f34541";
+    }
+  }

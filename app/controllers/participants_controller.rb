@@ -1,4 +1,4 @@
-# encoding: utf-8
+require './lib/country_filter'
 
 class ParticipantsController < ApplicationController
   before_action:authenticate_user!, :except => [:new, :create, :confirm, :certificate, :payuco_confirmation, :payuco_response]
@@ -281,6 +281,33 @@ class ParticipantsController < ApplicationController
     end
     respond_to do |format|
       format.html # search.html.erb
+    end
+  end
+
+  # GET /participants/followup
+  def followup
+    @active_menu = "dashboard"
+    # country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
+    # session[:country_filter]= @country= country_filter.country_iso
+
+    @events = Event.public_and_visible.select{ |ev|
+      !ev.event_type.nil? #&& ev.registration_link == "" && country_filter.select?(ev.country_id)
+      }
+    @participants=[]
+    @event_names= {}
+    @events.each do |event|
+      @participants += event.participants.contacted
+      @event_names[event.id] = event.event_type.name + " - " + event.date.to_formatted_s(:short)
+    end
+
+    # @participants = Participant.contacted.sort_by(&:updated_at)
+    @participants.sort_by(&:updated_at)
+    @influence_zones = InfluenceZone.all
+    @status_valuekey= STATUS_LIST
+    @status_keyvalue= STATUS_LIST.map {|s| [s[1],s[0]]}
+
+    respond_to do |format|
+      format.html # followup.html.erb
     end
   end
 
