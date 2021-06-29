@@ -301,7 +301,7 @@ class ParticipantsController < ApplicationController
     end
 
     # @participants = Participant.contacted.sort_by(&:updated_at)
-    @participants.sort_by(&:updated_at)
+    @participants.sort_by!(&:updated_at)
     @influence_zones = InfluenceZone.all
     @status_valuekey= STATUS_LIST
     @status_keyvalue= STATUS_LIST.map {|s| [s[1],s[0]]}
