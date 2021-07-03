@@ -13,7 +13,7 @@
 .page-header
   %h1.pull-left
     %i.icon-group
-    %span Seguimiento de Inscriptos (Beta)
+    %span Seguimiento de Inscriptos
 = render '/commons/notice'
 - groups= []
 - groups << ['+7', @events.select{ |p| (p.updated_at.yday-Date.today.yday)>7 }]
