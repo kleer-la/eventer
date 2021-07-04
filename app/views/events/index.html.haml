@@ -36,7 +36,7 @@
                   - if event.event_type.nil?
                     %td= link_to "Sin Tipo de Evento", event
                   - else
-                    %td= link_to event.event_type.short_name, event
+                    %td= link_to event.event_type.short_name, edit_event_path(event)
                   %td{ :style => "white-space:normal;"}
                     -if !event.country.nil?
                       %i{ :class => "flag flag-#{event.country.iso_code.downcase}"}
@@ -59,7 +59,7 @@
                       %span.label.label-success Publicado
                   %td
                     .text-right
-                      - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
-                      - #  %i.icon-eye-open
+                      %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants", :title => "Ver los Participantes" }
+                        %i.icon-group
                       %a.btn.btn-warning.btn-mini{ :href => edit_event_path(event) }
                         %i.icon-edit
