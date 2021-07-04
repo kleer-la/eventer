@@ -15,10 +15,11 @@
     %i.icon-group
     %span Seguimiento de Inscriptos
 = render '/commons/notice'
+- today= Date.today.yday
 - groups= []
-- groups << ['+7', @events.select{ |p| (p.updated_at.yday-Date.today.yday)>7 }]
-- groups << [7, @events.select{ |p| (p.updated_at.yday-Date.today.yday).between?(3,7) }]
-- groups << [2, @participants.select{ |p| (p.updated_at.yday-Date.today.yday)<=2 }]
+- groups << ['+7', @events.select{ |p| (today-p.updated_at.yday >7 }]
+- groups << [7, @events.select{ |p| (today-p.updated_at.yday).between?(3,7) }]
+- groups << [2, @participants.select{ |p| (today-p.updated_at.yday)<=2 }]
 - groups.each do |group|
   .row-fluid
     .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
