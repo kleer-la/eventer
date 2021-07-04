@@ -13,98 +13,111 @@
 .page-header
   %h1.pull-left
     %i.icon-group
-    %span Seguimiento de Inscriptos (Beta)
+    %span Seguimiento de Inscriptos
 = render '/commons/notice'
-.row-fluid
-  .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
-    .box-header.green-background
-      .title Lista de Inscriptos
-    .box-content.box-no-padding
-      .responsive-table
-        .scrollable-area
-          %table.table{ :style => "margin-bottom:0;" }
-            %thead
-              %tr
-                %th Modificado
-                %th Creado
-                %th Evento
-                %th Participante
-                %th
-                %th Estado
-                %th Notas
-                %th
-            %tbody
-              :ruby
-                status_color= {
-                  "N" => "#f34541", 
-                  "T" => "#9564e2", 
-                  "C" => "#00acec", 
-                  "A" => "#49bf67", 
-                  "N" => "#f34541", 
-                  "K" => "#00b0b0", 
-                  "X" => "#f8a326", 
-                  "D" => "#f8a326" 
-                }
-              - @participants.each do |participant|
-                - url= "/events/#{participant.event.id}/participants/#{participant.id}"
-                - cell_background_color = status_color[participant.status] || "#f34541"
+- today= Date.today.yday
+- groups= []
+- groups << ['+7', @events.select{ |p| (today-p.updated_at.yday >7 }]
+- groups << [7, @events.select{ |p| (today-p.updated_at.yday).between?(3,7) }]
+- groups << [2, @participants.select{ |p| (today-p.updated_at.yday)<=2 }]
+- groups.each do |group|
+  .row-fluid
+    .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
+      .box-header.green-background
+        .title Actualizados hace <=
+        = group[0]
+        días
+      .actions
+        %a.btn.box-collapse.btn-mini.btn-link
+        %i
+      .box-content.box-no-padding
+        .responsive-table
+          .scrollable-area
+            %table.table{ :style => "margin-bottom:0;" }
+              %thead
                 %tr
-                  %td{ :style => "white-space:normal;"}= l participant.updated_at, :format => :short
-                  %td{ :style => "white-space:normal;"}= l participant.created_at, :format => :short
-                  %td{ :style => "white-space:normal;"}= @event_names[participant.event.id]
-                  %td{ :style => "white-space:normal;"}
-                    %span{ :style => "white-space:nowrap;"}
-                      %i.icon-user
-                      = best_in_place participant, :fname, :url => url, :class => ['editable','editable-click']
-                      = " "
-                      = best_in_place participant, :lname, :url => url, :class => ['editable','editable-click']
-                    %br
-                    %span{ :style => "white-space:nowrap;"}
-                      %i.icon-envelope-alt
-                      = best_in_place participant, :email, :url => url, :class => ['editable','editable-click']
-                    %br
-                    %span{ :style => "white-space:nowrap;"}
-                      %i.icon-barcode
-                      = "ID: "
-                      = best_in_place participant, :id_number, :url => url, :class => ['editable','editable-click']
-                    %br
-                    - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
+                  %th Modificado
+                  %th Creado
+                  %th Evento
+                  %th Participante
+                  %th
+                  %th Estado
+                  %th Notas
+                  %th
+              %tbody
+                :ruby
+                  status_color= {
+                    "N" => "#f34541", 
+                    "T" => "#9564e2", 
+                    "C" => "#00acec", 
+                    "A" => "#49bf67", 
+                    "N" => "#f34541", 
+                    "K" => "#00b0b0", 
+                    "X" => "#f8a326", 
+                    "D" => "#f8a326" 
+                  }
+                - group[1].each do |participant|
+                  - url= "/events/#{participant.event.id}/participants/#{participant.id}"
+                  - cell_background_color = status_color[participant.status] || "#f34541"
+                  %tr
+                    %td{ :style => "white-space:normal;"}= l participant.updated_at, :format => :short
+                    %td{ :style => "white-space:normal;"}= l participant.created_at, :format => :short
+                    %td{ :style => "white-space:normal;"}
+                      %a{ :href => "/events/#{participant.event.id}/participants" }
+                        = @event_names[participant.event.id]
+                    %td{ :style => "white-space:normal;"}
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-user
+                        = best_in_place participant, :fname, :url => url, :class => ['editable','editable-click']
+                        = " "
+                        = best_in_place participant, :lname, :url => url, :class => ['editable','editable-click']
                       %br
                       %span{ :style => "white-space:nowrap;"}
-                        %i.icon-key
-                        = participant.referer_code
-                  %td{ :style => "white-space:normal;"}
-                    %span{ :style => "white-space:nowrap;"}
-                      %i.icon-phone-sign
-                      = best_in_place participant, :phone, :url => url, :class => ['editable','editable-click']
-                    %br
-                    %span{ :style => "white-space:nowrap;"}
-                      %i.icon-globe
-                      = best_in_place participant, :influence_zone_id, :as => :select, :url => url, :collection => @influence_zones.map{ |i| [i.id, "#{i.display_name}"] }, :class => ['editable','editable-click']
-                    %br
-                    %span{ :style => "white-space:nowrap;"}
-                      %i.icon-tag
-                      = participant.influence_zone.nil? ? "N/A" : participant.influence_zone.tag_name
-                    %br
-                    %span
-                      %i.icon-home
-                      = best_in_place participant, :address, :url => url, :class => ['editable','editable-click']
-                  %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
-                    = best_in_place participant, :status, :as => :select, :url => url, :collection => @status_keyvalue, :class => ['color_on_success','editable','editable-click']
-                  %td{ :style => "white-space:pre-line;"}
-                    = best_in_place participant, :notes, :as => :textarea, :url => url, :class => ['editable','editable-click']
-                    = participant.pay_notes
-                  %td
-                    %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
-                      %i.icon-edit{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Editar participante"}
-                    - if "AK".include? participant.status
-                      - cert_url= "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}"
-                      &nbsp;
-                      %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}", :id => "modificar" }
-                        %i.icon-certificate{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Ver certificado"}
-                      &nbsp;
-                      %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}&download=true", :id => "download"}
-                        %i.icon-chevron-down{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Descargar certificado"}
+                        %i.icon-envelope-alt
+                        = best_in_place participant, :email, :url => url, :class => ['editable','editable-click']
+                      %br
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-barcode
+                        = "ID: "
+                        = best_in_place participant, :id_number, :url => url, :class => ['editable','editable-click']
+                      %br
+                      - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
+                        %br
+                        %span{ :style => "white-space:nowrap;"}
+                          %i.icon-key
+                          = participant.referer_code
+                    %td{ :style => "white-space:normal;"}
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-phone-sign
+                        = best_in_place participant, :phone, :url => url, :class => ['editable','editable-click']
+                      %br
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-globe
+                        = best_in_place participant, :influence_zone_id, :as => :select, :url => url, :collection => @influence_zones.map{ |i| [i.id, "#{i.display_name}"] }, :class => ['editable','editable-click']
+                      %br
+                      %span{ :style => "white-space:nowrap;"}
+                        %i.icon-tag
+                        = participant.influence_zone.nil? ? "N/A" : participant.influence_zone.tag_name
+                      %br
+                      %span
+                        %i.icon-home
+                        = best_in_place participant, :address, :url => url, :class => ['editable','editable-click']
+                    %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}
+                      = best_in_place participant, :status, :as => :select, :url => url, :collection => @status_keyvalue, :class => ['color_on_success','editable','editable-click']
+                    %td{ :style => "white-space:pre-line;"}
+                      = best_in_place participant, :notes, :as => :textarea, :url => url, :class => ['editable','editable-click']
+                      = participant.pay_notes
+                    %td
+                      %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
+                        %i.icon-edit{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Editar participante"}
+                      - if "AK".include? participant.status
+                        - cert_url= "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}"
+                        &nbsp;
+                        %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}", :id => "modificar" }
+                          %i.icon-certificate{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Ver certificado"}
+                        &nbsp;
+                        %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}&download=true", :id => "download"}
+                          %i.icon-chevron-down{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Descargar certificado"}
 
 :javascript
 

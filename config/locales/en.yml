@@ -225,7 +225,7 @@ en:
         twitter_embedded_search: "Haz una búsqueda en Twitter con el #hashtag del webinar y pega aquí el código para embeberla."
         notify_webinar_start: "Al seleccionar este campo, se enviará un e-mail a todos los participantes para que ingresen al webinar (este proceso puede demorar unos minutos)."
         custom_prices_email_text: "Dejar en blanco para que el e-mail de bienvenida contenga información de precio de lista, early bird y descuentos para 2 y 3+ personas (si corresponde)"
-        monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco para no notificar nuevos registros."
+        monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco notificar a entrenamos@kleer.la."
         specific_conditions: "Condiciones específicas de este evento. Como por ejemplo: promociones, horarios especiales, ejecución desagregada, etc. En blanco, si no tiene."
         extra_script: "Pixel Facebook script"
         mailchimp_workflow_call: "Este valor se obtiene al crear un nuevo Workflow en Mailchimp"

@@ -104,7 +104,7 @@ class EventTypesController < ApplicationController
 
   def testimonies
     @event_type = EventType.find(params[:id])
-    @participants= @event_type.testimonies
+    @participants= @event_type.testimonies.sort_by(&:created_at).reverse
   end
 
   private
