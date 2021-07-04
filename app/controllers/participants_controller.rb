@@ -287,17 +287,20 @@ class ParticipantsController < ApplicationController
   # GET /participants/followup
   def followup
     @active_menu = "dashboard"
+    # country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
+    # session[:country_filter]= @country= country_filter.country_iso
 
-    @events = Event.public_and_visible
+    @events = Event.public_and_visible.select{ |ev|
+      !ev.event_type.nil? #&& ev.registration_link == "" && country_filter.select?(ev.country_id)
+      }
     @participants=[]
     @event_names= {}
     @events.each do |event|
-      if event.date > Date.today
-        @participants += event.participants.contacted
-        @event_names[event.id] = event.event_type.name + " - " + event.date.to_formatted_s(:short)
-      end
+      @participants += event.participants.contacted
+      @event_names[event.id] = event.event_type.name + " - " + event.date.to_formatted_s(:short)
     end
 
+    # @participants = Participant.contacted.sort_by(&:updated_at)
     @participants.sort_by!(&:updated_at)
     @influence_zones = InfluenceZone.all
     @status_valuekey= STATUS_LIST

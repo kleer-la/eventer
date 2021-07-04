@@ -265,26 +265,6 @@ describe ParticipantsController do
       end
 
     end
-    context "Follow Up" do
-      it "w/o contacted participant" do 
-        get :followup
-        expect(assigns(:participants)).to match_array([])
-      end
-      it "contacted participant" do 
-        @participant.contact!
-        @participant.save! 
-        get :followup
-        expect(assigns(:participants).count).to eq 1
-      end
-      it "contacted participant except today's events" do 
-        @participant.event.date= Date.today
-        @participant.event.save!
-        @participant.contact!
-        @participant.save! 
-        get :followup
-        expect(assigns(:participants).count).to eq 0
-      end
-    end
   end
 
 end

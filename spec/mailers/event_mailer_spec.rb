@@ -149,9 +149,9 @@ describe EventMailer do
     end
 
     context 'alert_event_monitor' do
-        it 'send registration to AlertMail when the event dont have alert email address' do
+        it 'dont send registration when the event dont have alert email address' do
             @email= EventMailer.alert_event_monitor(@participant, '')
-            expect(@email.to).to eq ["entrenamos@kleer.la"]
+            expect(@email.body).to eq ''
         end
         it 'send registration in event with alert email address' do
             @participant.event = FactoryBot.create(:event)

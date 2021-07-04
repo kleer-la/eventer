@@ -1,4 +1,4 @@
-AlertMail = "entrenamos@kleer.la"
+# encoding: utf-8
 
 class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
@@ -39,11 +39,10 @@ class EventMailer < ApplicationMailer
       body += "------------------------------------\n"
     end
     body += "Puedes ver/editar el registro en #{edit_registration_link}"
-    mail_to= event.monitor_email.presence || AlertMail 
-    mail(to: mail_to,
+    mail(to: event.monitor_email,
         subject: "[Keventer] Nuevo registro a #{event_title} del #{event.human_date}: " + newbie,
         body: body
-        )
+        ) unless event.monitor_email.to_s == ""    ## nil? || ''
   end
 
   def payment_process_result(participant,result,status)
