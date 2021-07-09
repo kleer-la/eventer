@@ -1,4 +1,3 @@
-# encoding: utf-8
 require 'rails_helper'
 
 RSpec.describe "generate one certificate" do
@@ -28,12 +27,28 @@ RSpec.describe "generate one certificate" do
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
       assign(:participant, participant )
-
       certificate_store= FileStoreService.createNull exists: {"certificate-images/base2021-LETTER.png" => false}
       assign(:certificate_store, certificate_store)
+
       expect {
         render :template => "participants/certificate", format: :pdf
       }.to raise_error(ActionView::Template::Error,/2021/)
+    end
+    it "2nd trainer wo signature" do
+      participant= FactoryBot.create(:participant)
+      participant.event.trainer2= FactoryBot.create(:trainer, name: 'pepe', signature_image: '')
+      participant.event.save!
+      participant.attend!
+      participant.save!
+      assign(:page_size, 'LETTER')
+      assign(:verification_code, participant.verification_code)
+      assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
+      assign(:participant, participant )
+      assign(:certificate_store, FileStoreService.createNull)
+
+      expect {
+        render :template => "participants/certificate", format: :pdf
+      }.not_to raise_error
     end
   end
 end

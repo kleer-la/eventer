@@ -212,7 +212,7 @@ module ParticipantsHelper
     end
     def trainers
       trainer(0)
-      trainer(1) if @data.trainer(1).present?
+      trainer(1) if @data.trainer(1).present? && @data.trainer_signature(1).present?
     end
     def trainer(t)
       trainer_width=130

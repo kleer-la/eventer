@@ -265,6 +265,7 @@ describe "render certificates" do
     context 'ParticipantsHelper::Certificate' do
         it 'invalid, no signature for 1st trainer' do
             @participant.event.trainers[0].signature_image= ''
+            @participant.event.save!
             @participant.attend!
             @participant.save!
             expect {
@@ -272,14 +273,15 @@ describe "render certificates" do
             }.to raise_error 'No signature available for the first trainer'
         end
         it 'valid, no signature  for 2nd trainer' do
-            @participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
+            @participant.event.trainer2= FactoryBot.create(:trainer, name: 'pepe', signature_image: '')
+            @participant.event.save!
             @participant.attend!
             @participant.save!
             expect {
                 ParticipantsHelper::Certificate.new(@participant)
             }.not_to raise_error
         end
-
+ 
         it 'default Background image' do
             cert= ParticipantsHelper::Certificate.new(@participant)
             expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
