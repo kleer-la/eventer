@@ -202,19 +202,19 @@
                         %i.icon-key
                         = participant.referer_code
                   %td{ :style => "white-space:normal;"}
-                    %span{ :style => "white-space:nowrap;"}
+                    %span
                       %i.icon-phone-sign
                       = best_in_place participant, :phone, :url => url, :class => ['editable','editable-click']
                     %br
-                    %span{ :style => "white-space:nowrap;"}
+                    %span
                       %i.icon-globe
                       = best_in_place participant, :influence_zone_id, :as => :select, :url => url, :collection => @influence_zones.map{ |i| [i.id, "#{i.display_name}"] }, :class => ['editable','editable-click']
                     %br
-                    %span{ :style => "white-space:nowrap;"}
+                    %span
                       %i.icon-tag
                       = participant.influence_zone.nil? ? "N/A" : participant.influence_zone.tag_name
                     %br
-                    %span{ :style => "white-space:nowrap;"}
+                    %span
                       %i.icon-home
                       = best_in_place participant, :address, :url => url, :class => ['editable','editable-click']
                   %td{:style=>"background-color: #{cell_background_color};color: #FFFFFF;"}

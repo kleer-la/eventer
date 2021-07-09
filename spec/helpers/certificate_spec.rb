@@ -115,51 +115,110 @@ describe Certificate do
         expect(cert.trainer_signature).to eq "PT.png"
     end
 
-    it "base description" do
-        cert = Certificate.new(@participant)
-        expect(cert.description).to start_with "Ha"
+    describe "certificate description" do
+        context "participant present" do
+            it "base description" do
+                cert = Certificate.new(@participant)
+                expect(cert.description).to start_with "Ha"
+            end
+            it "description with NONE Setting is NONE" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "Kleer cert description w/o Setting is base description" do
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to start_with "Ha"
+            end
+            it "Kleer cert description with NONE Setting NONE" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "Kleer cert description with KLEER Setting is NONE" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_KLEER, value: "2")
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "SA cert description w/o SA Setting is NONE" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_KLEER, value: "2")
+                @et.is_kleer_certification= true
+                @et.csd_eligible= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "SA cert description w SA Setting wo NONE setting is base" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_KLEER, value: "2")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_SCRUM_ALLIANCE, value: "3")
+                @et.is_kleer_certification= true
+                @et.csd_eligible= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to start_with "Ha"
+            end
+            it "SA/KLEER cert description w SA/KLEER Setting is NONE" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_KLEER, value: "2")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_SCRUM_ALLIANCE, value: "3")
+                @et.is_kleer_certification= true
+                @et.csd_eligible= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+        end
+        context "participant certified" do
+            before(:each) do
+                @participant.certify!
+            end
+            it "base description" do
+                cert = Certificate.new(@participant)
+                expect(cert.description).to start_with "Ha"
+            end
+            it "base description change with Setting" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "Kleer cert description w/o Setting is the same" do
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to start_with "Ha"
+            end
+            it "Kleer cert description with Setting" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "Kleer cert description w KLEER Setting is KLEER" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_KLEER, value: "2")
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "2"
+            end
+            it "SA cert description w/o SA Setting is NONE" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                @et.is_kleer_certification= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "1"
+            end
+            it "SA cert description w SA/KLEER Setting is KLEER" do
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_NONE, value: "1")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_KLEER, value: "2")
+                FactoryBot.create(:setting, key: ParticipantsHelper::CERTIFICATE_SCRUM_ALLIANCE, value: "3")
+                @et.is_kleer_certification= true
+                @et.csd_eligible= true
+                cert = Certificate.new(@participant)
+                expect(cert.description).to eq "2"
+            end
+        end
     end
-    it "base description change w Setting" do
-        FactoryBot.create(:setting, key: "CERTIFICATE_BASE", value: "1")
-        cert = Certificate.new(@participant)
-        expect(cert.description).to eq "1"
-    end
-    it "Kleer cert description w/o Setting is the same" do
-        @et.is_kleer_certification= true
-        cert = Certificate.new(@participant)
-        expect(cert.description).to start_with "Ha"
-    end
-    it "Kleer cert description w/o Setting" do
-        FactoryBot.create(:setting, key: "CERTIFICATE_BASE", value: "1")
-        @et.is_kleer_certification= true
-        cert = Certificate.new(@participant)
-        expect(cert.description).to eq "1"
-    end
-    it "Kleer cert description change w Setting" do
-        FactoryBot.create(:setting, key: "CERTIFICATE_BASE", value: "1")
-        FactoryBot.create(:setting, key: "CERTIFICATE_KLEER", value: "2")
-        @et.is_kleer_certification= true
-        cert = Certificate.new(@participant)
-        expect(cert.description).to eq "2"
-    end
-    it "SA cert description change w/o Setting" do
-        FactoryBot.create(:setting, key: "CERTIFICATE_BASE", value: "1")
-        FactoryBot.create(:setting, key: "CERTIFICATE_KLEER", value: "2")
-        @et.is_kleer_certification= true
-        @et.csd_eligible= true
-        cert = Certificate.new(@participant)
-        expect(cert.description).to eq "1"
-    end
-    it "SA cert description change w Setting" do
-        FactoryBot.create(:setting, key: "CERTIFICATE_BASE", value: "1")
-        FactoryBot.create(:setting, key: "CERTIFICATE_KLEER", value: "2")
-        FactoryBot.create(:setting, key: "CERTIFICATE_SCRUM_ALLIANCE", value: "3")
-        @et.is_kleer_certification= true
-        @et.csd_eligible= true
-        cert = Certificate.new(@participant)
-        expect(cert.description).to eq "3"
-    end
-
+    
     describe 'OnLine' do
       before(:each) do
       end
@@ -206,6 +265,7 @@ describe "render certificates" do
     context 'ParticipantsHelper::Certificate' do
         it 'invalid, no signature for 1st trainer' do
             @participant.event.trainers[0].signature_image= ''
+            @participant.event.save!
             @participant.attend!
             @participant.save!
             expect {
@@ -213,14 +273,15 @@ describe "render certificates" do
             }.to raise_error 'No signature available for the first trainer'
         end
         it 'valid, no signature  for 2nd trainer' do
-            @participant.event.trainers[1]= FactoryBot.create(:trainer, signature_image: '')
+            @participant.event.trainer2= FactoryBot.create(:trainer, name: 'pepe', signature_image: '')
+            @participant.event.save!
             @participant.attend!
             @participant.save!
             expect {
                 ParticipantsHelper::Certificate.new(@participant)
             }.not_to raise_error
         end
-
+ 
         it 'default Background image' do
             cert= ParticipantsHelper::Certificate.new(@participant)
             expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE

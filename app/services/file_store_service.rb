@@ -23,6 +23,10 @@ class FileStoreService
   end
 
   def read(filename, suffix, folder='certificate-images')
+    if filename.blank?
+      raise ArgumentError,"image filename blank"
+    end
+
     suffix = ('-' + suffix) if suffix.present?
     key = File.basename(filename,'.*') + suffix.to_s + File.extname(filename)
 
