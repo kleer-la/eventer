@@ -212,7 +212,7 @@ es:
         materials: "Materiales"
         include_in_catalog: "Incluido en Catálogo (Currícula)"
         tag_name: "Tag Name (CapsuleCRM)"
-        csd_eligible: "Es CSD-Eligible? (Aprobado por la Scrum Alliance para la certificación CSD)"
+        csd_eligible: "Es Scrum Alliance (CSx)"
         cancellation_policy: "Política de Cancelación"
         external_site_url: "Link externo al home del curso (en lugar del web site)"
         is_kleer_certification: "Es certificación kleer"
