@@ -2,6 +2,9 @@ require 'dimensions'
 
 module ParticipantsHelper
   DEFAULT_BACKGROUND_IMAGE= 'base2021.png'
+  CERTIFICATE_SCRUM_ALLIANCE= "CERTIFICATE_SCRUM_ALLIANCE"
+  CERTIFICATE_KLEER="CERTIFICATE_KLEER"
+  CERTIFICATE_NONE="CERTIFICATE_NONE"
 
   def self.validate_page_size(page_size)
     if page_size.nil? || (page_size != "LETTER" && page_size != "A4")
@@ -112,14 +115,17 @@ module ParticipantsHelper
     def trainers
         @participant.event.trainers
     end
-
+    def is_certified?
+      @participant.is_certified?
+    end
     def foreground?
       kleer_cert_seal_image.to_s.include? 'fg'
     end
     def description
-      [ (Setting.get("CERTIFICATE_SCRUM_ALLIANCE") if is_csd_eligible?),
-        (Setting.get("CERTIFICATE_KLEER") if is_kleer_certification? && !is_csd_eligible?),
-        Setting.get("CERTIFICATE_BASE"),
+      [ 
+        (Setting.get(CERTIFICATE_KLEER)          if is_certified? && is_kleer_certification?),
+        (Setting.get(CERTIFICATE_SCRUM_ALLIANCE) if is_certified? && is_csd_eligible?),
+        Setting.get(CERTIFICATE_NONE),
         "Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias."].find(&:present?)
     end
   end
