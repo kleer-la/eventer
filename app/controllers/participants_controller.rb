@@ -233,7 +233,7 @@ class ParticipantsController < ApplicationController
         @certificate = ParticipantsHelper::Certificate.new(@participant)
         render
       rescue ArgumentError, ActionView::Template::Error => e
-        flash[:alert] = e.message
+        flash[:alert] = e.message + " (#{e.backtrace[0]})"
         redirect_to event_participants_path
       end
     end
