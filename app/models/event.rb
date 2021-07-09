@@ -98,7 +98,7 @@ class Event < ApplicationRecord
 
   def completion
     if self.capacity > 0
-      (self.participants.confirmed.count+self.participants.attended.count)*1.0/self.capacity
+      (self.participants.confirmed.count+self.participants.to_certify.count)*1.0/self.capacity
     else
       1.0
     end

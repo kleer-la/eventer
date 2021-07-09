@@ -22,7 +22,7 @@ class ParticipantsController < ApplicationController
 
   def survey
     @event = Event.find(params[:event_id])
-    @participants = @event.participants.attended.sort_by{ |e| [ e.fname, e.lname ]}
+    @participants = @event.participants.to_certify.sort_by{ |e| [ e.fname, e.lname ]}
 
     respond_to do |format|
       format.html # survey.html.erb
@@ -31,7 +31,7 @@ class ParticipantsController < ApplicationController
 
   def print
     @event = Event.find(params[:event_id])
-    @participants = @event.participants.confirmed_or_attended.sort_by(&:lname)
+    @participants = @event.participants.attended?.sort_by(&:lname)
 
     respond_to do |format|
       format.html { render :layout => "empty_layout" }
