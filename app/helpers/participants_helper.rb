@@ -161,7 +161,7 @@ module ParticipantsHelper
       fill_image(@data.background_file) if @data.background_file.present?
     end
     def after
-      fill_image(@data.foreground_file) if @data.foreground_file.present?
+      fill_image(@data.foreground_file) if @data.background_file.present?
     end
     
     def fill_image(img_file)
