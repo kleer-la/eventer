@@ -30,6 +30,7 @@ module ParticipantsHelper
       if !valid?
         raise ArgumentError,'No signature available for the first trainer'
       end
+      seal
     end
     def valid?
       trainers[0].signature_image.present? 
@@ -46,19 +47,24 @@ module ParticipantsHelper
     def is_kleer_certification?
       @participant.event.event_type.is_kleer_certification
     end
-    def kleer_cert_seal_image
-      @participant.event.event_type.kleer_cert_seal_image
+    def seal
+      @cert_image= ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+      seal= @participant.event.event_type.kleer_cert_seal_image
+      if seal.present? && (! is_kleer_certification? || @participant.is_certified?)
+        @cert_image= seal
+      end
     end
     def background_file
-      if kleer_cert_seal_image.present? && (! is_kleer_certification? || @participant.is_certified?)
-        bg_image= kleer_cert_seal_image
-      else
-        bg_image= ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
-      end
-      bg_image if not foreground?
+      @cert_image if not foreground?
     end
     def foreground_file
-      kleer_cert_seal_image if foreground?
+      @cert_image if foreground?
+    end
+    def is_certified?
+      @participant.is_certified?
+    end
+    def foreground?
+      @cert_image.include? 'fg'
     end
     def event_name
       @participant.event.event_type.name
@@ -115,12 +121,6 @@ module ParticipantsHelper
     def trainers
         @participant.event.trainers
     end
-    def is_certified?
-      @participant.is_certified?
-    end
-    def foreground?
-      kleer_cert_seal_image.to_s.include? 'fg'
-    end
     def description
       [ 
         (Setting.get(CERTIFICATE_KLEER)          if is_certified? && is_kleer_certification?),
@@ -169,7 +169,7 @@ module ParticipantsHelper
              'LETTER' => [-38,576] }[ @doc.page.size]
       height= {'A4'   => 598,
               'LETTER' => 613 }[ @doc.page.size]
-      bk_image= @store.read( @data.background_file, @doc.page.size)
+      bk_image= @store.read( img_file, @doc.page.size)
       image bk_image, at: offset, height: height
     end
 

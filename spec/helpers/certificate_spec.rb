@@ -261,6 +261,11 @@ describe "render certificates" do
         certificate_filename = ParticipantsHelper::generate_certificate( @participant, 'A4',  @certificate_store )
         expect(certificate_filename).to include "/tmp/#{@participant.verification_code}p#{@participant.id}-A4.pdf"
     end
+    it 'foreground certificate file' do
+        @participant.event.event_type.kleer_cert_seal_image = 'fgbase.png'
+        certificate_filename = ParticipantsHelper::generate_certificate( @participant, 'A4',  @certificate_store )
+        expect(certificate_filename).to include "/tmp/#{@participant.verification_code}p#{@participant.id}-A4.pdf"
+    end
       
     context 'ParticipantsHelper::Certificate' do
         it 'invalid, no signature for 1st trainer' do
