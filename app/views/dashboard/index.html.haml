@@ -24,11 +24,13 @@
             %small Contactados
             .text-warning.icon-check.align-right
 
+- def dweek(d)
+  - (d.year*100+d.cweek) - (Date.today.year*100+Date.today.cweek)
 - event_groups= []
-- event_groups << [2, @events.select{ |ev| (ev.date.cweek-Date.today.cweek)<=2 }]
-- event_groups << [4, @events.select{ |ev| (ev.date.cweek-Date.today.cweek).between?(3,4) }]
-- event_groups << [6, @events.select{ |ev| (ev.date.cweek-Date.today.cweek).between?(5,6) }]
-- event_groups << ['+6', @events.select{ |ev| (ev.date.cweek-Date.today.cweek)>6 }]
+- event_groups << [2, @events.select{ |ev| dweek(ev.date)<=2 }]
+- event_groups << [4, @events.select{ |ev| dweek(ev.date).between?(3,4) }]
+- event_groups << [6, @events.select{ |ev| dweek(ev.date).between?(5,6) }]
+- event_groups << ['+6', @events.select{ |ev| dweek(ev.date)>6 }]
 - event_groups.each do |event_group|
   .row-fluid
     .span12
