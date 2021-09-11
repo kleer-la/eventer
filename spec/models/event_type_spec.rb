@@ -34,7 +34,13 @@ describe EventType do
     
     expect(@event_type.valid?).to  be false
   end
-  
+
+  it "elevator pitch invalid if +160 chars" do
+    @event_type.elevator_pitch = "x"*161
+    
+    expect(@event_type.valid?).to  be false
+  end
+
   it "should require its recipients" do
     @event_type.recipients = ""
     
