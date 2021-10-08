@@ -133,8 +133,8 @@ describe EventMailer do
             @participant.influence_zone.country.iso_code = 'AR'
             email = EventMailer.welcome_new_event_participant(@participant).deliver_now
             
-            expect(email.text_part.body.to_s).to include AR_TEXT
-            expect(email.html_part.body.to_s).to include AR_TEXT
+            expect(email.text_part.body.to_s).not_to include AR_TEXT
+            expect(email.html_part.body.to_s).not_to include AR_TEXT
         end
     end
 
