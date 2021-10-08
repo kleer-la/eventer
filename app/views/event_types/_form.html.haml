@@ -73,11 +73,11 @@
             .span12
               .control-group
                 %label.control-label{ :for => :elevator_pitch }= t("formtastic.labels.event_type.elevator_pitch") + " (*)"
-                = f.text_area :elevator_pitch, :rows => 4, :class => "input-block-level"
+                = f.text_area :elevator_pitch, :rows => 4, :class => "input-block-level", :maxlength => 160
                 %small.muted
-                  No más de dos párrafos. Texto plano,
+                  No más de 160 caracteres. Texto plano,
                   %strong sin HTML ni Markdown.
-                  Este texto será lo primero que se muetra en el tab de "Descripción", en kleer.la. También será utilizado en las
+                  Este texto es para SEO, el description / og:description, en kleer.la. También será utilizado en las
                   %a{ :href => "https://dev.twitter.com/docs/cards", :target => "_blank"}Twittercards
           .row-fluid
             .span12

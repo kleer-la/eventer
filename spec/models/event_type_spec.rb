@@ -34,7 +34,13 @@ describe EventType do
     
     expect(@event_type.valid?).to  be false
   end
-  
+
+  it "elevator pitch invalid if +160 chars" do
+    @event_type.elevator_pitch = "x"*161
+    
+    expect(@event_type.valid?).to  be false
+  end
+
   it "should require its recipients" do
     @event_type.recipients = ""
     
@@ -50,7 +56,7 @@ describe EventType do
   it "should require its duration" do
     @event_type.duration = ""
     
-    expect(@event_type.valid?).to  be false
+    expect(@event_type.valid?).to  be true
   end
   
   it "should have a shot_name version returning 30 characters if name is longer" do

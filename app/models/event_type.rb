@@ -6,7 +6,9 @@ class EventType < ApplicationRecord
   has_many :participants, :through => :events
   has_many :campaign_views
 
-  validates :name, :duration, :description, :recipients, :program, :trainers, :elevator_pitch, :presence => true
+  validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, :presence => true
+  validates :elevator_pitch, length: { maximum: 160,
+    too_long: "%{count} characters is the maximum allowed" }
 
   def short_name
     if self.name.length >= 30
