@@ -56,7 +56,7 @@ describe EventType do
   it "should require its duration" do
     @event_type.duration = ""
     
-    expect(@event_type.valid?).to  be false
+    expect(@event_type.valid?).to  be true
   end
   
   it "should have a shot_name version returning 30 characters if name is longer" do
