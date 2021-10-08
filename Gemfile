@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 ruby '~> 2.6'
 
-gem 'rails', '~> 5.2.0'
+gem 'rails', '~> 5.2'
 
 gem 'web-console', '~> 2.0', group: :development
 gem 'listen', group: :development
