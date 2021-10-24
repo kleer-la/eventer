@@ -13,7 +13,8 @@ private
     event = Event.find(id)
     result = event.interested_participant(
       params[:firstname], params[:lastname], 
-      params[:email], params[:country_iso]
+      params[:email], params[:country_iso],
+      params[:notes]
     ) 
     if result.present?
       render json: {error: result}, status: 400

@@ -211,10 +211,12 @@ class Event < ApplicationRecord
     humanize_date cancellation_limit_date
   end
 
-  def interested_participant(fname, lname, email, country_iso)
+  def interested_participant(fname, lname, email, country_iso, notes)
     part= participants.create(status: Participant::STATUS[:new], 
       fname: fname, lname: lname, email: email, 
-      phone: 'na', id_number: 'na', address: 'na', influence_zone: InfluenceZone.first  )
+      phone: 'na', id_number: 'na', address: 'na', influence_zone: InfluenceZone.first,
+      notes: notes
+    )
 
     part.save if part.valid?   
     part.errors.add(:participants, "No se pudo crear el participante") unless part.valid?

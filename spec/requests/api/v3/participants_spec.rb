@@ -18,7 +18,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
         lastname: 'Participant',
         country_iso: 'UY', 
         email: 'new@gmail.com',
-        comment: 'New comment'
+        notes: 'New comment'
       }
       expect {
         put("/api/v3/participants/interest", params: request_body)
@@ -35,7 +35,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
         lastname: '',
         country_iso: 'UY', 
         email: '',
-        comment: 'New comment'
+        notes: 'New comment'
       }
       expect {
         put("/api/v3/participants/interest", params: request_body)
@@ -45,9 +45,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
       expect(response.body).to match /Fname/
       expect(response.body).to match /Lname/
       expect(response.body).to match /Email/
-
     end
-
   end
 
 end
