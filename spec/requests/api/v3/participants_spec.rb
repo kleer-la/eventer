@@ -4,7 +4,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
   describe "PUT /interest" do
     before(:example) do
       @event = FactoryBot.create(:event)
-      FactoryBot.create(:influence_zone)
+      iz= FactoryBot.create(:influence_zone, country: Country.find_by(iso_code: 'AR'))
     end
     it "returns http success" do
       put "/api/v3/participants/interest"
@@ -16,7 +16,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
         event_type_id: 0,
         firstname: 'New',
         lastname: 'Participant',
-        country_iso: 'UY', 
+        country_iso: 'AR', 
         email: 'new@gmail.com',
         notes: 'New comment'
       }
@@ -33,7 +33,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
         event_type_id: 0,
         firstname: '',
         lastname: '',
-        country_iso: 'UY', 
+        country_iso: 'AR', 
         email: '',
         notes: 'New comment'
       }

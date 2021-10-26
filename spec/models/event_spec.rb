@@ -8,7 +8,7 @@ describe Event do
   end
 
   context "Valid" do
-    pending 'deprecate is_webinar' do
+    pending 'deprecate is_webinar (used in API)' do
       expect { @event.is_webinar }.to raise_error(NoMethodError)
     end
     it "should be valid" do
@@ -81,142 +81,147 @@ describe Event do
     end
   end
 
-  it "should have specific conditions" do
-    @event.specific_conditions = "Participa y llevate un Kindle de regalo!"
+  context "has attributes" do
+    it "should have specific conditions" do
+      @event.specific_conditions = "Participa y llevate un Kindle de regalo!"
 
-    expect(@event.specific_conditions).to eq "Participa y llevate un Kindle de regalo!"
-  end
+      expect(@event.specific_conditions).to eq "Participa y llevate un Kindle de regalo!"
+    end
 
-  it "should have a flag to enable referer codes on registrations if desired" do
-    @event.should_ask_for_referer_code = false
+    it "should have a flag to enable referer codes on registrations if desired" do
+      @event.should_ask_for_referer_code = false
 
-    expect(@event.should_ask_for_referer_code).to be false
-  end
+      expect(@event.should_ask_for_referer_code).to be false
+    end
 
-  it "should not require referer code (default)" do
-    expect(@event.should_ask_for_referer_code).to be false
-  end
+    it "should not require referer code (default)" do
+      expect(@event.should_ask_for_referer_code).to be false
+    end
 
-  it "should have a flag to prevent welcome e-mail if desired" do
-    @event.should_welcome_email = false
+    it "should have a flag to prevent welcome e-mail if desired" do
+      @event.should_welcome_email = false
 
-    expect(@event.should_welcome_email).to be false
-  end
+      expect(@event.should_welcome_email).to be false
+    end
 
-  it "should send welcome e-mails (default)" do
-    expect(@event.should_welcome_email).to be true
-  end
+    it "should send welcome e-mails (default)" do
+      expect(@event.should_welcome_email).to be true
+    end
 
-  it "Early Bird price should be smaller than List Price" do
-    @event.list_price = 100
-    @event.eb_price = 200
+    it "Early Bird price should be smaller than List Price" do
+      @event.list_price = 100
+      @event.eb_price = 200
 
-    expect(@event.valid?).to be false
-  end
+      expect(@event.valid?).to be false
+    end
 
-  it "Early Bird date should be earlier than Event date" do
-    @event.date = "31/01/3000"
-    @event.eb_end_date = "31/01/3100"
+    it "Early Bird date should be earlier than Event date" do
+      @event.date = "31/01/3000"
+      @event.eb_end_date = "31/01/3100"
 
-    expect(@event.valid?).to be false
-  end
-
-  
-  it "It should compute weeks from now" do
-    today = Date.today
-    @event.date = today
+      expect(@event.valid?).to be false
+    end
     
-    expect(@event.weeks_from(today.weeks_ago(3))).to eq 3
-  end
-  
-  it "It should compute weeks from now (next year)" do
-    today = Date.today
-    @event.date = today + 21
+    it "It should compute weeks from now" do
+      today = Date.today
+      @event.date = today
+      
+      expect(@event.weeks_from(today.weeks_ago(3))).to eq 3
+    end
     
-    expect(@event.weeks_from(today)).to eq 3
-  end
-  
-  it "should require a duration" do
-    @event.duration = ""
+    it "It should compute weeks from now (next year)" do
+      today = Date.today
+      @event.date = today + 21
+      
+      expect(@event.weeks_from(today)).to eq 3
+    end
     
-    expect(@event.valid?).to be false
-  end
-  
-  it "should have a duration greater than 0" do
-    @event.duration = 0
+    it "should require a duration" do
+      @event.duration = ""
+      
+      expect(@event.valid?).to be false
+    end
     
-    expect(@event.valid?).to be false
-  end
-  
-  it "should require a start time" do
-    @event.start_time = ""
+    it "should have a duration greater than 0" do
+      @event.duration = 0
+      
+      expect(@event.valid?).to be false
+    end
     
-    expect(@event.valid?).to be false
-  end
-  
-  it "should require a end time" do
-    @event.end_time = ""
+    it "should require a start time" do
+      @event.start_time = ""
+      
+      expect(@event.valid?).to be false
+    end
     
-    expect(@event.valid?).to be false
+    it "should require a end time" do
+      @event.end_time = ""
+      
+      expect(@event.valid?).to be false
+    end
+    
+    it "should allow a Presencial mode" do
+      @event.mode = 'cl'
+      expect(@event.is_classroom?).to be true
+    end
+    
+    it "should allow an OnLine mode" do
+      @event.mode = 'ol'
+      expect(@event.is_online?).to be true
+    end
+    
+    it "should allow a Blended Learning mode" do
+      @event.mode = 'bl'
+      expect(@event.is_blended_learning?).to be true
+    end
+    
+    it "should have a show_pricing flag" do
+      @event.show_pricing = true
+      expect(@event.show_pricing?).to be true
+    end
+    
+    it "should have a time zone name" do
+      @event.time_zone_name = TimeZone.all.first.name
+      tz = TimeZone.new( @event.time_zone_name )
+      expect(tz).to eq TimeZone.all.first
+    end
+    
+    it "should have a embedded player" do
+      @event.embedded_player = "hhhh"
+      expect(@event.embedded_player).to eq "hhhh"
+    end
+    
+    it "should have an embedded twitter search" do
+      @event.twitter_embedded_search = "hhhh"
+      expect(@event.twitter_embedded_search).to eq "hhhh"
+    end
+    
+    
+    it "should allow custom e-mail prices overrite" do
+      @event.custom_prices_email_text = "PL: 300, EB: 200, BN: 100"
+      expect(@event.custom_prices_email_text).to eq "PL: 300, EB: 200, BN: 100"
+    end
+    
+    it "should have an optional monitor email" do
+      @event.monitor_email = "martin.alaimo@kleer.la"
+      expect(@event.monitor_email).to eq "martin.alaimo@kleer.la"
+    end
+    
+    it "should allow a banner text to be displayes promptly" do
+      @event.banner_text = "Un texto a ser resaltado"
+      expect(@event.banner_text).to eq "Un texto a ser resaltado"
+    end
+    
+    it "should allow a banner type" do
+      @event.banner_type = "info"
+      expect(@event.banner_type).to eq "info"
+    end
+
+    it "should have a human time in Spanish that returns 'de 9:00 to 18:00hs'" do
+      expect(@event.human_time).to eq "de 09:00 a 18:00 hs"
+    end
   end
-  
-  it "should allow a Presencial mode" do
-    @event.mode = 'cl'
-    expect(@event.is_classroom?).to be true
-  end
-  
-  it "should allow an OnLine mode" do
-    @event.mode = 'ol'
-    expect(@event.is_online?).to be true
-  end
-  
-  it "should allow a Blended Learning mode" do
-    @event.mode = 'bl'
-    expect(@event.is_blended_learning?).to be true
-  end
-  
-  it "should have a show_pricing flag" do
-    @event.show_pricing = true
-    expect(@event.show_pricing?).to be true
-  end
-  
-  it "should have a time zone name" do
-    @event.time_zone_name = TimeZone.all.first.name
-    tz = TimeZone.new( @event.time_zone_name )
-    expect(tz).to eq TimeZone.all.first
-  end
-  
-  it "should have a embedded player" do
-    @event.embedded_player = "hhhh"
-    expect(@event.embedded_player).to eq "hhhh"
-  end
-  
-  it "should have an embedded twitter search" do
-    @event.twitter_embedded_search = "hhhh"
-    expect(@event.twitter_embedded_search).to eq "hhhh"
-  end
-  
-  
-  it "should allow custom e-mail prices overrite" do
-    @event.custom_prices_email_text = "PL: 300, EB: 200, BN: 100"
-    expect(@event.custom_prices_email_text).to eq "PL: 300, EB: 200, BN: 100"
-  end
-  
-  it "should have an optional monitor email" do
-    @event.monitor_email = "martin.alaimo@kleer.la"
-    expect(@event.monitor_email).to eq "martin.alaimo@kleer.la"
-  end
-  
-  it "should allow a banner text to be displayes promptly" do
-    @event.banner_text = "Un texto a ser resaltado"
-    expect(@event.banner_text).to eq "Un texto a ser resaltado"
-  end
-  
-  it "should allow a banner type" do
-    @event.banner_type = "info"
-    expect(@event.banner_type).to eq "info"
-  end
-  
+
   context "A private event" do
     
     before (:each) do
@@ -348,10 +353,6 @@ describe Event do
     end
   end
   
-  it "should have a human time in English that returns 'from 9:00 to 18:00hs'" do
-    expect(@event.human_time).to eq "de 09:00 a 18:00 hs"
-  end
-  
   context "When Locale is en" do
     before (:each) do
       I18n.locale=:en
@@ -419,4 +420,35 @@ describe Event do
       expect(@event.attendance_counts[:total]).to eq 1
     end
   end
+
+  context 'New interested participant' do
+    before(:each) do
+      c= FactoryBot.create(:country, iso_code: 'AR')
+      FactoryBot.create(:influence_zone, country: c)
+      @event = FactoryBot.create(:event)
+    end
+
+    it 'Evething is cool' do
+      expect {
+        result= @event.interested_participant('fname', 'lname', 'e@mail.com', 'AR', 'notes')
+      }.to change(Participant, :count).by(1)
+    end
+    it 'not cool' do      
+      expect {
+        @result= @event.interested_participant('', '', '', 'AR', '')
+      }.to change(Participant, :count).by(0)
+
+      expect(@result).to match /Fname/
+      expect(@result).to match /Lname/
+      expect(@result).to match /Email/
+    end
+    it 'country not found' do     
+      expect {
+        @result= @event.interested_participant('', '', '', 'ZZ', '')
+      }.to change(Participant, :count).by(0)
+
+      expect(@result).to match /país/
+    end
+  end
+
 end

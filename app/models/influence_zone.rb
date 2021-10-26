@@ -13,7 +13,7 @@ class InfluenceZone < ApplicationRecord
   end
 
   def self.find_by_country(iso_code)
-    Country.find_by(iso_code: iso_code.upcase)&.influence_zones&.first
+    InfluenceZone.joins(:country).where('countries.iso_code' => iso_code).first
   end
 
 end

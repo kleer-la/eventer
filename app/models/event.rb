@@ -211,15 +211,20 @@ class Event < ApplicationRecord
     humanize_date cancellation_limit_date
   end
 
+  INTERESTED_ERROR= "No se pudo crear el participante"
   def interested_participant(fname, lname, email, country_iso, notes)
+    iz= InfluenceZone::find_by_country(country_iso)
+    if iz.nil?
+      return "No se encontró el país #{country_iso}. " +INTERESTED_ERROR
+    end
     part= participants.create(status: Participant::STATUS[:new], 
       fname: fname, lname: lname, email: email, 
-      phone: 'na', id_number: 'na', address: 'na', influence_zone: InfluenceZone.first,
+      phone: 'na', id_number: 'na', address: 'na', influence_zone: iz,
       notes: notes
     )
 
     part.save if part.valid?   
-    part.errors.add(:participants, "No se pudo crear el participante") unless part.valid?
+    part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
     part.errors.full_messages.join(", ")
   end
 

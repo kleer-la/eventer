@@ -2,11 +2,11 @@ require 'rails_helper'
 
 describe InfluenceZone do
   
-  before(:each) do
-    @zi = FactoryBot.build(:influence_zone)
-  end
-
   context 'valid' do
+    before(:each) do
+      @zi = FactoryBot.build(:influence_zone)
+    end
+  
     it "should be valid" do
       expect(@zi.valid?).to be true
     end
@@ -31,9 +31,8 @@ describe InfluenceZone do
   end
   
   context "for Argentina" do
-    
     before(:each) do
-      @zi.country = FactoryBot.build(:country)
+      @zi = FactoryBot.create(:influence_zone)
     end
   
     it "display_name should be 'Argentina' if zone_name = ''" do
@@ -50,7 +49,11 @@ describe InfluenceZone do
   
   end
 
-  context "find by country" do  
+  context "find by country" do
+    before(:each) do
+      @zi = FactoryBot.create(:influence_zone)
+    end
+
     it "should find a InfluenceZone" do
       @zi.save
       iso_code= @zi.country.iso_code
