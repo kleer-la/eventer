@@ -11,4 +11,9 @@ class InfluenceZone < ApplicationRecord
       self.zone_name == "" ? self.country.name : self.country.name+" - "+self.zone_name
     end
   end
+
+  def self.find_by_country(iso_code)
+    InfluenceZone.joins(:country).where('countries.iso_code' => iso_code).first
+  end
+
 end
