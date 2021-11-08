@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V3::Participants", type: :request do
-  describe "PUT /interest" do
+  describe "POST /interest" do
     before(:example) do
       @event = FactoryBot.create(:event)
       iz= FactoryBot.create(:influence_zone, country: Country.find_by(iso_code: 'AR'))
     end
     it "returns http success" do
-      put "/api/v3/participants/interest"
+      post "/api/v3/participants/interest"
       expect(response).to have_http_status(:success)
     end
     it "add to an event" do
@@ -21,7 +21,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
         notes: 'New comment'
       }
       expect {
-        put("/api/v3/participants/interest", params: request_body)
+        post("/api/v3/participants/interest", params: request_body)
       }.to change(Participant, :count).by(1)
 
       expect(response).to have_http_status(:success)
@@ -38,7 +38,7 @@ RSpec.describe "Api::V3::Participants", type: :request do
         notes: 'New comment'
       }
       expect {
-        put("/api/v3/participants/interest", params: request_body)
+        post("/api/v3/participants/interest", params: request_body)
       }.to change(Participant, :count).by(0)
 
       expect(response).to have_http_status(:bad_request)
