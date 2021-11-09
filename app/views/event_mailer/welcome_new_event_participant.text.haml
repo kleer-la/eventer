@@ -19,9 +19,9 @@ Te enviamos la información de este taller:
   Formas de pago: Tarjeta de crédito.
   = ""
   - if false #@participant.influence_zone.country.iso_code == 'AR'
-    Nota: Para pagos desde Argentina los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
+    - # Nota: Para pagos desde Argentina los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
     = ""
-    IMPORTANTE: Te enviaremos un link de pago. Reservaras tu lugar con el pago. 
+    IMPORTANTE: Te enviaremos en las próx. 24hs hábiles un link de pago. Reservaras tu lugar con el pago. 
   - if !@participant.event.business_eb_price.nil?
     Grupos (5 o más):
     = "#{iso_code} #{currency_format(@participant.event.business_eb_price)} cada uno abonando antes del #{eb_end_date}."
