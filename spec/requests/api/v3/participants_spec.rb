@@ -66,6 +66,28 @@ RSpec.describe "Api::V3::Participants", type: :request do
     end
 
     context "just event type" do
+      before(:example) do
+        @event_type = FactoryBot.create(:event_type)
+        # iz= FactoryBot.create(:influence_zone, country: Country.find_by(iso_code: 'AR'))
+      end
+
+      it "interested in an event type -> no participant added" do
+        request_body = {
+          event_id: 0,
+          event_type_id: @event_type.id,
+          firstname: 'New',
+          lastname: 'Participant',
+          country_iso: 'AR', 
+          email: 'new@gmail.com',
+          notes: 'New comment'
+        }
+        expect {
+          post("/api/v3/participants/interest", params: request_body)
+        }.to change(Participant, :count).by(0)
+  
+        expect(response).to have_http_status(:success)
+      end
+
     end
   end
 

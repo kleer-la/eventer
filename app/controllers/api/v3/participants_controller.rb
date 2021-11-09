@@ -3,10 +3,10 @@ class Api::V3::ParticipantsController < ApplicationController
     event_id= params[:event_id].to_i
     event_type_id= params[:event_type_id].to_i
     if event_id == 0 and event_type_id > 0
-      event_id = Event.public_courses.where("event_type_id=?", event_type_id)[0].id
+      event_id = Event.public_courses.where("event_type_id=?", event_type_id)[0]&.id
     end
 
-    _interest_event(event_id) if event_id > 0
+    _interest_event(event_id) if event_id.to_i > 0
   end
 
 private
