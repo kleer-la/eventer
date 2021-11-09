@@ -38,13 +38,12 @@
       %br
       - if false #@participant.influence_zone.country.iso_code == 'AR'
         %b
-          Nota: Para pagos desde Argentina
-        los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
+          - # Nota: Para pagos desde Argentina los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
         %br
       %br
       %h2
         %b
-          &#x1F525; IMPORTANTE: Te enviaremos un link de pago. Reservaras tu lugar con el pago.
+          &#x1F525; IMPORTANTE: Te enviaremos en las próx. 24hs hábiles un link de pago. Reservaras tu lugar con el pago.
       %br
       - if !@participant.event.business_eb_price.nil?
         %br
