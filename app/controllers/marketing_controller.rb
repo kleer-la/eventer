@@ -48,6 +48,10 @@ class MarketingController < ApplicationController
       @camapign_ids = CampaignView.where("created_at >= ?", @since ).where("created_at < ?", @until ).map{ |p| p.campaign_id }
       @camapigns = Campaign.real.where('id in (?)', @camapign_ids ).order('updated_at DESC')
     end
+    @eventos= Participant.joins(event: :event_type).
+      select('events.id, name, date, visibility_type, capacity, list_price, status, count(*) as part').
+      where('events.date' =>  Date.parse("2021-1-1")..Date.parse("2021-12-31") ).
+      group('events.id', :name, :date, :visibility_type, :capacity, :list_price, :status)
   end
 
   def campaign
