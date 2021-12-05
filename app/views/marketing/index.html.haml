@@ -6,12 +6,12 @@
       = render partial: '/marketing/time_segment_menu', locals: {top: '/marketing'}
 
 .col-sm-12
-  = render partial: '/marketing/funnel'
-
-.col-sm-12
   .box.bordered-box.red-border
     .box-header.green-background
-      .title Campañas
+      .title Eventos
+      .actions
+        %a.btn.box-collapse.btn-mini.btn-link
+          %i
     .box-content.box-no-padding
       .responsive-table
         .scrollable-area
@@ -19,38 +19,32 @@
             %thead
               %tr
                 %td
-                  %strong Nombre
+                  %strong Evento
                 %td
-                  %strong Landing Page Views
+                  %strong Pu/Pr
                 %td
-                  %strong Registration Form Views
+                  %strong Inicio
                 %td
-                  %strong Registros
+                  %strong Capacidad
                 %td
-                  %strong Confirmados
+                  %strong Precio Lista
                 %td
-                  %strong Conversion Rate (%)
+                  %strong Estado
                 %td
-                  %strong Fecha Inicio
-                %td
-                  %strong Última Acción (View o Registro)
+                  %strong Participanes
             %tbody
-              - @camapigns.each do |campaign|
-                - visitors_count = CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
-                - interested_count = CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
-                - registrants_count = Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
-                - sales_count = Participant.attended?.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
-                - conversion_rate = (visitors_count==0 )? 0 : sales_count.to_f / visitors_count.to_f * 100
+              - @eventos.each do |evento|
                 %tr
-                  %td
-                    %a{ href: "/marketing/campaigns/#{campaign.id}/#{@time_segment}" }
-                      = campaign.display_name
-                  %td= visitors_count
-                  %td= interested_count
-                  %td= registrants_count
-                  %td= sales_count
-                  %td= conversion_rate.round(2)
-                  %td
-                    = campaign.created_at.strftime("%F")
-                  %td
-                    = campaign.updated_at.strftime("%F %H:%M")
+                  %td= evento.name
+                  %td= evento.visibility_type
+                  %td= evento.date
+                  %td= evento.capacity
+                  %td= evento.list_price
+                  %td= evento.status
+                  %td= evento.part
+
+.col-sm-12
+  = render partial: '/marketing/funnel'
+
+.col-sm-12
+  = render partial: '/marketing/campaigns'

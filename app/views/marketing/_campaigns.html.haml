@@ -1,0 +1,48 @@
+.box.bordered-box.red-border
+  .box-header.orange-background
+    .title Campañas
+    .actions
+      %a.btn.box-collapse.btn-mini.btn-link
+        %i
+  .box-content.box-no-padding
+    .responsive-table
+      .scrollable-area
+        %table.table.table-hover.table-striped.data-table
+          %thead
+            %tr
+              %td
+                %strong Nombre
+              %td
+                %strong Landing Page Views
+              %td
+                %strong Registration Form Views
+              %td
+                %strong Registros
+              %td
+                %strong Confirmados
+              %td
+                %strong Conversion Rate (%)
+              %td
+                %strong Fecha Inicio
+              %td
+                %strong Última Acción (View o Registro)
+          %tbody
+            - @camapigns.each do |campaign|
+              - visitors_count = CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "landing").count
+              - interested_count = CampaignView.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).where(element_viewed: "registration_form").count
+              - registrants_count = Participant.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+              - sales_count = Participant.attended?.where(campaign_id: campaign.id).where("created_at >= ?", @since).where("created_at < ?", @until ).count
+              - conversion_rate = (visitors_count==0 )? 0 : sales_count.to_f / visitors_count.to_f * 100
+              %tr
+                %td
+                  %a{ href: "/marketing/campaigns/#{campaign.id}/#{@time_segment}" }
+                    = campaign.display_name
+                %td= visitors_count
+                %td= interested_count
+                %td= registrants_count
+                %td= sales_count
+                %td= conversion_rate.round(2)
+                %td
+                  = campaign.created_at.strftime("%F")
+                %td
+                  = campaign.updated_at.strftime("%F %H:%M")
