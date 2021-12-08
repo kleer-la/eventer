@@ -49,6 +49,8 @@ Enjoy!
 - Ir al directorio de la aplicación
     cd /home/eventer
 - Seguir con las instrucciones previas
+- Si usas rails generate, los archivos quedan con usuarios del containter y no se pueden grabar con VS Code.
+    sudo chown -R juan .
 
 == Migrar versiones Rails
 - https://railsbump.org/ compatibilidad de gemas

@@ -119,4 +119,12 @@ FactoryBot.define do
     key {"Hi"}
     value {"Hello"}
   end
+
+  factory :article do
+    id {"10"}
+    title {"Mi historia"}
+    description {"Mi descripción"}
+    body {"Mi contenido"}
+    slug {"mi-historia"}
+  end
 end

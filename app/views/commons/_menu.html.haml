@@ -28,6 +28,10 @@
           %a{ :href => "/marketing" }
             %i.icon-bar-chart
             %span Marketing
+        %li{ :class => menu_item_class(@active_menu, "articles") }
+          %a{ :href => "/articles" }
+            %i.icon-file
+            %span Articles
             %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
               new
         - if can? :manage, Category.new
