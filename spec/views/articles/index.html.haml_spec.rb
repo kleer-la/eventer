@@ -6,15 +6,15 @@ RSpec.describe "articles/index", type: :view do
       Article.create!(
         title: "Title",
         slug: "Slug",
-        body: "MyText"
-        description: "MyDescr"
+        body: "MyText",
+        description: "MyDescr",
         published: false
       ),
       Article.create!(
         title: "Title",
         slug: "Slug",
-        body: "MyText"
-        description: "MyDescr"
+        body: "MyText",
+        description: "MyDescr",
         published: false
       )
     ])
@@ -24,7 +24,6 @@ RSpec.describe "articles/index", type: :view do
     render
     assert_select "tr>td", text: "Title".to_s, count: 2
     assert_select "tr>td", text: "Slug".to_s, count: 2
-    assert_select "tr>td", text: "MyText".to_s, count: 2
     assert_select "tr>td", text: "MyDescr".to_s, count: 2
     assert_select "tr>td", text: false.to_s, count: 2
   end

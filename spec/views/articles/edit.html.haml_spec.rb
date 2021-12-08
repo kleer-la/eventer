@@ -5,8 +5,8 @@ RSpec.describe "articles/edit", type: :view do
     @article = assign(:article, Article.create!(
       title: "MyString",
       slug: "MyString",
-      body: "MyText"
-      description: "MyText"
+      body: "MyText",
+      description: "MyText",
       published: false
     ))
   end
