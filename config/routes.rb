@@ -1,5 +1,6 @@
 
 Rails.application.routes.draw do
+  resources :articles
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
