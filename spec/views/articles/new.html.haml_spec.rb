@@ -4,7 +4,7 @@ RSpec.describe "articles/new", type: :view do
   before(:each) do
     assign(:article, Article.new(
       title: "MyString",
-      slug: "MyString",
+      tabtitle: "MyString",
       body: "MyText",
       description: "MyDescr",
       published: false
@@ -18,7 +18,7 @@ RSpec.describe "articles/new", type: :view do
 
       assert_select "input[name=?]", "article[title]"
 
-      assert_select "input[name=?]", "article[slug]"
+      assert_select "input[name=?]", "article[tabtitle]"
 
       assert_select "textarea[name=?]", "article[body]"
       assert_select "input[name=?]", "article[description]"

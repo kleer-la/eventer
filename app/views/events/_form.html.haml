@@ -207,7 +207,7 @@
             .span12
               .control-group
                 %label.control-label{ :for => :registration_link }= t("formtastic.labels.event.registration_link")
-                = f.text_field :registration_link, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.registration_link")
+                = f.text_field :registration_link, :type => :url, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.registration_link")
           .row-fuid
             .span4
               .control-group
