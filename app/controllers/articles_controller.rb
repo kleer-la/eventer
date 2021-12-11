@@ -8,8 +8,12 @@ class ArticlesController < ApplicationController
 
   # GET /articles/1
   def show
+    respond_to do |format|
+      format.html
+      format.json { render json: @article }
+    end
   end
-
+  
   # GET /articles/new
   def new
     @article = Article.new
@@ -48,11 +52,11 @@ class ArticlesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
-      @article = Article.find(params[:id])
+      @article = Article.friendly.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def article_params
-      params.require(:article).permit(:title, :slug, :body, :description, :published)
+      params.require(:article).permit(:title, :slug, :body, :description, :published, :tabtitle)
     end
 end

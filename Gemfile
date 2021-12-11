@@ -60,11 +60,10 @@ gem 'comma'
 gem 'money'
 gem 'prawn'
 gem 'prawn_rails'
-gem 'dimensions' # knowing the heigt of an image
+gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'redcarpet'
 
-# Edición en el lugar
-gem 'best_in_place'
+gem 'best_in_place' # for editing participants
 
 # Amazon AWS API Client
 gem 'aws-sdk', '~> 2' # v2 change to Aws instead of AWS
@@ -85,3 +84,5 @@ gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(
 gem 'activemodel-serializers-xml' # to_xml  (rails 5)
 gem 'rails-controller-testing'    # assigns (rails 5)
 gem 'puma'
+
+gem 'friendly_id' # for blog Articles

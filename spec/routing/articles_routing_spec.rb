@@ -14,6 +14,10 @@ RSpec.describe ArticlesController, type: :routing do
       expect(get: "/articles/1").to route_to("articles#show", id: "1")
     end
 
+    it "routes to #show JSON" do
+      expect(get: "/articles/1.json").to route_to("articles#show", id: "1", format: 'json')
+    end
+
     it "routes to #edit" do
       expect(get: "/articles/1/edit").to route_to("articles#edit", id: "1")
     end
