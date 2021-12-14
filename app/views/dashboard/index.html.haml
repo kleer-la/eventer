@@ -48,6 +48,8 @@
           .box-content
             %ul.unstyled.tasks
               - event_group[1].each do |event|
+                - trainers = event.trainers.reduce('') {|ac, t| ac += " #{t.name}"}
+                - human_hours = event.start_time.strftime( "%H:%Mhs." )
                 %li
                   .row-fluid
                     .span1
@@ -57,7 +59,7 @@
                         %span.pull-left
                           %a{ :href => "/events/#{event.id}/participants" }
                             %b= event.event_type.name
-                            = "| " + event.city + " | " + event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
+                            = "| #{event.city} | #{human_hours} | #{event.place} | #{trainers}"
                         %small.pull-right
                           - if event.registration_link == ""
                             = "#{(event.completion*100).round.to_s}% (#{event.participants.confirmed.count.to_s}/#{event.capacity.to_s}) "
