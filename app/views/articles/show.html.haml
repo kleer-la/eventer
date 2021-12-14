@@ -13,6 +13,9 @@
   %b Description:
   = @article.description
 %p
+  %b Trainers:
+  = @article.trainers.pluck(:name).join(',')
+%p
   %b Published:
   = @article.published
 
