@@ -40,6 +40,10 @@
               .control-group
                 %label.control-label{ :for => :capacity }= t("formtastic.labels.event.capacity")
                 = f.text_field :capacity, :class => "input-mini"
+            .span2
+              .control-group
+                %label.control-label{ :for => :capacity }= t("formtastic.labels.event.duration")
+                = f.text_field :duration, :class => "input-mini"
           .row-fluid
             .span6
               .control-group
