@@ -17,4 +17,12 @@ RSpec.describe Article, type: :model do
     expect(@article.valid?).to be false    
     expect(@article.errors.count).to be 4
   end
+  it "add HABM author (trainer)" do
+    article= FactoryBot.create(:article)
+    trainer= FactoryBot.create(:trainer)
+    article.trainers << trainer
+    expect(article.trainers.count).to be 1
+    expect(trainer.articles.count).to be 1
+  end
+
 end

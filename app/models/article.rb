@@ -1,6 +1,7 @@
 class Article < ApplicationRecord
     extend FriendlyId
     friendly_id :title, :use => [:slugged]
+    has_and_belongs_to_many :trainers
 
     validates :title, presence: true
     validates :body, presence: true
