@@ -48,7 +48,7 @@
           .box-content
             %ul.unstyled.tasks
               - event_group[1].each do |event|
-                - trainers = event.trainers.reduce('') {|ac, t| ac += " #{t.name}"}
+                - trainers = event.trainers.pluck(:name).join(',')
                 - human_hours = event.start_time.strftime( "%H:%Mhs." )
                 %li
                   .row-fluid
