@@ -28,7 +28,17 @@ RSpec.describe "/articles", type: :request do
       get article_url(article)
       expect(response).to be_successful
     end
+    it "articles has trainer json " do
+      article = FactoryBot.create(:article)
+      trainer= FactoryBot.create(:trainer, name: 'Luke')
+      article.trainers << trainer
+      get article_url(article), params: {:id => article.to_param, :format => "json"}
+
+      article_json = @response.parsed_body
+      expect(article_json['trainers'].count).to be 1
+      expect(article_json['trainers'][0]['name']).to eq 'Luke'
   end
+end
 
   describe "GET /new" do
     it "renders a successful response" do

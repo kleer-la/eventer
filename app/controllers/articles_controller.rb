@@ -10,7 +10,7 @@ class ArticlesController < ApplicationController
   def show
     respond_to do |format|
       format.html
-      format.json { render json: @article }
+      format.json { render json: @article, include: {trainers: {only: :name}} }
     end
   end
   
@@ -57,6 +57,6 @@ class ArticlesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def article_params
-      params.require(:article).permit(:title, :slug, :body, :description, :published, :tabtitle)
+      params.require(:article).permit(:title, :slug, :body, :description, :published, :tabtitle, trainer_ids: [])
     end
 end
