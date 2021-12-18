@@ -218,7 +218,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
-    pg (0.21.0)
+    pg (1.2.3)
     prawn (2.4.0)
       pdf-core (~> 0.9.0)
       ttfunk (~> 1.7)
@@ -392,7 +392,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri
   pdf-inspector
-  pg (= 0.21)
+  pg (~> 1.00)
   prawn
   prawn_rails
   puma

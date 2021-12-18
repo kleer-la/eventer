@@ -28,7 +28,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '0.21'    # wait until Rails 5.1.5 to upgrade to pg 1.x
+  gem 'pg', '~> 1.00'    # wait until Rails 5.1.5 to upgrade to pg 1.x
 end
 
 # Gems used only for assets and not required
