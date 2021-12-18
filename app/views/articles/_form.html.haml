@@ -23,6 +23,9 @@
                 %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
                 y HTML.
               = f.input :description, input_html: {class: 'input-block-level'}
+              = f.input :slug, input_html: {class: 'input-block-level'}
+              %small.muted
+                Dejar en blanco para generar automáticamente.
               = f.input :trainers, as: :select
               = f.input :published
 
