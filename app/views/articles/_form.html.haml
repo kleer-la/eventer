@@ -1,10 +1,41 @@
-= semantic_form_for @article do |f|
-  = f.inputs do
-    = f.input :title
-    = f.input :tabtitle
-    = f.input :body
-    = f.input :description
-    = f.input :published
-  
-  = f.actions do
-    = f.action(:submit)
+- @article.errors.full_messages.each do |msg|
+  .alert.alert-error
+    %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
+    =msg
+
+.row-fluid
+  .span12.box
+    .box-header.red-background
+      .title
+        .icon-edit
+          = @article.title.nil? ? t("formtastic.labels.trainer.new_title") : @article.title
+
+    .box-content
+      .row-fuid
+        = semantic_form_for @article do |f|
+          %fieldset.inputs
+            = f.inputs do
+              = f.input :title, input_html: {class: 'input-block-level'}
+              = f.input :tabtitle, input_html: {class: 'input-block-level'}
+              = f.input :body, input_html: {rows: 8, class: 'input-block-level'}
+              %small.muted 
+                Este texto soporta 
+                %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                y HTML.
+              = f.input :description, input_html: {class: 'input-block-level'}
+              = f.input :slug, input_html: {class: 'input-block-level'}
+              %small.muted
+                Dejar en blanco para generar automáticamente.
+              = f.input :trainers, as: :select
+              = f.input :published
+
+            .row-fuid
+              .span12
+                .form-actions
+                  .text-right
+                    %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
+                      %i.icon-save
+                      Guardar
+                    %a.btn.btn-large{ :href => articles_path }
+                      %i.icon-undo
+                      Cancelar

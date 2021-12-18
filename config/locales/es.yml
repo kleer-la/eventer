@@ -144,7 +144,7 @@ es:
         date: "Fecha de inicio"
         finish_date: "Fecha de fin"
         capacity: "Capacidad"
-        duration: "Duración (días)"
+        duration: "Duración (horas)"
         start_time: "Hora de inicio"
         end_time: "Hora de finalización"
         visibility_type: "Tipo"

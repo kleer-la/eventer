@@ -19,4 +19,12 @@ RSpec.describe "articles/show", type: :view do
     expect(rendered).to match(/MyDescr/)
     expect(rendered).to match(/MyText/)
   end
+
+  it "show authors (trainers)" do
+    @article.trainers << FactoryBot.create(:trainer, name: 'Luke Skywalker')
+    @article.trainers << FactoryBot.create(:trainer, name: 'Obi Wan Kenobi')
+    render
+    expect(rendered).to match(/Luke Skywalker/)
+    expect(rendered).to match(/Obi Wan Kenobi/)
+  end
 end

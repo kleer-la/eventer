@@ -8,6 +8,8 @@ class Trainer < ApplicationRecord
   has_many :participants, :through => :events
   has_many :cotrained_participants, :through => :cotrained_events, :source => :participants
 
+  has_and_belongs_to_many :articles
+
   scope :kleerer, -> {where(:is_kleerer => true)}
   scope :sorted, -> {order("name asc")}  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 

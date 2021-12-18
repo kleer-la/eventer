@@ -197,7 +197,7 @@ module ParticipantsHelper
                   overflow: :shrink_to_fit
     end
     def certificate_info
-      text_box "<color rgb='#{@kcolor}'><b>MODALIDAD:</b></color> Online<br>"+
+      text_box "<color rgb='#{@kcolor}'><b>MODALIDAD:</b></color>#{@data.place}<br>"+
                    "<color rgb='#{@kcolor}'><b>REALIZADO:</b></color> #{@data.date}<br>"+
                    "<color rgb='#{@kcolor}'><b>DEDICACIÓN:</b></color> #{@data.event_duration_hours} hs",
                 at: [0,250], :align => :left, 

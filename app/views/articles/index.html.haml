@@ -1,27 +1,33 @@
-%h1 Listing articles
+.page-header
+  %h1.pull-left
+    %i.icon-cogs
+    %span Articles
+  .pull-right
+    %a.btn.btn-white{ :href => new_article_path }= t('formtastic.actions.new')
 
-%table
-  %thead
-    %tr
-      %th Title
-      %th Slug
-      %th Description
-      %th Published
-      %th
-      %th
-      %th
+.row-fluid
+  .box-content.box-no-padding
+    .responsive-table
+      .scrollable-area
+        %table.table.table-striped{ :style => "margin-bottom:0;" }
+          %thead
+            %tr
+              %th Title
+              %th Slug
+              %th Description
+              %th Published
+              %th
 
-  %tbody
-    - @articles.each do |article|
-      %tr
-        %td= article.title
-        %td= article.slug
-        %td= article.description
-        %td= article.published
-        %td= link_to 'Show', article
-        %td= link_to 'Edit', edit_article_path(article)
-        %td= link_to 'Destroy', article, method: :delete, data: { confirm: 'Are you sure?' }
-
-%br
-
-= link_to 'New Article', new_article_path
+          %tbody
+            - @articles.each do |article|
+              %tr
+                %td= article.title
+                %td= article.slug
+                %td= article.description
+                %td= article.published
+                %td
+                  .text-right
+                    %a.btn.btn-warning.btn-mini{ :href => edit_article_path(article) }
+                      %i.icon-edit
+                    %a.btn.btn-danger.btn-mini{ :href => articles_path(article), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                      %i.icon-trash
