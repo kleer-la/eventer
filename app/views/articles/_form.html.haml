@@ -26,7 +26,7 @@
               = f.input :slug, input_html: {class: 'input-block-level'}
               %small.muted
                 Dejar en blanco para generar automáticamente.
-              = f.input :trainers, as: :select
+              = f.input :trainers, as: :select, collection: Trainer.all.order(name: :asc), input_html: {size: 8}
               = f.input :published
 
             .row-fuid
