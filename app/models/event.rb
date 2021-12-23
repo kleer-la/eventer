@@ -176,10 +176,6 @@ class Event < ApplicationRecord
     self.mode == 'bl'
   end
 
-  def is_webinar
-    is_online? && is_community_event?
-  end
-
   def trainers
     t= [trainer]
     if !trainer2.nil?
