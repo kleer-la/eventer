@@ -30,8 +30,15 @@ RSpec.describe "/articles", type: :request do
       expect(article_json[0]['trainers'].count).to be 1
       expect(article_json[0]['trainers'][0]['name']).to eq 'Luke'
     end
+    it "articles has abstract json " do
+      article = FactoryBot.create(:article, body: 'some text')
+      get articles_url, params: {format: "json"}
+      
+      article_json = @response.parsed_body
+      expect(article_json[0]['abstract']).to eq 'some text'
+    end
   end
-
+    
   describe "GET /show" do
     it "renders a successful response" do
       article = FactoryBot.create(:article)
