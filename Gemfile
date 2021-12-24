@@ -8,7 +8,7 @@ gem 'web-console', '~> 2.0', group: :development
 gem 'listen', group: :development
 
 group :development, :test do
-  gem 'sqlite3' #, '~> 1.3.6' # '1.4.2'
+  gem 'sqlite3'
   gem 'rspec-rails'
   gem 'pdf-inspector', :require => "pdf/inspector"
   gem 'rspec-mocks'
@@ -16,7 +16,7 @@ group :development, :test do
   # gem 'coveralls' #, '~> 0.7', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
   gem 'debase'
   gem 'ruby-debug-ide'
-  gem 'database_cleaner-active_record' # wait until Rails 5.x to upgrade to 2.0
+  gem 'database_cleaner-active_record'
 end
 
 group :test do
@@ -28,7 +28,7 @@ group :test do
 end
 
 group :test, :production do
-  gem 'pg', '~> 1.00'    # wait until Rails 5.1.5 to upgrade to pg 1.x
+  gem 'pg', '~> 1.00'
 end
 
 # Gems used only for assets and not required
@@ -42,7 +42,7 @@ gem "therubyracer"
 gem 'uglifier', '>= 1.3.0'
 
 gem 'jquery-rails'
-gem 'haml'            # wait until rails 5.1 to update to 2.0
+gem 'haml'
 gem 'haml-rails'
 
 gem 'nokogiri'
@@ -51,7 +51,7 @@ gem 'eventmachine', '1.2.7'
 gem 'devise', '~> 4'
 gem 'cancancan'
 
-gem 'formtastic'           # wait until rails 5.0 to update to 4.0
+gem 'formtastic', '~> 3.1' # fail with v4 (bc formtastic-bootstrap) https://github.com/formtastic/formtastic/issues/1308
 gem 'formtastic-bootstrap'
 gem 'valid_email'
 gem 'daemons'
