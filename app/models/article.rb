@@ -14,10 +14,10 @@ class Article < ApplicationRecord
 
   def abstract
     max_abstract_length= 500
-    double_n = body.index('\n\n')
+    double_n = body.index("\r\n\r\n")
+    double_n = double_n || max_abstract_length
     p = body.index('</p>')
     p += 4 unless p.nil?
-    double_n = double_n || max_abstract_length
     p = p || max_abstract_length
     abstract_end = double_n < p ? double_n : p 
     body[0...abstract_end]

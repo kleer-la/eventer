@@ -44,7 +44,7 @@ RSpec.describe Article, type: :model do
       expect(@article.abstract).to eq 'some text'
     end
     it "body until double empty line " do
-      @article.body = 'some text\n\nAnother text'
+      @article.body = "some text\r\n\r\nAnother text"
       expect(@article.abstract).to eq 'some text'
     end
     it "body until </p>" do
@@ -52,7 +52,7 @@ RSpec.describe Article, type: :model do
       expect(@article.abstract).to eq '<p>some text</p>'
     end
     it "body until </p> before \n\n" do
-      @article.body = '<p>some text</p>Another \n\n text'
+      @article.body = "<p>some text</p>Another \r\n\r\n text"
       expect(@article.abstract).to eq '<p>some text</p>'
     end
     it "body w/o </p> or \n\n and more than 500 chars" do
