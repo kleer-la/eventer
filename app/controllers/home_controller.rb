@@ -4,10 +4,10 @@ class HomeController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render :xml => @events.to_xml( :include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
                                                 ) }
       format.json { render json: @events.to_json( :include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
       ) }
     end
   end
@@ -17,10 +17,10 @@ class HomeController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render :xml => @events.to_xml( :include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
       ) }
       format.json { render json: @events.to_json( :include => event_data_to_include,
-                                                 :methods => [:human_date, :is_webinar]
+                                                 :methods => [:human_date]
       )}
     end
   end
@@ -30,10 +30,10 @@ class HomeController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render :xml => @events.to_xml(:include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
                                                 ) }
       format.json { render json: @events.to_json( :include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
       )}
     end
   end
@@ -42,10 +42,10 @@ class HomeController < ApplicationController
     @event = Event.public_and_visible.find(params[:id])
     respond_to do |format|
       format.xml { render :xml => @event.to_xml(:include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
                                                 ) }
       format.json { render json: @event.to_json( :include => event_data_to_include,
-                                                  :methods => [:human_date, :is_webinar]
+                                                  :methods => [:human_date]
       )}
     end
   end

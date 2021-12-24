@@ -38,4 +38,27 @@ RSpec.describe Article, type: :model do
     expect(trainer.articles.count).to be 1
   end
 
+  context "abstract" do
+    it "body w/o double empty line or </p>" do
+      @article.body = 'some text'
+      expect(@article.abstract).to eq 'some text'
+    end
+    it "body until double empty line " do
+      @article.body = 'some text\n\nAnother text'
+      expect(@article.abstract).to eq 'some text'
+    end
+    it "body until </p>" do
+      @article.body = '<p>some text</p>Another text'
+      expect(@article.abstract).to eq '<p>some text</p>'
+    end
+    it "body until </p> before \n\n" do
+      @article.body = '<p>some text</p>Another \n\n text'
+      expect(@article.abstract).to eq '<p>some text</p>'
+    end
+    it "body w/o </p> or \n\n and more than 500 chars" do
+      @article.body = '0123456789ABCDEF' * 32
+      expect(@article.abstract.length).to eq 500
+    end
+
+  end
 end

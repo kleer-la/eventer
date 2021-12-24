@@ -30,7 +30,8 @@ RSpec.describe 'articles/edit', type: :view do
     render
     expect(rendered).to match(/Luke Skywalker/)
     expect(rendered).to match(/Obi Wan Kenobi/)
-    assert_select 'select[name=?]', 'article[trainer_ids][]'
+    assert_select 'input[name=?]', 'article[trainer_ids][]'
+    # assert_select 'select[name=?]', 'article[trainer_ids][]'
   end
 
 end

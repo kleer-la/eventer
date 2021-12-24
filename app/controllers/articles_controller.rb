@@ -6,7 +6,10 @@ class ArticlesController < ApplicationController
     @articles = Article.all
     respond_to do |format|
       format.html
-      format.json { render json: @articles, include: {trainers: {only: :name}} }
+      format.json { render json: @articles.order(created_at: :desc),
+                    methods: [:abstract],
+                    include: {trainers: {only: :name}} 
+                  }
     end
   end
 
