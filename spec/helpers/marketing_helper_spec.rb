@@ -1,15 +1,9 @@
 require 'rails_helper'
 
-# Specs in this file have access to a helper object that includes
-# the MarketingHelper. For example:
-#
-# describe MarketingHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 describe MarketingHelper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  pending "empty when range is empty" do
+    r= Date.parse("2021-01-01")..Date.parse("2021-01-01")
+    eventos= MarketingHelper.training(r)
+    expect(eventos.count).to eq 0
+  end
 end
