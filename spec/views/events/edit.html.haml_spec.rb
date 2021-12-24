@@ -17,8 +17,8 @@ describe "events/edit" do
       :city => "Ev City"
     )
     # assign(:event, @event)
-    # @countries = [@event.country]
-    # @trainers = [@event.trainer]
+    @trainers = [FactoryBot.build(:trainer)]
+    @categories = [FactoryBot.build(:category)]
     @timezones = ActiveSupport::TimeZone.all
     @currencies = Money::Currency.table
     @event_type_cancellation_policy = @event.event_type.cancellation_policy
