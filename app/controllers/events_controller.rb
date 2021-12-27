@@ -1,21 +1,23 @@
+# frozen_string_literal: true
+
 include ActiveSupport
 require './lib/country_filter'
 
 class EventsController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
+  before_action :authenticate_user!
+  before_action :activate_menu
 
   load_and_authorize_resource
 
   # GET /events
   # GET /events.json
   def index
-    country_filter= CountryFilter.new(params[:country_iso], session[:country_filter])
-    session[:country_filter]= @country= country_filter.country_iso
+    country_filter = CountryFilter.new(params[:country_iso], session[:country_filter])
+    session[:country_filter] = @country = country_filter.country_iso
 
-    @events = Event.visible.order('date').select{ |ev|
+    @events = Event.visible.order('date').select do |ev|
       country_filter.select?(ev.country_id)
-      }
+    end
 
     respond_to do |format|
       format.html # index.html.erb
@@ -63,16 +65,16 @@ class EventsController < ApplicationController
     @event = Event.new(event_params)
     @timezones = TimeZone.all
     @currencies = Money::Currency.table
-    
+
     respond_to do |format|
       if @event.save
-        id= @event.id.to_s
-        link= ' <a id="last_event" href="/events/'+id+'/edit">Editar</a>'
-        format.html { redirect_to events_path, notice: t('flash.event.create.success')+link }
+        id = @event.id.to_s
+        link = " <a id=\"last_event\" href=\"/events/#{id}/edit\">Editar</a>"
+        format.html { redirect_to events_path, notice: t('flash.event.create.success') + link }
         format.json { render json: @event, status: :created, location: @event }
       else
         flash.now[:error] = t('flash.failure')
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @event.errors, status: :unprocessable_entity }
       end
     end
@@ -94,7 +96,7 @@ class EventsController < ApplicationController
         end
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @event.errors, status: :unprocessable_entity }
       end
     end
@@ -115,10 +117,10 @@ class EventsController < ApplicationController
   def send_certificate
     @event = Event.find(params[:id])
 
-    if @event.trainer.signature_image.nil? || @event.trainer.signature_image == ""
+    if @event.trainer.signature_image.nil? || @event.trainer.signature_image == ''
       flash.now[:alert] = t('flash.event.send_certificate.signature_failure')
     else
-      sent= 0
+      sent = 0
 
       @event.participants.each do |participant|
         if participant.could_receive_certificate?
@@ -129,23 +131,23 @@ class EventsController < ApplicationController
 
       flash.now[:notice] = t('flash.event.send_certificate.success') + "Se están enviando #{sent} certificados."
     end
-
   end
 
   private
 
   def activate_menu
-    @active_menu = "events"
+    @active_menu = 'events'
   end
+
   def event_params
     params.require(:event).permit :event_type_id, :trainer_id, :trainer2_id, :trainer3_id, :country_id, :date, :finish_date, :place, :capacity, :city, :visibility_type, :list_price,
-                  :event_type, :country, :trainer, :duration,
-                  :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants,
-                  :start_time, :end_time, :sepyme_enabled, :mode, :time_zone_name, :embedded_player, :twitter_embedded_search,
-                  :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
-                  :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
-                  :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
-                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :mailchimp_workflow_for_warmup, :mailchimp_workflow_for_warmup_call, :banner_text, :banner_type, :registration_ends,
-                  :cancellation_policy, :enable_online_payment, :online_course_codename, :online_cohort_codename, :specific_subtitle
+                                  :event_type, :country, :trainer, :duration,
+                                  :eb_price, :eb_end_date, :draft, :cancelled, :registration_link, :is_sold_out, :participants,
+                                  :start_time, :end_time, :sepyme_enabled, :mode, :time_zone_name, :embedded_player, :twitter_embedded_search,
+                                  :currency_iso_code, :address, :custom_prices_email_text, :monitor_email,
+                                  :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
+                                  :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price, :enterprise_11plus_price,
+                                  :show_pricing, :extra_script, :mailchimp_workflow, :mailchimp_workflow_call, :mailchimp_workflow_for_warmup, :mailchimp_workflow_for_warmup_call, :banner_text, :banner_type, :registration_ends,
+                                  :cancellation_policy, :enable_online_payment, :online_course_codename, :online_cohort_codename, :specific_subtitle
   end
 end

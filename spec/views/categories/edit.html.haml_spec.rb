@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-describe "categories/edit" do
+describe 'categories/edit' do
   before(:each) do
     @category = assign(:category, Category.new)
   end
 
-  it "renders the edit category form" do
+  it 'renders the edit category form' do
     render
 
     expect(rendered).to match(/Nombre \(\*\)/)

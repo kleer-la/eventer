@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateEvents < ActiveRecord::Migration[4.2]
   def change
     create_table :events do |t|
@@ -8,14 +10,14 @@ class CreateEvents < ActiveRecord::Migration[4.2]
       t.string :city
       t.references :country
       t.references :trainer
-      t.string :visibility_type, :limit => 2
-      t.decimal :list_price, :precision => 7, :scale => 2
+      t.string :visibility_type, limit: 2
+      t.decimal :list_price, precision: 7, scale: 2
       t.boolean :list_price_plus_tax
       t.integer :list_price_2_pax_discount
       t.integer :list_price_3plus_pax_discount
-      t.decimal :seb_price, :precision => 7, :scale => 2
+      t.decimal :seb_price, precision: 7, scale: 2
       t.date :seb_end_date
-      t.decimal :eb_price, :precision => 7, :scale => 2
+      t.decimal :eb_price, precision: 7, scale: 2
       t.date :eb_end_date
       t.text :description
       t.text :recipients

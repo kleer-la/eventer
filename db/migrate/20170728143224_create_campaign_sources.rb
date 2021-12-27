@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateCampaignSources < ActiveRecord::Migration[4.2]
   def change
     create_table :campaign_sources do |t|
@@ -5,7 +7,7 @@ class CreateCampaignSources < ActiveRecord::Migration[4.2]
       t.timestamps null: true
     end
 
-    add_column :campaign_views, :campaign_source_id, :integer, :index => true
+    add_column :campaign_views, :campaign_source_id, :integer, index: true
     remove_column :campaign_views, :source
 
     Campaign.reset_column_information
@@ -15,8 +17,7 @@ class CreateCampaignSources < ActiveRecord::Migration[4.2]
     generic_source = CampaignSource.where(codename: nil).first_or_create
 
     CampaignView.all.each do |cview|
-      cview.update_attribute( :campaign_source, generic_source)
+      cview.update_attribute(:campaign_source, generic_source)
     end
-
   end
 end

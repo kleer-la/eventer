@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class AddRatingAtributesToTrainer < ActiveRecord::Migration[4.2]
   def change
-  	add_column :trainers, :average_rating, :decimal, :precision => 4, :scale => 2
-  	add_column :trainers, :net_promoter_score, :integer
-  	add_column :trainers, :surveyed_count, :integer
-  	add_column :trainers, :promoter_count, :integer
+    add_column :trainers, :average_rating, :decimal, precision: 4, scale: 2
+    add_column :trainers, :net_promoter_score, :integer
+    add_column :trainers, :surveyed_count, :integer
+    add_column :trainers, :promoter_count, :integer
   end
 end

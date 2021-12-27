@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
+  before_action :authenticate_user!
+  before_action :activate_menu
   load_and_authorize_resource
-    
+
   # GET /users
   # GET /users.json
   def index
@@ -51,7 +53,7 @@ class UsersController < ApplicationController
         format.html { redirect_to @user, notice: 'User was successfully created.' }
         format.json { render json: @user, status: :created, location: @user }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -67,7 +69,7 @@ class UsersController < ApplicationController
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -84,11 +86,11 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   private
-  
+
   def activate_menu
-    @active_menu = "users"
+    @active_menu = 'users'
   end
 
   def user_params

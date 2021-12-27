@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-describe "event_types/new" do
+describe 'event_types/new' do
   before(:each) do
     @trainers = [FactoryBot.build(:trainer)]
     @categories = [FactoryBot.build(:category)]
-    assign(:event_type, 
-      EventType.new
-    )
+    assign(:event_type,
+           EventType.new)
   end
 
-  it "renders new event_type form" do
+  it 'renders new event_type form' do
     render
 
     expect(rendered).to match(/#{@trainers[0].name}/)

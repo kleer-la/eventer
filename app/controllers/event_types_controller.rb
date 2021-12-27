@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 class EventTypesController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
+  before_action :authenticate_user!
+  before_action :activate_menu
 
   load_and_authorize_resource
 
   # GET /event_types
   # GET /event_types.json
   def index
-    @event_types = EventType.all.sort{|p1,p2| p1.name <=> p2.name}
+    @event_types = EventType.all.sort { |p1, p2| p1.name <=> p2.name }
 
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @event_types }
-      format.xml { render :xml => @event_types.to_xml( { :include => :categories } ) }
+      format.xml { render xml: @event_types.to_xml({ include: :categories }) }
     end
   end
 
@@ -34,7 +36,7 @@ class EventTypesController < ApplicationController
     @event_type = EventType.new
     @trainers = Trainer.sorted
     @categories = Category.sorted
-    @cancellation_policy_setting = Setting.get("CANCELLATION_POLICY")
+    @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
 
     respond_to do |format|
       format.html # new.html.erb
@@ -47,7 +49,7 @@ class EventTypesController < ApplicationController
     @event_type = EventType.find(params[:id])
     @trainers = Trainer.sorted
     @categories = Category.sorted
-    @cancellation_policy_setting = Setting.get("CANCELLATION_POLICY")
+    @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
   end
 
   # POST /event_types
@@ -59,12 +61,12 @@ class EventTypesController < ApplicationController
 
     respond_to do |format|
       if @event_type.save
-        id= @event_type.id.to_s
-        link= ' <a id="last_event_type" href="/event_types/'+id+'/edit">Editar</a>'
-        format.html { redirect_to event_types_path, notice: t('flash.event_type.create.success')+link  }
+        id = @event_type.id.to_s
+        link = " <a id=\"last_event_type\" href=\"/event_types/#{id}/edit\">Editar</a>"
+        format.html { redirect_to event_types_path, notice: t('flash.event_type.create.success') + link }
         format.json { render json: @event_type, status: :created, location: @event_type }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @event_type.errors, status: :unprocessable_entity }
       end
     end
@@ -82,7 +84,7 @@ class EventTypesController < ApplicationController
         format.html { redirect_to event_types_path, notice: t('flash.event_type.update.success') }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @event_type.errors, status: :unprocessable_entity }
       end
     end
@@ -92,7 +94,7 @@ class EventTypesController < ApplicationController
   # DELETE /event_types/1.json
   def destroy
     redirect_to event_types_path, notice: 'Event type delete is disable. Contact entrenamos@kleer.la'
-    
+
     # @event_type = EventType.find(params[:id])
     # @event_type.destroy
 
@@ -104,19 +106,19 @@ class EventTypesController < ApplicationController
 
   def testimonies
     @event_type = EventType.find(params[:id])
-    @participants= @event_type.testimonies.sort_by(&:created_at).reverse
+    @participants = @event_type.testimonies.sort_by(&:created_at).reverse
   end
 
   private
 
   def activate_menu
-    @active_menu = "event_types"
+    @active_menu = 'event_types'
   end
 
   def event_type_params
-    params.require(:event_type).permit :name, :subtitle, :duration, :goal, :description, :recipients, :program, {trainer_ids: []},
-                  :faq, :materials, {category_ids: []}, :events, :include_in_catalog, :elevator_pitch,
-                  :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification,
-                  :kleer_cert_seal_image, :external_site_url
+    params.require(:event_type).permit :name, :subtitle, :duration, :goal, :description, :recipients, :program, { trainer_ids: [] },
+                                       :faq, :materials, { category_ids: [] }, :events, :include_in_catalog, :elevator_pitch,
+                                       :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification,
+                                       :kleer_cert_seal_image, :external_site_url
   end
 end

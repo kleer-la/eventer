@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class CategoriesController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
+  before_action :authenticate_user!
+  before_action :activate_menu
   load_and_authorize_resource
-  
+
   # GET /categories
   # GET /categories.json
   def index
@@ -51,7 +53,7 @@ class CategoriesController < ApplicationController
         format.html { redirect_to @category, notice: 'Category was successfully created.' }
         format.json { render json: @category, status: :created, location: @category }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @category.errors, status: :unprocessable_entity }
       end
     end
@@ -67,7 +69,7 @@ class CategoriesController < ApplicationController
         format.html { redirect_to @category, notice: 'Category was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @category.errors, status: :unprocessable_entity }
       end
     end
@@ -84,14 +86,15 @@ class CategoriesController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   private
-  
+
   def activate_menu
-    @active_menu = "categories"
+    @active_menu = 'categories'
   end
 
   def category_params
-    params.require(:category).permit :codename, :description, :name, :tagline, :description_en, :name_en, :tagline_en, :events, :visible, :order
+    params.require(:category).permit :codename, :description, :name, :tagline, :description_en, :name_en, :tagline_en,
+                                     :events, :visible, :order
   end
 end

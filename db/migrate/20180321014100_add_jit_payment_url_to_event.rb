@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddJitPaymentUrlToEvent < ActiveRecord::Migration[4.2]
   def change
     add_column :events, :enable_online_payment, :boolean, default: false

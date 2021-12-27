@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # --------------------------------------------------------------------------------------------------
 # Please note: If you're subclassing Formtastic::FormBuilder, Formtastic uses
@@ -62,7 +62,7 @@ Formtastic::FormBuilder.inline_errors = :list
 # fall back to the default order as defined by #inline_order
 # Formtastic::FormBuilder.custom_inline_order[:checkbox] = [:errors, :hints, :input]
 # Formtastic::FormBuilder.custom_inline_order[:select] = [:hints, :input, :errors]
-#Formtastic::FormBuilder.custom_inline_order = [:input, :hints, :errors]
+# Formtastic::FormBuilder.custom_inline_order = [:input, :hints, :errors]
 
 # Specifies if labels/hints for input fields automatically be looked up using I18n.
 # Default value: true. Overridden for specific fields by setting value to true,
@@ -74,7 +74,7 @@ Formtastic::FormBuilder.i18n_lookups_by_default = true
 # Formtastic::Helpers::FormHelper.builder = MyCustomBuilder
 Formtastic::Helpers::FormHelper.builder = FormtasticBootstrap::FormBuilder
 
-# You can opt-in to Formtastic's use of the HTML5 `required` attribute on `<input>`, `<select>` 
+# You can opt-in to Formtastic's use of the HTML5 `required` attribute on `<input>`, `<select>`
 # and `<textarea>` tags by setting this to false (defaults to true).
 # Formtastic::FormBuilder.use_required_attribute = true
 
