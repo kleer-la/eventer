@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MailchimpWarmupWorkflow < ActiveRecord::Migration[4.2]
   def up
     add_column :events, :mailchimp_workflow_for_warmup, :boolean

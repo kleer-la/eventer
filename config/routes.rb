@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 Rails.application.routes.draw do
   resources :articles
@@ -11,7 +12,7 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
-  root :to => 'dashboard#index'
+  root to: 'dashboard#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -33,12 +34,11 @@ Rails.application.routes.draw do
     resources :participants
   end
   patch 'events/:id/edit' => 'events#update'
-  
+
   resources :roles
-  
+
   devise_for :users
   resources :users
-
 
   get 'dashboard' => 'dashboard#index'
   get 'dashboard/pricing' => 'dashboard#pricing'
@@ -46,7 +46,7 @@ Rails.application.routes.draw do
   get 'dashboard/countdown' => 'dashboard#countdown'
   get 'dashboard/funneling' => 'dashboard#funneling'
   get 'dashboard/:country_iso' => 'dashboard#index'
-  get 'dashboard/pricing/:country_iso' => 'dashboard#pricing'    
+  get 'dashboard/pricing/:country_iso' => 'dashboard#pricing'
 
   get 'api/events' => 'home#index'
   get 'api/trainers' => 'home#trainers'
@@ -72,8 +72,8 @@ Rails.application.routes.draw do
   get 'events/:id/send_certificate' => 'events#send_certificate'
 
   get 'events/:event_id/participant_confirmed' => 'participants#confirm'
-  post 'events/payuco/confirmation' =>'participants#payuco_confirmation'
-  get 'events/payuco/response' =>'participants#payuco_response'
+  post 'events/payuco/confirmation' => 'participants#payuco_confirmation'
+  get 'events/payuco/response' => 'participants#payuco_response'
   get 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
   get 'events/:event_id/participants_print' => 'participants#print'
   get 'events/:event_id/participants_survey' => 'participants#survey'
@@ -82,10 +82,10 @@ Rails.application.routes.draw do
   get 'participants/search' => 'participants#search'
   get 'participants/followup' => 'participants#followup'
 
-  get "marketing" => 'marketing#index'
-  get "marketing/:time_segment" => 'marketing#index'
-  get "marketing/campaigns/:id" => 'marketing#campaign'
-  get "marketing/campaigns/:id/:time_segment" => 'marketing#campaign'
+  get 'marketing' => 'marketing#index'
+  get 'marketing/:time_segment' => 'marketing#index'
+  get 'marketing/campaigns/:id' => 'marketing#campaign'
+  get 'marketing/campaigns/:id/:time_segment' => 'marketing#campaign'
   get 'events/:id/viewed' => 'marketing#viewed'
   #   resources :products
 

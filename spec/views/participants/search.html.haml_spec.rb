@@ -1,21 +1,23 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "rendering the search result template" do
-  it "displays the search result" do
-    participant= FactoryBot.create(:participant)
+RSpec.describe 'rendering the search result template' do
+  it 'displays the search result' do
+    participant = FactoryBot.create(:participant)
     assign(:participants, [participant])
 
-    render :template => "participants/search"
+    render template: 'participants/search'
 
-    expect(rendered).to match /Juan Carlos/
+    expect(rendered).to match(/Juan Carlos/)
   end
-  it "displays a message for nil event type" do
-    participant= FactoryBot.create(:participant)
-    participant.event.event_type= nil
+  it 'displays a message for nil event type' do
+    participant = FactoryBot.create(:participant)
+    participant.event.event_type = nil
     assign(:participants, [participant])
 
-    render :template => "participants/search"
+    render template: 'participants/search'
 
-    expect(rendered).to match /sin tipo evento/
+    expect(rendered).to match(/sin tipo evento/)
   end
 end

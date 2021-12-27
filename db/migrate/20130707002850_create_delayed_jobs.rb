@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class CreateDelayedJobs < ActiveRecord::Migration[4.2]
   def self.up
-    create_table :delayed_jobs, :force => true do |t|
-      t.integer  :priority, :default => 0      # Allows some jobs to jump to the front of the queue
-      t.integer  :attempts, :default => 0      # Provides for retries, but still fail eventually.
+    create_table :delayed_jobs, force: true do |t|
+      t.integer  :priority, default: 0      # Allows some jobs to jump to the front of the queue
+      t.integer  :attempts, default: 0      # Provides for retries, but still fail eventually.
       t.text     :handler                      # YAML-encoded string of the object that will do work
       t.text     :last_error                   # reason for last failure (See Note below)
       t.datetime :run_at                       # When to run. Could be Time.zone.now for immediately, or sometime in the future.
@@ -13,7 +15,7 @@ class CreateDelayedJobs < ActiveRecord::Migration[4.2]
       t.timestamps null: true
     end
 
-    add_index :delayed_jobs, [:priority, :run_at], :name => 'delayed_jobs_priority'
+    add_index :delayed_jobs, %i[priority run_at], name: 'delayed_jobs_priority'
   end
 
   def self.down

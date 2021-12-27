@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 class AddVerificationCodeToParticipant < ActiveRecord::Migration[4.2]
   def change
-  	add_column :participants, :verification_code, :string
+    add_column :participants, :verification_code, :string
 
-  	Participant.all.each do |participant|
-  		participant.update_attribute(:verification_code, Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase)
-  	end
-
+    Participant.all.each do |participant|
+      participant.update_attribute(:verification_code, Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase)
+    end
   end
 end

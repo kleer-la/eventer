@@ -1,1 +1,3 @@
-Aws.config[:region]="us-east-1"
+# frozen_string_literal: true
+
+Aws.config[:region] = 'us-east-1'

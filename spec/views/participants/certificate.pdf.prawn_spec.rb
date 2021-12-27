@@ -1,54 +1,56 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "generate one certificate" do
-  it "a correct one@participant." do
-    participant= FactoryBot.create(:participant)
+RSpec.describe 'generate one certificate' do
+  it 'a correct one@participant.' do
+    participant = FactoryBot.create(:participant)
     participant.attend!
     participant.save!
-    trainer= participant.event.trainer
-    trainer.signature_image= 'PT.png'
+    trainer = participant.event.trainer
+    trainer.signature_image = 'PT.png'
     assign(:page_size, 'LETTER')
     assign(:verification_code, participant.verification_code)
-    assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
-    assign(:participant, participant )
+    assign(:certificate, ParticipantsHelper::Certificate.new(participant))
+    assign(:participant, participant)
     assign(:certificate_store, FileStoreService.createNull)
 
-    render :template => "participants/certificate", format: :pdf
-    texts= PDF::Inspector::Text.analyze(rendered).strings
-    expect(texts.join ' ').to include 'Juan Carlos Perez Luasó'
+    render template: 'participants/certificate', format: :pdf
+    texts = PDF::Inspector::Text.analyze(rendered).strings
+    expect(texts.join(' ')).to include 'Juan Carlos Perez Luasó'
   end
 
   context 'PdfCertificate' do
-    it "seal image not found" do
-      participant= FactoryBot.create(:participant)
+    it 'seal image not found' do
+      participant = FactoryBot.create(:participant)
       participant.attend!
       participant.save!
       assign(:page_size, 'LETTER')
       assign(:verification_code, participant.verification_code)
-      assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
-      assign(:participant, participant )
-      certificate_store= FileStoreService.createNull exists: {"certificate-images/base2021-LETTER.png" => false}
+      assign(:certificate, ParticipantsHelper::Certificate.new(participant))
+      assign(:participant, participant)
+      certificate_store = FileStoreService.createNull exists: { 'certificate-images/base2021-LETTER.png' => false }
       assign(:certificate_store, certificate_store)
 
-      expect {
-        render :template => "participants/certificate", format: :pdf
-      }.to raise_error(ActionView::Template::Error,/2021/)
+      expect do
+        render template: 'participants/certificate', format: :pdf
+      end.to raise_error(ActionView::Template::Error, /2021/)
     end
-    it "2nd trainer wo signature" do
-      participant= FactoryBot.create(:participant)
-      participant.event.trainer2= FactoryBot.create(:trainer, name: 'pepe', signature_image: '')
+    it '2nd trainer wo signature' do
+      participant = FactoryBot.create(:participant)
+      participant.event.trainer2 = FactoryBot.create(:trainer, name: 'pepe', signature_image: '')
       participant.event.save!
       participant.attend!
       participant.save!
       assign(:page_size, 'LETTER')
       assign(:verification_code, participant.verification_code)
-      assign(:certificate, ParticipantsHelper::Certificate.new(participant) )
-      assign(:participant, participant )
+      assign(:certificate, ParticipantsHelper::Certificate.new(participant))
+      assign(:participant, participant)
       assign(:certificate_store, FileStoreService.createNull)
 
-      expect {
-        render :template => "participants/certificate", format: :pdf
-      }.not_to raise_error
+      expect do
+        render template: 'participants/certificate', format: :pdf
+      end.not_to raise_error
     end
   end
 end

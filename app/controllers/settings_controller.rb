@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class SettingsController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
+  before_action :authenticate_user!
+  before_action :activate_menu
 
   load_and_authorize_resource
 
@@ -52,7 +54,7 @@ class SettingsController < ApplicationController
         format.html { redirect_to @setting, notice: 'Setting was successfully created.' }
         format.json { render json: @setting, status: :created, location: @setting }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @setting.errors, status: :unprocessable_entity }
       end
     end
@@ -68,7 +70,7 @@ class SettingsController < ApplicationController
         format.html { redirect_to @setting, notice: 'Setting was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @setting.errors, status: :unprocessable_entity }
       end
     end
@@ -89,10 +91,10 @@ class SettingsController < ApplicationController
   private
 
   def activate_menu
-    @active_menu = "settings"
+    @active_menu = 'settings'
   end
+
   def setting_params
     params.require(:setting).permit :key, :value
   end
-
 end

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class TrainersController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
+  before_action :authenticate_user!
+  before_action :activate_menu
   load_and_authorize_resource
 
   # GET /trainers
@@ -51,7 +53,7 @@ class TrainersController < ApplicationController
         format.html { redirect_to trainers_path, notice: t('flash.trainer.create.success') }
         format.json { render json: @trainer, status: :created, location: @trainer }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @trainer.errors, status: :unprocessable_entity }
       end
     end
@@ -67,7 +69,7 @@ class TrainersController < ApplicationController
         format.html { redirect_to trainers_path, notice: t('flash.trainer.update.success') }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @trainer.errors, status: :unprocessable_entity }
       end
     end
@@ -86,11 +88,13 @@ class TrainersController < ApplicationController
   end
 
   private
-  
+
   def activate_menu
-    @active_menu = "trainers"
+    @active_menu = 'trainers'
   end
+
   def trainer_params
-    params.require(:trainer).permit :name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name, :signature_image, :signature_credentials, :is_kleerer
+    params.require(:trainer).permit :name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name,
+                                    :signature_image, :signature_credentials, :is_kleerer
   end
 end

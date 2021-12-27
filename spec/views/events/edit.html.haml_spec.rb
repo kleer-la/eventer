@@ -1,21 +1,21 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-describe "events/edit" do  
-  it "renders the edit event form" do
-    pending "rendering partial _form"
-    event_types= [FactoryBot.create(:event_type,
-      :name => "ET Name",
-      :description => "ET Descripcion",
-      :recipients => "ET Recipients",
-      :program => "ET Program"
-      )]
+describe 'events/edit' do
+  it 'renders the edit event form' do
+    pending 'rendering partial _form'
+    event_types = [FactoryBot.create(:event_type,
+                                     name: 'ET Name',
+                                     description: 'ET Descripcion',
+                                     recipients: 'ET Recipients',
+                                     program: 'ET Program')]
     @event = FactoryBot.create(:event,
-      :event_type => event_types[0],
-      :place => "EvPlace",
-      :date => "2025-01-01",
-      :capacity => 12358,
-      :city => "Ev City"
-    )
+                               event_type: event_types[0],
+                               place: 'EvPlace',
+                               date: '2025-01-01',
+                               capacity: 12_358,
+                               city: 'Ev City')
     # assign(:event, @event)
     @trainers = [FactoryBot.build(:trainer)]
     @categories = [FactoryBot.build(:category)]

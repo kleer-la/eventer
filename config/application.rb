@@ -1,4 +1,6 @@
-require File.expand_path('../boot', __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path('boot', __dir__)
 
 require 'rails/all'
 
@@ -22,6 +24,6 @@ module Eventer
     I18n.config.enforce_available_locales = false
     I18n.default_locale = :es
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddEventTypeToCampaignView < ActiveRecord::Migration[4.2]
   def change
     add_column :campaign_views, :event_type_id, :integer, index: true

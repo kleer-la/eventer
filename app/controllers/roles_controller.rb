@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class RolesController < ApplicationController
-  before_action:authenticate_user!
-  before_action:activate_menu
-  load_and_authorize_resource :except => :create
-  
+  before_action :authenticate_user!
+  before_action :activate_menu
+  load_and_authorize_resource except: :create
+
   # GET /roles
   # GET /roles.json
   def index
@@ -51,7 +53,7 @@ class RolesController < ApplicationController
         format.html { redirect_to @role, notice: 'Role was successfully created.' }
         format.json { render json: @role, status: :created, location: @role }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @role.errors, status: :unprocessable_entity }
       end
     end
@@ -67,7 +69,7 @@ class RolesController < ApplicationController
         format.html { redirect_to @role, notice: 'Role was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @role.errors, status: :unprocessable_entity }
       end
     end
@@ -84,11 +86,11 @@ class RolesController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   private
-  
+
   def activate_menu
-    @active_menu = "roles"
+    @active_menu = 'roles'
   end
 
   def role_params

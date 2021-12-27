@@ -1,15 +1,18 @@
+# frozen_string_literal: true
+
 class ArticlesController < ApplicationController
-  before_action :set_article, only: [:show, :edit, :update, :destroy]
+  before_action :set_article, only: %i[show edit update destroy]
 
   # GET /articles
   def index
     @articles = Article.all
     respond_to do |format|
       format.html
-      format.json { render json: @articles.order(created_at: :desc),
-                    methods: [:abstract],
-                    include: {trainers: {only: :name}} 
-                  }
+      format.json do
+        render json: @articles.order(created_at: :desc),
+               methods: [:abstract],
+               include: { trainers: { only: :name } }
+      end
     end
   end
 
@@ -17,18 +20,17 @@ class ArticlesController < ApplicationController
   def show
     respond_to do |format|
       format.html
-      format.json { render json: @article, include: {trainers: {only: :name}} }
+      format.json { render json: @article, include: { trainers: { only: :name } } }
     end
   end
-  
+
   # GET /articles/new
   def new
     @article = Article.new
   end
 
   # GET /articles/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /articles
   def create
@@ -57,13 +59,14 @@ class ArticlesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_article
-      @article = Article.friendly.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def article_params
-      params.require(:article).permit(:title, :slug, :body, :description, :published, :tabtitle, trainer_ids: [])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_article
+    @article = Article.friendly.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def article_params
+    params.require(:article).permit(:title, :slug, :body, :description, :published, :tabtitle, trainer_ids: [])
+  end
 end

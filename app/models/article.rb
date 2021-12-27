@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Article < ApplicationRecord
   extend FriendlyId
-  friendly_id :title, :use => [:slugged]
+  friendly_id :title, use: [:slugged]
   has_and_belongs_to_many :trainers
 
   validates :title, presence: true
@@ -13,13 +15,13 @@ class Article < ApplicationRecord
   end
 
   def abstract
-    max_abstract_length= 500
+    max_abstract_length = 500
     double_n = body.index("\r\n\r\n")
-    double_n = double_n || max_abstract_length
+    double_n ||= max_abstract_length
     p = body.index('</p>')
     p += 4 unless p.nil?
-    p = p || max_abstract_length
-    abstract_end = double_n < p ? double_n : p 
+    p ||= max_abstract_length
+    abstract_end = double_n < p ? double_n : p
     body[0...abstract_end]
   end
 end
