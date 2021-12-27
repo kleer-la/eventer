@@ -4,7 +4,7 @@ require './lib/country_filter'
 
 class ParticipantsController < ApplicationController
   before_action :authenticate_user!,
-                except: %i[new create confirm certificate payuco_confirmation payuco_response]
+                except: %i[new create confirm certificate]
 
   STATUS_LIST = [%w[Nuevo N], %w[Contactado T], %w[Confirmado C], %w[Presente A], %w[Certificado K],
                  %w[Cancelado X], %w[Pospuesto D]].freeze
@@ -146,18 +146,11 @@ class ParticipantsController < ApplicationController
           edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
           EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
 
-          if session[:payment_on_eventer]
-            webCheckout = PayuCoWebcheckoutService.new
-            @payment_data = webCheckout.prepare_webcheckout(@event, @participant)
-            format.html { render action: 'confirm_with_payment', layout: 'empty_layout' }
-          else
-            format.html do
-              redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
-                          notice: 'Tu pedido fue realizado exitosamente.'
-            end
-            format.json { render json: @participant, status: :created, location: @participant }
+          format.html do
+            redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
+                        notice: 'Tu pedido fue realizado exitosamente.'
           end
-
+          format.json { render json: @participant, status: :created, location: @participant }
         else
           format.html { render action: 'new', layout: 'empty_layout' }
           format.json { render json: @participant.errors, status: :unprocessable_entity }
@@ -167,25 +160,6 @@ class ParticipantsController < ApplicationController
       # invalid captcha
       @captcha_error = true
       render action: 'new', layout: 'empty_layout'
-    end
-  end
-
-  # POST events/payuco_confirmation
-  def payuco_confirmation
-    payu_co_confirmation_service = PayuCoConfirmationService.new params
-    payu_co_confirmation_service.confirm
-    render status: 200, json: 'ok'
-  rescue Exception => e
-    puts "error #{e.message}"
-    puts e.backtrace
-    render status: 500, json: 'error'
-  end
-
-  # GET events/payuco_response
-  def payuco_response
-    @data_to_show = PayuCoResponseService.new(params).response
-    respond_to do |format|
-      format.html { render layout: 'empty_layout' }
     end
   end
 
@@ -290,33 +264,36 @@ class ParticipantsController < ApplicationController
   def followup
     @active_menu = 'dashboard'
 
-    @events = Event.public_and_visible
-    @participants = []
-    @event_names = {}
-    @events.each do |event|
-      if event.date > Date.today
-        @participants += event.participants.contacted
-        @event_names[event.id] = "#{event.event_type.name} - #{event.date.to_formatted_s(:short)}"
-      end
-    end
+    events = Event.public_and_visible
+
+    @participants, @event_names = filter_event_participants(events)
 
     @participants.sort_by!(&:updated_at)
     @influence_zones = InfluenceZone.all
     @status_valuekey = STATUS_LIST
     @status_keyvalue = STATUS_LIST.map { |s| [s[1], s[0]] }
-
-    respond_to do |format|
-      format.html # followup.html.erb
-    end
   end
 
   private
 
+  def filter_event_participants(events)
+    participants = []
+    event_names = {}
+    events.each do |event|
+      if event.date > Date.today
+        participants += event.participants.contacted
+        event_names[event.id] = "#{event.event_type.name} - #{event.date.to_formatted_s(:short)}"
+      end
+    end
+    [participants, event_names]
+  end
+
   def participant_params
-    params.require(:participant).permit :email, :fname, :lname, :phone, :event_id,
-                                        :status, :notes, :influence_zone_id, :influence_zone,
-                                        :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
-                                        :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
-                                        :campaign_source, :campaign, :accept_terms, :id_number, :address
+    params.require(:participant)
+          .permit :email, :fname, :lname, :phone, :event_id,
+                  :status, :notes, :influence_zone_id, :influence_zone,
+                  :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
+                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
+                  :campaign_source, :campaign, :accept_terms, :id_number, :address
   end
 end

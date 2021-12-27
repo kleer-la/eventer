@@ -48,14 +48,4 @@ class EventMailer < ApplicationMailer
          subject: "[Keventer] Nuevo registro a #{event_title} del #{event.human_date}: " + newbie,
          body: body)
   end
-
-  def payment_process_result(participant, result, status)
-    puts '------------------SENDING MAIL FOR PAYU CONFIRMATION ------------------'
-    @participant = participant
-    @result = result
-    @status = status
-    mail(to: "#{@participant.email}, #{@participant.event.monitor_email}",
-         from: 'Eventos <eventos@kleerer.com>',
-         subject: "Kleer | Resultado del pago para: #{@participant.event.event_type.name}")
-  end
 end

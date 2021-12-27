@@ -192,7 +192,6 @@ describe ParticipantsController do
     end
     describe 'certificate' do
       before(:each) do
-        ev = @participant.event.event_type
         @participant.attend!
         @participant.save!
       end

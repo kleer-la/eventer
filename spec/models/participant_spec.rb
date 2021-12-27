@@ -183,13 +183,13 @@ describe Participant do
       store = FileStoreService.createNull
       @participant_pdf.filestore store
 
-      @filepath_A4 = ParticipantsHelper.generate_certificate(@participant_pdf, 'A4', store)
-      @filepath_LETTER = ParticipantsHelper.generate_certificate(@participant_pdf, 'LETTER', store)
+      @filepath_a4 = ParticipantsHelper.generate_certificate(@participant_pdf, 'A4', store)
+      @filepath_letter = ParticipantsHelper.generate_certificate(@participant_pdf, 'LETTER', store)
     end
 
     before(:each) do
-      @reader_A4 = PDF::Reader.new(@filepath_A4)
-      @reader_LETTER = PDF::Reader.new(@filepath_LETTER)
+      @reader_a4 = PDF::Reader.new(@filepath_a4)
+      @reader_letter = PDF::Reader.new(@filepath_letter)
     end
 
     it 'basic cert should works wo/errors' do
@@ -199,13 +199,14 @@ describe Participant do
     end
 
     it 'should have a unique name' do
-      expect(@filepath_A4).to eq "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-A4.pdf"
-      expect(@filepath_LETTER).to eq "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}-LETTER.pdf"
+      base = "#{Rails.root}/tmp/#{@participant_pdf.verification_code}p#{@participant_pdf.id}"
+      expect(@filepath_a4).to eq "#{base}-A4.pdf"
+      expect(@filepath_letter).to eq "#{base}-LETTER.pdf"
     end
 
     it 'should be a single page certificate' do
-      expect(@reader_A4.page_count).to eq 1
-      expect(@reader_LETTER.page_count).to eq 1
+      expect(@reader_a4.page_count).to eq 1
+      expect(@reader_letter.page_count).to eq 1
     end
   end
 

@@ -2,7 +2,6 @@
 
 require 'rails_helper'
 require 'aws-sdk'
-include ParticipantsHelper
 
 class PrawnMock
   attr_reader :history
@@ -15,9 +14,10 @@ class PrawnMock
     @history += msg
   end
 
-  def method_missing(m, *args, &block); end
+  def method_missing(msg, *args, &block); end
 end
 
+include ParticipantsHelper
 describe Certificate do
   before(:each) do
     @participant = FactoryBot.build(:participant)

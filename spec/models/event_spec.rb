@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-include ActiveSupport
 
 describe Event do
+  include ActiveSupport
   before(:each) do
     @event = FactoryBot.build(:event)
   end
@@ -377,7 +377,7 @@ describe Event do
   context 'Capacity' do
     it 'It should return a completion percentage w/confirmed participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'C')
+      FactoryBot.create(:participant, event: @event, status: 'C')
 
       expect(@event.completion).to eq 0.1
     end
@@ -390,7 +390,7 @@ describe Event do
   context 'Attendance' do
     it '0 attendance wo/attended or certified participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'C')
+      FactoryBot.create(:participant, event: @event, status: 'C')
 
       expect(@event.attendance_counts[:attendance]).to eq 0
       expect(@event.attendance_counts[:total]).to eq 1
@@ -398,14 +398,14 @@ describe Event do
 
     it '1 attendance w/ one attended participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'A')
+      FactoryBot.create(:participant, event: @event, status: 'A')
 
       expect(@event.attendance_counts[:attendance]).to eq 1
       expect(@event.attendance_counts[:total]).to eq 1
     end
     it '1 attendance w/ one certified participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'K')
+      FactoryBot.create(:participant, event: @event, status: 'K')
 
       expect(@event.attendance_counts[:attendance]).to eq 1
       expect(@event.attendance_counts[:total]).to eq 1
@@ -421,7 +421,7 @@ describe Event do
 
     it 'Evething is cool' do
       expect do
-        result = @event.interested_participant('fname', 'lname', 'e@mail.com', 'AR', 'notes')
+        @event.interested_participant('fname', 'lname', 'e@mail.com', 'AR', 'notes')
       end.to change(Participant, :count).by(1)
     end
     it 'not cool' do

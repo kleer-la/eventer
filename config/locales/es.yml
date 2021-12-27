@@ -172,7 +172,7 @@ es:
         time_zone_name: "Zona Horaria"
         sepyme_enabled: "Habilitado para Sepyme"
         registration_link: "Link de Registro (externo)"
-        enable_online_payment: "Habilitar Pagos en Kleer Online, o PayU en K.Co"
+        enable_online_payment: "Habilitar Pagos en Kleer Online"
         online_course_codename: "Código del curso en Kleer Online"
         online_cohort_codename: "Código del evento/cohort en Kleer Online"
         embedded_player: "Embedded Video (Hangout o YouTube)"

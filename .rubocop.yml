@@ -1,0 +1,19 @@
+AllCops:
+  Exclude:
+    - 'bin/**/*'
+    - 'db/migrate/201*'
+
+Metrics/BlockLength:
+  IgnoredMethods:
+    - 'describe'
+    - 'context'
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*.*'
+
+Metrics/AbcSize:
+  Max: 20 # was 17

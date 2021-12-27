@@ -9,7 +9,7 @@ describe 'API Events GET /events' do
   end
   context 'event list in XML' do
     before(:example) do
-      event = FactoryBot.create(:event)
+      FactoryBot.create(:event)
       event_url = '/api/events.xml'
       get event_url
       @parsed = Nokogiri::XML(last_response.body)
@@ -36,7 +36,7 @@ describe 'API Events GET /events' do
 
   context 'event list in JSON' do
     before(:example) do
-      event = FactoryBot.create(:event)
+      FactoryBot.create(:event)
       event_url = '/api/events.json'
       get event_url
       @json = JSON.parse(last_response.body)

@@ -19,7 +19,7 @@ describe FileStoreService do
     it "try to read from a Nullable store - doesn't exists" do
       store = FileStoreService.createNull exists: { 'certificate-images/12345.png' => false }
       expect do
-        filename = store.read '12345.png', ''
+        store.read '12345.png', ''
       end.to raise_error ArgumentError
     end
   end

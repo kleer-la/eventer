@@ -32,7 +32,7 @@ RSpec.describe '/articles', type: :request do
       expect(article_json[0]['trainers'][0]['name']).to eq 'Luke'
     end
     it 'articles has abstract json ' do
-      article = FactoryBot.create(:article, body: 'some text')
+      FactoryBot.create(:article, body: 'some text')
       get articles_url, params: { format: 'json' }
 
       article_json = @response.parsed_body
