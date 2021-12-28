@@ -160,17 +160,17 @@ describe Event do
 
     it 'should allow a Presencial mode' do
       @event.mode = 'cl'
-      expect(@event.is_classroom?).to be true
+      expect(@event.classroom?).to be true
     end
 
     it 'should allow an OnLine mode' do
       @event.mode = 'ol'
-      expect(@event.is_online?).to be true
+      expect(@event.online?).to be true
     end
 
     it 'should allow a Blended Learning mode' do
       @event.mode = 'bl'
-      expect(@event.is_blended_learning?).to be true
+      expect(@event.blended_learning?).to be true
     end
 
     it 'should have a show_pricing flag' do
@@ -179,9 +179,9 @@ describe Event do
     end
 
     it 'should have a time zone name' do
-      @event.time_zone_name = TimeZone.all.first.name
-      tz = TimeZone.new(@event.time_zone_name)
-      expect(tz).to eq TimeZone.all.first
+      @event.time_zone_name = ActiveSupport::TimeZone.all.first.name
+      tz = ActiveSupport::TimeZone.new(@event.time_zone_name)
+      expect(tz).to eq ActiveSupport::TimeZone.all.first
     end
 
     it 'should have a embedded player' do
@@ -251,7 +251,7 @@ describe Event do
     end
 
     it 'should not be marked as community' do
-      expect(@event.is_community_event?).to be false
+      expect(@event.community_event?).to be false
     end
   end
 
@@ -273,7 +273,7 @@ describe Event do
     end
 
     it 'should not be marked as community' do
-      expect(@event.is_community_event?).to be false
+      expect(@event.community_event?).to be false
     end
   end
 
@@ -283,7 +283,7 @@ describe Event do
     end
 
     it 'should be marked as community' do
-      expect(@event.is_community_event?).to be true
+      expect(@event.community_event?).to be true
     end
   end
 

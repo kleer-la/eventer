@@ -19,17 +19,14 @@ class Participant < ApplicationRecord
 
   validates_each :event_rating do |record, attr, value|
     val_range(record, attr, value, :event_rating_should_be_between_1_and_5, 1, 5)
-    #      record.errors.add(attr, :event_rating_should_be_between_1_and_5) unless value.nil? || (value >= 1 && value <= 5)
   end
 
   validates_each :trainer_rating do |record, attr, value|
     val_range(record, attr, value, :trainer_rating_should_be_between_1_and_5, 1, 5)
-    #      record.errors.add(attr, :trainer_rating_should_be_between_1_and_5) unless value.nil? || (value >= 1 && value <= 5)
   end
 
   validates_each :promoter_score do |record, attr, value|
     val_range(record, attr, value, :promoter_score_should_be_between_0_and_10, 0, 10)
-    #      record.errors.add(attr, :promoter_score_should_be_between_0_and_10) unless value.nil? || (value >= 0 && value <= 10)
   end
 
   STATUS = {
@@ -68,7 +65,8 @@ class Participant < ApplicationRecord
   scope :attended, -> { where(status: STATUS[:attended]) }
   scope :certified, -> { where(status: STATUS[:certified]) }
   scope :attended?, lambda {
-                      where('status=? OR status=? OR status=?', STATUS[:confirmed], STATUS[:attended], STATUS[:certified])
+                      where('status=? OR status=? OR status=?',
+                            STATUS[:confirmed], STATUS[:attended], STATUS[:certified])
                     }
   scope :to_certify, -> { where('status=? OR status=?', STATUS[:attended], STATUS[:certified]) }
 
@@ -97,10 +95,10 @@ class Participant < ApplicationRecord
   end
 
   def initialize_defaults
-    if new_record?
-      self.status = STATUS[:new] if status.nil?
-      self.verification_code = Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase
-    end
+    return unless new_record?
+
+    self.status = STATUS[:new] if status.nil?
+    self.verification_code = Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase
   end
 
   def human_status
@@ -133,16 +131,16 @@ class Participant < ApplicationRecord
     self.status = STATUS[:certified]
   end
 
-  def is_present?
+  def present?
     status == STATUS[:attended]
   end
 
-  def is_certified?
+  def certified?
     status == STATUS[:certified]
   end
 
   def could_receive_certificate?
-    is_present? || is_certified?
+    present? || certified?
   end
 
   def influence_zone_tag
@@ -162,7 +160,7 @@ class Participant < ApplicationRecord
   end
 
   def filestore(store = nil)
-    @store = store || @store || FileStoreService.createS3
+    @store = store || @store || FileStoreService.create_s3
   end
 
   def generate_certificate
@@ -182,28 +180,21 @@ class Participant < ApplicationRecord
   def self.parse_line(participant_data_line)
     attributes = participant_data_line.split("\t")
     attributes = participant_data_line.split(',') if attributes.size == 1
-    attributes
+    attributes.map(&:strip)
   end
 
   def self.create_from_batch_line(participant_data_line, event, influence_zone, status)
     attributes = parse_line(participant_data_line)
 
-    if attributes.size >= 3
-      Participant.new(
-        fname: attributes[1].strip,
-        lname: attributes[0].strip,
-        email: attributes[2].strip,
-        phone: (attributes[3] || 'N/A').strip,
-        id_number: 'Batch load',
-        address: 'Batch load',
-        event_id: event.id,
-        notes: 'Batch load',
-        influence_zone_id: influence_zone.id,
-        status: status
-      ).save
-    else
-      false
-    end
+    (return false) unless attributes.size >= 3
+    Participant.new(
+      fname: attributes[1],
+      lname: attributes[0],
+      email: attributes[2],
+      phone: (attributes[3] || 'N/A'),
+      id_number: 'Batch load', address: 'Batch load', notes: 'Batch load',
+      event_id: event.id, influence_zone_id: influence_zone.id, status: status
+    ).save
   end
 
   def self.search(searching)

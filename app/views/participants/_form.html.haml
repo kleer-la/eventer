@@ -78,7 +78,7 @@
             - else
               %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
                 %i.icon-save
-                - if @event.is_community_event?
+                - if @event.community_event?
                   = I18n.t("formtastic.button.participant.register")
                 - else
                   = I18n.t("formtastic.button.participant.more_info")

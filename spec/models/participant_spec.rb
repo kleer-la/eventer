@@ -115,10 +115,10 @@ describe Participant do
   end
 
   it 'should let someone mark attended it' do
-    expect(@participant.is_present?).to be false
+    expect(@participant.present?).to be false
     @participant.attend!
     expect(@participant.status).to eq 'A'
-    expect(@participant.is_present?).to be true
+    expect(@participant.present?).to be true
   end
 
   it 'should have the event rating from the participant satisfaction survey' do
@@ -180,7 +180,7 @@ describe Participant do
       @participant_pdf.event.event_type.csd_eligible = true
       @participant_pdf.influence_zone = FactoryBot.create(:influence_zone)
       @participant_pdf.status = 'A'
-      store = FileStoreService.createNull
+      store = FileStoreService.create_null
       @participant_pdf.filestore store
 
       @filepath_a4 = ParticipantsHelper.generate_certificate(@participant_pdf, 'A4', store)

@@ -210,7 +210,7 @@ class ParticipantsController < ApplicationController
       flash[:alert] = error_msg
       redirect_to event_participants_path
     else
-      @certificate_store = FileStoreService.createS3
+      @certificate_store = FileStoreService.create_s3
       begin
         @certificate = ParticipantsHelper::Certificate.new(@participant)
         render

@@ -3,11 +3,11 @@
 require 'aws-sdk'
 
 class FileStoreService
-  def self.createNull(exists: {})
+  def self.create_null(exists: {})
     FileStoreService.new NullFileStore.new(exists: exists)
   end
 
-  def self.createS3
+  def self.create_s3
     FileStoreService.new S3FileStore.new
   end
 

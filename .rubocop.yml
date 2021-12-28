@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - 'bin/**/*'
     - 'db/migrate/201*'
+    - 'db/schema.rb'
 
 Metrics/BlockLength:
   IgnoredMethods:
