@@ -17,4 +17,10 @@ class InfluenceZone < ApplicationRecord
   def self.find_by_country(iso_code)
     InfluenceZone.joins(:country).where('countries.iso_code' => iso_code).first
   end
+
+  def self.sort_wo_republica
+    InfluenceZone.all.sort do |a, b|
+      a.display_name.sub('Republica ', '') <=> b.display_name.sub('Republica ', '')
+    end
+  end
 end

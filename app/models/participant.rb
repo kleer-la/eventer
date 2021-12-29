@@ -197,6 +197,26 @@ class Participant < ApplicationRecord
     ).save
   end
 
+  def self.batch_load(batch, event, influence_zone, status)
+    success_loads = 0
+    errored_loads = 0
+    errored_lines = ''
+
+    batch.lines.each do |participant_data_line|
+      if Participant.create_from_batch_line(participant_data_line, event, influence_zone, status)
+        success_loads += 1
+      else
+        errored_loads += 1
+        errored_lines += if errored_lines == ''
+                           "'#{participant_data_line.strip}'"
+                         else
+                           ", '#{participant_data_line.strip}'"
+                         end
+      end
+    end
+    [success_loads, errored_loads, errored_lines]
+  end
+
   def self.search(searching)
     s = searching.downcase
     Participant.select { |p| "#{p.fname} #{p.lname}#{p.verification_code}".downcase.include?(s) }

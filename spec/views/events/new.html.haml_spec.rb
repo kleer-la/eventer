@@ -6,7 +6,7 @@ describe 'events/new' do
   before(:each) do
     # @countries = [FactoryBot.create(:country)]
     # @trainers = [FactoryBot.create(:trainer)]
-    @timezones = TimeZone.all
+    @timezones = ActiveSupport::TimeZone.all
     @currencies = Money::Currency.table
 
     @event_types = [FactoryBot.create(:event_type,

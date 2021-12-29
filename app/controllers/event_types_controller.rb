@@ -30,13 +30,17 @@ class EventTypesController < ApplicationController
     end
   end
 
+  def pre_edit
+    @trainers = Trainer.sorted
+    @categories = Category.sorted
+    @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
+  end
+
   # GET /event_types/new
   # GET /event_types/new.json
   def new
     @event_type = EventType.new
-    @trainers = Trainer.sorted
-    @categories = Category.sorted
-    @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
+    pre_edit
 
     respond_to do |format|
       format.html # new.html.erb
@@ -47,45 +51,44 @@ class EventTypesController < ApplicationController
   # GET /event_types/1/edit
   def edit
     @event_type = EventType.find(params[:id])
-    @trainers = Trainer.sorted
-    @categories = Category.sorted
-    @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
+    pre_edit
   end
 
   # POST /event_types
   # POST /event_types.json
   def create
     @event_type = EventType.new(event_type_params)
-    @trainers = Trainer.sorted
-    @categories = Category.sorted
+    pre_edit
 
     respond_to do |format|
       if @event_type.save
-        id = @event_type.id.to_s
-        link = " <a id=\"last_event_type\" href=\"/event_types/#{id}/edit\">Editar</a>"
+        link = " <a id=\"last_event_type\" href=\"/event_types/#{@event_type.id}/edit\">Editar</a>"
         format.html { redirect_to event_types_path, notice: t('flash.event_type.create.success') + link }
         format.json { render json: @event_type, status: :created, location: @event_type }
       else
-        format.html { render action: 'new' }
-        format.json { render json: @event_type.errors, status: :unprocessable_entity }
+        create_error(format, @event_type.errors, 'new')
       end
     end
+  end
+
+  def create_error(format, errors, action)
+    flash.now[:error] = t('flash.failure')
+    format.html { render action: action }
+    format.json { render json: errors, status: :unprocessable_entity }
   end
 
   # PUT /event_types/1
   # PUT /event_types/1.json
   def update
     @event_type = EventType.find(params[:id])
-    @trainers = Trainer.sorted
-    @categories = Category.sorted
+    pre_edit
 
     respond_to do |format|
       if @event_type.update_attributes(event_type_params)
         format.html { redirect_to event_types_path, notice: t('flash.event_type.update.success') }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
-        format.json { render json: @event_type.errors, status: :unprocessable_entity }
+        create_error(format, @event_type.errors, 'edit')
       end
     end
   end
@@ -116,9 +119,10 @@ class EventTypesController < ApplicationController
   end
 
   def event_type_params
-    params.require(:event_type).permit :name, :subtitle, :duration, :goal, :description, :recipients, :program, { trainer_ids: [] },
-                                       :faq, :materials, { category_ids: [] }, :events, :include_in_catalog, :elevator_pitch,
-                                       :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification,
-                                       :kleer_cert_seal_image, :external_site_url
+    params.require(:event_type)
+          .permit :name, :subtitle, :duration, :goal, :description, :recipients, :program, { trainer_ids: [] },
+                  :faq, :materials, { category_ids: [] }, :events, :include_in_catalog, :elevator_pitch,
+                  :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification,
+                  :kleer_cert_seal_image, :external_site_url
   end
 end

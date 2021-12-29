@@ -13,7 +13,8 @@ group :development do
 end
 
 group :development, :test do
-  gem 'coveralls_reborn', require: false # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
+  # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
+  gem 'coveralls_reborn', require: false
   gem 'pdf-inspector', require: 'pdf/inspector'
   gem 'rspec-mocks'
   gem 'rspec-rails'
