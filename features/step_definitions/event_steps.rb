@@ -9,6 +9,10 @@ def create_valid_event_inputs(event_type_name, event_date = '31-01-2030')
   fill_in 'event_date', with: event_date
   fill_in 'event_finish_date', with: Date.parse(event_date) + 1
   fill_in 'event_date', with: event_date
+  event_default
+end
+
+def event_default
   select 'Presencial', from: 'event_mode'
   fill_in 'event_place', with: 'Hotel Llao Llao'
   fill_in 'event_address', with: 'Tucumán 373'
@@ -17,8 +21,8 @@ def create_valid_event_inputs(event_type_name, event_date = '31-01-2030')
   select 'Argentina', from: 'event_country_id'
   choose 'event_visibility_type_pu'
   fill_in 'event_list_price', with: 500.00
-  check 'event_should_welcome_email'
-  check 'event_should_ask_for_referer_code'
+  # check 'event_should_welcome_email'
+  # check 'event_should_ask_for_referer_code'
   fill_in 'event_eb_price', with: 450.00
   fill_in 'event_specific_conditions', with: 'Algunas condiciones especiales'
 end
