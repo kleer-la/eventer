@@ -10,7 +10,7 @@ class ArticlesController < ApplicationController
       format.html
       format.json do
         render json: @articles.order(created_at: :desc),
-               methods: [:abstract],
+               methods: %i[abstract category_name],
                include: { trainers: { only: :name } }
       end
     end
@@ -67,6 +67,7 @@ class ArticlesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def article_params
-    params.require(:article).permit(:title, :slug, :body, :description, :published, :tabtitle, trainer_ids: [])
+    params.require(:article)
+          .permit(:title, :slug, :body, :lang, :description, :published, :tabtitle, :category_id, trainer_ids: [])
   end
 end

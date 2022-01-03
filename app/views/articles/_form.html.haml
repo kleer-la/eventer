@@ -15,6 +15,7 @@
         = semantic_form_for @article do |f|
           %fieldset.inputs
             = f.inputs do
+              = f.input :lang, :as => :radio
               = f.input :title, input_html: {class: 'input-block-level'}
               = f.input :tabtitle, input_html: {class: 'input-block-level'}
               = f.input :body, input_html: {rows: 8, class: 'input-block-level'}
@@ -29,6 +30,7 @@
               %br
               %br
               = f.input :trainers, as: :check_boxes, collection: Trainer.order(name: :asc), wrapper_html: { class: 'box-content'}
+              = f.input :category
               = f.input :published
 
             .row-fuid
