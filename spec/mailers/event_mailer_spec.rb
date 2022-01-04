@@ -162,6 +162,9 @@ describe EventMailer do
       @participant.lname = 'Salias'
       @participant.phone = '1234-5678'
       @participant.notes = 'questions'
+      @participant.id_number = '20-12358132-1'
+      @participant.address = 'Tatooine'
+
       edit_registration_link = 'http://fighters.foo/events/1/participants/2/edit'
       @email = EventMailer.alert_event_monitor(@participant, edit_registration_link)
       expect(@email.subject).to include('Martin Salias')
@@ -169,6 +172,8 @@ describe EventMailer do
       expect(@email.body).to include('Martin Salias')
       expect(@email.body).to include('1234-5678')
       expect(@email.body).to include('questions')
+      expect(@email.body).to include('20-12358132-1')
+      expect(@email.body).to include('Tatooine')
       expect(@email.from).to eq ['entrenamos@kleer.la']
     end
   end

@@ -5,14 +5,8 @@ class HomeController < ApplicationController
     @events = Event.public_courses
     respond_to do |format|
       format.html
-      format.xml do
-        render xml: @events.to_xml(include: event_data_to_include,
-                                   methods: [:human_date])
-      end
-      format.json do
-        render json: @events.to_json(include: event_data_to_include,
-                                     methods: [:human_date])
-      end
+      format.xml { render xml: @events.to_xml(include: event_data_to_include, methods: [:human_date]) }
+      format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date]) }
     end
   end
 
@@ -22,14 +16,8 @@ class HomeController < ApplicationController
     end.sort_by(&:date)
     respond_to do |format|
       format.html
-      format.xml do
-        render xml: @events.to_xml(include: event_data_to_include,
-                                   methods: [:human_date])
-      end
-      format.json do
-        render json: @events.to_json(include: event_data_to_include,
-                                     methods: [:human_date])
-      end
+      format.xml { render xml: @events.to_xml(include: event_data_to_include, methods: [:human_date]) }
+      format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date]) }
     end
   end
 
@@ -37,28 +25,16 @@ class HomeController < ApplicationController
     @events = Event.public_community_visible.all(order: 'date')
     respond_to do |format|
       format.html
-      format.xml do
-        render xml: @events.to_xml(include: event_data_to_include,
-                                   methods: [:human_date])
-      end
-      format.json do
-        render json: @events.to_json(include: event_data_to_include,
-                                     methods: [:human_date])
-      end
+      format.xml { render xml: @events.to_xml(include: event_data_to_include, methods: [:human_date]) }
+      format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date]) }
     end
   end
 
   def show
     @event = Event.public_and_visible.find(params[:id])
     respond_to do |format|
-      format.xml do
-        render xml: @event.to_xml(include: event_data_to_include,
-                                  methods: [:human_date])
-      end
-      format.json do
-        render json: @event.to_json(include: event_data_to_include,
-                                    methods: [:human_date])
-      end
+      format.xml { render xml: @event.to_xml(include: event_data_to_include, methods: [:human_date]) }
+      format.json { render json: @event.to_json(include: event_data_to_include, methods: [:human_date]) }
     end
   end
 
