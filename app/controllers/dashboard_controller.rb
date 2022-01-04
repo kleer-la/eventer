@@ -26,6 +26,7 @@ class DashboardController < ApplicationController
     events.reduce([0, 0]) do |ac, event|
       ac[0] += event.participants.new_ones.count
       ac[1] += event.participants.contacted.count
+      ac
     end
   end
 
