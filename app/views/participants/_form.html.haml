@@ -19,69 +19,58 @@
       %input{ :type => "hidden", :name => "utm_source", :value => utm_source }
 
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :fname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.fname")
+      .control-group
+        = f.text_field :fname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.fname")
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :lname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.lname")
+      .control-group
+        = f.text_field :lname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.lname")
     .row-fluid
-      .span12
-        .control-group
-          - email_placeholder = '* '+ I18n.t("formtastic.labels.participant.email")
-          - email_placeholder += " (confirmaremos tu registro en este email)"
-          = f.text_field :email, required: true, :class => "span12", :placeholder => email_placeholder
+      .control-group
+        - email_placeholder = '* '+ I18n.t("formtastic.labels.participant.email")
+        - email_placeholder += " (confirmaremos tu registro en este email)"
+        = f.text_field :email, required: true, :class => "span12", :placeholder => email_placeholder
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
+      .control-group
+        = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
     - if @event.should_ask_for_referer_code
       .row-fluid
-        .span12
-          .control-group
-            = f.text_field :referer_code, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.referer_code")
+        .control-group
+          = f.text_field :referer_code, :class => "span6", :placeholder => I18n.t("formtastic.labels.participant.referer_code")
     .row_fluid
-      .span12
-        .control-group
-          %small.muted
-            Cantidad de cupos
-          = f.select :quantity, @quantities, {}, {:class => "span12"}
+      .control-group
+        %small.muted
+          Cantidad de cupos
+        = f.select :quantity, @quantities, {}, {:class => "span6"}
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :phone, :class => "span12", :placeholder => 'Opcional '+ I18n.t("formtastic.labels.participant.phone")
+      .control-group
+        = f.text_field :phone, :class => "span12", :placeholder => 'Opcional '+ I18n.t("formtastic.labels.participant.phone")
     .row-fluid
-      .span12
-        .control-group
-          = f.text_area :notes, :class => "span12 autogrow", :placeholder => I18n.t("formtastic.labels.participant.notes"), :rows => 2
+      .control-group
+        = f.text_area :notes, :class => "span12 autogrow", :placeholder => I18n.t("formtastic.labels.participant.notes"), :rows => 2
     .row-fluid
-      .span12
-        .control-group
-          %label.checkbox
-            = f.check_box :accept_terms, :required => true
-            %label.control-label{ :for => :accept_terms }= ('* '+ I18n.t("formtastic.labels.participant.accept_terms")).html_safe
+      .control-group
+        %label.checkbox
+          = f.check_box :accept_terms, :required => true
+          %label.control-label{ :for => :accept_terms }= ('* '+ I18n.t("formtastic.labels.participant.accept_terms")).html_safe
     .row-fluid
-      .span12
-        = recaptcha_tags
+      = recaptcha_tags
 
     .row-fluid
-      .span12
-        .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
-          .text-center
-            %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
+      .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
+        .text-center
+          %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
 
-            - if session[:payment_on_eventer]
-              %button.btn.btn-success.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-                %i.icon-flag
-                = I18n.t("formtastic.button.participant.pay")
-            - else
-              %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-                %i.icon-save
-                - if @event.community_event?
-                  = I18n.t("formtastic.button.participant.register")
-                - else
-                  = I18n.t("formtastic.button.participant.more_info")
+          - if session[:payment_on_eventer]
+            %button.btn.btn-success.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+              %i.icon-flag
+              = I18n.t("formtastic.button.participant.pay")
+          - else
+            %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+              %i.icon-save
+              - if @event.community_event?
+                = I18n.t("formtastic.button.participant.register")
+              - else
+                = I18n.t("formtastic.button.participant.more_info")
 
 
 :javascript
