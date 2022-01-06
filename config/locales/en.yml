@@ -111,7 +111,7 @@ en:
       participant:
         fname: "First name"
         lname: "Last name"
-        phone: "Phone"
+        phone: "(optional) Phone"
         id_number: "ID Number(for invoice)"
         address: "Address (for invoice)"
         quantity: "How many learners?"
@@ -119,7 +119,7 @@ en:
         status: "Status"
         influence_zone: "Influence Zone"
         referer_code: "Reference code"
-        notes: "Optional: additional data or question"
+        notes: "(optional) additional data or question"
         zone: "Where are you?"
         payment_type: "Payment type"
         is_payed: "Paid"

@@ -111,7 +111,7 @@ es:
       participant:
         fname: "Nombre"
         lname: "Apellido"
-        phone: "Teléfono de contacto"
+        phone: "(optional) Teléfono de contacto"
         id_number: "ID tributario para facturación (RUT/RUC/CUIT/NIT)"
         address: "Dirección de facturación"
         quantity: "Cantidad de cupos a comprar"
@@ -119,7 +119,7 @@ es:
         status: "Estado"
         influence_zone: "Zona de Influencia"
         referer_code: "Código de Referencia"
-        notes: "Opcional: Datos adicionales que te interesa contarnos o preguntarnos"
+        notes: "(optional) Datos adicionales que te interesa contarnos o preguntarnos"
         zone: "Tu lugar más próximo ..."
         payment_type: "Forma de Pago"
         is_payed: "Pagado"
