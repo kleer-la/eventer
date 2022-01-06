@@ -61,7 +61,7 @@ gem 'comma'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'dimensions' # knowing the heigt of an image - for certificates pdf
-gem 'formtastic', '~> 3.1' # fail with v4 (bc formtastic-bootstrap) https://github.com/formtastic/formtastic/issues/1308
+gem 'formtastic'
 gem 'formtastic-bootstrap'
 gem 'money'
 gem 'prawn'

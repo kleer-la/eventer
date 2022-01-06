@@ -73,10 +73,10 @@ describe Participant do
       expect(@participant.valid?).to be false
     end
 
-    it 'should require the influence zone' do
+    it 'could have no the influence zone' do
       @participant.influence_zone = nil
 
-      expect(@participant.valid?).to be false
+      expect(@participant.valid?).to be true
     end
 
     it 'should validate the email' do
@@ -85,10 +85,10 @@ describe Participant do
       expect(@participant.valid?).to be true
     end
 
-    it 'should require its phone' do
+    it 'phone is optional' do
       @participant.phone = ''
 
-      expect(@participant.valid?).to be false
+      expect(@participant.valid?).to be true
     end
 
     it "should be valid if there's no referer code" do

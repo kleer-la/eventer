@@ -8,7 +8,8 @@ class Participant < ApplicationRecord
   belongs_to :campaign
   belongs_to :campaign_source
 
-  validates :email, :fname, :lname, :phone, :event, :influence_zone, :id_number, :address, presence: true
+  validates :email, :fname, :lname, :event, :address, presence: true
+  # validates :phone, :influence_zone, :id_number
 
   validates :email, email: true
   validates_acceptance_of :accept_terms, message: 'No podemos contactarlo si no acepta los términos.'
@@ -99,6 +100,7 @@ class Participant < ApplicationRecord
 
     self.status = STATUS[:new] if status.nil?
     self.verification_code = Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase
+    self.influence_zone = InfluenceZone.first()
   end
 
   def human_status

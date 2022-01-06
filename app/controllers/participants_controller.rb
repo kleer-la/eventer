@@ -83,13 +83,22 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.sort_wo_republica
     @nakedform = !params[:nakedform].nil?
     I18n.locale = (:es if params[:lang].nil? || params[:lang].downcase == 'es') || :en
-
+    @quantities = quantities_list
     campaign_new
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
       format.json { render json: @participant }
     end
   end
+
+  # [["1 personas x 100usd = 100usd", 1], ["2 personas x 100usd = 200usd", 2]]
+  def quantities_list
+    (1..6).reduce([]) do |ac, qty|
+      price = @event.price(qty, DateTime.now)
+      ac << ["#{qty} personas x #{price} usd = #{price*qty} usd", qty]
+    end
+  end
+  
 
   # GET /participants/new/confirm
   def confirm

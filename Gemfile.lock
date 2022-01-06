@@ -151,8 +151,8 @@ GEM
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
     ffi (1.15.0)
-    formtastic (3.1.5)
-      actionpack (>= 3.2.13)
+    formtastic (4.0.0)
+      actionpack (>= 5.2.0)
     formtastic-bootstrap (3.1.1)
       formtastic (>= 3.0)
     friendly_id (5.4.2)
@@ -399,7 +399,7 @@ DEPENDENCIES
   dimensions
   eventmachine (= 1.2.7)
   factory_bot_rails
-  formtastic (~> 3.1)
+  formtastic
   formtastic-bootstrap
   friendly_id
   haml

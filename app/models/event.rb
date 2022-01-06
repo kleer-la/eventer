@@ -212,10 +212,35 @@ class Event < ApplicationRecord
                                fname: fname, lname: lname, email: email,
                                phone: 'na', id_number: 'na', address: 'na', influence_zone: iz,
                                notes: notes)
+                               
+                               part.save if part.valid?
+                               part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
+                               part.errors.full_messages.join(', ')
+  end
+      
+  def price(qty, date)
+    if eb_end_date.present? && date < eb_end_date
+      case qty
+      when 0..1
+        eb_price || list_price
+      when 2..4
+        couples_eb_price || eb_price || list_price
+      when 5..6
+        business_eb_price || couples_eb_price || eb_price || list_price
+      else
+        enterprise_11plus_price || business_eb_price || couples_eb_price || eb_price || list_price
+      end
+    else
+      case qty
+      when 0..4
+        list_price
+      when 5..6
+        business_price || list_price
+      else
+        enterprise_6plus_price || business_price || list_price
+      end
+    end
 
-    part.save if part.valid?
-    part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
-    part.errors.full_messages.join(', ')
   end
 
   private

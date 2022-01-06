@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_31_024430) do
+ActiveRecord::Schema.define(version: 2022_01_04_183055) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -264,6 +264,7 @@ ActiveRecord::Schema.define(version: 2021_12_31_024430) do
     t.string "id_number"
     t.string "address"
     t.text "pay_notes"
+    t.integer "quantity", default: 1, null: false
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
 
