@@ -58,8 +58,6 @@
     .row-fluid
       .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
         .text-center
-          %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
-
           - if session[:payment_on_eventer]
             %button.btn.btn-success.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
               %i.icon-flag
@@ -72,19 +70,5 @@
               - else
                 = I18n.t("formtastic.button.participant.more_info")
 
-
-:javascript
-  $(document).ready(function() {
-    $('[name="commit"]').click( function() { setLoading() } );
-    $("#loader_img").hide();
-  })
-
-  function setLoading() {
-    $('[name="commit"]').val("Registro en progreso ...");
-    $('[name="commit"]').attr('disabled','disabled');
-    $('[name="commit"]').attr('class', 'btn btn-primary disabled');
-    $("#loader_img").show();
-    $("#new_participant").submit();
-  }
 = @event.extra_script.nil? ? "" : @event.extra_script.html_safe
 %script(src="https://www.google.com/recaptcha/api.js")
