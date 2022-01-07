@@ -243,6 +243,15 @@ class Event < ApplicationRecord
 
   end
 
+  def seat_available
+    capacity-confirmed_quantity
+  end
+  
+  def confirmed_quantity
+    participants.confirmed.pluck(:quantity).reduce(0, :+)
+  end
+  
+
   private
 
   def cancellation_limit_date

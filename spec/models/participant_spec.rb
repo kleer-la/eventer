@@ -36,12 +36,18 @@ describe Participant do
     end
   end
 
-  it "should have a default status of 'N'" do
-    expect(@participant.status).to eq 'N'
-  end
+  context 'default' do
+    it "should have a default status of 'N'" do
+      expect(@participant.status).to eq 'N'
+    end
+    
+    it 'should have a default quantity of 1' do
+      expect(@participant.quantity).to eq 1
+    end
 
-  it 'should have a default payed of false' do
-    expect(@participant.is_payed).to eq false
+    it 'should have a default payed of false' do
+      expect(@participant.is_payed).to eq false
+    end
   end
 
   describe 'valid' do
@@ -91,7 +97,7 @@ describe Participant do
       expect(@participant.valid?).to be true
     end
 
-    it "should be valid if there's no referer code" do
+    it "should be valid if there's NO referer code" do
       @participant.referer_code = ''
 
       expect(@participant.valid?).to be true
@@ -99,76 +105,87 @@ describe Participant do
 
     it "should be valid if there's a referer code" do
       @participant.referer_code = 'UNCODIGO'
-
+  
       expect(@participant.valid?).to be true
+    end
+
+    it "should be valid to change quantity to 2" do
+      @participant.quantity = 2
+      @participant.save!
+  
+      expect(@participant.quantity).to eq 2
     end
   end
 
-  it 'should let someone confirm it' do
-    @participant.confirm!
-    expect(@participant.status).to eq 'C'
+  context 'status' do
+    
+    it 'should let someone confirm it' do
+      @participant.confirm!
+      expect(@participant.status).to eq 'C'
+    end
+    
+    it 'should let someone contact it' do
+      @participant.contact!
+      expect(@participant.status).to eq 'T'
+    end
+    
+    it 'should let someone mark attended it' do
+      expect(@participant.present?).to be false
+      @participant.attend!
+      expect(@participant.status).to eq 'A'
+      expect(@participant.present?).to be true
+    end
   end
 
-  it 'should let someone contact it' do
-    @participant.contact!
-    expect(@participant.status).to eq 'T'
-  end
+  context 'survey' do
+    it 'should have the event rating from the participant satisfaction survey' do
+      @participant.event_rating = 5
+      expect(@participant.event_rating).to eq 5
+    end
 
-  it 'should let someone mark attended it' do
-    expect(@participant.present?).to be false
-    @participant.attend!
-    expect(@participant.status).to eq 'A'
-    expect(@participant.present?).to be true
-  end
+    it 'should have an event rating smaller or equal to 5' do
+      @participant.event_rating = 10
+      expect(@participant.valid?).to be false
+    end
 
-  it 'should have the event rating from the participant satisfaction survey' do
-    @participant.event_rating = 5
-    expect(@participant.event_rating).to eq 5
-  end
+    it 'should have an event rating greater or equal to 1' do
+      @participant.event_rating = 0
+      expect(@participant.valid?).to be false
+    end
 
-  it 'should have an event rating smaller or equal to 5' do
-    @participant.event_rating = 10
-    expect(@participant.valid?).to be false
-  end
+    it 'should have the trainer rating from the participant satisfaction survey' do
+      @participant.trainer_rating = 5
+      expect(@participant.trainer_rating).to eq 5
+    end
 
-  it 'should have an event rating greater or equal to 1' do
-    @participant.event_rating = 0
-    expect(@participant.valid?).to be false
-  end
+    it 'should have an trainer rating smaller or equal to 5' do
+      @participant.trainer_rating = 10
+      expect(@participant.valid?).to be false
+    end
 
-  it 'should have the trainer rating from the participant satisfaction survey' do
-    @participant.trainer_rating = 5
-    expect(@participant.trainer_rating).to eq 5
-  end
+    it 'should have an trainer rating greater or equal to 1' do
+      @participant.trainer_rating = 0
+      expect(@participant.valid?).to be false
+    end
 
-  it 'should have an trainer rating smaller or equal to 5' do
-    @participant.trainer_rating = 10
-    expect(@participant.valid?).to be false
-  end
+    it 'should have a testimony from a participant satisfaction survey' do
+      @participant.testimony = 'me ha gustado mucho'
+      expect(@participant.testimony).to eq 'me ha gustado mucho'
+    end
 
-  it 'should have an trainer rating greater or equal to 1' do
-    @participant.trainer_rating = 0
-    expect(@participant.valid?).to be false
-  end
+    it 'should have a promoter_score from a participant satisfaction survey' do
+      @participant.promoter_score = 8
+      expect(@participant.promoter_score).to eq 8
+    end
+    it 'should have a promoter_score smaller or equal to 10' do
+      @participant.promoter_score = 11
+      expect(@participant.valid?).to be false
+    end
 
-  it 'should have a testimony from a participant satisfaction survey' do
-    @participant.testimony = 'me ha gustado mucho'
-    expect(@participant.testimony).to eq 'me ha gustado mucho'
-  end
-
-  it 'should have a promoter_score from a participant satisfaction survey' do
-    @participant.promoter_score = 8
-    expect(@participant.promoter_score).to eq 8
-  end
-
-  it 'should have a promoter_score smaller or equal to 10' do
-    @participant.promoter_score = 11
-    expect(@participant.valid?).to be false
-  end
-
-  it 'should have a promoter_score greater or equal to 0' do
-    @participant.promoter_score = -1
-    expect(@participant.valid?).to be false
+    it 'should have a promoter_score greater or equal to 0' do
+      @participant.promoter_score = -1
+      expect(@participant.valid?).to be false
+    end
   end
 
   context 'given a PDF certificate is generated' do
