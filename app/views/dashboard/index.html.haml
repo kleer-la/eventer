@@ -62,7 +62,7 @@
                             = "| #{event.city} | #{human_hours} | #{event.place} | #{trainers}"
                         %small.pull-right
                           - if event.registration_link == ""
-                            = "#{(event.completion*100).round.to_s}% (#{event.participants.confirmed.count.to_s}/#{event.capacity.to_s}) "
+                            = "#{(event.completion*100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
                             - if event.participants.new_ones.count > 0
                               %img{:src => "/assets/alert.png", :style => "vertical-align:middle"}
                               %strong= link_to event.participants.new_ones.count.to_s + " nuevos", event_participants_path(event)

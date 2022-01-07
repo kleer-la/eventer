@@ -176,5 +176,13 @@ describe EventMailer do
       expect(@email.body).to include('Tatooine')
       expect(@email.from).to eq ['entrenamos@kleer.la']
     end
+    it 'send qty & price' do
+      @participant.event = FactoryBot.create(:event, list_price: 123.4, eb_end_date: nil)
+      @participant.quantity = 2
+      @email = EventMailer.alert_event_monitor(@participant, '')
+      expect(@email.body).to include('123.4')
+      expect(@email.body).to include('246.8')
+      expect(@email.body).to include('2 personas')
+    end
   end
 end
