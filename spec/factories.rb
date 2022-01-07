@@ -127,4 +127,10 @@ FactoryBot.define do
     body { 'Mi contenido' }
     slug { 'mi-historia' }
   end
+
+  factory :oauth_token do
+    issuer { 'Xero' }
+    token_set { 'Lots of encripted data' }
+    tenantId { 'global-unique-identifier' }
+  end
 end
