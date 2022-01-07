@@ -1,3 +1,5 @@
+%script(src="https://www.google.com/recaptcha/api.js")
+%script(src="https://www.google.com/recaptcha/api.js")
 = form_for [:event, @participant] do |f|
   - if @event.is_sold_out
     .alert
@@ -53,7 +55,7 @@
           = f.check_box :accept_terms, :required => true
           %label.control-label{ :for => :accept_terms }= ('* '+ I18n.t("formtastic.labels.participant.accept_terms")).html_safe
     .row-fluid
-      = recaptcha_tags
+      = recaptcha_tags(expired_callback: 'grecaptcha.reset()')
 
     .row-fluid
       .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
@@ -71,4 +73,3 @@
                 = I18n.t("formtastic.button.participant.more_info")
 
 = @event.extra_script.nil? ? "" : @event.extra_script.html_safe
-%script(src="https://www.google.com/recaptcha/api.js")

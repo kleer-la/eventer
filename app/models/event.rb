@@ -212,12 +212,12 @@ class Event < ApplicationRecord
                                fname: fname, lname: lname, email: email,
                                phone: 'na', id_number: 'na', address: 'na', influence_zone: iz,
                                notes: notes)
-                               
-                               part.save if part.valid?
-                               part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
-                               part.errors.full_messages.join(', ')
+
+    part.save if part.valid?
+    part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
+    part.errors.full_messages.join(', ')
   end
-      
+
   def price(qty, date)
     if eb_end_date.present? && date < eb_end_date
       case qty
@@ -240,17 +240,15 @@ class Event < ApplicationRecord
         enterprise_6plus_price || business_price || list_price
       end
     end
-
   end
 
   def seat_available
-    capacity-confirmed_quantity
+    capacity - confirmed_quantity
   end
-  
+
   def confirmed_quantity
     participants.confirmed.pluck(:quantity).reduce(0, :+)
   end
-  
 
   private
 

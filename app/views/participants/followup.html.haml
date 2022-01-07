@@ -75,9 +75,9 @@
                         = best_in_place participant, :email, :url => url, :class => ['editable','editable-click']
                       %br
                       %span{ :style => "white-space:nowrap;"}
-                        %i.icon-barcode
-                        = "ID: "
-                        = best_in_place participant, :id_number, :url => url, :class => ['editable','editable-click']
+                        %i.icon-list
+                        = "Qty: "
+                        = best_in_place participant, :quantity, :url => url, :class => ['editable','editable-click']
                       %br
                       - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
                         %br

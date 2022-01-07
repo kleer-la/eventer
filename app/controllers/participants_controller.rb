@@ -95,10 +95,9 @@ class ParticipantsController < ApplicationController
   def quantities_list
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
-      ac << ["#{qty} personas x #{price} usd = #{price*qty} usd", qty]
+      ac << ["#{qty} personas x #{price} usd = #{price * qty} usd", qty]
     end
   end
-  
 
   # GET /participants/new/confirm
   def confirm
