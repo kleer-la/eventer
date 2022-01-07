@@ -7,7 +7,7 @@ RSpec.describe 'Api::V3::Participants', type: :request do
     context 'with event' do
       before(:example) do
         @event = FactoryBot.create(:event)
-        iz = FactoryBot.create(:influence_zone, country: Country.find_by(iso_code: 'AR'))
+        FactoryBot.create(:influence_zone, country: Country.find_by(iso_code: 'AR'))
       end
       it 'returns http success' do
         post '/api/v3/participants/interest'

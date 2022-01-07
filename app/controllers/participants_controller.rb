@@ -4,7 +4,7 @@ require './lib/country_filter'
 
 class ParticipantsController < ApplicationController
   before_action :authenticate_user!,
-                except: %i[new create confirm certificate payuco_confirmation payuco_response]
+                except: %i[new create confirm certificate]
 
   STATUS_LIST = [%w[Nuevo N], %w[Contactado T], %w[Confirmado C], %w[Presente A], %w[Certificado K],
                  %w[Cancelado X], %w[Pospuesto D]].freeze
@@ -43,14 +43,34 @@ class ParticipantsController < ApplicationController
     end
   end
 
+  # no route for this
   # GET /participants/1
   # GET /participants/1.json
-  def show
-    @participant = Participant.find(params[:id])
+  # def show
+  #   @participant = Participant.find(params[:id])
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @participant }
+  #   respond_to do |format|
+  #     format.html
+  #     format.json { render json: @participant }
+  #   end
+  # end
+
+  def campaign_new
+    utm_campaign = params[:utm_campaign]
+    utm_source = params[:utm_source]
+    utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
+    utm_source = utm_source.downcase unless utm_source.nil?
+
+    return if @event.nil?
+
+    source = CampaignSource.where(codename: utm_source).first_or_create
+    campaign = Campaign.where(codename: utm_campaign).first_or_create
+
+    begin
+      CampaignView.create(campaign: campaign, campaign_source: source, event: @event, event_type: @event.event_type,
+                          element_viewed: 'registration_form')
+    rescue StandardError
+      puts 'Sometimes a DB locked error: we can skip this record'
     end
   end
 
@@ -60,38 +80,25 @@ class ParticipantsController < ApplicationController
     @participant = Participant.new
     @event = Event.find(params[:event_id])
     session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
-    @influence_zones = InfluenceZone.all.sort do |a, b|
-      a.display_name.sub('Republica ', '') <=> b.display_name.sub('Republica ', '')
-    end
+    @influence_zones = InfluenceZone.sort_wo_republica
     @nakedform = !params[:nakedform].nil?
-    I18n.locale = if params[:lang].nil? || (params[:lang].downcase == 'es')
-                    :es
-                  else
-                    :en
-                  end
-
-    utm_campaign = params[:utm_campaign]
-    utm_source = params[:utm_source]
-    utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
-    utm_source = utm_source.downcase unless utm_source.nil?
-
-    unless @event.nil?
-      source = CampaignSource.where(codename: utm_source).first_or_create
-      campaign = Campaign.where(codename: utm_campaign).first_or_create
-
-      begin
-        CampaignView.create(campaign: campaign, campaign_source: source, event: @event, event_type: @event.event_type,
-                            element_viewed: 'registration_form')
-      rescue Exception
-        puts 'Sometimes a DB locked error: we can skip this record'
-      end
-    end
-
+    I18n.locale = (:es if params[:lang].nil? || params[:lang].downcase == 'es') || :en
+    @quantities = quantities_list
+    campaign_new
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
       format.json { render json: @participant }
     end
   end
+
+  # [["1 personas x 100usd = 100usd", 1], ["2 personas x 100usd = 200usd", 2]]
+  def quantities_list
+    (1..6).reduce([]) do |ac, qty|
+      price = @event.price(qty, DateTime.now)
+      ac << ["#{qty} personas x #{price} usd = #{price*qty} usd", qty]
+    end
+  end
+  
 
   # GET /participants/new/confirm
   def confirm
@@ -111,6 +118,26 @@ class ParticipantsController < ApplicationController
     @status_valuekey = STATUS_LIST
   end
 
+  def pre_campaign(params)
+    utm_campaign = params[:utm_campaign]
+    utm_source = params[:utm_source]
+    utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
+    utm_source = utm_source.downcase unless utm_source.nil?
+    source = CampaignSource.where(codename: utm_source).first_or_create
+    campaign = Campaign.where(codename: utm_campaign).first_or_create
+
+    [source, campaign]
+  end
+
+  def create_mails
+    if @event.should_welcome_email && !session[:payment_on_eventer]
+      EventMailer.delay.welcome_new_event_participant(@participant)
+    end
+
+    edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
+    EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
+  end
+
   # POST /participants
   # POST /participants.json
   def create
@@ -118,74 +145,37 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.all
     @participant = Participant.new(participant_params)
     @participant.event = @event
-    if verify_recaptcha
-
-      @nakedform = !params[:nakedform].nil?
-      @participant.confirm! if @event.list_price == 0.0
-
-      utm_campaign = params[:utm_campaign]
-      utm_source = params[:utm_source]
-      utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
-      utm_source = utm_source.downcase unless utm_source.nil?
-      source = CampaignSource.where(codename: utm_source).first_or_create
-      campaign = Campaign.where(codename: utm_campaign).first_or_create
-
-      respond_to do |format|
-        if @participant.save
-          @participant.update_attribute(:campaign_source, source)
-          @participant.update_attribute(:campaign, campaign)
-          if @event.list_price != 0.0
-            @participant.contact!
-            @participant.save
-          end
-
-          if @event.should_welcome_email && !session[:payment_on_eventer]
-            EventMailer.delay.welcome_new_event_participant(@participant)
-          end
-
-          edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
-          EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
-
-          if session[:payment_on_eventer]
-            webCheckout = PayuCoWebcheckoutService.new
-            @payment_data = webCheckout.prepare_webcheckout(@event, @participant)
-            format.html { render action: 'confirm_with_payment', layout: 'empty_layout' }
-          else
-            format.html do
-              redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
-                          notice: 'Tu pedido fue realizado exitosamente.'
-            end
-            format.json { render json: @participant, status: :created, location: @participant }
-          end
-
-        else
-          format.html { render action: 'new', layout: 'empty_layout' }
-          format.json { render json: @participant.errors, status: :unprocessable_entity }
-        end
-      end
-    else
+    unless verify_recaptcha(model: @participant)
       # invalid captcha
+      @quantities = quantities_list
       @captcha_error = true
-      render action: 'new', layout: 'empty_layout'
+      return render action: 'new', layout: 'empty_layout'
     end
-  end
 
-  # POST events/payuco_confirmation
-  def payuco_confirmation
-    payu_co_confirmation_service = PayuCoConfirmationService.new params
-    payu_co_confirmation_service.confirm
-    render status: 200, json: 'ok'
-  rescue Exception => e
-    puts "error #{e.message}"
-    puts e.backtrace
-    render status: 500, json: 'error'
-  end
+    @nakedform = !params[:nakedform].nil?
+    @participant.confirm! if @event.list_price > 0.0
 
-  # GET events/payuco_response
-  def payuco_response
-    @data_to_show = PayuCoResponseService.new(params).response
+    source, campaign = pre_campaign(params)
+
     respond_to do |format|
-      format.html { render layout: 'empty_layout' }
+      if @participant.save
+        @participant.update_attribute(:campaign_source, source)
+        @participant.update_attribute(:campaign, campaign)
+        if @event.list_price > 0.0
+          @participant.contact!
+          @participant.save
+        end
+        create_mails
+
+        format.html do
+          redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
+                      notice: 'Tu pedido fue realizado exitosamente.'
+        end
+        format.json { render json: @participant, status: :created, location: @participant }
+      else
+        format.html { render action: 'new', layout: 'empty_layout' }
+        format.json { render json: @participant.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -195,9 +185,9 @@ class ParticipantsController < ApplicationController
     @participant = Participant.find(params[:id])
     @influence_zones = InfluenceZone.all
     respond_to do |format|
-      original_participant_status = @participant.status
+      # original_participant_status = @participant.status
       if @participant.update_attributes(participant_params)
-        new_participant_status = participant_params[:status]
+        # new_participant_status = participant_params[:status]
         @event = Event.find(params[:event_id])
         format.html do
           redirect_to event_participants_path(@participant.event), notice: 'Participant was successfully updated.'
@@ -222,54 +212,44 @@ class ParticipantsController < ApplicationController
     end
   end
 
+  def certificate_validate
+    ParticipantsHelper.validate_page_size(@page_size) ||
+      ParticipantsHelper.validate_event(@participant.event) ||
+      ParticipantsHelper.validation_participant(@participant, @verification_code)
+  end
+
+  def certificate_error(msg)
+    flash[:alert] = msg
+    redirect_to event_participants_path
+  end
+
+  def render_certificate
+    @certificate = ParticipantsHelper::Certificate.new(@participant)
+    render
+  rescue ArgumentError, ActionView::Template::Error => e
+    certificate_error "#{e.message} (#{e.backtrace[0]})"
+  end
+
   def certificate
     @page_size = params[:page_size]
     @verification_code = params[:verification_code]
     @participant = Participant.find(params[:id])
     @is_download = (params[:download] == 'true')
 
-    error_msg = ParticipantsHelper.validate_page_size(@page_size) ||
-                ParticipantsHelper.validate_event(@participant.event) ||
-                ParticipantsHelper.validation_participant(@participant, @verification_code)
+    error_msg = certificate_validate
+    (return certificate_error(error_msg)) if error_msg.present?
 
-    if error_msg.present?
-      flash[:alert] = error_msg
-      redirect_to event_participants_path
-    else
-      @certificate_store = FileStoreService.createS3
-      begin
-        @certificate = ParticipantsHelper::Certificate.new(@participant)
-        render
-      rescue ArgumentError, ActionView::Template::Error => e
-        flash[:alert] = e.message + " (#{e.backtrace[0]})"
-        redirect_to event_participants_path
-      end
-    end
+    @certificate_store = FileStoreService.create_s3
+    render_certificate
   end
 
   def batch_load
-    event = Event.find(params[:event_id])
-    influence_zone = InfluenceZone.find(params[:influence_zone_id])
-    status = params[:status]
-
-    success_loads = 0
-    errored_loads = 0
-    errored_lines = ''
-
-    batch = params[:participants_batch]
-
-    batch.lines.each do |participant_data_line|
-      if Participant.create_from_batch_line(participant_data_line, event, influence_zone, status)
-        success_loads += 1
-      else
-        errored_loads += 1
-        errored_lines += if errored_lines == ''
-                           "'#{participant_data_line.strip}'"
-                         else
-                           ", '#{participant_data_line.strip}'"
-                         end
-      end
-    end
+    success_loads, errored_loads, errored_lines = Participant.batch_load(
+      params[:participants_batch],
+      Event.find(params[:event_id]),
+      InfluenceZone.find(params[:influence_zone_id]),
+      params[:status]
+    )
 
     flash[:alert] = t('flash.event.batch_load.error', errored_loads: errored_loads, errored_lines: errored_lines)
     flash[:notice] = t('flash.event.batch_load.success', success_loads: success_loads)
@@ -290,33 +270,36 @@ class ParticipantsController < ApplicationController
   def followup
     @active_menu = 'dashboard'
 
-    @events = Event.public_and_visible
-    @participants = []
-    @event_names = {}
-    @events.each do |event|
-      if event.date > Date.today
-        @participants += event.participants.contacted
-        @event_names[event.id] = "#{event.event_type.name} - #{event.date.to_formatted_s(:short)}"
-      end
-    end
+    events = Event.public_and_visible
+
+    @participants, @event_names = filter_event_participants(events)
 
     @participants.sort_by!(&:updated_at)
     @influence_zones = InfluenceZone.all
     @status_valuekey = STATUS_LIST
     @status_keyvalue = STATUS_LIST.map { |s| [s[1], s[0]] }
-
-    respond_to do |format|
-      format.html # followup.html.erb
-    end
   end
 
   private
 
+  def filter_event_participants(events)
+    participants = []
+    event_names = {}
+    events.each do |event|
+      if event.date > Date.today
+        participants += event.participants.contacted
+        event_names[event.id] = "#{event.event_type.name} - #{event.date.to_formatted_s(:short)}"
+      end
+    end
+    [participants, event_names]
+  end
+
   def participant_params
-    params.require(:participant).permit :email, :fname, :lname, :phone, :event_id,
-                                        :status, :notes, :influence_zone_id, :influence_zone,
-                                        :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
-                                        :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
-                                        :campaign_source, :campaign, :accept_terms, :id_number, :address
+    params.require(:participant)
+          .permit :email, :fname, :lname, :phone, :event_id,
+                  :status, :notes, :influence_zone_id, :influence_zone, :quantity,
+                  :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
+                  :xero_invoice_number, :xero_invoice_reference, :xero_invoice_amount, :is_payed, :payment_type,
+                  :campaign_source, :campaign, :accept_terms, :id_number, :address
   end
 end

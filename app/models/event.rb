@@ -46,9 +46,9 @@ class Event < ApplicationRecord
   end
 
   def self.discount_on_private(record, attr, value)
-    if !value.nil? && (value.positive? && record.visibility_type == 'pr')
-      record.errors.add(attr, :private_event_should_not_have_discounts)
-    end
+    return unless !value.nil? && (value.positive? && record.visibility_type == 'pr')
+
+    record.errors.add(attr, :private_event_should_not_have_discounts)
   end
 
   validates_each :couples_eb_price do |record, attr, value|
@@ -74,14 +74,12 @@ class Event < ApplicationRecord
   comma do
     visibility_type 'Visibilidad'
     id 'Event ID'
-    event_type 'Event Type' do |ev_type| ev_type.nil? ? '' : ev_type.name end
+    event_type('Event Type') { |ev_type| ev_type.nil? ? '' : ev_type.name }
     date 'Fecha de Inicio'
-    country 'País' do |country| country.nil? ? '' : country.name end
+    country('País') { |country| country.nil? ? '' : country.name }
     city 'Ciudad'
     participants 'Registrados', &:count
-    participants 'Confirmados' do |participants|
-      participants.count.positive? ? participants.confirmed.count : 0
-    end
+    participants('Confirmados') { |p| p.count.positive? ? p.confirmed.count : 0 }
     capacity 'Capacidad'
   end
 
@@ -93,12 +91,12 @@ class Event < ApplicationRecord
   }.freeze
 
   def initialize_defaults
-    if new_record?
-      self.start_time ||= '9:00'
-      self.end_time ||= '18:00'
-      self.duration ||= 1
-      self.should_welcome_email ||= true
-    end
+    return unless new_record?
+
+    self.start_time ||= '9:00'
+    self.end_time ||= '18:00'
+    self.duration ||= 1
+    self.should_welcome_email ||= true
   end
 
   def completion
@@ -120,7 +118,7 @@ class Event < ApplicationRecord
     from_date = now.beginning_of_week
     to_date = date.beginning_of_week
 
-    weeks = (to_date - from_date) / 7
+    (to_date - from_date) / 7
   end
 
   def human_date
@@ -162,19 +160,19 @@ class Event < ApplicationRecord
     (Time.parse(self.end_time.strftime('%Y/%m/%d %H:%M')) < timezone_current_time)
   end
 
-  def is_community_event?
+  def community_event?
     visibility_type == 'co'
   end
 
-  def is_classroom?
+  def classroom?
     mode == 'cl'
   end
 
-  def is_online?
+  def online?
     mode == 'ol'
   end
 
-  def is_blended_learning?
+  def blended_learning?
     mode == 'bl'
   end
 
@@ -214,20 +212,50 @@ class Event < ApplicationRecord
                                fname: fname, lname: lname, email: email,
                                phone: 'na', id_number: 'na', address: 'na', influence_zone: iz,
                                notes: notes)
-
-    part.save if part.valid?
-    part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
-    part.errors.full_messages.join(', ')
+                               
+                               part.save if part.valid?
+                               part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
+                               part.errors.full_messages.join(', ')
   end
+      
+  def price(qty, date)
+    if eb_end_date.present? && date < eb_end_date
+      case qty
+      when 0..1
+        eb_price || list_price
+      when 2..4
+        couples_eb_price || eb_price || list_price
+      when 5..6
+        business_eb_price || couples_eb_price || eb_price || list_price
+      else
+        enterprise_11plus_price || business_eb_price || couples_eb_price || eb_price || list_price
+      end
+    else
+      case qty
+      when 0..4
+        list_price
+      when 5..6
+        business_price || list_price
+      else
+        enterprise_6plus_price || business_price || list_price
+      end
+    end
+
+  end
+
+  def seat_available
+    capacity-confirmed_quantity
+  end
+  
+  def confirmed_quantity
+    participants.confirmed.pluck(:quantity).reduce(0, :+)
+  end
+  
 
   private
 
   def cancellation_limit_date
     registration_ends.nil? ? date : registration_ends
-  end
-
-  def get_event_duration
-    self.duration || 1
   end
 
   def humanize_start_date
@@ -238,7 +266,7 @@ class Event < ApplicationRecord
     if !finish_date.nil?
       humanize_date finish_date
     else
-      duration = get_event_duration
+      duration = self.duration || 1
       humanize_date date + (duration - 1)
     end
   end

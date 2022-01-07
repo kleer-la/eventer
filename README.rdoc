@@ -32,11 +32,6 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     
 - Tambien es importante setear las variables, by default hay datos para abientes de prueba:
 
-    PAYU_CO_API_KEY=4Vj8eK4rloUd272L48hsrarnUA
-    PAYU_CO_MERCHANT_ID=508029
-    PAYU_CO_ACCOUNT_ID=512321
-    PAYU_CO_WEBCHECKOUT_URL=https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu
-    PAYU_CO_TEST_OPTION=1
     PUBLIC_DOMAIN=http://localhost:3000
 
 - Inicia la aplicación: bundle exec rails s -b 0

@@ -16,12 +16,12 @@ describe ParticipantsController do
       end
     end
 
-    describe 'GET show' do
-      it 'assigns the requested participant as @participant' do
-        get :show, params: { id: @participant.to_param, event_id: @participant.event.id }
-        expect(assigns(:participant)).to eq @participant
-      end
-    end
+    # describe 'GET show' do
+    #   it 'assigns the requested participant as @participant' do
+    #     get :show, params: { id: @participant.to_param, event_id: @participant.event.id }
+    #     expect(assigns(:participant)).to eq @participant
+    #   end
+    # end
 
     describe 'GET new' do
       it 'assigns a new participant as @participant' do
@@ -192,7 +192,6 @@ describe ParticipantsController do
     end
     describe 'certificate' do
       before(:each) do
-        ev = @participant.event.event_type
         @participant.attend!
         @participant.save!
       end

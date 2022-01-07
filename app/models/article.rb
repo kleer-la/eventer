@@ -4,6 +4,8 @@ class Article < ApplicationRecord
   extend FriendlyId
   friendly_id :title, use: [:slugged]
   has_and_belongs_to_many :trainers
+  enum lang: %i[es en]
+  belongs_to :category
 
   validates :title, presence: true
   validates :body, presence: true
@@ -23,5 +25,9 @@ class Article < ApplicationRecord
     p ||= max_abstract_length
     abstract_end = double_n < p ? double_n : p
     body[0...abstract_end]
+  end
+
+  def category_name
+    category&.name
   end
 end

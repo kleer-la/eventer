@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-def get_last_id
-  last_id = 1
+def last_id
+  id = 1
   expect(page).to have_css('table tr')
   elem = page.all(:xpath, "//table//tr[td='31 Ene-1 Feb']/td[2]/a").last ||
          page.all(:xpath, "//table//tr[td='31 Jan-1 Feb']/td[2]/a").last
   href = elem[:href] unless elem.nil?
   unless href.nil?
     ri = href.rindex('/')
-    last_id = href[ri + 1, 3]
+    id = href[ri + 1, 3]
   end
-  last_id
+  id
 end
 
 Given(/^there is one event$/) do
@@ -19,12 +19,10 @@ Given(/^there is one event$/) do
 end
 
 When(/^I visit the "(.*?)" registration page$/) do |lang|
-  last_id = get_last_id
   visit "/events/#{last_id}/participants/new?lang=" + lang
 end
 
 When(/^I visit the registration page without languaje$/) do
-  last_id = get_last_id
   visit "/events/#{last_id}/participants/new"
 end
 

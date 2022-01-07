@@ -13,7 +13,7 @@ RSpec.describe 'generate one certificate' do
     assign(:verification_code, participant.verification_code)
     assign(:certificate, ParticipantsHelper::Certificate.new(participant))
     assign(:participant, participant)
-    assign(:certificate_store, FileStoreService.createNull)
+    assign(:certificate_store, FileStoreService.create_null)
 
     render template: 'participants/certificate', format: :pdf
     texts = PDF::Inspector::Text.analyze(rendered).strings
@@ -29,7 +29,7 @@ RSpec.describe 'generate one certificate' do
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant))
       assign(:participant, participant)
-      certificate_store = FileStoreService.createNull exists: { 'certificate-images/base2021-LETTER.png' => false }
+      certificate_store = FileStoreService.create_null exists: { 'certificate-images/base2021-LETTER.png' => false }
       assign(:certificate_store, certificate_store)
 
       expect do
@@ -46,7 +46,7 @@ RSpec.describe 'generate one certificate' do
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant))
       assign(:participant, participant)
-      assign(:certificate_store, FileStoreService.createNull)
+      assign(:certificate_store, FileStoreService.create_null)
 
       expect do
         render template: 'participants/certificate', format: :pdf

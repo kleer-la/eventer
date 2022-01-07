@@ -103,22 +103,22 @@
     - if @event.completion < 0.2
       .box-content.box-statistic.red-background
         %h3.title.text-primary= (@event.completion*100).round.to_s + "%"
-        %small= "Completo (Restan " + (@event.capacity-@event.participants.confirmed.count).to_s + " personas)"
+        %small= "Completo (Restan #{@event.seat_available} personas)"
         .text-primary.icon-group.align-right
     - elsif @event.completion >= 0.2 && @event.completion < 0.5
       .box-content.box-statistic.orange-background
         %h3.title.text-primary= (@event.completion*100).round.to_s + "%"
-        %small= "Completo (Restan " + (@event.capacity-@event.participants.confirmed.count).to_s + " personas)"
+        %small= "Completo (Restan #{@event.seat_available} personas)"
         .text-primary.icon-group.align-right
     - elsif @event.completion >= 0.5 && @event.completion < 0.8
       .box-content.box-statistic.blue-background
         %h3.title.text-primary= (@event.completion*100).round.to_s + "%"
-        %small= "Completo (Restan " + (@event.capacity-@event.participants.confirmed.count).to_s + " personas)"
+        %small= "Completo (Restan #{@event.seat_available}  personas)"
         .text-primary.icon-group.align-right
     - elsif @event.completion >= 0.8
       .box-content.box-statistic.green-background
         %h3.title.text-primary= (@event.completion*100).round.to_s + "%"
-        %small= "Completo (Restan " + (@event.capacity-@event.participants.confirmed.count).to_s + " personas)"
+        %small= "Completo (Restan #{@event.seat_available} personas)"
         .text-primary.icon-group.align-right
   .span2
     .box-content.box-statistic
@@ -193,8 +193,8 @@
                     %br
                     %span{ :style => "white-space:nowrap;"}
                       %i.icon-barcode
-                      = "ID: "
-                      = best_in_place participant, :id_number, :url => url, :class => ['editable','editable-click']
+                      = "Qty: "
+                      = best_in_place participant, :quantity, :url => url, :class => ['editable','editable-click']
                     %br
                     - if (!participant.referer_code.nil? && participant.referer_code.to_s != "")
                       %br

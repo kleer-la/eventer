@@ -2,7 +2,6 @@
 
 require 'rails_helper'
 require 'aws-sdk'
-include ParticipantsHelper
 
 class PrawnMock
   attr_reader :history
@@ -15,9 +14,10 @@ class PrawnMock
     @history += msg
   end
 
-  def method_missing(m, *args, &block); end
+  def method_missing(msg, *args, &block); end
 end
 
+include ParticipantsHelper
 describe Certificate do
   before(:each) do
     @participant = FactoryBot.build(:participant)
@@ -50,7 +50,7 @@ describe Certificate do
     @et.csd_eligible = false
 
     cert = Certificate.new(@participant)
-    expect(cert.is_csd_eligible?).to be false
+    expect(cert.csd_eligible?).to be false
   end
 
   it 'should return the event name' do
@@ -104,17 +104,17 @@ describe Certificate do
 
   it 'should return the trainer name' do
     cert = Certificate.new(@participant)
-    expect(cert.trainer).to eq 'Juan Alberto'
+    expect(cert.trainer(0)).to eq 'Juan Alberto'
   end
 
   it 'should return the trainer credentials' do
     cert = Certificate.new(@participant)
-    expect(cert.trainer_credentials).to eq 'Agile Coach & Trainer'
+    expect(cert.trainer_credentials(0)).to eq 'Agile Coach & Trainer'
   end
 
   it 'should return the trainer signature image' do
     cert = Certificate.new(@participant)
-    expect(cert.trainer_signature).to eq 'PT.png'
+    expect(cert.trainer_signature(0)).to eq 'PT.png'
   end
 
   describe 'certificate description' do
@@ -247,7 +247,7 @@ end
 
 describe 'render certificates' do
   before(:each) do
-    @certificate_store = FileStoreService.createNull
+    @certificate_store = FileStoreService.create_null
     @participant = FactoryBot.create(:participant)
   end
 

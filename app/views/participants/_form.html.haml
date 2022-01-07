@@ -4,7 +4,7 @@
       = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
   - if @participant.errors.full_messages.count > 0 || @captcha_error
     .alert.alert-danger{:id => "validation_msg"}
-      = "Todos los campos son requeridos excepto observaciones"
+      = "Complete los campos con * y el captcha"
   %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
@@ -19,83 +19,56 @@
       %input{ :type => "hidden", :name => "utm_source", :value => utm_source }
 
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :fname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.fname")
+      .control-group
+        = f.text_field :fname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.fname")
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :lname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.lname")
+      .control-group
+        = f.text_field :lname, required: true, :class => "span12", :placeholder => '* '+I18n.t("formtastic.labels.participant.lname")
     .row-fluid
-      .span12
-        .control-group
-          - email_placeholder = '* '+ I18n.t("formtastic.labels.participant.email")
-          - email_placeholder += " (confirmaremos tu registro en este email)"
-          = f.text_field :email, required: true, :class => "span12", :placeholder => email_placeholder
+      .control-group
+        - email_placeholder = '* '+ I18n.t("formtastic.labels.participant.email")
+        - email_placeholder += " (confirmaremos tu registro en este email)"
+        = f.text_field :email, required: true, :class => "span12", :placeholder => email_placeholder
     .row-fluid
-      .span12
-        .control-group
-          = f.text_field :phone, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.phone")
-    .row-fluid
-      .span12
-        .control-group
-          = f.text_field :id_number, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.id_number")
-    .row-fluid
-      .span12
-        .control-group
-          = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
+      .control-group
+        = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
     - if @event.should_ask_for_referer_code
       .row-fluid
-        .span12
-          .control-group
-            = f.text_field :referer_code, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.referer_code")
-    .row-fluid
-      .span12
         .control-group
-          = f.text_area :notes, :class => "span12 autogrow", :placeholder => I18n.t("formtastic.labels.participant.notes"), :rows => 2
+          = f.text_field :referer_code, :class => "span6", :placeholder => I18n.t("formtastic.labels.participant.referer_code")
     .row_fluid
-      = f.collection_select :influence_zone_id, @influence_zones, :id, :display_name, {include_blank: '* '+ I18n.t("formtastic.labels.participant.zone"), :required => true }
+      .control-group
+        %small.muted
+          Cantidad de cupos
+        = f.select :quantity, @quantities, {}, {:class => "span6"}
     .row-fluid
-      .span12
-        .control-group
-          %label.checkbox
-            = f.check_box :accept_terms, :required => true
-            %label.control-label{ :for => :accept_terms }= ('* '+ I18n.t("formtastic.labels.participant.accept_terms")).html_safe
+      .control-group
+        = f.text_field :phone, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")
     .row-fluid
-      .span12
-        = recaptcha_tags
+      .control-group
+        = f.text_area :notes, :class => "span12 autogrow", :placeholder => I18n.t("formtastic.labels.participant.notes"), :rows => 2
+    .row-fluid
+      .control-group
+        %label.checkbox
+          = f.check_box :accept_terms, :required => true
+          %label.control-label{ :for => :accept_terms }= ('* '+ I18n.t("formtastic.labels.participant.accept_terms")).html_safe
+    .row-fluid
+      = recaptcha_tags
 
     .row-fluid
-      .span12
-        .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
-          .text-center
-            %img{ :src => "/assets/ajax-loader.gif", :id => "loader_img" }
+      .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
+        .text-center
+          - if session[:payment_on_eventer]
+            %button.btn.btn-success.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+              %i.icon-flag
+              = I18n.t("formtastic.button.participant.pay")
+          - else
+            %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+              %i.icon-save
+              - if @event.community_event?
+                = I18n.t("formtastic.button.participant.register")
+              - else
+                = I18n.t("formtastic.button.participant.more_info")
 
-            - if session[:payment_on_eventer]
-              %button.btn.btn-success.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-                %i.icon-flag
-                = I18n.t("formtastic.button.participant.pay")
-            - else
-              %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-                %i.icon-save
-                - if @event.is_community_event?
-                  = I18n.t("formtastic.button.participant.register")
-                - else
-                  = I18n.t("formtastic.button.participant.more_info")
-
-
-:javascript
-  $(document).ready(function() {
-    $('[name="commit"]').click( function() { setLoading() } );
-    $("#loader_img").hide();
-  })
-
-  function setLoading() {
-    $('[name="commit"]').val("Registro en progreso ...");
-    $('[name="commit"]').attr('disabled','disabled');
-    $('[name="commit"]').attr('class', 'btn btn-primary disabled');
-    $("#loader_img").show();
-    $("#new_participant").submit();
-  }
 = @event.extra_script.nil? ? "" : @event.extra_script.html_safe
 %script(src="https://www.google.com/recaptcha/api.js")

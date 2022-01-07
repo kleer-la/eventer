@@ -9,7 +9,7 @@ describe 'API Trainers GET /trainers' do
   end
   context 'trainer list in XML' do
     before(:example) do
-      event = FactoryBot.create(:trainer, is_kleerer: true)
+      FactoryBot.create(:trainer, is_kleerer: true)
       event_url = '/api/kleerers.xml'
       get event_url
       @parsed = Nokogiri::XML(last_response.body)

@@ -14,8 +14,8 @@ describe HomeController do
       expect(assigns(:events)).to eq [event]
     end
     it 'returns non draft events' do
-      event = FactoryBot.create(:event, place: 'here')
-      draft = FactoryBot.create(:event, place: 'there', draft: true)
+      FactoryBot.create(:event, place: 'here')
+      FactoryBot.create(:event, place: 'there', draft: true)
       get :index, params: { format: 'xml' }
       expect(assigns(:events).map(&:place)).to eq ['here']
     end

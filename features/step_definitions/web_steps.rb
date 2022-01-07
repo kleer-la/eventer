@@ -145,8 +145,8 @@ When(/^I register for that event$/) do
 end
 
 Then(/^I should see a confirmation message$/) do
-  current_path.should == '/events/1/participant_confirmed'
-  page.should have_content('Tu pedido fue realizado exitosamente.')
+  expect(current_path).to eq '/events/1/participant_confirmed'
+  expect(page).to have_content('Tu pedido fue realizado exitosamente.')
 end
 
 Then(/^It should have a registration page$/) do

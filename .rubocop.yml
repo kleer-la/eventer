@@ -1,0 +1,28 @@
+AllCops:
+  Exclude:
+    - 'bin/**/*'
+    - 'db/migrate/201*'
+    - 'db/schema.rb'
+
+Metrics/BlockLength:
+  IgnoredMethods:
+    - 'describe'
+    - 'context'
+  Exclude:
+    - 'spec/factories.rb'
+    - 'config/routes.rb'
+
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*.*'
+
+Metrics/AbcSize:
+  Max: 20 # was 17
+
+Style/MixinUsage: 
+  Exclude:
+    - 'spec/**/*'

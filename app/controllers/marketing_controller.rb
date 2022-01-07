@@ -32,7 +32,7 @@ class MarketingController < ApplicationController
     if @time_segment.nil?
       redirect_to '/marketing/30'
     else
-      if @time_segment.is_integer?
+      if time_segment_integer?
         @since = DateTime.now - @time_segment.to_i
         @until = DateTime.now
       elsif @time_segment == '30-60'
@@ -60,7 +60,7 @@ class MarketingController < ApplicationController
     if @time_segment.nil?
       redirect_to "marketing/campaigns/#{params[:id]}/30"
     else
-      if @time_segment.is_integer?
+      if time_segment_integer?
         @since = DateTime.now - @time_segment.to_i
         @until = DateTime.now
       elsif @time_segment == '30-60'
@@ -84,5 +84,11 @@ class MarketingController < ApplicationController
 
   def activate_menu
     @active_menu = 'segmento'
+  end
+
+  def time_segment_integer?
+    true if Integer(@time_segment)
+  rescue StandardError
+    false
   end
 end

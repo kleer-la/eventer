@@ -1,7 +1,7 @@
 - content_for  :title do
   = "Compra de #{@event.event_type.name}"
 .controls
-  - if !@nakedform
+  - unless @nakedform
     .form-wrapper
       %h1.text-center= @event.event_type.name
       %p.text-center

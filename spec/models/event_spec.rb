@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-include ActiveSupport
 
 describe Event do
+  include ActiveSupport
   before(:each) do
     @event = FactoryBot.build(:event)
   end
@@ -160,17 +160,17 @@ describe Event do
 
     it 'should allow a Presencial mode' do
       @event.mode = 'cl'
-      expect(@event.is_classroom?).to be true
+      expect(@event.classroom?).to be true
     end
 
     it 'should allow an OnLine mode' do
       @event.mode = 'ol'
-      expect(@event.is_online?).to be true
+      expect(@event.online?).to be true
     end
 
     it 'should allow a Blended Learning mode' do
       @event.mode = 'bl'
-      expect(@event.is_blended_learning?).to be true
+      expect(@event.blended_learning?).to be true
     end
 
     it 'should have a show_pricing flag' do
@@ -179,9 +179,9 @@ describe Event do
     end
 
     it 'should have a time zone name' do
-      @event.time_zone_name = TimeZone.all.first.name
-      tz = TimeZone.new(@event.time_zone_name)
-      expect(tz).to eq TimeZone.all.first
+      @event.time_zone_name = ActiveSupport::TimeZone.all.first.name
+      tz = ActiveSupport::TimeZone.new(@event.time_zone_name)
+      expect(tz).to eq ActiveSupport::TimeZone.all.first
     end
 
     it 'should have a embedded player' do
@@ -251,7 +251,7 @@ describe Event do
     end
 
     it 'should not be marked as community' do
-      expect(@event.is_community_event?).to be false
+      expect(@event.community_event?).to be false
     end
   end
 
@@ -273,7 +273,7 @@ describe Event do
     end
 
     it 'should not be marked as community' do
-      expect(@event.is_community_event?).to be false
+      expect(@event.community_event?).to be false
     end
   end
 
@@ -283,7 +283,7 @@ describe Event do
     end
 
     it 'should be marked as community' do
-      expect(@event.is_community_event?).to be true
+      expect(@event.community_event?).to be true
     end
   end
 
@@ -377,7 +377,7 @@ describe Event do
   context 'Capacity' do
     it 'It should return a completion percentage w/confirmed participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'C')
+      FactoryBot.create(:participant, event: @event, status: 'C')
 
       expect(@event.completion).to eq 0.1
     end
@@ -390,7 +390,7 @@ describe Event do
   context 'Attendance' do
     it '0 attendance wo/attended or certified participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'C')
+      FactoryBot.create(:participant, event: @event, status: 'C')
 
       expect(@event.attendance_counts[:attendance]).to eq 0
       expect(@event.attendance_counts[:total]).to eq 1
@@ -398,14 +398,14 @@ describe Event do
 
     it '1 attendance w/ one attended participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'A')
+      FactoryBot.create(:participant, event: @event, status: 'A')
 
       expect(@event.attendance_counts[:attendance]).to eq 1
       expect(@event.attendance_counts[:total]).to eq 1
     end
     it '1 attendance w/ one certified participant' do
       @event.capacity = 10
-      p = FactoryBot.create(:participant, event: @event, status: 'K')
+      FactoryBot.create(:participant, event: @event, status: 'K')
 
       expect(@event.attendance_counts[:attendance]).to eq 1
       expect(@event.attendance_counts[:total]).to eq 1
@@ -421,7 +421,7 @@ describe Event do
 
     it 'Evething is cool' do
       expect do
-        result = @event.interested_participant('fname', 'lname', 'e@mail.com', 'AR', 'notes')
+        @event.interested_participant('fname', 'lname', 'e@mail.com', 'AR', 'notes')
       end.to change(Participant, :count).by(1)
     end
     it 'not cool' do
@@ -441,4 +441,61 @@ describe Event do
       expect(@result).to match(/país/)
     end
   end
+
+  context 'princing' do
+    before(:each) do
+      @event = FactoryBot.build(:event, eb_end_date: DateTime.new-1,
+                                list_price: 99, eb_price: 98, couples_eb_price: 97,
+                                business_price: 96, business_eb_price: 95,
+                                enterprise_6plus_price: 94, enterprise_11plus_price: 93
+                )
+    end
+    context "early bird" do
+        [ [1,98],
+        [2,97],
+        [3,97],
+        [4,97],
+        [5,95],
+        [6,95],
+        [7,93]
+      ].each do |nro, unit_price|
+        it "for # people #{nro} #{unit_price}" do
+          expect(@event.price(nro, DateTime.new-2)).to eq unit_price
+        end
+      end      
+    end
+    context "regular price" do
+      [ [1,99],
+        [2,99],
+        [3,99],
+        [4,99],
+        [5,96],
+        [6,96],
+        [7,94]
+      ].each do |nro, unit_price|
+        it "for # people #{nro} #{unit_price}" do
+          expect(@event.price(nro, DateTime.new)).to eq unit_price
+        end
+      end
+    end
+    context "regular price w/o eb" do
+      before(:each) do
+        @event.eb_end_date = nil
+      end
+
+      [ [1,99],
+        [2,99],
+        [3,99],
+        [4,99],
+        [5,96],
+        [6,96],
+        [7,94]
+      ].each do |nro, unit_price|
+        it "for # people #{nro} #{unit_price}" do
+          expect(@event.price(nro, DateTime.new)).to eq unit_price
+        end
+      end
+    end
+  end
+    
 end

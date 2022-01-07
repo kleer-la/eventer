@@ -72,8 +72,6 @@ Rails.application.routes.draw do
   get 'events/:id/send_certificate' => 'events#send_certificate'
 
   get 'events/:event_id/participant_confirmed' => 'participants#confirm'
-  post 'events/payuco/confirmation' => 'participants#payuco_confirmation'
-  get 'events/payuco/response' => 'participants#payuco_response'
   get 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
   get 'events/:event_id/participants_print' => 'participants#print'
   get 'events/:event_id/participants_survey' => 'participants#survey'

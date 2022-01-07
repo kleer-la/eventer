@@ -13,7 +13,8 @@ group :development do
 end
 
 group :development, :test do
-  gem 'coveralls_reborn', require: false # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
+  # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
+  gem 'coveralls_reborn', require: false
   gem 'pdf-inspector', require: 'pdf/inspector'
   gem 'rspec-mocks'
   gem 'rspec-rails'
@@ -60,7 +61,7 @@ gem 'comma'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'dimensions' # knowing the heigt of an image - for certificates pdf
-gem 'formtastic', '~> 3.1' # fail with v4 (bc formtastic-bootstrap) https://github.com/formtastic/formtastic/issues/1308
+gem 'formtastic'
 gem 'formtastic-bootstrap'
 gem 'money'
 gem 'prawn'

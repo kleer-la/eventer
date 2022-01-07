@@ -27,7 +27,9 @@ Capybara.run_server = false
 
 Capybara.register_driver :selenium do |app|
   options = Selenium::WebDriver::Chrome::Options.new(
-    args: %w[--headless --no-sandbox] # --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security --disable-popup-blocking --window-size=1920,1080]
+    args: %w[--headless --no-sandbox]
+    # --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security
+    # --disable-popup-blocking --window-size=1920,1080]
   )
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
@@ -35,7 +37,8 @@ end
 # require 'webdrivers'
 #   Webdrivers::Chromedriver.required_version = '87.0.4280.88'
 #   options = Selenium::WebDriver::Chrome::Options.new(
-#     args: %w[--headless --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security --disable-popup-blocking --window-size=1920,1080]
+#     args: %w[--headless --no-sandbox --disable-gpu --disable-dev-shm-usage
+#           --disable-setuid-sandbox --disable-web-security --disable-popup-blocking --window-size=1920,1080]
 #   )
 #   driver=Selenium::WebDriver.for :chrome, options: options
 #   driver.get 'http://www.google.com'
