@@ -131,6 +131,6 @@ FactoryBot.define do
   factory :oauth_token do
     issuer { 'Xero' }
     token_set { 'Lots of encripted data' }
-    tenantId { 'global-unique-identifier' }
+    tenant_id { 'global-unique-identifier' }
   end
 end

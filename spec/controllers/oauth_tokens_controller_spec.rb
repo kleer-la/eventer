@@ -15,7 +15,7 @@ describe OauthTokensController do
       end
     end
 
-    describe 'GET new, initiates a new token workflow' do
+    describe 'new token workflow' do
       it 'redirects to the Xero endpoint' do
         expected_redirect = 'https://login.xero.com/identity/connect/authorize?response_type=code' +
                             "&client_id=#{ENV['XERO_CLIENT_ID']}" +

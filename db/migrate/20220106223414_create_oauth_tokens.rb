@@ -3,7 +3,7 @@ class CreateOauthTokens < ActiveRecord::Migration[5.2]
     create_table :oauth_tokens do |t|
       t.string :issuer
       t.string :token_set
-      t.string :tenantId
+      t.string :tenant_id
 
       t.timestamps
     end
