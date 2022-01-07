@@ -88,7 +88,7 @@ Rails.application.routes.draw do
   #   resources :products
 
   get 'oauth_tokens/' => 'oauth_tokens#index'
-  # get 'oauth_tokens/new' => 'oauth_tokens#new'
+  get 'oauth_tokens/new' => 'oauth_tokens#new'
   # post 'oauth_tokens/callback' => 'oauth_tokens#callback'
 
   # Example resource route with options:
