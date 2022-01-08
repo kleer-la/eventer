@@ -40,7 +40,7 @@ Enjoy!
 
 == Ambiente docker
 - Iniciar el contenedor
-    docker-compose run --service-ports eventer bash
+    docker compose run --service-ports eventer bash
 - Ir al directorio de la aplicación
     cd /home/eventer
 - Seguir con las instrucciones previas

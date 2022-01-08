@@ -95,10 +95,9 @@ class ParticipantsController < ApplicationController
   def quantities_list
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
-      ac << ["#{qty} personas x #{price} usd = #{price*qty} usd", qty]
+      ac << ["#{qty} personas x #{price} usd = #{price * qty} usd", qty]
     end
   end
-  
 
   # GET /participants/new/confirm
   def confirm
@@ -145,9 +144,9 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.all
     @participant = Participant.new(participant_params)
     @participant.event = @event
+    @quantities = quantities_list
     unless verify_recaptcha(model: @participant)
       # invalid captcha
-      @quantities = quantities_list
       @captcha_error = true
       return render action: 'new', layout: 'empty_layout'
     end

@@ -100,7 +100,7 @@ class Participant < ApplicationRecord
 
     self.status = STATUS[:new] if status.nil?
     self.verification_code = Digest::SHA1.hexdigest([Time.now, rand].join)[1..20].upcase
-    self.influence_zone = InfluenceZone.first()
+    self.influence_zone = InfluenceZone.first
   end
 
   def human_status
