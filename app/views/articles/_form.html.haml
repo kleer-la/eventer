@@ -1,3 +1,13 @@
+:css
+  ol {
+     list-style:none;
+  }
+  .label {
+    color:black;
+    background-color:white;
+    font-weight: normal;
+  }
+
 - @article.errors.full_messages.each do |msg|
   .alert.alert-error
     %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
@@ -11,35 +21,46 @@
           = @article.title.nil? ? t("formtastic.labels.trainer.new_title") : @article.title
 
     .box-content
-      .row-fuid
-        = semantic_form_for @article do |f|
-          %fieldset.inputs
-            = f.inputs do
-              = f.input :lang, :as => :radio
-              = f.input :title, input_html: {class: 'input-block-level'}
-              = f.input :tabtitle, input_html: {class: 'input-block-level'}
-              = f.input :body, input_html: {rows: 8, class: 'input-block-level'}
-              %small.muted 
-                Este texto soporta 
-                %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
-                y HTML.
-              = f.input :description, input_html: {class: 'input-block-level'}
-              = f.input :slug, input_html: {class: 'input-block-level'}
-              %small.muted
-                Dejar en blanco para generar automáticamente.
-              %br
-              %br
-              = f.input :trainers, as: :check_boxes, collection: Trainer.order(name: :asc), wrapper_html: { class: 'box-content'}
-              = f.input :category
-              = f.input :published
+      = semantic_form_for @article do |f|
+        %fieldset.inputs
+          = f.inputs do
+            = f.input :lang, :as => :radio, wrapper_html:  {class: 'control-group'}
+            = f.input :title, input_html: {class: 'input-block-level'}
+            = f.input :tabtitle, input_html: {class: 'input-block-level'}
+            = f.input :body, input_html: {rows: 8, class: 'input-block-level'}
+            %small.muted 
+              Este texto soporta 
+              %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+              y HTML.
+            .row-fuid{id:'warnings', class: 'text-warning'}
+            = f.input :description, input_html: {class: 'input-block-level'}
+            = f.input :slug, input_html: {class: 'input-block-level'}
+            %small.muted 
+              Dejar en blanco para generar automáticamente.
+            %br
+            %br
+            = f.input :trainers, as: :check_boxes, collection: Trainer.order(name: :asc), wrapper_html: { class: 'box-content'}
+            = f.input :category
+            = f.input :published
+          .row-fuid
+            .span12
+              .form-actions
+                .text-right
+                  %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
+                    %i.icon-save
+                    Guardar
+                  %a.btn.btn-large{ :href => articles_path }
+                    %i.icon-undo
+                    Cancelar
+:javascript
+  let articleBody = document.getElementsByName("article[body]")[0]
+  articleBody.addEventListener("change", function(){
+    let msgTest = document.getElementById("warnings");
+    let content = articleBody.value;
+    if (0> content.search(/<h1>/i) && 0> content.search(/^# /m) ) {
+      msgTest.innerText= " ";
+    } else {
+      msgTest.innerText= "No utilice títulos nivel uno (<h1> o # )";
+    }
+  });
 
-            .row-fuid
-              .span12
-                .form-actions
-                  .text-right
-                    %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
-                      %i.icon-save
-                      Guardar
-                    %a.btn.btn-large{ :href => articles_path }
-                      %i.icon-undo
-                      Cancelar
