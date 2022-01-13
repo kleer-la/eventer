@@ -29,10 +29,9 @@ class EventMailer < ApplicationMailer
   def alert_event_monitor(participant, edit_registration_link)
     event = participant.event
     event_info = event_data(event.event_type.name, event.country.name, event.human_date)
-    body = event_info +
-           contact_data(participant) +
+    body = contact_data(participant) +
            invoice_data(participant) +
-           "\nPuedes ver/editar el registro en #{edit_registration_link}"
+           "\n\nPuedes ver/editar el registro en #{edit_registration_link}"
 
     mail(to: event.monitor_email.presence || ALERT_MAIL,
          subject: "[Keventer] Nuevo registro a #{event_info}: #{participant.fname} #{participant.lname}",
@@ -44,14 +43,39 @@ class EventMailer < ApplicationMailer
   end
 
   def contact_data(participant)
-    "\n#{participant.fname} #{participant.lname} (#{participant.email} #{participant.phone})\n"
+  "Contact #{participant.fname} #{participant.lname}\n
+  FName: #{participant.fname} / Lname: #{participant.lname} \n
+  email: #{participant.email} \n
+  phone: #{participant.phone})\n
+  Nro fiscal:#{participant.id_number} / Dirección:#{participant.address}
+  --------------
+  \n"
   end
 
   def invoice_data(participant)
     unit_price = participant.event.price(participant.quantity, participant.created_at)
-    body = "Nro fiscal:#{participant.id_number} / Dirección:#{participant.address}\n"
-    body += "Código de referencia: #{participant.referer_code}\n" if participant.referer_code.present?
-    body += "Cantidad y precio: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price}\n"
-    body + "---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
+    if participant.quantity == 1
+      participant_text = " por una vancante de #{participant.fname} #{participant.lname}"
+    else
+      participant_text = " por #{participant.quantity} vancantes"
+    end
+
+    event_name = participant.event.event_type.name
+    country = participant.event.country.name
+    human_date = participant.event.human_date
+    online_payment = 'Online Payment' if participant.event.enable_online_payment
+    codename = participant.event.online_cohort_codename
+    # enable_online_payment
+    # online_course_codename
+    # online_cohort_codename
+
+    "Contact #{participant.fname} #{participant.lname}\n
+      Código de referencia: #{participant.referer_code}\n
+      Texto:\n
+      #{event_name} - #{country} - #{human_date}\n
+      #{participant_text}
+      Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} #{codename}\n
+      #{online_payment}\n
+      ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
   end
 end
