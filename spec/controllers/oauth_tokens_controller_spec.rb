@@ -18,6 +18,7 @@ describe OauthTokensController do
     describe 'new token workflow' do
       it 'redirects to the Xero endpoint' do
         ENV['XERO_CLIENT_ID'] ='some'
+        ENV['XERO_CLIENT_SECRET'] ='secret'
         ENV['XERO_REDIRECT_URI'] = 'data'
         ENV['XERO_SCOPES'] = 'definded'
         expected_redirect = 'https://login.xero.com/identity/connect/authorize?response_type=code' +
