@@ -1,10 +1,15 @@
 module XeroClientService
   def self.build_client
+    raise 'You must specify the XERO_CLIENT_ID env variable' unless xero_client_id = ENV['XERO_CLIENT_ID']
+    raise 'You must specify the XERO_CLIENT_SECRET env variable' unless xero_client_secret = ENV['XERO_CLIENT_SECRET']
+    raise 'You must specify the XERO_REDIRECT_URI env variable' unless xero_redirect_uri = ENV['XERO_REDIRECT_URI']  
+    raise 'You must specify the XERO_SCOPES env variable' unless xero_scopes = ENV['XERO_SCOPES']
+
     creds = {
-      client_id: XERO_CLIENT_ID,
-      client_secret: XERO_CLIENT_SECRET,
-      redirect_uri: XERO_REDIRECT_URI,
-      scopes: XERO_SCOPES
+      client_id: xero_client_id,
+      client_secret: xero_client_secret,
+      redirect_uri: xero_redirect_uri,
+      scopes: xero_scopes
     }
     config = {
       # timeout: 30,
@@ -36,12 +41,4 @@ module XeroClientService
 
     [xero_client, oauth_token.tenant_id]
   end
-
-  raise 'You must specify the XERO_CLIENT_ID env variable' unless XERO_CLIENT_ID = ENV['XERO_CLIENT_ID']
-
-  raise 'You must specify the XERO_CLIENT_SECRET env variable' unless XERO_CLIENT_SECRET = ENV['XERO_CLIENT_SECRET']
-
-  raise 'You must specify the XERO_REDIRECT_URI env variable' unless XERO_REDIRECT_URI = ENV['XERO_REDIRECT_URI']
-
-  raise 'You must specify the XERO_SCOPES env variable' unless XERO_SCOPES = ENV['XERO_SCOPES']
 end
