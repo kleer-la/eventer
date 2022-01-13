@@ -92,3 +92,7 @@ gem 'rails-controller-testing' # assigns (rails 5)
 gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(?) in application_controller
 
 gem 'friendly_id' # for blog Articles
+
+# Xero API
+gem 'xero-ruby'
+gem 'jwt'
