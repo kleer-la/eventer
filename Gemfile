@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '~> 2.7'
+ruby '~> 2.7.5'
 
 gem 'rails', '~> 5.2'
 

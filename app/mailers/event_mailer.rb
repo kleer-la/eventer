@@ -48,7 +48,7 @@ class EventMailer < ApplicationMailer
   end
 
   def invoice_data(participant)
-    unit_price= participant.event.price(participant.quantity, participant.created_at)
+    unit_price = participant.event.price(participant.quantity, participant.created_at)
     body = "Nro fiscal:#{participant.id_number} / Dirección:#{participant.address}\n"
     body += "Código de referencia: #{participant.referer_code}\n" if participant.referer_code.present?
     body += "Cantidad y precio: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price}\n"

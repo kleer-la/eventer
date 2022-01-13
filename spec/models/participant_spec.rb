@@ -40,7 +40,7 @@ describe Participant do
     it "should have a default status of 'N'" do
       expect(@participant.status).to eq 'N'
     end
-    
+
     it 'should have a default quantity of 1' do
       expect(@participant.quantity).to eq 1
     end
@@ -105,30 +105,29 @@ describe Participant do
 
     it "should be valid if there's a referer code" do
       @participant.referer_code = 'UNCODIGO'
-  
+
       expect(@participant.valid?).to be true
     end
 
-    it "should be valid to change quantity to 2" do
+    it 'should be valid to change quantity to 2' do
       @participant.quantity = 2
       @participant.save!
-  
+
       expect(@participant.quantity).to eq 2
     end
   end
 
   context 'status' do
-    
     it 'should let someone confirm it' do
       @participant.confirm!
       expect(@participant.status).to eq 'C'
     end
-    
+
     it 'should let someone contact it' do
       @participant.contact!
       expect(@participant.status).to eq 'T'
     end
-    
+
     it 'should let someone mark attended it' do
       expect(@participant.present?).to be false
       @participant.attend!
