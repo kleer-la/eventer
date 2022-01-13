@@ -10,13 +10,13 @@ class OauthTokensController < ApplicationController
   end
 
   def new
-    xero_client = XeroClientHelper.build_client
+    xero_client = XeroClientService.build_client
 
     redirect_to xero_client.authorization_url
   end
 
   def callback
-    xero_client = XeroClientHelper.build_client
+    xero_client = XeroClientService.build_client
 
     token_set = xero_client.get_token_set_from_callback(params)
 

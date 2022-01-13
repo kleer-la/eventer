@@ -1,4 +1,4 @@
-module XeroClientHelper
+module XeroClientService
   def self.build_client
     creds = {
       client_id: XERO_CLIENT_ID,
