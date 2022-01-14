@@ -43,25 +43,24 @@ class EventMailer < ApplicationMailer
   end
 
   def contact_data(participant)
-  "Contact #{participant.fname} #{participant.lname}\n
-  FName: #{participant.fname} / Lname: #{participant.lname} \n
-  email: #{participant.email} \n
-  phone: #{participant.phone})\n
+    "Contact #{participant.fname} #{participant.lname}
+  FName: #{participant.fname} / Lname: #{participant.lname}
+  email: #{participant.email}
+  phone: #{participant.phone}
   Nro fiscal:#{participant.id_number} / Dirección:#{participant.address}
-  --------------
-  \n"
+  --------------\n"
   end
 
   def invoice_data(participant)
     unit_price = participant.event.price(participant.quantity, participant.created_at)
-    if participant.quantity == 1
-      participant_text = " por una vancante de #{participant.fname} #{participant.lname}"
-    else
-      participant_text = " por #{participant.quantity} vancantes"
-    end
+    participant_text = if participant.quantity == 1
+                         " por una vancante de #{participant.fname} #{participant.lname}"
+                       else
+                         " por #{participant.quantity} vancantes"
+                       end
 
     event_name = participant.event.event_type.name
-    country = participant.event.country.name
+    country = participant.event.country.name.tr('-', '')
     human_date = participant.event.human_date
     online_payment = 'Online Payment' if participant.event.enable_online_payment
     codename = participant.event.online_cohort_codename
@@ -69,12 +68,12 @@ class EventMailer < ApplicationMailer
     # online_course_codename
     # online_cohort_codename
 
-    "Contact #{participant.fname} #{participant.lname}\n
-      Código de referencia: #{participant.referer_code}\n
-      Texto:\n
-      #{event_name} - #{country} - #{human_date}\n
+    "Contact #{participant.fname} #{participant.lname}
+      Código de referencia: #{participant.referer_code}
+      Texto:
+      #{event_name} - #{country} - #{human_date} -
       #{participant_text}
-      Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} #{codename}\n
+      Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} COD: #{codename}\n
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
   end

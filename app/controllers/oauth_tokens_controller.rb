@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class OauthTokensController < ApplicationController
-
   def index
     @oauth_tokens = OauthToken.all
     respond_to do |format|
@@ -34,5 +33,4 @@ class OauthTokensController < ApplicationController
       redirect_to oauth_tokens_path, notice: 'Token generated successfully!'
     end
   end
-
 end
