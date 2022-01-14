@@ -94,5 +94,5 @@ gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(
 gem 'friendly_id' # for blog Articles
 
 # Xero API
-gem 'xero-ruby'
 gem 'jwt'
+gem 'xero-ruby'

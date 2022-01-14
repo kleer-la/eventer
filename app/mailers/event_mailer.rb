@@ -43,7 +43,7 @@ class EventMailer < ApplicationMailer
   end
 
   def contact_data(participant)
-  "Contact #{participant.fname} #{participant.lname}
+    "Contact #{participant.fname} #{participant.lname}
   FName: #{participant.fname} / Lname: #{participant.lname}
   email: #{participant.email}
   phone: #{participant.phone}
@@ -53,11 +53,11 @@ class EventMailer < ApplicationMailer
 
   def invoice_data(participant)
     unit_price = participant.event.price(participant.quantity, participant.created_at)
-    if participant.quantity == 1
-      participant_text = " por una vancante de #{participant.fname} #{participant.lname}"
-    else
-      participant_text = " por #{participant.quantity} vancantes"
-    end
+    participant_text = if participant.quantity == 1
+                         " por una vancante de #{participant.fname} #{participant.lname}"
+                       else
+                         " por #{participant.quantity} vancantes"
+                       end
 
     event_name = participant.event.event_type.name
     country = participant.event.country.name.tr('-', '')
