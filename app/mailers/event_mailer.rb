@@ -7,10 +7,11 @@ class EventMailer < ApplicationMailer
 
   def welcome_new_event_participant(participant)
     @participant = participant
+    send_invoice(participant)
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
-      format.html { render layout: 'event_mailer2' }
+      format.html { render layout: 'event_mailer2' }  
     end
   end
 
@@ -77,4 +78,16 @@ class EventMailer < ApplicationMailer
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
   end
+
+  def send_invoice(participant)
+    contact = XeroClientService.create_contact(
+      "#{participant.fname} #{participant.lname}", participant.fname, participant.lname, 
+      participant.email, participant.phone, participant.address
+    )
+    return if contact.has_validation_errors
+    # create_invoice ...
+  end
+
+
+
 end
