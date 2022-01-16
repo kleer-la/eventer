@@ -6,7 +6,7 @@ class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
 
   def self.xero(xero_service = nil)
-    (@@xero = XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero())) unless defined? @@xero
+    @@xero = XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero()))
   end
 
   def welcome_new_event_participant(participant)
