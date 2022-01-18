@@ -5,8 +5,13 @@ ALERT_MAIL = 'entrenamos@kleer.la'
 class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
 
-  def self.xero(xero_service = nil)
-    @@xero = XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero()))
+  def self.xero_service(xero_service)
+    @@xero_service = xero_service
+  end
+
+  def self.xero
+    @@xero_service = nil unless defined?(@@xero_service) # real infra 
+    @@xero = XeroClientService::XeroApi.new(@@xero_service || XeroClientService.create_xero())
   end
 
   def welcome_new_event_participant(participant)

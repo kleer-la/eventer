@@ -8,7 +8,7 @@ describe EventMailer do
     @participant.email = 'app_test@kleer.la'
     @participant.event.event_type.name = 'Concurso de truco'
     ActionMailer::Base.deliveries.clear
-    EventMailer.xero(XeroClientService.create_null())
+    EventMailer.xero_service(XeroClientService.create_null())
   end
 
   context 'welcome_new_event_participant' do
