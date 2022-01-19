@@ -28,3 +28,6 @@ chromedriver.log
 *.crt
 *.key
 *Zone.Identifier
+
+# env variable
+.env
