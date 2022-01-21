@@ -63,15 +63,7 @@ class EventMailer < ApplicationMailer
 
   def invoice_data(participant)
     unit_price = participant.event.price(participant.quantity, participant.created_at)
-    participant_text = if participant.quantity == 1
-                         " por una vancante de #{participant.fname} #{participant.lname}"
-                       else
-                         " por #{participant.quantity} vancantes"
-                       end
 
-    event_name = participant.event.event_type.name
-    country = participant.event.country.name.tr('-', '')
-    human_date = participant.event.human_date
     online_payment = 'Online Payment' if participant.event.enable_online_payment
     codename = participant.event.online_cohort_codename
     # enable_online_payment
@@ -80,9 +72,7 @@ class EventMailer < ApplicationMailer
 
     "Contact #{participant.fname} #{participant.lname}
       Código de referencia: #{participant.referer_code}
-      Texto:
-      #{event_name} - #{country} - #{human_date} -
-      #{participant_text}
+      Texto: \n#{description(participant)}
       Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} COD: #{codename}\n
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
@@ -93,12 +83,29 @@ class EventMailer < ApplicationMailer
 
     contact = @@xero.create_contact(
       "#{participant.fname} #{participant.lname}", participant.fname, participant.lname, 
-      participant.email, participant.phone, participant.address
+      participant.email, participant.phone, participant.address)
+
+    return if contact.nil?
+    unit_price = participant.event.price(participant.quantity, participant.created_at)
+    date = participant.event.date
+    codename = participant.event.online_cohort_codename
+
+    @@xero.create_invoices(contact.contacts[0].contact_id, 
+      description(participant), participant.quantity, unit_price,
+      date.to_s, (date+7).to_s, codename
     )
-    return if contact.has_validation_errors
-    # create_invoice ...
   end
 
+  def description(participant)
+    event_name = participant.event.event_type.name
+    country = participant.event.country.name.tr('-', '')
+    human_date = participant.event.human_date
+    participant_text = if participant.quantity == 1
+      " por una vancante de #{participant.fname} #{participant.lname}"
+    else
+      " por #{participant.quantity} vancantes"
+    end
 
-
+    "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
+  end
 end
