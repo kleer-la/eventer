@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe EventMailer do
   before :each do
-    @participant = FactoryBot.build(:participant)
+    @participant = FactoryBot.create(:participant)
     @participant.email = 'app_test@kleer.la'
     @participant.event.event_type.name = 'Concurso de truco'
     ActionMailer::Base.deliveries.clear
@@ -43,6 +43,7 @@ describe EventMailer do
     end
 
     it 'should send early bird prices if EB info is available' do
+      @participant.event.date = Date.today
       @participant.event.eb_end_date = Date.today
       @participant.event.eb_price = 180
 
@@ -89,6 +90,7 @@ describe EventMailer do
     end
 
     it 'should replace all prices if custom text is present' do
+      @participant.event.date = Date.today
       @participant.event.list_price = 200
       @participant.event.eb_end_date = Date.today
       @participant.event.eb_price = 180
