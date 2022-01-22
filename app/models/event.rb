@@ -219,28 +219,36 @@ class Event < ApplicationRecord
   end
 
   def price(qty, date)
-    if eb_end_date.present? && date < eb_end_date
-      case qty
-      when 0..1
-        eb_price || list_price
-      when 2..4
-        couples_eb_price || eb_price || list_price
-      when 5..6
-        business_eb_price || couples_eb_price || eb_price || list_price
-      else
-        enterprise_11plus_price || business_eb_price || couples_eb_price || eb_price || list_price
-      end
+    if eb_end_date.present? && date <= eb_end_date
+      earlybird_price(qty)
     else
-      case qty
-      when 0..4
-        list_price
-      when 5..6
-        business_price || list_price
-      else
-        enterprise_6plus_price || business_price || list_price
-      end
+      regular_price(qty)
     end
   end
+
+  def earlybird_price(qty)
+    case qty
+    when 0..1
+      eb_price || list_price
+    when 2..4
+      couples_eb_price || eb_price || list_price
+    when 5..6
+      business_eb_price || couples_eb_price || eb_price || list_price
+    else
+      enterprise_11plus_price || business_eb_price || couples_eb_price || eb_price || list_price
+    end
+  end
+
+  def regular_price(qty)
+    case qty
+    when 0..4
+      list_price
+    when 5..6
+      business_price || list_price
+    else
+      enterprise_6plus_price || business_price || list_price
+    end
+  end    
 
   def seat_available
     capacity - confirmed_quantity
