@@ -248,7 +248,7 @@ class Event < ApplicationRecord
     else
       enterprise_6plus_price || business_price || list_price
     end
-  end    
+  end
 
   def seat_available
     capacity - confirmed_quantity

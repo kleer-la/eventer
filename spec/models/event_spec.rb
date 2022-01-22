@@ -445,12 +445,11 @@ describe Event do
   context 'princing' do
     before(:each) do
       @eb = DateTime.new - 1
-      @event = FactoryBot.build(
-        :event, eb_end_date: @eb,
-        list_price: 99, eb_price: 98, couples_eb_price: 97,
-        business_price: 96, business_eb_price: 95,
-        enterprise_6plus_price: 94, enterprise_11plus_price: 93
-      )
+      @event = FactoryBot.build(:event,
+                                eb_end_date: @eb,
+                                list_price: 99, eb_price: 98, couples_eb_price: 97,
+                                business_price: 96, business_eb_price: 95,
+                                enterprise_6plus_price: 94, enterprise_11plus_price: 93)
     end
     context 'early bird' do
       [[1, 98],
@@ -487,7 +486,7 @@ describe Event do
        [6, 96],
        [7, 94]].each do |nro, unit_price|
         it "for # people #{nro} #{unit_price}" do
-          expect(@event.price(nro, @eb +1)).to eq unit_price
+          expect(@event.price(nro, @eb + 1)).to eq unit_price
         end
       end
     end
