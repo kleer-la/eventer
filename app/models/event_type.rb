@@ -7,7 +7,7 @@ class EventType < ApplicationRecord
   has_many :events
   has_many :participants, through: :events
   has_many :campaign_views
-  has_many :clons, class_name: 'EventType', foreign_key: "canonical_id"
+  has_many :clons, class_name: 'EventType', foreign_key: 'canonical_id'
 
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
   validates :elevator_pitch, length: { maximum: 160,

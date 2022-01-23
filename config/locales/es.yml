@@ -218,6 +218,7 @@ es:
         external_site_url: "Link externo al home del curso (en lugar del web site)"
         is_kleer_certification: "Es certificación kleer"
         kleer_cert_seal_image: "Nombre de Imagen del Seal"
+        canonical: "Tipo de evento canonico"
       category:
         new_title: "Nueva Categoría"
         name: "Nombre"

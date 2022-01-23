@@ -123,6 +123,6 @@ class EventTypesController < ApplicationController
           .permit :name, :subtitle, :duration, :goal, :description, :recipients, :program, { trainer_ids: [] },
                   :faq, :materials, { category_ids: [] }, :events, :include_in_catalog, :elevator_pitch,
                   :learnings, :takeaways, :tag_name, :csd_eligible, :cancellation_policy, :is_kleer_certification,
-                  :kleer_cert_seal_image, :external_site_url
+                  :kleer_cert_seal_image, :external_site_url, :canonical_id
   end
 end
