@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_06_223414) do
+ActiveRecord::Schema.define(version: 2022_01_22_223625) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -146,6 +146,8 @@ ActiveRecord::Schema.define(version: 2022_01_06_223414) do
     t.boolean "is_kleer_certification", default: false
     t.string "kleer_cert_seal_image"
     t.string "external_site_url"
+    t.integer "canonical_id"
+    t.index ["canonical_id"], name: "index_event_types_on_canonical_id"
   end
 
   create_table "event_types_trainers", id: false, force: :cascade do |t|

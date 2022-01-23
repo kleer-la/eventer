@@ -27,6 +27,14 @@
 %p
   %b External site url:
   = @event_type.external_site_url
+%p
+  %b Canonical:
+  - unless @event_type.canonical.nil?
+    = link_to @event_type.canonical.name, @event_type.canonical
+%p
+  %b Clons:
+  - @event_type.clons.each do |et|
+    = link_to et.name, et
 
 
 = link_to 'Edit', edit_event_type_path(@event_type)

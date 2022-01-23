@@ -159,6 +159,13 @@
                 = f.text_field :external_site_url, :class => "input-block-level"
                 %small.muted
                   Si la configura kleer.la redirigirá a ella en lugar del landing del taller.
+          .row-fluid
+            .span12
+              .control-group
+                %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.canonical")
+                = f.collection_select :canonical_id, EventType.all.sort{|p1,p2| p1.name <=> p2.name}, :id, :name, {include_blank: '<sin canonical>'}
+                %small.muted
+                  Para SEO, se incluira en HEAD de la landing.
           .row-fuid
             .span12
               .form-actions

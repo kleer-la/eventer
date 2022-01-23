@@ -10,8 +10,8 @@ class EventMailer < ApplicationMailer
   end
 
   def self.xero
-    @@xero_service = nil unless defined?(@@xero_service) # real infra 
-    @@xero = XeroClientService::XeroApi.new(@@xero_service || XeroClientService.create_xero())
+    @@xero_service = nil unless defined?(@@xero_service) # real infra
+    @@xero = XeroClientService::XeroApi.new(@@xero_service || XeroClientService.create_xero)
   end
 
   def welcome_new_event_participant(participant)
@@ -20,7 +20,7 @@ class EventMailer < ApplicationMailer
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
-      format.html { render layout: 'event_mailer2' }  
+      format.html { render layout: 'event_mailer2' }
     end
   end
 
@@ -82,18 +82,19 @@ class EventMailer < ApplicationMailer
     EventMailer.xero
 
     contact = @@xero.create_contact(
-      "#{participant.fname} #{participant.lname}", participant.fname, participant.lname, 
-      participant.email, participant.phone, participant.address)
+      "#{participant.fname} #{participant.lname}", participant.fname, participant.lname,
+      participant.email, participant.phone, participant.address
+    )
 
     return if contact.nil?
+
     unit_price = participant.event.price(participant.quantity, participant.created_at)
     date = participant.event.date
     codename = participant.event.online_cohort_codename
 
-    @@xero.create_invoices(contact.contacts[0].contact_id, 
-      description(participant), participant.quantity, unit_price,
-      date.to_s, (date+7).to_s, codename
-    )
+    @@xero.create_invoices(contact.contacts[0].contact_id,
+                           description(participant), participant.quantity, unit_price,
+                           date.to_s, (date + 7).to_s, codename)
   end
 
   def description(participant)
@@ -101,10 +102,10 @@ class EventMailer < ApplicationMailer
     country = participant.event.country.name.tr('-', '')
     human_date = participant.event.human_date
     participant_text = if participant.quantity == 1
-      " por una vancante de #{participant.fname} #{participant.lname}"
-    else
-      " por #{participant.quantity} vancantes"
-    end
+                         " por una vancante de #{participant.fname} #{participant.lname}"
+                       else
+                         " por #{participant.quantity} vancantes"
+                       end
 
     "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
   end

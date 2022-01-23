@@ -104,4 +104,21 @@ describe EventType do
       expect(@event_type.testimonies.count).to eq 0
     end
   end
+  context 'Canonical' do
+    it 'allow stand alone event types' do
+      et = FactoryBot.create(:event_type)
+      expect(et.canonical).to be_nil
+      expect(et.clons).to eq []
+    end
+    it 'one canonical / one clon' do
+      et1 = FactoryBot.create(:event_type, name: 'Original')
+      et2 = FactoryBot.create(:event_type, name: 'Academia', canonical: et1)
+      expect(et1.canonical).to be_nil
+      expect(et1.clons.count).to eq 1
+      expect(et1.clons[0].id).to eq et2.id
+
+      expect(et2.canonical.id).to eq et1.id
+      expect(et2.clons).to eq []
+    end
+  end
 end
