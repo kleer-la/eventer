@@ -19,4 +19,18 @@ describe 'event_types/show' do
     expect(rendered).to match(/ET Recipients/)
     expect(rendered).to match(/ET Program/)
   end
+  it 'has a canonical' do
+    other_et = FactoryBot.create(:event_type, name: 'this is da canonical')
+    @event_type.canonical = other_et
+
+    render
+    expect(rendered).to match(/this is da canonical/)
+  end
+  it 'has clons' do
+    other_et = FactoryBot.create(:event_type, name: 'yes, master!', canonical: @event_type)
+    @event_type.reload # needed to populate clons
+
+    render
+    expect(rendered).to match(/yes, master!/)
+  end
 end
