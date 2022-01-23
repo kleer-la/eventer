@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class EventType < ApplicationRecord
+  belongs_to :canonical, class_name: 'EventType'
   has_and_belongs_to_many :trainers
   has_and_belongs_to_many :categories
   has_many :events
   has_many :participants, through: :events
   has_many :campaign_views
+  has_many :clons, class_name: 'EventType', foreign_key: "canonical_id"
 
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
   validates :elevator_pitch, length: { maximum: 160,
