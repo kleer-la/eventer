@@ -92,9 +92,15 @@ class EventMailer < ApplicationMailer
     date = participant.event.date
     codename = participant.event.online_cohort_codename
 
-    @@xero.create_invoices(contact.contacts[0].contact_id,
-                           description(participant), participant.quantity, unit_price,
-                           date.to_s, (date + 7).to_s, codename)
+    begin
+      @@xero.create_invoices(
+        contact.contacts[0].contact_id,
+        description(participant), participant.quantity, unit_price,
+        date.to_s, (date + 7).to_s, codename
+      )
+    rescue NoMethodError => e
+      print_exception(e, true)
+    end
   end
 
   def description(participant)
