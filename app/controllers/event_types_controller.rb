@@ -26,7 +26,7 @@ class EventTypesController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @event_type }
-      format.xml { render xml: @event_type }
+      format.xml { render xml: @event_type.to_xml(methods: [:canonical_slug]) }
     end
   end
 

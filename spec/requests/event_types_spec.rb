@@ -35,6 +35,11 @@ describe 'API Events GET /event_types' do
 
       expect(parsed.xpath('//categories/category').count).to eq 1
     end
+    it 'has canonical_slug' do
+      get @url
+      parsed = Nokogiri::XML(last_response.body)
+      expect(parsed.xpath('//canonical-slug').count).to eq 1      
+    end
   end
 
   context 'one event w/JSON' do
