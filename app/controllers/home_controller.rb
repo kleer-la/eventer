@@ -58,7 +58,7 @@ class HomeController < ApplicationController
   def categories
     @categories = Category.visible_ones
     respond_to do |format|
-      format.xml { render xml: @categories.to_xml(include: { event_types: {} }) }
+      format.xml { render xml: @categories.to_xml(include: { event_types: {methods: [:slug, :canonical_slug]} }) }
       format.json { render json: @categories }
     end
   end
