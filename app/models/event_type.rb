@@ -29,9 +29,13 @@ class EventType < ApplicationRecord
     part
   end
 
+  def slug
+    "#{id}-#{name.parameterize}"
+  end
+
   def canonical_slug
     if canonical.nil?
-      "#{id}-#{name.parameterize}"
+      slug
     else
       "#{canonical.id}-#{canonical.name.parameterize}"
     end
