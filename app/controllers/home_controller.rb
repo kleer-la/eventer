@@ -98,7 +98,7 @@ class HomeController < ApplicationController
   def event_data_to_include
     {
       country: {},
-      event_type: {},
+      event_type: {methods: [:slug, :canonical_slug]},
       trainer: {},
       trainer2: {},
       trainers: {},
