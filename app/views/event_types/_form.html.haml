@@ -142,7 +142,7 @@
           .row-fluid
             .span12
               .control-group
-                %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.cancellation_policy")
+                %label.control-label{ :for => :cancellation_policy }= t("formtastic.labels.event_type.cancellation_policy")
                 = f.text_area :cancellation_policy, :rows => 8, :class => "input-block-level"
                 - if !@cancellation_policy_setting.nil?
                   %a.btn.btn-small.btn-info.btn-cancellation-policy{ :href => "#"}
@@ -155,17 +155,32 @@
           .row-fluid
             .span12
               .control-group
-                %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.external_site_url")
+                %label.control-label{ :for => :external_site_url }= t("formtastic.labels.event_type.external_site_url")
                 = f.text_field :external_site_url, :class => "input-block-level"
                 %small.muted
                   Si la configura kleer.la redirigirá a ella en lugar del landing del taller.
           .row-fluid
             .span12
               .control-group
-                %label.control-label{ :for => :faq }= t("formtastic.labels.event_type.canonical")
+                %label.control-label{ :for => :canonical_id }= t("formtastic.labels.event_type.canonical")
                 = f.collection_select :canonical_id, (EventType.all.map {|e| ["#{e.name} - #{e.id}", e.id]}).sort, :last, :first, {include_blank: '<sin canonical>'}
                 %small.muted
                   Para SEO, se incluira en HEAD de la landing.
+          .row-fluid
+            .span6
+              .control-group
+                %label.control-label{ :for => :deleted }
+                  Borrado
+                = f.check_box :deleted
+                %small.muted
+                  Redireccionará a canonical o 404
+            .span6
+              .control-group
+                %label.control-label{ :for => :noindex }
+                  No Indexar
+                = f.check_box :noindex
+                %small.muted
+                  Pedirá no ser indexada por buscador (es un draft o tiene canonical).
           .row-fuid
             .span12
               .form-actions
@@ -173,7 +188,7 @@
                   %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
                     %i.icon-save
                     Guardar
-                  %a.btn.btn-large{ :href => events_path }
+                  %a.btn.btn-large{ :href => event_types_path }
                     %i.icon-undo
                     Cancelar
 

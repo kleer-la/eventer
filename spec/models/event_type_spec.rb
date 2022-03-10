@@ -136,4 +136,11 @@ describe EventType do
       expect(et2.canonical_slug).to eq '23-original'
     end
   end
+  context 'Deleted & noindex' do
+    it 'New event type is no deleted and indexed' do
+      et = FactoryBot.create(:event_type)
+      expect(et.deleted).to be false
+      expect(et.noindex).to be false
+    end
+  end
 end
