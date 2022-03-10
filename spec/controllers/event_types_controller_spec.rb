@@ -61,6 +61,17 @@ describe EventTypesController do
         expect(assigns(:event_type)).to be_persisted
       end
 
+      it 'deleted' do
+        @event_type_att[:deleted]= true
+        post :create, params: { event_type: @event_type_att }
+        expect(assigns(:event_type)[:deleted]).to be true
+      end
+      it 'noindex' do
+        @event_type_att[:noindex]= true
+        post :create, params: { event_type: @event_type_att }
+        expect(assigns(:event_type)[:noindex]).to be true
+      end
+
       it 'redirects to the created event_type' do
         post :create, params: { event_type: @event_type_att }
         expect(response).to redirect_to EventType

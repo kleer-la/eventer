@@ -19,23 +19,25 @@
               %tr
                 %th= t('formtastic.labels.event_type.name')
                 %th= t('formtastic.labels.event_type.subtitle')
-                -# %th= t('formtastic.labels.event_type.description')
+                %th Borrado
+                %th NoIndexar
                 %th
             %tbody
               - @event_types.each do |event_type|
                 - subtitle = event_type.subtitle.to_s
                 - subt = subtitle[0...30] + ("..." if subtitle.length>30).to_s
                 %tr
-                  %td= link_to event_type.name, event_type
+                  %td= link_to event_type.name, edit_event_type_path(event_type)
                   %td= link_to subt, event_type
-                  -# %td= event_type.description
+                  %td= event_type.deleted
+                  %td= event_type.noindex
                   %td
                     .text-right
                       - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
                       - #  %i.icon-eye-open
                       %a.btn.btn-warning.btn-mini{ :href => "/event_types/#{event_type.id}/testimonies" }
                         %i.icon-comment
-                      %a.btn.btn-warning.btn-mini{ :href => edit_event_type_path(event_type) }
-                        %i.icon-edit
+                      -# %a.btn.btn-warning.btn-mini{ :href => edit_event_type_path(event_type) }
+                      -#   %i.icon-edit
                       - #%a.btn.btn-danger.btn-mini{ :href => event_type_path(event_type), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
                       - # %i.icon-trash
