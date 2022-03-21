@@ -228,7 +228,7 @@ class Event < ApplicationRecord
   end
 
   def price(qty, date)
-    if eb_end_date.present? && date <= eb_end_date
+    if eb_end_date.present? && date.to_date <= eb_end_date.to_date # to_date remove hours
       earlybird_price(qty)
     else
       regular_price(qty)

@@ -462,13 +462,18 @@ describe Event do
 
   context 'princing' do
     before(:each) do
-      @eb = DateTime.new - 1
+      @eb = DateTime.new(2022, 1, 1)
       @event = FactoryBot.build(:event,
                                 eb_end_date: @eb,
                                 list_price: 99, eb_price: 98, couples_eb_price: 97,
                                 business_price: 96, business_eb_price: 95,
                                 enterprise_6plus_price: 94, enterprise_11plus_price: 93)
     end
+
+    it 'eb date comparation wo hour' do
+      expect(@event.price(1, DateTime.new(2022, 1, 1, 8))).to eq 98
+    end
+
     context 'early bird' do
       [[1, 98],
        [2, 97],
