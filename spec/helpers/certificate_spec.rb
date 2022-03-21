@@ -78,6 +78,17 @@ describe Certificate do
     expect(cert.event_date).to eq '20-21 Mar'
   end
 
+  it 'event human readable date in same year' do
+    @e.date = Date.new(2021, 10, 31)
+    cert = Certificate.new(@participant)
+    expect(cert.date).to eq '31 Oct-1 Nov 2021'
+  end
+  it 'event human readable date across year`s eve' do
+    @e.date = Date.new(2021, 12, 31)
+    cert = Certificate.new(@participant)
+    expect(cert.date).to eq '31 Dic 2021-1 Ene 2022'
+  end
+
   it 'should return the event year' do
     @e.date = Date.new(2014, 3, 20)
     cert = Certificate.new(@participant)

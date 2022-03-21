@@ -344,6 +344,24 @@ describe Event do
     end
   end
 
+  context 'human_long_date' do
+    before(:each) do
+      @event.date = '30/12/2021'
+    end
+    it 'One day' do
+      @event.duration = 1
+      expect(@event.human_long_date).to eq '30 Dic 2021'
+    end
+    it 'Two days same years' do
+      @event.duration = 2
+      expect(@event.human_long_date).to eq '30-31 Dic 2021'
+    end
+    it 'Three days dif years' do
+      @event.duration = 3
+      expect(@event.human_long_date).to eq '30 Dic 2021-1 Ene 2022'
+    end
+  end
+
   context 'When Locale is en' do
     before(:each) do
       I18n.locale = :en
