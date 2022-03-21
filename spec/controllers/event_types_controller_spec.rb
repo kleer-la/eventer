@@ -62,12 +62,12 @@ describe EventTypesController do
       end
 
       it 'deleted' do
-        @event_type_att[:deleted]= true
+        @event_type_att[:deleted] = true
         post :create, params: { event_type: @event_type_att }
         expect(assigns(:event_type)[:deleted]).to be true
       end
       it 'noindex' do
-        @event_type_att[:noindex]= true
+        @event_type_att[:noindex] = true
         post :create, params: { event_type: @event_type_att }
         expect(assigns(:event_type)[:noindex]).to be true
       end

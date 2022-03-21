@@ -135,15 +135,14 @@ class Event < ApplicationRecord
   end
 
   def human_long_date
-    if (date.year == safe_end_date.year)
-      return "#{human_date} #{date.year}"
-    end
+    return "#{human_date} #{date.year}" if date.year == safe_end_date.year
+
     start_date = humanize_start_date
     end_date = humanize_date(safe_end_date)
 
     "#{start_date} #{date.year}-#{end_date} #{safe_end_date.year}"
   end
-  
+
   def human_finish_date
     humanize_date safe_end_date
   end

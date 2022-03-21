@@ -40,5 +40,4 @@ class EventType < ApplicationRecord
       "#{canonical.id}-#{canonical.name.parameterize}"
     end
   end
-
 end

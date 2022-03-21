@@ -58,7 +58,7 @@ class HomeController < ApplicationController
   def categories
     @categories = Category.visible_ones
     respond_to do |format|
-      format.xml { render xml: @categories.to_xml(include: { event_types: {methods: [:slug, :canonical_slug]} }) }
+      format.xml { render xml: @categories.to_xml(include: { event_types: { methods: %i[slug canonical_slug] } }) }
       format.json { render json: @categories }
     end
   end
@@ -70,7 +70,7 @@ class HomeController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @event_type }
-      format.xml { render xml: @event_type.to_xml(methods: [:slug, :canonical_slug], include: :categories ) }
+      format.xml { render xml: @event_type.to_xml(methods: %i[slug canonical_slug], include: :categories) }
     end
   end
 
@@ -98,7 +98,7 @@ class HomeController < ApplicationController
   def event_data_to_include
     {
       country: {},
-      event_type: {methods: [:slug, :canonical_slug]},
+      event_type: { methods: %i[slug canonical_slug] },
       trainer: {},
       trainer2: {},
       trainers: {},
