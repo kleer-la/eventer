@@ -141,6 +141,12 @@ describe EventMailer do
       expect(email.text_part.body.to_s).not_to include ar_text
       expect(email.html_part.body.to_s).not_to include ar_text
     end
+    context 'Update participant' do
+      it 'set invoice number' do
+        EventMailer.welcome_new_event_participant(@participant).deliver_now
+        expect(@participant.xero_invoice_number).to eq 'INV-0100' # from NullInvoice
+      end
+    end
   end
 
   it 'should send the certificate e-mail' do

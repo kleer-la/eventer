@@ -16,7 +16,8 @@ class EventMailer < ApplicationMailer
 
   def welcome_new_event_participant(participant)
     @participant = participant
-    send_invoice(participant)
+    invoice = send_invoice(participant)
+    update_participant(participant, invoice)
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
@@ -24,6 +25,12 @@ class EventMailer < ApplicationMailer
     end
   end
 
+  def update_participant(participant, invoice)
+    return if invoice.nil?
+    participant.xero_invoice_number = invoice.invoices[0].invoice_number
+    participant.save!
+  end
+  
   def send_certificate(participant, certificate_url_a4, certificate_url_letter)
     @participant = participant
     @certificate_link_a4 = certificate_url_a4
@@ -90,17 +97,20 @@ class EventMailer < ApplicationMailer
 
     unit_price = participant.event.price(participant.quantity, participant.created_at)
     date = participant.event.date
+    due_date = date + 7
     codename = participant.event.online_cohort_codename
 
-    begin
-      @@xero.create_invoices(
+    begin     #TODO: add participant notes
+      invoice = @@xero.create_invoices(
         contact.contacts[0].contact_id,
         description(participant), participant.quantity, unit_price,
-        date.to_s, (date + 7).to_s, codename
+        date.to_s, due_date.to_s, codename
       )
     rescue NoMethodError => e
       print_exception(e, true)
+      invoice = nil
     end
+    invoice
   end
 
   def description(participant)

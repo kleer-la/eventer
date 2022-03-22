@@ -73,12 +73,6 @@ module XeroClientService
       #     "Type": "DAYSAFTERBILLDATE"
       #   }
 
-      branding_theme = { branding_theme_id: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60' } # , name: 'Curso'
-      # "BrandingTheme": {
-      #   "BrandingThemeID": "fc426c1a-bbd1-4725-a973-3ead6fde8a60",
-      #   "Name": "Curso"
-      # },
-
       contacts = { contacts: [{
         name: name,
         first_name: fname,
@@ -86,8 +80,7 @@ module XeroClientService
         email_address: email,
         addresses: addresses,
         phones: phones,
-        payment_terms: payment_terms,
-        branding_theme: branding_theme
+        payment_terms: payment_terms
       }] }
 
       begin
@@ -100,11 +93,18 @@ module XeroClientService
 
     SERVICE_ACCOUNT = '4300'
     def create_invoices(contact_id, description, quantity, unit, date, due_date, codename)
+      branding_theme = { branding_theme_id: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60' } # , name: 'Curso'
+      # "BrandingTheme": {
+      #   "BrandingThemeID": "fc426c1a-bbd1-4725-a973-3ead6fde8a60",
+      #   "Name": "Curso"
+      # },
+
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
                                     contact: { contact_id: contact_id },
                                     line_items: [{ description: description, quantity: quantity, unit_amount: unit,
                                                    account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE }],
                                     date: date, due_date: due_date, reference: codename,
+                                    branding_theme: branding_theme,
                                     status: XeroRuby::Accounting::Invoice::DRAFT }] }
       begin
         @client.create_invoices(invoice_data)
@@ -159,6 +159,10 @@ module XeroClientService
     def contacts
       [NullContact.new]
     end
+
+    def invoices
+      [NullInvoice.new]
+    end
   end
 
   class NullContact
@@ -166,6 +170,14 @@ module XeroClientService
 
     def initialize
       @contact_id = '1234567890abcdefg'
+    end
+  end
+
+  class NullInvoice
+    attr_reader :invoice_number
+
+    def initialize
+      @invoice_number = 'INV-0100'
     end
   end
 
