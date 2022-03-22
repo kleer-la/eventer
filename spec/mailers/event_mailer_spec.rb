@@ -141,6 +141,39 @@ describe EventMailer do
       expect(email.text_part.body.to_s).not_to include ar_text
       expect(email.html_part.body.to_s).not_to include ar_text
     end
+    context 'Update participant' do
+      it 'set invoice number' do
+        EventMailer.welcome_new_event_participant(@participant).deliver_now
+        expect(@participant.xero_invoice_number).to eq 'INV-0100' # from NullInvoice
+      end
+    end
+    context 'Create Invoice' do
+      before :each do
+        @participant.event.date = DateTime.new(2022, 1, 20)
+        @participant.event.eb_end_date = DateTime.new(2022, 1, 10)
+      end
+      it 'normal due date' do
+        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 1))
+        expect(due_date.to_date.to_s).to eq '2022-01-08'
+      end
+      it 'normal due date > eb' do
+        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 4))
+        expect(due_date.to_date.to_s).to eq '2022-01-10'
+      end
+      it 'normal due date > curse date' do
+        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 14))
+        expect(due_date.to_date.to_s).to eq '2022-01-19'
+      end
+      it 'no eb' do
+        @participant.event.eb_end_date = nil
+        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 4))
+        expect(due_date.to_date.to_s).to eq '2022-01-11'
+      end
+      it 'today > eb' do
+        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 11))
+        expect(due_date.to_date.to_s).to eq '2022-01-18'
+      end
+    end
   end
 
   it 'should send the certificate e-mail' do

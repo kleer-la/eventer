@@ -129,7 +129,7 @@ module ParticipantsHelper
     end
 
     def date
-      "#{@participant.event.human_date} #{@participant.event.date.year}"
+      @participant.event.human_long_date
     end
 
     def trainer(t_ord)

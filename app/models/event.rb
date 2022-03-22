@@ -123,7 +123,7 @@ class Event < ApplicationRecord
 
   def human_date
     start_date = humanize_start_date
-    end_date = humanize_end_date
+    end_date = humanize_date(safe_end_date)
 
     if event_is_within_the_same_day(start_date, end_date)
       start_date
@@ -134,8 +134,17 @@ class Event < ApplicationRecord
     end
   end
 
+  def human_long_date
+    return "#{human_date} #{date.year}" if date.year == safe_end_date.year
+
+    start_date = humanize_start_date
+    end_date = humanize_date(safe_end_date)
+
+    "#{start_date} #{date.year}-#{end_date} #{safe_end_date.year}"
+  end
+
   def human_finish_date
-    humanize_end_date
+    humanize_date safe_end_date
   end
 
   def human_time
@@ -219,7 +228,7 @@ class Event < ApplicationRecord
   end
 
   def price(qty, date)
-    if eb_end_date.present? && date <= eb_end_date
+    if eb_end_date.present? && date.to_date <= eb_end_date.to_date # to_date remove hours
       earlybird_price(qty)
     else
       regular_price(qty)
@@ -268,12 +277,11 @@ class Event < ApplicationRecord
     humanize_date date
   end
 
-  def humanize_end_date
-    if !finish_date.nil?
-      humanize_date finish_date
+  def safe_end_date
+    if finish_date.nil?
+      date + (self.duration || 1) - 1
     else
-      duration = self.duration || 1
-      humanize_date date + (duration - 1)
+      finish_date
     end
   end
 

@@ -106,7 +106,7 @@ describe EventType do
   end
   context 'Slug & Canonical' do
     it 'allow stand alone event types' do
-      et = FactoryBot.create(:event_type, id:45, name: 'Joy Division (JD)')
+      et = FactoryBot.create(:event_type, id: 45, name: 'Joy Division (JD)')
       expect(et.slug).to eq '45-joy-division-jd'
     end
     it 'allow stand alone event types' do
@@ -125,7 +125,7 @@ describe EventType do
       expect(et2.clons).to eq []
     end
     it 'stand alone event types canonical_slug are themself' do
-      et = FactoryBot.create(:event_type, id:504, name: 'Un Curso')
+      et = FactoryBot.create(:event_type, id: 504, name: 'Un Curso')
       expect(et.slug).to eq '504-un-curso'
       expect(et.canonical_slug).to eq '504-un-curso'
     end
