@@ -27,10 +27,11 @@ class EventMailer < ApplicationMailer
 
   def update_participant(participant, invoice)
     return if invoice.nil?
+
     participant.xero_invoice_number = invoice.invoices[0].invoice_number
     participant.save!
   end
-  
+
   def send_certificate(participant, certificate_url_a4, certificate_url_letter)
     @participant = participant
     @certificate_link_a4 = certificate_url_a4
@@ -100,7 +101,8 @@ class EventMailer < ApplicationMailer
     due_date = date + 7
     codename = participant.event.online_cohort_codename
 
-    begin     #TODO: add participant notes
+    # TODO: add participant notes
+    begin
       invoice = @@xero.create_invoices(
         contact.contacts[0].contact_id,
         description(participant), participant.quantity, unit_price,
