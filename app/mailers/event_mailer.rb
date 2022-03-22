@@ -5,15 +5,6 @@ ALERT_MAIL = 'entrenamos@kleer.la'
 class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
 
-  def self.xero_service(xero_service)
-    @@xero_service = xero_service
-  end
-
-  def self.xero
-    @@xero_service = nil unless defined?(@@xero_service) # real infra
-    @@xero = XeroClientService::XeroApi.new(@@xero_service || XeroClientService.create_xero)
-  end
-
   def welcome_new_event_participant(participant)
     @participant = participant
     invoice = send_invoice(participant)
@@ -23,13 +14,6 @@ class EventMailer < ApplicationMailer
       format.text
       format.html { render layout: 'event_mailer2' }
     end
-  end
-
-  def update_participant(participant, invoice)
-    return if invoice.nil?
-
-    participant.xero_invoice_number = invoice.invoices[0].invoice_number
-    participant.save!
   end
 
   def send_certificate(participant, certificate_url_a4, certificate_url_letter)
@@ -78,12 +62,41 @@ class EventMailer < ApplicationMailer
     # online_course_codename
     # online_cohort_codename
 
-    "Contact #{participant.fname} #{participant.lname}
-      Código de referencia: #{participant.referer_code}
+    "Código de referencia: #{participant.referer_code}
       Texto: \n#{description(participant)}
       Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} COD: #{codename}\n
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
+  end
+
+  # -----------------------------
+  # TODO: move code related to Xero to XeroClientService
+  #
+  def self.xero_service(xero_service)
+    @@xero_service = xero_service
+  end
+
+  def self.xero
+    @@xero_service = nil unless defined?(@@xero_service) # real infra
+    @@xero = XeroClientService::XeroApi.new(@@xero_service || XeroClientService.create_xero)
+  end
+
+  def update_participant(participant, invoice)
+    return if invoice.nil?
+
+    participant.xero_invoice_number = invoice.invoices[0].invoice_number
+    participant.save!
+  end
+
+  def self.due_date(event, today = DateTime.now)
+    start = event.date
+    eb = event.eb_end_date
+    eb = nil if eb.nil? || eb.to_date < today.to_date
+    [
+      today + 7,  # one week from now
+      start - 1,  # one day before curse start date
+      eb          # if eb > today
+    ].reject(&:nil?).min
   end
 
   def send_invoice(participant)
@@ -97,8 +110,7 @@ class EventMailer < ApplicationMailer
     return if contact.nil?
 
     unit_price = participant.event.price(participant.quantity, participant.created_at)
-    date = participant.event.date
-    due_date = date + 7
+    date = DateTime.now
     codename = participant.event.online_cohort_codename
 
     # TODO: add participant notes
@@ -106,10 +118,12 @@ class EventMailer < ApplicationMailer
       invoice = @@xero.create_invoices(
         contact.contacts[0].contact_id,
         description(participant), participant.quantity, unit_price,
-        date.to_s, due_date.to_s, codename
+        date.to_s, EventMailer.due_date(participant.event).to_s, codename
       )
-    rescue NoMethodError => e
-      print_exception(e, true)
+    rescue StandardError => e
+      puts e.message
+      puts
+      puts e.backtrace.grep_v(%r{/gems/})
       invoice = nil
     end
     invoice
@@ -127,4 +141,6 @@ class EventMailer < ApplicationMailer
 
     "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
   end
+  #  End of code to be moved to XeroClientService
+  # ----------------------------------------------
 end
