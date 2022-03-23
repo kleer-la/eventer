@@ -263,8 +263,20 @@ class Event < ApplicationRecord
     capacity - confirmed_quantity
   end
 
+  def new_ones_quantity
+    participants.new_ones.pluck(:quantity).reduce(0, :+)
+  end
+
+  def contacted_quantity
+    participants.contacted.pluck(:quantity).reduce(0, :+)
+  end
+
   def confirmed_quantity
     participants.confirmed.pluck(:quantity).reduce(0, :+)
+  end
+
+  def attended_quantity
+    participants.attended.pluck(:quantity).reduce(0, :+)
   end
 
   private
