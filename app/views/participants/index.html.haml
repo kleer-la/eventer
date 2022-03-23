@@ -123,25 +123,25 @@
   .span2
     .box-content.box-statistic
       %h3.title.text-error
-        = @event.participants.new_ones.count
+        = @event.new_ones_quantity
       %small Nuevos
       .text-error.icon-inbox.align-right
   .span2
     .box-content.box-statistic
       %h3.title.text-info
-        = @event.participants.contacted.count
+        = @event.contacted_quantity
       %small Contactados
       .text-info.icon-comments.align-right
   .span2
     .box-content.box-statistic
       %h3.title.text-primary
-        = @event.participants.confirmed.count
+        = @event.confirmed_quantity
       %small= "Confirmados"
       .text-primary.icon-check.align-right
   .span2
     .box-content.box-statistic
       %h3.title.text-success
-        = @event.participants.attended.count
+        = @event.attended_quantity
       %small= "Presentes"
       .text-success.icon-user.align-right
 
