@@ -84,7 +84,7 @@ class EventMailer < ApplicationMailer
   def update_participant(participant, invoice)
     return if invoice.nil?
 
-    participant.xero_invoice_number = invoice.invoices[0].invoice_number
+    participant.xero_invoice_number =  invoice.invoice_number
     participant.save!
   end
 

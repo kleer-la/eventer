@@ -103,6 +103,30 @@ module XeroClientService
                                     status: XeroRuby::Accounting::Invoice::DRAFT }] }
       begin
         @client.create_invoices(invoice_data)
+        # <XeroRuby::Accounting::Invoice:0x00007fd0082d7960
+        #   @has_attachments=false, 
+        #   @has_errors=false, @type="ACCREC",
+        #   @contact=#<XeroRuby::Accounting::Contact:0x00007fd0082d7500
+        #     @has_attachments=false, @has_validation_errors=false, @contact_id="55862b5e-1707-4299-9d75-f01068d285fb", @contact_status="ACTIVE", 
+        #     @name="Prueba prueba", @first_name="Prueba", @last_name="prueba", @email_address="juliana541@gmail.com", @contact_persons=[], 
+        #     @bank_account_details="", @addresses=[#<XeroRuby::Accounting::Address:0x00007fd0082d6ab0 @address_type="STREET", @address_line1="prueba", 
+        #     @city="", @region="", @postal_code="", @country="">, #<XeroRuby::Accounting::Address:0x00007fd0082d63f8 @address_type="POBOX", @city="", 
+        #     @region="", @postal_code="", @country="">], @phones=[#<XeroRuby::Accounting::Phone:0x00007fd0082d5cf0 @phone_type="DEFAULT", @phone_number="", 
+        #     @phone_area_code="", @phone_country_code="">, #<XeroRuby::Accounting::Phone:0x00007fd0082d5778 @phone_type="DDI", @phone_number="", 
+        #     @phone_area_code="", @phone_country_code="">, #<XeroRuby::Accounting::Phone:0x00007fd0082d5228 @phone_type="FAX", @phone_number="", 
+        #     @phone_area_code="", @phone_country_code="">, #<XeroRuby::Accounting::Phone:0x00007fd0082d4c60 @phone_type="MOBILE", @phone_number="1111111", 
+        #     @phone_area_code="", @phone_country_code="">], @is_supplier=false, @is_customer=true, 
+        #     @payment_terms=#<XeroRuby::Accounting::PaymentTerm:0x00007fd0082d4198 @sales=#<XeroRuby::Accounting::Bill:0x00007fd0082cffa8 
+        #       @day=7, @type="DAYSAFTERBILLDATE">>, @updated_date_utc=Tue, 22 Feb 2022 17:21:43 +0000, @contact_groups=[], @sales_tracking_categories=[], 
+        #       @purchases_tracking_categories=[]>, 
+        #   @line_items=[#<XeroRuby::Accounting::LineItem:0x00007fd0082cf148 @line_item_id="2a09ce4d-ad2a-4231-89fd-a48ac85e9405", 
+        #     @description="Tipo de Evento de Prueba -  OnLine  - 10 Jun -\n por 2 vancantes", @quantity=0.2e1, @unit_amount=0.9e2, 
+        #     @account_code="4300", @tax_type="NONE", @tax_amount=0.0, @line_amount=0.18e3, @tracking=[]>], 
+        #   @date=Thu, 24 Mar 2022, @due_date=Thu, 31 Mar 2022, @line_amount_types="Exclusive", @invoice_number="INV-0363", @reference="", 
+        #   @branding_theme_id="fc426c1a-bbd1-4725-a973-3ead6fde8a60", @currency_code="USD", @currency_rate=0.1e1, @status="DRAFT", @sent_to_contact=false, 
+        #   @sub_total=0.18e3, @total_tax=0.0, @total=0.18e3, @invoice_id="50f0d30c-5791-48cd-9357-cdcf8a001e29", @is_discounted=false, 
+        #   @prepayments=[], @overpayments=[], @amount_due=0.18e3, @amount_paid=0.0, @updated_date_utc=Thu, 24 Mar 2022 18:24:08 +0000>
+        # 
       rescue XeroRuby::ApiError => e
         puts "Exception when calling create_invoices: #{e}"
       end
@@ -127,7 +151,7 @@ module XeroClientService
     end
 
     def create_invoices(...)
-      NullResponse.new(has_validation_errors: @has_validation_error)
+      NullInvoice.new
     end
   end
 
@@ -154,10 +178,6 @@ module XeroClientService
 
     def contacts
       [NullContact.new]
-    end
-
-    def invoices
-      [NullInvoice.new]
     end
   end
 
