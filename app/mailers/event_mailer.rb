@@ -136,7 +136,7 @@ class EventMailer < ApplicationMailer
     participant_text = if participant.quantity == 1
                          " por una vancante de #{participant.fname} #{participant.lname}"
                        else
-                         " por #{participant.quantity} vancantes"
+                         " por #{participant.quantity} vacantes"
                        end
 
     "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
