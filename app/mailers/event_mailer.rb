@@ -85,6 +85,7 @@ class EventMailer < ApplicationMailer
     return if invoice.nil?
 
     participant.xero_invoice_number =  invoice.invoice_number
+    participant.invoice_id =  invoice.invoice_id
     participant.save!
   end
 

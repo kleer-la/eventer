@@ -190,10 +190,11 @@ module XeroClientService
   end
 
   class NullInvoice
-    attr_reader :invoice_number
+    attr_reader :invoice_number, :invoice_id
 
     def initialize
       @invoice_number = 'INV-0100'
+      @invoice_id = 'a12346' * 6 # 36 char
     end
   end
 
