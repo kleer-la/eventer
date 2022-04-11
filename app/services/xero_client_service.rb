@@ -97,10 +97,13 @@ module XeroClientService
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
                                     contact: { contact_id: contact_id },
                                     line_items: [{ description: description, quantity: quantity, unit_amount: unit,
-                                                   account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE }],
+                                                   account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE,
+                                                   tracking: [{name: 'Cód. Proyecto', option: codename}]
+                                                  },
+                                                ],
                                     date: date, due_date: due_date, reference: codename,
                                     branding_theme_id: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
-                                    status: XeroRuby::Accounting::Invoice::AUTHORISED }] } # DRAFT
+                                    status: XeroRuby::Accounting::Invoice::DRAFT }] } # DRAFT / AUTHORISED
       begin
         @client.create_invoices(invoice_data)
         # <XeroRuby::Accounting::Invoice:0x00007fd0082d7960
