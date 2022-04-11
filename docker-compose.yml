@@ -3,8 +3,8 @@ services:
   eventer:
     image: ruby:2.7.5 #kleer-la/keventer3 
     container_name: eventer
-    env_file:
-      - ./eventer.env
+    # env_file:
+    #   - ./eventer.env
     ports:
       - '3000:3000'
     volumes:
