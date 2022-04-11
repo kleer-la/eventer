@@ -233,6 +233,11 @@
                       &nbsp;
                       %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}&download=true", :id => "download"}
                         %i.icon-chevron-down{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Descargar certificado"}
+                    - if participant.invoice_id.present?
+                      - inv_url= "https://go.xero.com/AccountsReceivable/Edit.aspx?InvoiceID=#{participant.invoice_id}"
+                      &nbsp;
+                      %a.btn.btn-info.btn-mini{ :href => inv_url, :id => "xero" }
+                        %i.icon-info-sign{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Xero Invoice"}
 
 :javascript
 

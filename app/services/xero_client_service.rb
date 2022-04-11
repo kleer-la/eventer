@@ -97,10 +97,13 @@ module XeroClientService
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
                                     contact: { contact_id: contact_id },
                                     line_items: [{ description: description, quantity: quantity, unit_amount: unit,
-                                                   account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE }],
+                                                   account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE,
+                                                   tracking: [{name: 'Cód. Proyecto', option: codename}]
+                                                  },
+                                                ],
                                     date: date, due_date: due_date, reference: codename,
                                     branding_theme_id: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
-                                    status: XeroRuby::Accounting::Invoice::DRAFT }] }
+                                    status: XeroRuby::Accounting::Invoice::DRAFT }] } # DRAFT / AUTHORISED
       begin
         @client.create_invoices(invoice_data)
         # <XeroRuby::Accounting::Invoice:0x00007fd0082d7960
@@ -120,7 +123,7 @@ module XeroClientService
         #       @day=7, @type="DAYSAFTERBILLDATE">>, @updated_date_utc=Tue, 22 Feb 2022 17:21:43 +0000, @contact_groups=[], @sales_tracking_categories=[], 
         #       @purchases_tracking_categories=[]>, 
         #   @line_items=[#<XeroRuby::Accounting::LineItem:0x00007fd0082cf148 @line_item_id="2a09ce4d-ad2a-4231-89fd-a48ac85e9405", 
-        #     @description="Tipo de Evento de Prueba -  OnLine  - 10 Jun -\n por 2 vancantes", @quantity=0.2e1, @unit_amount=0.9e2, 
+        #     @description="Tipo de Evento de Prueba -  OnLine  - 10 Jun -\n por 2 vacantes", @quantity=0.2e1, @unit_amount=0.9e2, 
         #     @account_code="4300", @tax_type="NONE", @tax_amount=0.0, @line_amount=0.18e3, @tracking=[]>], 
         #   @date=Thu, 24 Mar 2022, @due_date=Thu, 31 Mar 2022, @line_amount_types="Exclusive", @invoice_number="INV-0363", @reference="", 
         #   @branding_theme_id="fc426c1a-bbd1-4725-a973-3ead6fde8a60", @currency_code="USD", @currency_rate=0.1e1, @status="DRAFT", @sent_to_contact=false, 
@@ -190,10 +193,11 @@ module XeroClientService
   end
 
   class NullInvoice
-    attr_reader :invoice_number
+    attr_reader :invoice_number, :invoice_id
 
     def initialize
       @invoice_number = 'INV-0100'
+      @invoice_id = 'a12346' * 6 # 36 char
     end
   end
 

@@ -85,6 +85,7 @@ class EventMailer < ApplicationMailer
     return if invoice.nil?
 
     participant.xero_invoice_number =  invoice.invoice_number
+    participant.invoice_id =  invoice.invoice_id
     participant.save!
   end
 
@@ -136,7 +137,7 @@ class EventMailer < ApplicationMailer
     participant_text = if participant.quantity == 1
                          " por una vancante de #{participant.fname} #{participant.lname}"
                        else
-                         " por #{participant.quantity} vancantes"
+                         " por #{participant.quantity} vacantes"
                        end
 
     "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"

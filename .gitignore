@@ -27,6 +27,7 @@ chromedriver.log
 # https credentials
 *.crt
 *.key
+eventer.env
 *Zone.Identifier
 
 # env variable
