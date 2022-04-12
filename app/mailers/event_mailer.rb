@@ -7,8 +7,7 @@ class EventMailer < ApplicationMailer
 
   def welcome_new_event_participant(participant)
     @participant = participant
-    invoice = send_invoice(participant)
-    update_participant(participant, invoice)
+    invoice = create_send_invoice(participant)
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
@@ -100,7 +99,7 @@ class EventMailer < ApplicationMailer
     ].reject(&:nil?).min
   end
 
-  def send_invoice(participant)
+  def create_send_invoice(participant)
     EventMailer.xero
 
     contact = @@xero.create_contact(
@@ -110,6 +109,21 @@ class EventMailer < ApplicationMailer
 
     return if contact.nil?
 
+    invoice = create_invoice(participant, contact)
+
+    return if invoice.nil?
+
+    update_participant(participant, invoice)
+
+    begin
+      @@xero.email_invoice(invoice)
+    rescue StandardError => e
+      puts e.message
+      puts e.backtrace.grep_v(%r{/gems/})
+    end
+  end
+
+  def create_invoice(participant, contact)
     unit_price = participant.event.price(participant.quantity, participant.created_at)
     date = DateTime.now
     codename = participant.event.online_cohort_codename
@@ -123,13 +137,12 @@ class EventMailer < ApplicationMailer
       )
     rescue StandardError => e
       puts e.message
-      puts
       puts e.backtrace.grep_v(%r{/gems/})
       invoice = nil
     end
     invoice
   end
-
+  
   def description(participant)
     event_name = participant.event.event_type.name
     country = participant.event.country.name.tr('-', '')
