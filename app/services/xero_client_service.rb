@@ -2,6 +2,8 @@
 
 require 'xero-ruby'
 
+# https://github.com/XeroAPI/xero-ruby/blob/master/lib/xero-ruby/api/accounting_api.rb
+
 module XeroClientService
   def self.build_client
     raise 'You must specify the XERO_CLIENT_ID env variable' unless xero_client_id = ENV['XERO_CLIENT_ID']
@@ -103,7 +105,7 @@ module XeroClientService
                                                 ],
                                     date: date, due_date: due_date, reference: codename,
                                     branding_theme_id: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
-                                    status: XeroRuby::Accounting::Invoice::DRAFT }] } # DRAFT / AUTHORISED
+                                    status: XeroRuby::Accounting::Invoice::AUTHORISED }] } # DRAFT / AUTHORISED
       begin
         @client.create_invoices(invoice_data)
         # <XeroRuby::Accounting::Invoice:0x00007fd0082d7960
@@ -134,6 +136,11 @@ module XeroClientService
         puts "Exception when calling create_invoices: #{e}"
       end
     end
+
+    def email_invoice(invoice)
+      @client.email_invoice(invoice.invoice_id, {})
+    end
+
   end
 
   def self.create_null(...)
@@ -156,6 +163,10 @@ module XeroClientService
     def create_invoices(...)
       NullInvoice.new
     end
+    def email_invoice(invoice)
+      
+    end
+    
   end
 
   # { "Id": "e997d6d7-6dad-4458-beb8-d9c1bf7f2edf", "Status": "OK", "ProviderName": "Xero API Partner",
@@ -217,6 +228,9 @@ module XeroClientService
 
     def create_invoices(...)
       @xero_client.accounting_api.create_invoices(@xero_tenant_id, ...).invoices.first
+    end
+    def email_invoice(...)
+      @xero_client.accounting_api.email_invoice(@xero_tenant_id, ...)
     end
   end
 end
