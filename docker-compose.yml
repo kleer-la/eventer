@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   eventer:
-    image: ruby:2.7.5 #kleer-la/keventer3 
+    image: ruby:2.7.6 #kleer-la/keventer3 
     container_name: eventer
     # env_file:
     #   - ./eventer.env

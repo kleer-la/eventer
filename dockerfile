@@ -1,4 +1,4 @@
-FROM ruby:2.6
+FROM ruby:2.7
 
 # derived from https://nander.cc/using-selenium-within-a-docker-container
 
