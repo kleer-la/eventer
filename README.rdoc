@@ -52,3 +52,20 @@ Enjoy!
 
 == Migrar versiones Rails
 - https://railsbump.org/ compatibilidad de gemas
+
+
+== Deploy Heroku sin pipeline
+```cli
+# una vez - ambiente test (qa2.kleer.la)
+heroku git:remote -a keventer-test
+git remote rename heroku heroku-test
+# cada deploy a test
+git push heroku-test develop:main
+```
+
+```cli
+# una vez - ambiente prod (www.kleer.la)
+heroku git:remote -a keventer
+# cada deploy a prod
+git push heroku master:main
+```
