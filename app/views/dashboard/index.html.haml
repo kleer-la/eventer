@@ -63,8 +63,10 @@
                         %small.pull-right
                           - if event.registration_link == ""
                             = "#{(event.completion*100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
+                            - unless event.online_cohort_codename.present?
+                              %a{ :href => "/events/#{event.id}/edit" }
+                                %img{src: "/assets/alert.png", style: "vertical-align:middle", alt: 'Project code missing', 'data-toggle': 'tooltip', 'data-placement': 'top', title: 'Project code missing'}
                             - if event.participants.new_ones.count > 0
-                              %img{:src => "/assets/alert.png", :style => "vertical-align:middle"}
                               %strong= link_to event.participants.new_ones.count.to_s + " nuevos", event_participants_path(event)
                             %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants" }
                               %i.icon-group
