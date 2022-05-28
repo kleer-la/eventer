@@ -1,3 +1,18 @@
+:css
+  #event_type_lang_input {
+    list-style:none;
+  }
+  ol {
+    list-style:none;
+    list-style-type: none;
+  }
+  .label {
+    color:black;
+    background-color:white;
+    font-weight: normal;
+  }
+
+
 - @event_type.errors.full_messages.each do |msg|
   .alert.alert-error
     %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
@@ -10,7 +25,8 @@
         .icon-edit
           = @event_type.name.nil? ? "Nuevo Tipo de Evento" : @event_type.name
     .box-content
-      = form_for @event_type do |f|
+      = #form_for @event_type do |f|
+      = semantic_form_for @event_type do |f|
         %fieldset.inputs
           .row-fluid
             .span8
@@ -44,6 +60,9 @@
               .control-group
                 %label.control-label{ :for => :include_in_catalog }= t("formtastic.labels.event_type.include_in_catalog")
                 = f.check_box :include_in_catalog
+              .control-group
+                = f.input :lang, as: :radio
+                = #f.input :lang, :as => :radio, wrapper_html:  {class: 'input-block-level'}
             .span3
               .control-group
                 %label.control-label{ :for => :tag_name }= t("formtastic.labels.event_type.tag_name")
