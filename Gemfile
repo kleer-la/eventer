@@ -27,7 +27,7 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'cucumber-rails', '< 2.1.0', require: false # 2.2 if rails >= 5.0? just updating doesn't works
+  gem 'cucumber-rails' #, '< 2.1.0', require: false # 2.2 if rails >= 5.0? just updating doesn't works
   gem 'factory_bot_rails', require: false
   gem 'selenium-webdriver' # , '~> 3'
   gem 'webdrivers' # , '~> 4.0'
