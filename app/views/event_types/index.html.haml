@@ -20,8 +20,10 @@
               %tr
                 %th= t('formtastic.labels.event_type.name')
                 %th= t('formtastic.labels.event_type.subtitle')
+                %th Lang
                 %th Borrado
-                %th NoIndexar
+                %th 
+                %th
                 %th
             %tbody
               - @event_types.each do |event_type|
@@ -30,8 +32,12 @@
                 %tr
                   %td= link_to event_type.name, edit_event_type_path(event_type)
                   %td= link_to subt, event_type
-                  %td= event_type.deleted
-                  %td= event_type.noindex
+                  %td= event_type.lang  
+                  %td= {false => 'Activo', true => 'Borrado'}[event_type.deleted]
+                  %td= {false => 'normal', true => 'noIndex'}[event_type.noindex]
+                  %td
+                    - if event_type.canonical.present? 
+                      %a{ href: "/event_types/#{event_type.canonical.id}/edit"}= 'canonical'
                   %td
                     .text-right
                       - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
