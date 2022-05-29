@@ -2,6 +2,7 @@
   %h1.pull-left
     %i.icon-tasks
     %span Tipos de Evento
+    = render partial: '/commons/event_type_filter_menu', locals: {top: '/event_types/filter'}
   .pull-right
     %a.btn.btn-white{ :href => new_event_type_path }= t('formtastic.actions.new')
 

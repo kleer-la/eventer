@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+def filter_select(data, filter)
+  (data == filter) || !filter.present? || filter == 'all'
+end
+
 class EventTypesController < ApplicationController
   before_action :authenticate_user!
   before_action :activate_menu
@@ -9,7 +13,14 @@ class EventTypesController < ApplicationController
   # GET /event_types
   # GET /event_types.json
   def index
-    @event_types = EventType.all.sort { |p1, p2| p1.name <=> p2.name }
+    # country_filter = CountryFilter.new(params[:country_iso], session[:country_filter])
+    @lang = params[:lang] || session[:lang_filter]
+    @lang = nil if @lang == 'all'
+    session[:lang_filter] = @lang
+
+    @event_types = EventType.all.order('name').select do |et|
+      filter_select(et.lang, @lang)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
