@@ -13,7 +13,6 @@ class EventTypesController < ApplicationController
   # GET /event_types
   # GET /event_types.json
   def index
-    # country_filter = CountryFilter.new(params[:country_iso], session[:country_filter])
     @lang = params[:lang] || session[:lang_filter]
     @lang = nil if @lang == 'all'
     session[:lang_filter] = @lang
