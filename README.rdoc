@@ -60,12 +60,12 @@ Enjoy!
 heroku git:remote -a keventer-test
 git remote rename heroku heroku-test
 # cada deploy a test
-git push heroku-test develop:main
+git push heroku-test develop:master
 ```
 
 ```cli
 # una vez - ambiente prod (www.kleer.la)
 heroku git:remote -a keventer
 # cada deploy a prod
-git push heroku master:main
+git push heroku master:master
 ```

@@ -83,8 +83,8 @@ class EventMailer < ApplicationMailer
   def update_participant(participant, invoice)
     return if invoice.nil?
 
-    participant.xero_invoice_number =  invoice.invoice_number
-    participant.invoice_id =  invoice.invoice_id
+    participant.xero_invoice_number = invoice.invoice_number
+    participant.invoice_id = invoice.invoice_id
     participant.save!
   end
 
@@ -142,7 +142,7 @@ class EventMailer < ApplicationMailer
     end
     invoice
   end
-  
+
   def description(participant)
     event_name = participant.event.event_type.name
     country = participant.event.country.name.tr('-', '')
