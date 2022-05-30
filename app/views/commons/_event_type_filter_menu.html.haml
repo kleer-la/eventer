@@ -6,11 +6,11 @@
     %b.caret
   %ul.dropdown-menu{id: 'lang'}
     %li
-      %a(href="#{top}/all/active/#{@active}")todos
+      %a(href="#{top}/all/active/#{@active || 'all'}")todos
     %li
-      %a(href="#{top}/es/active/#{@active}")es
+      %a(href="#{top}/es/active/#{@active || 'all'}")es
     %li
-      %a(href="#{top}/en/active/#{@active}")en
+      %a(href="#{top}/en/active/#{@active || 'all'}")en
   -# %a.dropdown-toggle{ "data-toggle" => "dropdown", "data-target" => "#active", :href => "#" }
   -#   %span.hidden-phone
   -#   = @active || "activo?"
