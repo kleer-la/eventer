@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-def filter_select(data, filter)
-  (data == filter) || !filter.present? || filter == 'all'
+def lang_select(data, filter)
+  !filter.present? || filter == 'all' || (data == filter)
+end
+
+def active_select(data, filter)
+  !filter.present? || filter == 'all' || (data == ActiveModel::Type::Boolean.new.cast(filter) )
 end
 
 class EventTypesController < ApplicationController
@@ -17,8 +21,12 @@ class EventTypesController < ApplicationController
     @lang = nil if @lang == 'all'
     session[:lang_filter] = @lang
 
+    @active = params[:active] || session[:active_filter] || 'true'
+    @active = nil if @active == 'all'
+    session[:active_filter] = @active
+
     @event_types = EventType.all.order('name').select do |et|
-      filter_select(et.lang, @lang)
+      lang_select(et.lang, @lang) && active_select(!et.deleted, @active)
     end
 
     respond_to do |format|

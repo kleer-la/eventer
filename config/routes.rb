@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
   resources :event_types
   get 'event_types/:id/testimonies', to: 'event_types#testimonies'
-  get 'event_types/filter/:lang' => 'event_types#index'
+  get 'event_types/filter/:lang/active/:active' => 'event_types#index'
 
   resources :trainers
 
