@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+def lang_select(data, filter)
+  !filter.present? || filter == 'all' || (data == filter)
+end
+
+def active_select(data, filter)
+  !filter.present? || filter == 'all' || (data == ActiveModel::Type::Boolean.new.cast(filter) )
+end
+
 class EventTypesController < ApplicationController
   before_action :authenticate_user!
   before_action :activate_menu
@@ -9,7 +17,17 @@ class EventTypesController < ApplicationController
   # GET /event_types
   # GET /event_types.json
   def index
-    @event_types = EventType.all.sort { |p1, p2| p1.name <=> p2.name }
+    @lang = params[:lang] || session[:lang_filter]
+    @lang = nil if @lang == 'all'
+    session[:lang_filter] = @lang
+
+    @active = params[:active] || session[:active_filter] || 'true'
+    @active = nil if @active == 'all'
+    session[:active_filter] = @active
+
+    @event_types = EventType.all.order('name').select do |et|
+      lang_select(et.lang, @lang) && active_select(!et.deleted, @active)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
