@@ -21,6 +21,10 @@ class EventType < ApplicationRecord
       name
     end
   end
+  def unique_name
+    "#{name} (#{lang}) ##{id}"
+  end
+
 
   def testimonies
     part = []

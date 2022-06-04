@@ -22,7 +22,7 @@
             .span12
               .control-group
                 %label.control-label{ :for => :event_type_id } Tipo de Evento
-                = f.collection_select :event_type_id, EventType.all.sort{|p1,p2| p1.name <=> p2.name}, :id, :name, {include_blank: 'Selecciona uno...'}
+                = f.collection_select :event_type_id, @event_types, :id, :unique_name, {include_blank: 'Selecciona uno...'}
           .row-fluid
             .span2
               .control-group

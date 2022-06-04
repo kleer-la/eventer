@@ -39,6 +39,7 @@ class EventsController < ApplicationController
   def pre_edit
     @timezones = TimeZone.all
     @currencies = Money::Currency.table
+    @event_types = EventType.where(deleted: false).order(:name)
   end
 
   # GET /events/new
