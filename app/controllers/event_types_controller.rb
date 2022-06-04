@@ -9,7 +9,7 @@ def active_select(data, filter)
 end
 
 def duration_select(data, filter)
-  date ||=0
+  data ||=0
   !filter.present? || filter == 'all' || (data <= 1 && filter == '1' ) || (data > 1 && filter != '1' )
 end
 
