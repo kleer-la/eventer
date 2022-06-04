@@ -1,5 +1,4 @@
 %span.dropdown.btn.btn-white
-  -# %a.dropdown-toggle{ "data-toggle" => "dropdown", "data-target" => "#lang", :href => "#" }
   %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
     %span.hidden-phone
     = @lang || "lang"
@@ -11,14 +10,15 @@
       %a(href="#{top}/es/active/#{@active || 'all'}")es
     %li
       %a(href="#{top}/en/active/#{@active || 'all'}")en
-  -# %a.dropdown-toggle{ "data-toggle" => "dropdown", "data-target" => "#active", :href => "#" }
-  -#   %span.hidden-phone
-  -#   = @active || "activo?"
-  -#   %b.caret
-  -# %ul.dropdown-menu{id: 'active'}
-  -#   %li
-  -#     %a(href="#{top}/#{@lang}/active/all")todos
-  -#   %li
-  -#     %a(href="#{top}/#{@lang}/active/true")activo
-  -#   %li
-  -#     %a(href="#{top}/#{@lang}/active/false")borrado
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @active || "activo?"
+    %b.caret
+  %ul.dropdown-menu{id: 'active'}
+    %li
+      %a(href="#{top}/#{@lang || 'all'}/active/all")todos
+    %li
+      %a(href="#{top}/#{@lang || 'all'}/active/true")activo
+    %li
+      %a(href="#{top}/#{@lang || 'all'}/active/false")borrado
