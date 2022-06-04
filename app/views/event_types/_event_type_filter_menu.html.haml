@@ -1,0 +1,39 @@
+- lang = @lang || 'all'
+- active = @active || 'all'
+- duration = @duration || 'all'
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @lang || 'lang'
+    %b.caret
+  %ul.dropdown-menu{id: 'lang'}
+    %li
+      %a(href="#{top}/all/active/#{active}")todos
+    %li
+      %a(href="#{top}/es/active/#{active}")es
+    %li
+      %a(href="#{top}/en/active/#{active}")en
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @active || 'activo?'
+    %b.caret
+  %ul.dropdown-menu{id: 'active'}
+    %li
+      %a(href="#{top}/#{lang}/active/all/dur/#{duration}")todos
+    %li
+      %a(href="#{top}/#{lang}/active/true/dur/#{duration}")activo
+    %li
+      %a(href="#{top}/#{lang}/active/false/dur/#{duration}")borrado
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = {nil => 'duration', '1' => '1 hs',  '2' => '> 1 hs'} [@duration]
+    %b.caret
+  %ul.dropdown-menu{id: 'active'}
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/all")todos
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/1")1hs
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/2") > 1hs

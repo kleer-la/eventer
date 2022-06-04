@@ -2,7 +2,7 @@
   %h1.pull-left
     %i.icon-tasks
     %span Tipos de Evento
-    = render partial: '/commons/event_type_filter_menu', locals: {top: '/event_types/filter'}
+    = render partial: '/event_types/event_type_filter_menu', locals: {top: '/event_types/filter'}
   .pull-right
     %a.btn.btn-white{ :href => new_event_type_path }= t('formtastic.actions.new')
 
@@ -32,7 +32,7 @@
                 %tr
                   %td= link_to event_type.name, edit_event_type_path(event_type)
                   %td= link_to subt, event_type
-                  %td= event_type.lang
+                  %td= event_type.lang + " #{event_type.duration}hs"
                   %td= show_active[event_type.deleted]
                   %td
                     = indexed[event_type.noindex]

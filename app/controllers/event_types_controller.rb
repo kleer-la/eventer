@@ -8,6 +8,10 @@ def active_select(data, filter)
   !filter.present? || filter == 'all' || (data == ActiveModel::Type::Boolean.new.cast(filter) )
 end
 
+def duration_select(data, filter)
+  !filter.present? || filter == 'all' || (data <= 1 && filter == '1' ) || (data > 1 && filter != '1' )
+end
+
 class EventTypesController < ApplicationController
   before_action :authenticate_user!
   before_action :activate_menu
@@ -25,8 +29,12 @@ class EventTypesController < ApplicationController
     @active = nil if @active == 'all'
     session[:active_filter] = @active
 
+    @duration = params[:duration] || session[:duration_filter] || '2'
+    @duration = nil if @duration == 'all'
+    session[:duration_filter] = @duration
+
     @event_types = EventType.all.order('name').select do |et|
-      lang_select(et.lang, @lang) && active_select(!et.deleted, @active)
+      lang_select(et.lang, @lang) && active_select(!et.deleted, @active) && duration_select(et.duration, @duration)
     end
 
     respond_to do |format|
