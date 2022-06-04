@@ -7,7 +7,8 @@
     %a.btn.btn-white{ :href => new_event_type_path }= t('formtastic.actions.new')
 
 = render '/commons/notice'
-
+- show_active = {false => 'Activo', true => 'Borrado'}
+- indexed = {false => 'normal', true => 'noIndex'}
 .row-fluid
   .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
     .box-header.orange-background
@@ -22,8 +23,7 @@
                 %th= t('formtastic.labels.event_type.subtitle')
                 %th Lang
                 %th Borrado
-                %th 
-                %th
+                %th SEO tags
                 %th
             %tbody
               - @event_types.each do |event_type|
@@ -32,10 +32,10 @@
                 %tr
                   %td= link_to event_type.name, edit_event_type_path(event_type)
                   %td= link_to subt, event_type
-                  %td= event_type.lang  
-                  %td= {false => 'Activo', true => 'Borrado'}[event_type.deleted]
-                  %td= {false => 'normal', true => 'noIndex'}[event_type.noindex]
+                  %td= event_type.lang
+                  %td= show_active[event_type.deleted]
                   %td
+                    = indexed[event_type.noindex]
                     - if event_type.canonical.present? 
                       %a{ href: "/event_types/#{event_type.canonical.id}/edit"}= 'canonical'
                   %td
