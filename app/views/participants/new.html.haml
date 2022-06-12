@@ -1,5 +1,5 @@
 - content_for  :title do
-  = "Compra de #{@event.event_type.name}"
+  = "#{I18n.t('formtastic.titles.participant_buy')} #{@event.event_type.name}"
 .controls
   - unless @nakedform
     .form-wrapper

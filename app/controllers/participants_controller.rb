@@ -93,9 +93,13 @@ class ParticipantsController < ApplicationController
 
   # [["1 personas x 100usd = 100usd", 1], ["2 personas x 100usd = 200usd", 2]]
   def quantities_list
+    seat_text = []
+    5.times {seat_text.push I18n.t('formtastic.button.participant.seats') }
+    seat_text.push I18n.t('formtastic.button.participant.seat')
+
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
-      ac << ["#{qty} personas x #{price} usd = #{price * qty} usd", qty]
+      ac << ["#{qty} #{seat_text.pop} x #{price} usd = #{price * qty} usd", qty]
     end
   end
 

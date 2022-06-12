@@ -89,16 +89,20 @@ en:
     yes: "Yes"
     no: "No"
     titles:
-        event_details: "Información de Evento"
-        event_price_details: "Información de Precios"
-        trainer_details: "Información de Entrenador"
-        user_details: "Información de Usuario"
-        role_details: "Información de Rol"
+      event_details: "Información de Evento"
+      event_price_details: "Información de Precios"
+      trainer_details: "Información de Entrenador"
+      user_details: "Información de Usuario"
+      role_details: "Información de Rol"
+      participant_buy: "Buy"
     button:
       participant:
         register: "Register Now!"
         pay: "Pay Now!"
         more_info: "More info!"
+        buy: "Buy now!"
+        seat: "seat"
+        seats: "seats"
     labels:
       name: "Name"
       date: "Date"

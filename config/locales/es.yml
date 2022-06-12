@@ -94,11 +94,15 @@ es:
         trainer_details: "Información de Entrenador"
         user_details: "Información de Usuario"
         role_details: "Información de Rol"
+        participant_buy: "Compra de"
     button:
       participant:
         register: "¡Registrarme!"
         pay: "¡Pagar ahora!"
-        more_info: "Comprar"
+        buy: "Comprar"
+        more_info: "Más Info"
+        seat: 'persona'
+        seats: 'personas'
     labels:
       name: "Nombre"
       date: "Fecha"
