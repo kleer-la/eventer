@@ -75,11 +75,15 @@
                 %label.control-label{ :for => :csd_eligible }= t("formtastic.labels.event_type.csd_eligible")
                 = f.check_box :csd_eligible
           .row-fluid
-            .span6
+            .span4
               .control-group
                 %label.control-label{ :for => :is_kleer_certification }= t("formtastic.labels.event_type.is_kleer_certification")
                 = f.check_box :is_kleer_certification
-            .span6
+            .span4
+              .control-group
+                %label.control-label{ :for => :cover }= t("formtastic.labels.event_type.cover")
+                = f.text_field :cover, :class => 'input-block-level'
+            .span4
               .control-group
                 %label.control-label{ :for => :subtitle }= t("formtastic.labels.event_type.kleer_cert_seal_image")
                 = f.text_field :kleer_cert_seal_image, :class => 'input-block-level'

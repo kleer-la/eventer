@@ -46,6 +46,11 @@ describe 'API Events GET /event_types' do
       expect(parsed.xpath('//deleted').count).to eq 1
       expect(parsed.xpath('//noindex').count).to eq 1
     end
+    it 'has cover' do
+      get @url
+      parsed = Nokogiri::XML(last_response.body)
+      expect(parsed.xpath('//cover').count).to eq 1
+    end
   end
 
   context 'one event w/JSON' do

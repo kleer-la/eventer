@@ -214,6 +214,7 @@ en:
         is_kleer_certification: "Is Kleer Certification"
         kleer_cert_seal_image: "Seal Image Name"
         canonical: "Canonical event type"
+        cover: "Cover"
       category:
         new_title: "New Category"
         name: "Nombre"
