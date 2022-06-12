@@ -60,6 +60,15 @@ describe ParticipantsController do
         it 'redirects to the created participant' do
           post :create, params: { participant: @participant_attr, event_id: @participant.event.id }
           expect(response).to redirect_to("/events/#{Participant.last.event.id}/participant_confirmed")
+          expect(I18n.locale).to eq(:es)
+        end
+
+        it 'redirects to the created participant (EN)' do
+          @participant.event.event_type.lang= 'en'
+          @participant.event.event_type.save!
+          post :create, params: { participant: @participant_attr, event_id: @participant.event.id }
+          expect(response).to redirect_to("/events/#{Participant.last.event.id}/participant_confirmed")
+          expect(I18n.locale).to eq(:en)
         end
 
         it 'persist comment has the first note' do

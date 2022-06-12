@@ -155,6 +155,8 @@ class ParticipantsController < ApplicationController
       return render action: 'new', layout: 'empty_layout'
     end
 
+    I18n.locale = @event.event_type.lang.to_sym
+
     @nakedform = !params[:nakedform].nil?
     @participant.confirm! if @event.list_price > 0.0
 
