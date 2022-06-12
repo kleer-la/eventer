@@ -106,6 +106,7 @@ class ParticipantsController < ApplicationController
   # GET /participants/new/confirm
   def confirm
     @event = Event.find(params[:event_id])
+    I18n.locale = @event.event_type.lang.to_sym
     @nakedform = !params[:nakedform].nil?
 
     respond_to do |format|
