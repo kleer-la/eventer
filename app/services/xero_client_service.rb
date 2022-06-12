@@ -49,8 +49,9 @@ module XeroClientService
   end
 
   class XeroApi
-    def initialize(client)
+    def initialize(client, lang = :es)
       @client = client
+      @lang = lang
     end
 
     def create_contact(name, fname, lname, email, phone, address)
@@ -93,6 +94,10 @@ module XeroClientService
       end
     end
 
+    BRANDING_THEME = {
+      es: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
+      en: '0420bcfb-62ef-428a-a178-b02ff936ed3d'  }
+
     SERVICE_ACCOUNT = '4300'
     def create_invoices(contact_id, description, quantity, unit, date, due_date, codename)
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
@@ -101,7 +106,7 @@ module XeroClientService
                                                    account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE,
                                                    tracking: [{ name: 'Cód. Proyecto', option: codename }] }],
                                     date: date, due_date: due_date, reference: codename,
-                                    branding_theme_id: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
+                                    branding_theme_id: BRANDING_THEME[@lang],
                                     status: XeroRuby::Accounting::Invoice::AUTHORISED }] } # DRAFT / AUTHORISED
       begin
         @client.create_invoices(invoice_data)
