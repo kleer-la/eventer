@@ -127,6 +127,8 @@ en:
         payment_type: "Payment type"
         is_payed: "Paid"
         accept_terms: "I have read and accepted <a href='http://www.kleer.la/en/privacy'>the privacy policy</a>."
+        confirm_with_mail: "Thanks! We have sent you a e-mail with the payment link. Your seat is confirmed with the payment."
+        confirm_without_mail: "Thanks! We will contact you shortly."
       trainer:
         new_title: "New Trainer"
         bio_en: "Bio EN"
@@ -345,6 +347,8 @@ en:
           is_attending: "El participante ya está presente en el webinar. Por favor, regístrate mediante el siguiente formulario."
           not_found: "El participante indicado no fue encontrado. Por favor, regístrate mediante el siguiente formulario."
           registration_required: "Es necesario que te registres. Por favor, utiliza el siguiente formulario."
+          buy:
+            success: 'You buy was registered.'
       rating:
         calculating: "Calculando rating. Puede tardar unos minutos... Recarga la página para ver el resultado."
 

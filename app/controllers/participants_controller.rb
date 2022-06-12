@@ -172,7 +172,7 @@ class ParticipantsController < ApplicationController
 
         format.html do
           redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
-                      notice: 'Tu pedido fue realizado exitosamente.'
+                      notice: t('flash.participant.buy.success')
         end
         format.json { render json: @participant, status: :created, location: @participant }
       else
