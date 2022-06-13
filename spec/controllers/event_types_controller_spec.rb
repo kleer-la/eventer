@@ -71,6 +71,11 @@ describe EventTypesController do
         post :create, params: { event_type: @event_type_att }
         expect(assigns(:event_type)[:noindex]).to be true
       end
+      it 'cover' do
+        @event_type_att[:cover] = 'rambandanga'
+        post :create, params: { event_type: @event_type_att }
+        expect(assigns(:event_type)[:cover]).to eq 'rambandanga'
+      end
 
       it 'redirects to the created event_type' do
         post :create, params: { event_type: @event_type_att }

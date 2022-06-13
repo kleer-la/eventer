@@ -40,7 +40,6 @@
     .row_fluid
       .control-group
         %small.muted
-          Cantidad de cupos
         = f.select :quantity, @quantities, {}, {:class => "span6"}
     .row-fluid
       .control-group
@@ -69,6 +68,6 @@
               - if @event.community_event?
                 = I18n.t("formtastic.button.participant.register")
               - else
-                = I18n.t("formtastic.button.participant.more_info")
+                = I18n.t("formtastic.button.participant.buy")
 
 = @event.extra_script.nil? ? "" : @event.extra_script.html_safe

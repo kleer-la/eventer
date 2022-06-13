@@ -93,15 +93,20 @@ class ParticipantsController < ApplicationController
 
   # [["1 personas x 100usd = 100usd", 1], ["2 personas x 100usd = 200usd", 2]]
   def quantities_list
+    seat_text = []
+    5.times {seat_text.push I18n.t('formtastic.button.participant.seats') }
+    seat_text.push I18n.t('formtastic.button.participant.seat')
+
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
-      ac << ["#{qty} personas x #{price} usd = #{price * qty} usd", qty]
+      ac << ["#{qty} #{seat_text.pop} x #{price} usd = #{price * qty} usd", qty]
     end
   end
 
   # GET /participants/new/confirm
   def confirm
     @event = Event.find(params[:event_id])
+    I18n.locale = @event.event_type.lang.to_sym
     @nakedform = !params[:nakedform].nil?
 
     respond_to do |format|
@@ -151,6 +156,8 @@ class ParticipantsController < ApplicationController
       return render action: 'new', layout: 'empty_layout'
     end
 
+    I18n.locale = @event.event_type.lang.to_sym
+
     @nakedform = !params[:nakedform].nil?
     @participant.confirm! if @event.list_price > 0.0
 
@@ -168,7 +175,7 @@ class ParticipantsController < ApplicationController
 
         format.html do
           redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
-                      notice: 'Tu pedido fue realizado exitosamente.'
+                      notice: t('flash.participant.buy.success')
         end
         format.json { render json: @participant, status: :created, location: @participant }
       else

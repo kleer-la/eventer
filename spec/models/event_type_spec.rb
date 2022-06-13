@@ -75,6 +75,15 @@ describe EventType do
     expect(@event_type.valid?).to be true
   end
 
+  it 'could not have a cover' do
+    @event_type.cover = nil
+    expect(@event_type.valid?).to be true
+  end
+  it 'could have a cover' do
+    @event_type.cover = 'rambandanga'
+    expect(@event_type.valid?).to be true
+  end
+
   context 'Testimonies' do
     it 'no event no testimony' do
       expect(@event_type.testimonies.count).to eq 0

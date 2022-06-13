@@ -38,6 +38,8 @@
                     = indexed[event_type.noindex]
                     - if event_type.canonical.present? 
                       %a{ href: "/event_types/#{event_type.canonical.id}/edit"}= 'canonical'
+                    - else
+                      autorref
                   %td
                     .text-right
                       - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }

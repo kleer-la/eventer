@@ -89,16 +89,20 @@ en:
     yes: "Yes"
     no: "No"
     titles:
-        event_details: "Información de Evento"
-        event_price_details: "Información de Precios"
-        trainer_details: "Información de Entrenador"
-        user_details: "Información de Usuario"
-        role_details: "Información de Rol"
+      event_details: "Información de Evento"
+      event_price_details: "Información de Precios"
+      trainer_details: "Información de Entrenador"
+      user_details: "Información de Usuario"
+      role_details: "Información de Rol"
+      participant_buy: "Buy"
     button:
       participant:
         register: "Register Now!"
         pay: "Pay Now!"
         more_info: "More info!"
+        buy: "Buy now!"
+        seat: "seat"
+        seats: "seats"
     labels:
       name: "Name"
       date: "Date"
@@ -123,6 +127,8 @@ en:
         payment_type: "Payment type"
         is_payed: "Paid"
         accept_terms: "I have read and accepted <a href='http://www.kleer.la/en/privacy'>the privacy policy</a>."
+        confirm_with_mail: "Thanks! We have sent you an e-mail with the payment link. Your seat is confirmed with the payment."
+        confirm_without_mail: "Thanks! We will contact you shortly."
       trainer:
         new_title: "New Trainer"
         bio_en: "Bio EN"
@@ -208,6 +214,7 @@ en:
         is_kleer_certification: "Is Kleer Certification"
         kleer_cert_seal_image: "Seal Image Name"
         canonical: "Canonical event type"
+        cover: "Cover"
       category:
         new_title: "New Category"
         name: "Nombre"
@@ -341,6 +348,8 @@ en:
           is_attending: "El participante ya está presente en el webinar. Por favor, regístrate mediante el siguiente formulario."
           not_found: "El participante indicado no fue encontrado. Por favor, regístrate mediante el siguiente formulario."
           registration_required: "Es necesario que te registres. Por favor, utiliza el siguiente formulario."
+          buy:
+            success: 'Your purchase is confirmed.'
       rating:
         calculating: "Calculando rating. Puede tardar unos minutos... Recarga la página para ver el resultado."
 
