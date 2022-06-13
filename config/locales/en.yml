@@ -349,7 +349,7 @@ en:
           not_found: "El participante indicado no fue encontrado. Por favor, regístrate mediante el siguiente formulario."
           registration_required: "Es necesario que te registres. Por favor, utiliza el siguiente formulario."
           buy:
-            success: 'Your buy was registered.'
+            success: 'Your purchase is confirmed.'
       rating:
         calculating: "Calculando rating. Puede tardar unos minutos... Recarga la página para ver el resultado."
 
