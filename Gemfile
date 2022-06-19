@@ -23,6 +23,7 @@ group :development, :test do
   gem 'database_cleaner-active_record'
   gem 'debase'
   gem 'ruby-debug-ide'
+  gem 'next_rails'
 end
 
 group :test do
@@ -45,6 +46,7 @@ gem 'sassc-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer'
+gem 'execjs', '~> 2.7.0'    # fail with 2.8.1
 gem 'uglifier', '>= 1.3.0'
 
 gem 'haml'
