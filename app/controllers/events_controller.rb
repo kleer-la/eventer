@@ -93,7 +93,7 @@ class EventsController < ApplicationController
     pre_edit
 
     respond_to do |format|
-      if @event.update_attributes(event_params)
+      if @event.update(event_params)
         format.html do
           redirect_to events_path,
                       notice: (@event.cancelled ? t('flash.event.cancel.success') : t('flash.event.update.success'))

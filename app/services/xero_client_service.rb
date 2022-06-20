@@ -140,7 +140,7 @@ module XeroClientService
     end
 
     def email_invoice(invoice)
-      @client.email_invoice(invoice.invoice_id, {})
+      @client.email_invoice(invoice.invoice_id)
     end
   end
 
