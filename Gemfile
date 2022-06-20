@@ -1,10 +1,17 @@
+def next?
+  File.basename(__FILE__) == "Gemfile.next"
+end
 # frozen_string_literal: true
 
 source 'http://rubygems.org'
 
 ruby '~> 2.7.6'
 
-gem 'rails', '~> 5.2'
+if next?
+  gem 'rails', '~> 6.0.0'
+else
+  gem 'rails', '~> 5.2'
+end
 
 group :development do
   gem 'listen'
@@ -91,7 +98,13 @@ gem 'will_paginate', '~> 3'
 gem 'activemodel-serializers-xml' # to_xml  (rails 5)
 gem 'puma'
 gem 'rails-controller-testing' # assigns (rails 5)
-gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(?) in application_controller
+
+if next?
+  gem 'responders', '~> 3.0'
+else
+  gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(?) in application_controller
+end
+
 
 gem 'friendly_id' # for blog Articles
 
