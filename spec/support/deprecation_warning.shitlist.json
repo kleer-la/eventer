@@ -1,0 +1,5 @@
+{
+  "./spec/controllers/participants_controller_spec.rb": [
+    "Version 2 of the Ruby SDK will enter maintenance mode as of November 20, 2020. To continue receiving service updates and new features, please upgrade to Version 3. More information can be found here: https://aws.amazon.com/blogs/developer/deprecation-schedule-for-aws-sdk-for-ruby-v2/"
+  ]
+}

@@ -61,6 +61,7 @@ class EventTypesController < ApplicationController
     @trainers = Trainer.sorted
     @categories = Category.sorted
     @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
+    @event_types = EventType.where(deleted: false).where.not(duration: 0..1).order(:name)
   end
 
   # GET /event_types/new
@@ -111,7 +112,7 @@ class EventTypesController < ApplicationController
     pre_edit
 
     respond_to do |format|
-      if @event_type.update_attributes(event_type_params)
+      if @event_type.update(event_type_params)
         format.html { redirect_to event_types_path, notice: t('flash.event_type.update.success') }
         format.json { head :no_content }
       else

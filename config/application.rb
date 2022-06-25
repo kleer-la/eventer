@@ -25,5 +25,9 @@ module Eventer
     I18n.default_locale = :es
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = 'utf-8'
+
+    # config.load_defaults 6.0
+    # config.autoloader = :classic
+    # config.load_defaults 5.2
   end
 end

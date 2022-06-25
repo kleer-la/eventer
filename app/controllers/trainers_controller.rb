@@ -65,7 +65,7 @@ class TrainersController < ApplicationController
     @trainer = Trainer.find(params[:id])
 
     respond_to do |format|
-      if @trainer.update_attributes(trainer_params)
+      if @trainer.update(trainer_params)
         format.html { redirect_to trainers_path, notice: t('flash.trainer.update.success') }
         format.json { head :no_content }
       else

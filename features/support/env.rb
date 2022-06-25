@@ -42,7 +42,6 @@ end
 #   )
 #   driver=Selenium::WebDriver.for :chrome, options: options
 #   driver.get 'http://www.google.com'
-#   p driver
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how

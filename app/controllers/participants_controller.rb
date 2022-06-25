@@ -192,7 +192,7 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.all
     respond_to do |format|
       # original_participant_status = @participant.status
-      if @participant.update_attributes(participant_params)
+      if @participant.update(participant_params)
         # new_participant_status = participant_params[:status]
         @event = Event.find(params[:event_id])
         format.html do
