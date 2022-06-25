@@ -61,6 +61,7 @@ class EventTypesController < ApplicationController
     @trainers = Trainer.sorted
     @categories = Category.sorted
     @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
+    @event_types = EventType.where(deleted: false).where.not(duration: 0..1).order(:name)
   end
 
   # GET /event_types/new
