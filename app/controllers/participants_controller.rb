@@ -77,8 +77,14 @@ class ParticipantsController < ApplicationController
   # GET /participants/new
   # GET /participants/new.json
   def new
-    @participant = Participant.new
     @event = Event.find(params[:event_id])
+    
+    if !ENV['RECAPTCHA_SITE_KEY'].present?
+      redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
+      notice: 'An unexpected problem just happen! Our bad!. Please contact info@kleer.la saying that "Enviroment not properly set."'
+      return
+    end
+    @participant = Participant.new
     session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
     @influence_zones = InfluenceZone.sort_wo_republica
     @nakedform = !params[:nakedform].nil?

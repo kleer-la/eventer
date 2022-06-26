@@ -1,39 +1,61 @@
 - lang = @lang || 'all'
 - active = @active || 'all'
 - duration = @duration || 'all'
+- ind_can = @indexcanonical || 'all'
+- index_canonical = {nil => 'Index/Canonical?', 'ic' => 'normal canonical',  'inc' => 'normal autoref', 'nic' => 'noIndex canonical', 'ninc' => 'noIndex autoref'}
 %span.dropdown.btn.btn-white
   %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
     %span.hidden-phone
-    = @lang || 'lang'
+    = @lang || 'lang?'
     %b.caret
   %ul.dropdown-menu{id: 'lang'}
     %li
-      %a(href="#{top}/all/active/#{active}/dur/#{duration}")todos
+      %a(href="#{top}/all/active/#{active}/dur/#{duration}/ic/#{ind_can}")todos
     %li
-      %a(href="#{top}/es/active/#{active}/dur/#{duration}")es
+      %a(href="#{top}/es/active/#{active}/dur/#{duration}/ic/#{ind_can}")es
     %li
-      %a(href="#{top}/en/active/#{active}/dur/#{duration}")en
+      %a(href="#{top}/en/active/#{active}/dur/#{duration}/ic/#{ind_can}")en
 %span.dropdown.btn.btn-white
   %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
     %span.hidden-phone
-    = @active || 'activo?'
+    = { 'all' => 'activo?', 'false' => 'borrado', 'true' => 'activo'}[active]
     %b.caret
   %ul.dropdown-menu{id: 'active'}
     %li
-      %a(href="#{top}/#{lang}/active/all/dur/#{duration}")todos
+      %a(href="#{top}/#{lang}/active/all/dur/#{duration}/ic/#{ind_can}")todos
     %li
-      %a(href="#{top}/#{lang}/active/true/dur/#{duration}")activo
+      %a(href="#{top}/#{lang}/active/true/dur/#{duration}/ic/#{ind_can}")activo
     %li
-      %a(href="#{top}/#{lang}/active/false/dur/#{duration}")borrado
+      %a(href="#{top}/#{lang}/active/false/dur/#{duration}/ic/#{ind_can}")borrado
 %span.dropdown.btn.btn-white
   %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
     %span.hidden-phone
-    = {nil => 'duration', '1' => '1 hs',  '2' => '> 1 hs'} [@duration]
+    = {'all' => 'duration?', '1' => '1 hs',  '2' => '> 1 hs'} [@duration]
     %b.caret
   %ul.dropdown-menu{id: 'active'}
     %li
-      %a(href="#{top}/#{lang}/active/#{active}/dur/all")todos
+      %a(href="#{top}/#{lang}/active/#{active}/dur/all/ic/#{ind_can}")todos
     %li
-      %a(href="#{top}/#{lang}/active/#{active}/dur/1")1hs
+      %a(href="#{top}/#{lang}/active/#{active}/dur/1/ic/#{ind_can}")1hs
     %li
-      %a(href="#{top}/#{lang}/active/#{active}/dur/2") > 1hs
+      %a(href="#{top}/#{lang}/active/#{active}/dur/2/ic/#{ind_can}") > 1hs
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = index_canonical[@indexcanonical]
+    %b.caret
+  %ul.dropdown-menu{id: 'indexcanonical'}
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/#{duration}/ic/all") todos
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/#{duration}/ic/ic")
+        = index_canonical['ic']
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/#{duration}/ic/inc") 
+        = index_canonical['inc']
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/#{duration}/ic/nic") 
+        = index_canonical['nic']
+    %li
+      %a(href="#{top}/#{lang}/active/#{active}/dur/#{duration}/ic/ninc")
+        = index_canonical['ninc']

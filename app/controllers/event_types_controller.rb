@@ -13,6 +13,13 @@ def duration_select(data, filter)
   !filter.present? || filter == 'all' || (data <= 1 && filter == '1' ) || (data > 1 && filter != '1' )
 end
 
+def index_canonical_select(canonical, noindex, filter)
+  filter_idx= filter.first(2) == 'ni' unless filter.nil?
+  filter_can= filter.last(2) != 'nc' unless filter.nil?
+
+  !filter.present? || filter == 'all' || (!(canonical ^ filter_can) && !(noindex ^ filter_idx))  
+end
+
 class EventTypesController < ApplicationController
   before_action :authenticate_user!
   before_action :activate_menu
@@ -27,15 +34,20 @@ class EventTypesController < ApplicationController
     session[:lang_filter] = @lang
 
     @active = params[:active] || session[:active_filter] || 'true'
-    @active = nil if @active == 'all'
     session[:active_filter] = @active
 
     @duration = params[:duration] || session[:duration_filter] || '2'
-    @duration = nil if @duration == 'all'
     session[:duration_filter] = @duration
 
+    @indexcanonical = params[:indexcanonical] || session[:indexcanonical_filter]
+    @indexcanonical = nil if @indexcanonical == 'all'
+    session[:indexcanonical_filter] = @indexcanonical
+
     @event_types = EventType.all.order('name').select do |et|
-      lang_select(et.lang, @lang) && active_select(!et.deleted, @active) && duration_select(et.duration, @duration)
+      lang_select(et.lang, @lang) && 
+      active_select(!et.deleted, @active) && 
+      duration_select(et.duration, @duration) &&
+      index_canonical_select(et.canonical.present?, et.noindex, @indexcanonical)
     end
 
     respond_to do |format|
