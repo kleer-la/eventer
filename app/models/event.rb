@@ -278,6 +278,10 @@ class Event < ApplicationRecord
   def attended_quantity
     participants.attended.pluck(:quantity).reduce(0, :+)
   end
+  
+  def experimental_features
+    extra_script.to_s.html_safe
+  end
 
   private
 

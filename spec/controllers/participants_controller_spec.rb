@@ -9,8 +9,15 @@ describe ParticipantsController do
     before(:each) do
       @participant = FactoryBot.create(:participant)
     end
+    before(:each) do
+      @recaptcha = ENV['RECAPTCHA_SITE_KEY']
+    end
+    after(:each) do
+      ENV['RECAPTCHA_SITE_KEY'] = @recaptcha
+    end
     describe 'GET index' do
       it 'assigns all participants as @participants' do
+        ENV['RECAPTCHA_SITE_KEY'] = nil
         get :index, params: { event_id: @participant.event.id }
         expect(assigns(:participants)).to eq [@participant]
       end
@@ -25,6 +32,7 @@ describe ParticipantsController do
 
     describe 'GET new' do
       it 'assigns a new participant as @participant' do
+        ENV['RECAPTCHA_SITE_KEY'] = 'xxx'
         get :new, params: { event_id: @participant.event.id }
         expect(assigns(:participant)).to be_a_new(Participant)
       end
