@@ -148,7 +148,7 @@ class EventMailer < ApplicationMailer
     country = participant.event.country.name.tr('-', '')
     human_date = participant.event.human_date
     participant_text = if participant.quantity == 1
-                         " por una vancante de #{participant.fname} #{participant.lname}"
+                         " por una vacante de #{participant.fname} #{participant.lname}"
                        else
                          " por #{participant.quantity} vacantes"
                        end
