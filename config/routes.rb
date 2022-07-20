@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :logs, only: [:index, :show]
   resources :articles
   namespace :api do
     namespace :v3 do
