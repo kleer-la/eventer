@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_12_221142) do
+ActiveRecord::Schema.define(version: 2022_07_19_213146) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -239,6 +239,15 @@ ActiveRecord::Schema.define(version: 2022_06_12_221142) do
     t.integer "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "logs", force: :cascade do |t|
+    t.integer "area"
+    t.integer "level"
+    t.string "message"
+    t.text "details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "oauth_tokens", force: :cascade do |t|

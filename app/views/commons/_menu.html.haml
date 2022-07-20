@@ -32,8 +32,6 @@
           %a{ :href => "/articles" }
             %i.icon-file
             %span Articles
-            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
-              new
         - if can? :manage, Category.new
           %li{ :class => menu_item_class(@active_menu, "categories") }
             %a{ :href => categories_path }
@@ -62,3 +60,9 @@
             %a{ :href => settings_path }
               %i.icon-cog
               %span= t('menu.settings')
+        %li{ :class => menu_item_class(@active_menu, "logs") }
+          %a{ :href => logs_path }
+            %i.icon-cog
+            %span= t('menu.logs')
+            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
+              new

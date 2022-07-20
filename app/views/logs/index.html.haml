@@ -1,0 +1,24 @@
+.page-header
+  %h1.pull-left
+    %i.icon-cogs
+    %span Logs
+
+.row-fluid
+  .box-content.box-no-padding
+    .responsive-table
+      .scrollable-area
+        %table.table.table-striped{ :style => "margin-bottom:0;" }
+          %thead
+            %tr
+              %th Area
+              %th Level
+              %th Message
+              %th Date
+
+          %tbody
+            - @logs.each do |log|
+              %tr
+                %td= log.area
+                %td= log.level
+                %td= link_to log.message, log
+                %td= log.created_at

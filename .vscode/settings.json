@@ -1,0 +1,8 @@
+{
+  "i18n-ally.localesPaths": [
+    "config/locales",
+    "app/assets/javascripts/flatty/plugins/ckeditor/lang",
+    "app/assets/javascripts/flatty/plugins/ckeditor/plugins/a11yhelp/dialogs/lang",
+    "app/assets/javascripts/flatty/plugins/ckeditor/plugins/specialchar/dialogs/lang"
+  ]
+}

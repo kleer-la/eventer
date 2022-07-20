@@ -1,0 +1,28 @@
+.page-header
+  %h1.pull-left
+    %i.icon-cogs
+    %span Log
+
+%p
+  %b Area:
+  = @log.area
+%p
+  %b Level:
+  = @log.level
+%p
+  %b Message:
+  = @log.message
+%p
+  %b More Info:
+  = @log.details
+%p
+  %b Created:
+  = @log.created_at
+
+.row-fuid
+  .span12
+    .form-actions
+      .text-right
+        %a.btn.btn-large{ :href => logs_path }
+          %i.icon-undo
+          Back to list
