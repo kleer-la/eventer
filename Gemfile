@@ -110,8 +110,7 @@ else
   gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(?) in application_controller
 end
 
-
-gem 'friendly_id' # for blog Articles
+gem 'friendly_id' # slug for blog Articles
 
 # Xero API
 gem 'jwt'

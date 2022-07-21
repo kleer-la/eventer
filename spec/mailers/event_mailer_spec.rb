@@ -176,6 +176,15 @@ describe EventMailer do
         due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 11))
         expect(due_date.to_date.to_s).to eq '2022-01-18'
       end
+      it 'Fail when ' do
+        EventMailer.xero_service(XeroClientService.create_null(
+          # exception_to_raise: XeroRuby::ApiError.new('Invoice error')
+           exception_to_raise: StandardError.new('Invoice error')
+        ))
+        expect {
+          email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        }.to change {Log.count}.by 1
+      end
     end
   end
 
