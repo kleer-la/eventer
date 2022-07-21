@@ -8,7 +8,6 @@ describe EventMailer do
     @participant.email = 'app_test@kleer.la'
     @participant.event.event_type.name = 'Concurso de truco'
     ActionMailer::Base.deliveries.clear
-    EventMailer.xero_service(XeroClientService.create_null)
   end
 
   context 'welcome_new_event_participant' do
@@ -17,6 +16,10 @@ describe EventMailer do
     group_text = 'Grupos (5 o más):'
     ar_text = 'pagos desde Argentina'
 
+    before :each do
+      EventMailer.xero_service(XeroClientService.create_null)
+    end
+  
     it 'should queue and verify a simple email' do
       @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
       # File.open("x.html", 'w') { |file| file.write(@email) }

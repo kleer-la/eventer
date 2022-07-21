@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'xero-ruby'
+require 'xero_client_null_service'
 
 # https://github.com/XeroAPI/xero-ruby/blob/master/lib/xero-ruby/api/accounting_api.rb
 
@@ -135,7 +136,11 @@ module XeroClientService
         #   @prepayments=[], @overpayments=[], @amount_due=0.18e3, @amount_paid=0.0, @updated_date_utc=Thu, 24 Mar 2022 18:24:08 +0000>
         #
       rescue XeroRuby::ApiError => e
-        puts "Exception when calling create_invoices: #{e}"
+        Log.log(:xero, :error,  
+          "contact:#{contact_id}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+         )
+         nil
       end
     end
 
@@ -152,64 +157,6 @@ module XeroClientService
     Xero.new
   end
 
-  class NullXero
-    def initialize(has_validation_error: false)
-      @has_validation_error = has_validation_error
-    end
-
-    def create_contacts(...)
-      NullResponse.new(has_validation_errors: @has_validation_error)
-    end
-
-    def create_invoices(...)
-      NullInvoice.new
-    end
-
-    def email_invoice(invoice); end
-  end
-
-  # { "Id": "e997d6d7-6dad-4458-beb8-d9c1bf7f2edf", "Status": "OK", "ProviderName": "Xero API Partner",
-  #   "DateTimeUTC": "/Date(1551399321121)/", "Contacts": [ { "ContactID": "3ff6d40c-af9a-40a3-89ce-3c1556a25591",
-  #     "ContactStatus": "ACTIVE", "Name": "Foo9987", "EmailAddress": "sid32476@blah.com", "BankAccountDetails": "",
-  #     "Addresses": [ { "AddressType": "STREET", "City": "", "Region": "", "PostalCode": "", "Country": "" },
-  #       { "AddressType": "POBOX", "City": "", "Region": "", "PostalCode": "", "Country": "" } ],
-  #         "Phones": [ { "PhoneType": "DEFAULT", "PhoneNumber": "", "PhoneAreaCode": "", "PhoneCountryCode": "" },
-  #       { "PhoneType": "DDI", "PhoneNumber": "", "PhoneAreaCode": "", "PhoneCountryCode": "" },
-  #       { "PhoneType": "FAX", "PhoneNumber": "", "PhoneAreaCode": "", "PhoneCountryCode": "" },
-  #       { "PhoneType": "MOBILE", "PhoneNumber": "555-1212", "PhoneAreaCode": "415", "PhoneCountryCode": "" } ],
-  #       "UpdatedDateUTC": "/Date(1551399321043+0000)/", "ContactGroups": [], "IsSupplier": false, "IsCustomer": false,
-  #       "SalesTrackingCategories": [], "PurchasesTrackingCategories": [],
-  #       "PaymentTerms": { "Bills": { "Day": 15, "Type": "OFCURRENTMONTH" },
-  #       "Sales": { "Day": 10, "Type": "DAYSAFTERBILLMONTH" } }, "ContactPersons": [], "HasValidationErrors": false } ] }
-
-  class NullResponse
-    attr_reader :has_validation_errors
-
-    def initialize(has_validation_errors: false)
-      @has_validation_errors = has_validation_errors
-    end
-
-    def contacts
-      [NullContact.new]
-    end
-  end
-
-  class NullContact
-    attr_reader :contact_id
-
-    def initialize
-      @contact_id = '1234567890abcdefg'
-    end
-  end
-
-  class NullInvoice
-    attr_reader :invoice_number, :invoice_id
-
-    def initialize
-      @invoice_number = 'INV-0100'
-      @invoice_id = 'a12346' * 6 # 36 char
-    end
-  end
 
   class Xero
     def initialize

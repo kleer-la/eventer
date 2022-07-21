@@ -136,8 +136,10 @@ class EventMailer < ApplicationMailer
         date.to_s, EventMailer.due_date(participant.event).to_s, codename
       )
     rescue StandardError => e
-      puts e.message
-      puts e.backtrace.grep_v(%r{/gems/})
+      Log.log(:xero, :error,  
+        "contact:#{contact.contacts[0].contact_id}", 
+        e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+       )
       invoice = nil
     end
     invoice

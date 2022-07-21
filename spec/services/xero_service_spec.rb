@@ -10,4 +10,26 @@ describe XeroClientService do
 
     expect(response.has_validation_errors).to be false
   end
+  it 'Create Invoice with API error' do
+    xero = XeroClientService::XeroApi.new(
+            XeroClientService.create_null(
+              exception_to_raise: XeroRuby::ApiError.new('Invoice error')
+            )
+          )
+
+    expect {
+      response = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30','CODE')
+    }.to change {Log.count}.by 1
+  end
+  # it 'Create Invoice with Standard error' do
+  #   xero = XeroClientService::XeroApi.new(
+  #           XeroClientService.create_null(
+  #             exception_to_raise: StandardError.new('Invoice error')
+  #           )
+  #         )
+
+  #   expect {
+  #     response = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30','CODE')
+  #   }.to change {Log.count}.by 1
+  # end
 end
