@@ -86,8 +86,17 @@ describe EventMailer do
       end
       it 'Fail w/ Standard exceptions ' do
         EventMailer.xero_service(XeroClientService.create_null(
-          # invoice_exception: XeroRuby::ApiError.new('Invoice error')
            invoice_exception: StandardError.new('Invoice error')
+        ))
+        expect {
+          email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        }.to change {Log.count}.by 1
+      end
+    end
+    context 'Create Invoice' do
+      it 'Fail w/ Standard exceptions ' do
+        EventMailer.xero_service(XeroClientService.create_null(
+           email_exception: StandardError.new('Email Invoice error')
         ))
         expect {
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now

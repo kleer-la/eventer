@@ -176,8 +176,8 @@ module XeroClientService
       @xero_client.accounting_api.create_invoices(@xero_tenant_id, ...).invoices.first
     end
 
-    def email_invoice(...)
-      @xero_client.accounting_api.email_invoice(@xero_tenant_id, ...)
+    def email_invoice(invoice_id, request_empty = [], opts = {})
+      @xero_client.accounting_api.email_invoice(@xero_tenant_id, invoice_id, request_empty, opts)
     end
   end
 end

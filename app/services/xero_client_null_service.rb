@@ -1,8 +1,9 @@
 module XeroClientService
   class NullXero
-    def initialize(has_validation_error: false, invoice_exception: nil)
+    def initialize(has_validation_error: false, invoice_exception: nil, email_exception: nil)
       @has_validation_error = has_validation_error
       @invoice_exception = invoice_exception
+      @email_exception = email_exception
     end
 
     def create_contacts(...)
@@ -13,8 +14,10 @@ module XeroClientService
       raise @invoice_exception if @invoice_exception
       NullInvoice.new()
     end
-
-    def email_invoice(invoice); end
+    
+    def email_invoice(invoice)
+      raise @email_exception if @email_exception
+    end
   end
 
   # { "Id": "e997d6d7-6dad-4458-beb8-d9c1bf7f2edf", "Status": "OK", "ProviderName": "Xero API Partner",
