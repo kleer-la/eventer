@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 ALERT_MAIL = 'entrenamos@kleer.la'
+ADMIN_MAIL = 'admin@kleer.la'
 
 class EventMailer < ApplicationMailer
   add_template_helper(DashboardHelper)
 
   def welcome_new_event_participant(participant)
     @participant = participant
+    @pih = ParticipantInvoiceHelper.new(participant)
     invoice = create_send_invoice(participant)
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
-      format.html { render layout: 'event_mailer2' }
+      format.html { render layout: 'event_mailer' }
     end
   end
 
@@ -23,11 +25,12 @@ class EventMailer < ApplicationMailer
     mail(to: @participant.email,
          subject: "Kleer | Certificado del #{@participant.event.event_type.name}") do |format|
       format.text
-      format.html { render layout: 'event_mailer2' }
+      format.html { render layout: 'event_mailer' }
     end
   end
 
   def alert_event_monitor(participant, edit_registration_link)
+    @pih = ParticipantInvoiceHelper.new(participant)
     event = participant.event
     event_info = event_data(event.event_type.name, event.country.name, event.human_date)
     body = contact_data(participant) +
@@ -62,7 +65,7 @@ class EventMailer < ApplicationMailer
     # online_cohort_codename
 
     "Código de referencia: #{participant.referer_code}
-      Texto: \n#{description(participant)}
+      Texto: \n#{@pih.description}
       Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} COD: #{codename}\n
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
@@ -78,14 +81,6 @@ class EventMailer < ApplicationMailer
   def self.xero
     @@xero_service = nil unless defined?(@@xero_service) # real infra
     @@xero = XeroClientService::XeroApi.new(@@xero_service || XeroClientService.create_xero)
-  end
-
-  def update_participant(participant, invoice)
-    return if invoice.nil?
-
-    participant.xero_invoice_number = invoice.invoice_number
-    participant.invoice_id = invoice.invoice_id
-    participant.save!
   end
 
   def self.due_date(event, today = DateTime.now)
@@ -113,7 +108,7 @@ class EventMailer < ApplicationMailer
 
     return if invoice.nil?
 
-    update_participant(participant, invoice)
+    @pih.update_participant(invoice)
 
     begin
       @@xero.email_invoice(invoice)
@@ -132,7 +127,7 @@ class EventMailer < ApplicationMailer
     begin
       invoice = @@xero.create_invoices(
         contact.contacts[0].contact_id,
-        description(participant), participant.quantity, unit_price,
+        @pih.description, participant.quantity, unit_price,
         date.to_s, EventMailer.due_date(participant.event).to_s, codename
       )
     rescue StandardError => e
@@ -145,18 +140,41 @@ class EventMailer < ApplicationMailer
     invoice
   end
 
-  def description(participant)
+  #  End of code to be moved to XeroClientService
+  # ----------------------------------------------
+end
+
+class ParticipantInvoiceHelper
+  def initialize(participant)
+    @participant = participant
+  end
+
+  def description
+    participant = @participant
     event_name = participant.event.event_type.name
     country = participant.event.country.name.tr('-', '')
     human_date = participant.event.human_date
-    participant_text = if participant.quantity == 1
-                         " por una vacante de #{participant.fname} #{participant.lname}"
-                       else
-                         " por #{participant.quantity} vacantes"
-                       end
+    # participant_text = if participant.quantity == 1
+    #                      " por una vacante de #{participant.fname} #{participant.lname}"
+    #                    else
+    #                      " por #{participant.quantity} vacantes"
+    #                    end
 
-    "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
+    # "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
+    if participant.quantity == 1
+      I18n.t('mail.item_one', course: event_name, place: country, date: human_date, student_name: "#{participant.fname} #{participant.lname}")
+    else
+      I18n.t('mail.item_more', course: event_name, place: country, date: human_date, qty: participant.quantity)
+    end
   end
-  #  End of code to be moved to XeroClientService
-  # ----------------------------------------------
+
+  def update_participant(invoice)
+    return if invoice.nil?
+    participant = @participant
+
+    participant.xero_invoice_number = invoice.invoice_number
+    participant.invoice_id = invoice.invoice_id
+    participant.save!
+  end
+
 end

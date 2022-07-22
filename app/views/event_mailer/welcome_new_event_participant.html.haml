@@ -1,69 +1,27 @@
 %div{ :style => "background-color:rgb(110, 233, 241);margin-bottom:20px;padding:10px;font-size:34px;" }
   %font{ :face => "raleway, verdana, sans-serif", :size => "5" }
     %span{ :style => "line-height: 22px;" }
-    = @participant.event.event_type.name
+    = "#{@participant.event.event_type.name} - #{@participant.event.human_date}"
+    
 %div{ :style => "padding:6px;font-size:12px" }
   %font{ :face => "raleway, verdana, sans-serif"}
     = "Hola, " + @participant.fname + "."
     %br
+    Recibes este correo como continuación de la compra que iniciaste en el sitio de Kleer.
+
     %br
-    ¡Gracias por tu interés!
+    Para completar la compra y reservar tu lugar, te compatimos el link de pago:
     %br
+    %a{ref: "https://in.xero.com/#{@participant.invoice_id}?utm_source=emailpaynowbutton#paynow", style: "background: rgb(87, 196, 10); border: 0px solid rgb(87, 196, 10); border-radius: 3px; color: rgb(254, 254, 254); display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 5px 0px; text-align: center; text-decoration: none; width: 110px;"} Pagar ahora
     %br
-    Te enviamos la información de este taller:
-    %br
-    %br
-    - if @participant.event.custom_prices_email_text.blank?
-      - iso_code= @participant.event.currency_iso_code
-      - #currency_symbol = currency_symbol_for(@participant.event.currency_iso_code)
-      - def currency_format(money) sprintf("%.0f", money) end
-      - eb_end_date= @participant.event.eb_end_date&.strftime('%d-%b-%Y')
-      %b
-        Precio de lista:
-        = "#{iso_code} #{currency_format(@participant.event.list_price)}"
-      %br
-      - if !@participant.event.eb_price.nil? && @participant.event.eb_price > 0
-        %b
-          Pronto pago:
-        = "#{iso_code} #{currency_format(@participant.event.eb_price)} abonando antes del #{eb_end_date}."
-        %br
-      - if !@participant.event.couples_eb_price.nil?
-        %b
-          En parejas:
-        = "#{iso_code} #{currency_format(@participant.event.couples_eb_price)} cada uno abonando antes del #{eb_end_date}."
-      %br
-      %b
-        Formas de pago:
-      Tarjeta de crédito.
-      %br
-      - if false #@participant.influence_zone.country.iso_code == 'AR'
-        %b
-          - # Nota: Para pagos desde Argentina los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
-        %br
-      %br
-      %h2
-        %b
-          &#x1F525; IMPORTANTE: Te enviaremos en las próx. 24hs hábiles un link de pago. Reservarás tu lugar con el pago.
-      %br
-      - if !@participant.event.business_eb_price.nil?
-        %br
-        Grupos (5 o más):
-        %br
-        = "#{iso_code} #{currency_format(@participant.event.business_eb_price)} cada uno abonando antes del #{eb_end_date}."
-        %br
-        %br
-        Para grupos, responde a este mail indicando cuantas personas son y si puedes pagar con tarjeta.
-        %br
-      %br
-      %br
-    - else
-      = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
+    Este link tiene validez hasta el final de período del pago temprano o 6 días, lo que ocurra primero.
+
+    Puedes ver la factura correspondiente aquí
+    = "https://in.xero.com/#{@participant.invoice_id}"
+
     %br
     %br
-    %b
-      Fecha:
-    =" #{@participant.event.human_date}"
-    %br
+    Datos del evento
     %b
       Horario:
     =@participant.event.start_time.strftime( '%H:%M' ) + " a " + @participant.event.end_time.strftime( '%H:%M ' ) + "hs."
@@ -74,38 +32,13 @@
     %br
     %b
       Dirección:
-    =" #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
+    = " #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
     %br
     %br
-    %b
-    - if @participant.event.trainer2.nil?
-      Facilitador:
-    - else
-      Facilitadores:                                  
-    - if @participant.event.trainer.linkedin_url.blank?
-      %b= @participant.event.trainer.name
-    - else
-      %a{ :href => @participant.event.trainer.linkedin_url, :target => "_blank" }
-        = @participant.event.trainer.name
-    - if ! @participant.event.trainer2.nil?
-      y 
-      - if ! @participant.event.trainer2.linkedin_url.blank?
-        %a{ :href => @participant.event.trainer2.linkedin_url, :target => "_blank" }
-          = @participant.event.trainer2.name
-      - else
-        %b= @participant.event.trainer2.name
+    - if @participant.event.custom_prices_email_text.present?
+      = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
     %br
-    %br
-    - if ! @participant.event.event_type.program.blank?
-      %br
-      %br
-      %b
-        Programa:
-      %br
-      = @markdown_renderer.render( @participant.event.event_type.program ).html_safe
-    %br
-    %br
-    - if !@participant.event.cancellation_policy.nil? && @participant.event.cancellation_policy != ""
+    - if @participant.event.cancellation_policy.present?
       %b
         Política de Cancelación
       %br
@@ -120,6 +53,8 @@
     %br
     %br
     %strong Kleer - Agile Coaching & Training
+    %br
+    = ADMIN_MAIL
     %br
     = "website | "
     %a{ :href => "http://www.kleer.la", :target => "_blank" }

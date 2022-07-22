@@ -1,6 +1,4 @@
 es:
-
-  # formatos de fecha y hora
   date:
     formats:
       default: "%d/%m/%Y"
@@ -26,7 +24,6 @@ es:
       two_words_connector: " y "
       last_word_connector: " y "
 
-  # Devise
   devise:
     failure:
       user:
@@ -37,8 +34,6 @@ es:
         signed_in: "Identificación exitosa. Bienvenido!"
         signed_out: "Gracias por utilizar Eventer. Hasta la próxima!"
 
-
-  # ActiveRecord
   activerecord:
       errors:
         template:
@@ -373,3 +368,13 @@ es:
     previous_label: "<<"
     page_gap: "..."
     next_label: ">>"
+
+  mail:
+    invoice:
+      item_one: >-
+        %{course} -
+        %{place} - %{date} - por una vacante de %{student_name}
+      item_more: >-
+        %{course} -
+        %{place} - %{date} - por %{qty} vacantes
+ 
