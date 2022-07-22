@@ -4,6 +4,7 @@ ALERT_MAIL = 'entrenamos@kleer.la'
 ADMIN_MAIL = 'admin@kleer.la'
 
 class EventMailer < ApplicationMailer
+  default from: ALERT_MAIL
   add_template_helper(DashboardHelper)
 
   def welcome_new_event_participant(participant)
@@ -11,7 +12,7 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant)
     invoice = create_send_invoice(participant)
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
-    mail(to: @participant.email, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
+    mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
       format.html { render layout: 'event_mailer' }
     end
@@ -65,7 +66,7 @@ class EventMailer < ApplicationMailer
     # online_cohort_codename
 
     "Código de referencia: #{participant.referer_code}
-      Texto: \n#{@pih.description}
+      Texto: \n#{@pih.item_description}
       Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} COD: #{codename}\n
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
@@ -111,6 +112,8 @@ class EventMailer < ApplicationMailer
     @pih.update_participant(invoice)
 
     begin
+       # GET https://api.xero.com/api.xro/2.0/Invoices/9b9ba9e5-e907-4b4e-8210-54d82b0aa479/OnlineInvoice
+
       @@xero.email_invoice(invoice)
     rescue StandardError => e
       puts e.message
@@ -127,7 +130,7 @@ class EventMailer < ApplicationMailer
     begin
       invoice = @@xero.create_invoices(
         contact.contacts[0].contact_id,
-        @pih.description, participant.quantity, unit_price,
+        @pih.item_description, participant.quantity, unit_price,
         date.to_s, EventMailer.due_date(participant.event).to_s, codename
       )
     rescue StandardError => e
@@ -149,7 +152,8 @@ class ParticipantInvoiceHelper
     @participant = participant
   end
 
-  def description
+  #TODO: test & change languaje
+  def item_description
     participant = @participant
     event_name = participant.event.event_type.name
     country = participant.event.country.name.tr('-', '')
@@ -162,9 +166,9 @@ class ParticipantInvoiceHelper
 
     # "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
     if participant.quantity == 1
-      I18n.t('mail.item_one', course: event_name, place: country, date: human_date, student_name: "#{participant.fname} #{participant.lname}")
+      I18n.t('mail.invoice.item_one', course: event_name, place: country, date: human_date, student_name: "#{participant.fname} #{participant.lname}")
     else
-      I18n.t('mail.item_more', course: event_name, place: country, date: human_date, qty: participant.quantity)
+      I18n.t('mail.invoice.item_more', course: event_name, place: country, date: human_date, qty: participant.quantity)
     end
   end
 

@@ -1,8 +1,8 @@
 module XeroClientService
   class NullXero
-    def initialize(has_validation_error: false, exception_to_raise: nil)
+    def initialize(has_validation_error: false, invoice_exception: nil)
       @has_validation_error = has_validation_error
-      @exception_to_raise = exception_to_raise
+      @invoice_exception = invoice_exception
     end
 
     def create_contacts(...)
@@ -10,7 +10,7 @@ module XeroClientService
     end
 
     def create_invoices(...)
-      raise @exception_to_raise if @exception_to_raise
+      raise @invoice_exception if @invoice_exception
       NullInvoice.new()
     end
 

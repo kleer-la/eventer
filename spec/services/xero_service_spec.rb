@@ -13,7 +13,7 @@ describe XeroClientService do
   it 'Create Invoice with API error' do
     xero = XeroClientService::XeroApi.new(
             XeroClientService.create_null(
-              exception_to_raise: XeroRuby::ApiError.new('Invoice error')
+              invoice_exception: XeroRuby::ApiError.new('Invoice error')
             )
           )
 
