@@ -31,7 +31,7 @@
       Lugar:
     =" #{@participant.event.place}"
     %br
-    - unless @participant.event.country.name}.downcase.include? 'online'
+    - unless @participant.event.country.name.downcase.include? 'online'
       %b
         Dirección:
       = " #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
