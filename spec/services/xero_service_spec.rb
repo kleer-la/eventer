@@ -32,4 +32,11 @@ describe XeroClientService do
       response = xero.email_invoice(invoice)
     }.to change {Log.count}.by 1
   end
+  it 'get online link' do
+    xero = XeroClientService::XeroApi.new(
+      XeroClientService.create_null
+    )
+    invoice = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30','CODE')
+    expect(xero.get_online_invoice_url(invoice)).to eq 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
+  end
 end

@@ -12,12 +12,12 @@
     %br
     Para completar la compra y reservar tu lugar, te compatimos el link de pago:
     %br
-    %a{ref: "https://in.xero.com/#{@participant.invoice_id}?utm_source=emailpaynowbutton#paynow", style: "background: rgb(87, 196, 10); border: 0px solid rgb(87, 196, 10); border-radius: 3px; color: rgb(254, 254, 254); display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 5px 0px; text-align: center; text-decoration: none; width: 110px;"} Pagar ahora
+    %a{ref: "#{@online_invoice_url}?utm_source=emailpaynowbutton#paynow", style: "background: rgb(87, 196, 10); border: 0px solid rgb(87, 196, 10); border-radius: 3px; color: rgb(254, 254, 254); display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 5px 0px; text-align: center; text-decoration: none; width: 110px;"} Pagar ahora
     %br
     Este link tiene validez hasta el final de período del pago temprano o 6 días, lo que ocurra primero.
 
     Puedes ver la factura correspondiente aquí
-    = "https://in.xero.com/#{@participant.invoice_id}"
+    = @online_invoice_url
 
     %br
     %br

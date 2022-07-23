@@ -18,6 +18,10 @@ module XeroClientService
     def email_invoice(invoice)
       raise @email_exception if @email_exception
     end
+
+    def get_online_invoice(_)
+      [NullOnlineInvoice.new]
+    end
   end
 
   # { "Id": "e997d6d7-6dad-4458-beb8-d9c1bf7f2edf", "Status": "OK", "ProviderName": "Xero API Partner",
@@ -56,10 +60,17 @@ module XeroClientService
 
   class NullInvoice
     attr_reader :invoice_number, :invoice_id
-
     def initialize
       @invoice_number = 'INV-0100'
       @invoice_id = 'a12346' * 6 # 36 char
     end
   end
+  
+  class NullOnlineInvoice
+    attr_reader :online_invoice_url
+    def initialize
+      @online_invoice_url = 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
+    end
+  end
+
 end
