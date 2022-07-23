@@ -8,7 +8,6 @@ describe EventMailer do
     @participant.email = 'app_test@kleer.la'
     @participant.event.event_type.name = 'Concurso de truco'
     ActionMailer::Base.deliveries.clear
-    EventMailer.xero_service(XeroClientService.create_null)
   end
 
   context 'welcome_new_event_participant' do
@@ -17,6 +16,10 @@ describe EventMailer do
     group_text = 'Grupos (5 o más):'
     ar_text = 'pagos desde Argentina'
 
+    before :each do
+      EventMailer.xero_service(XeroClientService.create_null)
+    end
+  
     it 'should queue and verify a simple email' do
       @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
       # File.open("x.html", 'w') { |file| file.write(@email) }
@@ -26,98 +29,6 @@ describe EventMailer do
       expect(@email.text_part.body.to_s).to include 'Concurso de truco'
       expect(@email.html_part.body.to_s).to include 'Concurso de truco'
       expect(@email.from).to eq ['entrenamos@kleer.la']
-    end
-    it 'should send standard prices text info if custom prices text is empty' do
-      @participant.event.list_price = 200
-
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).to include 'ARS 200'
-      expect(email.html_part.body.to_s).to include 'ARS 200'
-    end
-    it 'should not send early bird prices if EB info is empty' do
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).not_to include eb_text
-      expect(email.html_part.body.to_s).not_to include eb_text
-    end
-
-    it 'should send early bird prices if EB info is available' do
-      @participant.event.date = Date.today
-      @participant.event.eb_end_date = Date.today
-      @participant.event.eb_price = 180
-
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).to include eb_text
-      expect(email.html_part.body.to_s).to include eb_text
-      expect(email.text_part.body.to_s).to include 'ARS 180'
-      expect(email.html_part.body.to_s).to include 'ARS 180'
-    end
-
-    it 'should not show 2 person price if NOT present' do
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).not_to include pair_text
-      expect(email.html_part.body.to_s).not_to include pair_text
-    end
-    it 'should show 2 person price if present' do
-      @participant.event.couples_eb_price = 950
-
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).to include pair_text
-      expect(email.html_part.body.to_s).to include pair_text
-      expect(email.text_part.body.to_s).to include 'ARS 950'
-      expect(email.html_part.body.to_s).to include 'ARS 950'
-    end
-
-    it 'should not show group price if NOT present' do
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).not_to include group_text
-      expect(email.html_part.body.to_s).not_to include group_text
-    end
-    it 'should show group price if present' do
-      @participant.event.business_eb_price = 850
-
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).to include group_text
-      expect(email.html_part.body.to_s).to include group_text
-      expect(email.text_part.body.to_s).to include 'ARS 850 cada uno abonando antes del'
-      expect(email.html_part.body.to_s).to include 'ARS 850 cada uno abonando antes del'
-    end
-
-    it 'should replace all prices if custom text is present' do
-      @participant.event.date = Date.today
-      @participant.event.list_price = 200
-      @participant.event.eb_end_date = Date.today
-      @participant.event.eb_price = 180
-      @participant.event.couples_eb_price = 100
-      @participant.event.business_eb_price = 150
-
-      @participant.event.custom_prices_email_text = 'texto customizado'
-
-      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-
-      expect(email.text_part.body.to_s).not_to include eb_text
-      expect(email.html_part.body.to_s).not_to include eb_text
-      expect(email.text_part.body.to_s).not_to include pair_text
-      expect(email.html_part.body.to_s).not_to include pair_text
-      expect(email.text_part.body.to_s).not_to include group_text
-      expect(email.html_part.body.to_s).not_to include group_text
-      expect(email.text_part.body.to_s).not_to include 'ARS 200'
-      expect(email.html_part.body.to_s).not_to include 'ARS 200'
-      expect(email.text_part.body.to_s).not_to include 'ARS 180'
-      expect(email.html_part.body.to_s).not_to include 'ARS 180'
-      expect(email.text_part.body.to_s).not_to include 'ARS 100'
-      expect(email.html_part.body.to_s).not_to include 'ARS 100'
-      expect(email.text_part.body.to_s).not_to include 'ARS 150'
-      expect(email.html_part.body.to_s).not_to include 'ARS 150'
-
-      expect(email.text_part.body.to_s).to include 'texto customizado'
-      expect(email.html_part.body.to_s).to include 'texto customizado'
     end
 
     it 'should send the custom text in HTML format if custom text markdown is present' do
@@ -172,6 +83,24 @@ describe EventMailer do
       it 'today > eb' do
         due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 11))
         expect(due_date.to_date.to_s).to eq '2022-01-18'
+      end
+      it 'Fail w/ Standard exceptions ' do
+        EventMailer.xero_service(XeroClientService.create_null(
+           invoice_exception: StandardError.new('Invoice error')
+        ))
+        expect {
+          email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        }.to change {Log.count}.by 1
+      end
+    end
+    context 'Create Invoice' do
+      it 'Fail w/ Standard exceptions ' do
+        EventMailer.xero_service(XeroClientService.create_null(
+           email_exception: StandardError.new('Email Invoice error')
+        ))
+        expect {
+          email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        }.to change {Log.count}.by 1
       end
     end
   end

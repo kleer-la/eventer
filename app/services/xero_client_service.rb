@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'xero-ruby'
+require 'xero_client_null_service'
 
 # https://github.com/XeroAPI/xero-ruby/blob/master/lib/xero-ruby/api/accounting_api.rb
 
@@ -135,12 +136,30 @@ module XeroClientService
         #   @prepayments=[], @overpayments=[], @amount_due=0.18e3, @amount_paid=0.0, @updated_date_utc=Thu, 24 Mar 2022 18:24:08 +0000>
         #
       rescue XeroRuby::ApiError => e
-        puts "Exception when calling create_invoices: #{e}"
+        Log.log(:xero, :error,  
+          "contact:#{contact_id}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+         )
+         nil
       end
     end
 
     def email_invoice(invoice)
-      @client.email_invoice(invoice.invoice_id)
+      begin
+        @client.email_invoice(invoice.invoice_id)
+      rescue StandardError => e 
+       Log.log(:xero, :warn,
+         "invoice not sent :#{invoice.invoice_number}", 
+         e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+        )
+      end
+    end
+    
+    def get_online_invoice_url(invoice)
+      return nil if invoice.nil?
+
+      data = @client.get_online_invoice(invoice.invoice_id)
+      data.online_invoices[0].online_invoice_url
     end
   end
 
@@ -150,65 +169,6 @@ module XeroClientService
 
   def self.create_xero
     Xero.new
-  end
-
-  class NullXero
-    def initialize(has_validation_error: false)
-      @has_validation_error = has_validation_error
-    end
-
-    def create_contacts(...)
-      NullResponse.new(has_validation_errors: @has_validation_error)
-    end
-
-    def create_invoices(...)
-      NullInvoice.new
-    end
-
-    def email_invoice(invoice); end
-  end
-
-  # { "Id": "e997d6d7-6dad-4458-beb8-d9c1bf7f2edf", "Status": "OK", "ProviderName": "Xero API Partner",
-  #   "DateTimeUTC": "/Date(1551399321121)/", "Contacts": [ { "ContactID": "3ff6d40c-af9a-40a3-89ce-3c1556a25591",
-  #     "ContactStatus": "ACTIVE", "Name": "Foo9987", "EmailAddress": "sid32476@blah.com", "BankAccountDetails": "",
-  #     "Addresses": [ { "AddressType": "STREET", "City": "", "Region": "", "PostalCode": "", "Country": "" },
-  #       { "AddressType": "POBOX", "City": "", "Region": "", "PostalCode": "", "Country": "" } ],
-  #         "Phones": [ { "PhoneType": "DEFAULT", "PhoneNumber": "", "PhoneAreaCode": "", "PhoneCountryCode": "" },
-  #       { "PhoneType": "DDI", "PhoneNumber": "", "PhoneAreaCode": "", "PhoneCountryCode": "" },
-  #       { "PhoneType": "FAX", "PhoneNumber": "", "PhoneAreaCode": "", "PhoneCountryCode": "" },
-  #       { "PhoneType": "MOBILE", "PhoneNumber": "555-1212", "PhoneAreaCode": "415", "PhoneCountryCode": "" } ],
-  #       "UpdatedDateUTC": "/Date(1551399321043+0000)/", "ContactGroups": [], "IsSupplier": false, "IsCustomer": false,
-  #       "SalesTrackingCategories": [], "PurchasesTrackingCategories": [],
-  #       "PaymentTerms": { "Bills": { "Day": 15, "Type": "OFCURRENTMONTH" },
-  #       "Sales": { "Day": 10, "Type": "DAYSAFTERBILLMONTH" } }, "ContactPersons": [], "HasValidationErrors": false } ] }
-
-  class NullResponse
-    attr_reader :has_validation_errors
-
-    def initialize(has_validation_errors: false)
-      @has_validation_errors = has_validation_errors
-    end
-
-    def contacts
-      [NullContact.new]
-    end
-  end
-
-  class NullContact
-    attr_reader :contact_id
-
-    def initialize
-      @contact_id = '1234567890abcdefg'
-    end
-  end
-
-  class NullInvoice
-    attr_reader :invoice_number, :invoice_id
-
-    def initialize
-      @invoice_number = 'INV-0100'
-      @invoice_id = 'a12346' * 6 # 36 char
-    end
   end
 
   class Xero
@@ -229,8 +189,19 @@ module XeroClientService
       @xero_client.accounting_api.create_invoices(@xero_tenant_id, ...).invoices.first
     end
 
-    def email_invoice(...)
-      @xero_client.accounting_api.email_invoice(@xero_tenant_id, ...)
+    def email_invoice(invoice_id, request_empty = [], opts = {})
+      @xero_client.accounting_api.email_invoice(@xero_tenant_id, invoice_id, request_empty, opts)
+    end
+    # GET https://api.xero.com/api.xro/2.0/Invoices/9b9ba9e5-e907-4b4e-8210-54d82b0aa479/OnlineInvoice
+    # {
+    #   "OnlineInvoices": [
+    #     {
+    #       "OnlineInvoiceUrl": "https://in.xero.com/iztKMjyAEJT7MVnmruxgCdIJUDStfRgmtdQSIW13"
+    #     }
+    #   ]
+    # }
+    def get_online_invoice(invoice_id)
+      data = @xero_client.accounting_api.get_online_invoice(@xero_tenant_id, invoice_id)
     end
   end
 end
