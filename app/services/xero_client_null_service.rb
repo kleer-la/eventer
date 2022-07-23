@@ -20,7 +20,7 @@ module XeroClientService
     end
 
     def get_online_invoice(_)
-      [NullOnlineInvoice.new]
+      NullOnlineInvoices.new
     end
   end
 
@@ -65,12 +65,17 @@ module XeroClientService
       @invoice_id = 'a12346' * 6 # 36 char
     end
   end
-  
-  class NullOnlineInvoice
-    attr_reader :online_invoice_url
+
+  class NullOnlineInvoices 
+    attr_reader :online_invoices
     def initialize
-      @online_invoice_url = 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
+      @online_invoices = [NullOnlineInvoice.new]
+    end
+    class NullOnlineInvoice
+      attr_reader :online_invoice_url
+      def initialize
+        @online_invoice_url = 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
+      end
     end
   end
-
 end

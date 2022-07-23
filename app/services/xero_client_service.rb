@@ -159,7 +159,7 @@ module XeroClientService
       return nil if invoice.nil?
 
       data = @client.get_online_invoice(invoice.invoice_id)
-      data[0].online_invoice_url
+      data.online_invoices[0].online_invoice_url
     end
   end
 
