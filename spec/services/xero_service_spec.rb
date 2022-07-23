@@ -21,4 +21,15 @@ describe XeroClientService do
       response = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30','CODE')
     }.to change {Log.count}.by 1
   end
+  it 'Send Invoice with API error' do
+    xero = XeroClientService::XeroApi.new(
+            XeroClientService.create_null(
+              email_exception: XeroRuby::ApiError.new('Send Invoice error')
+            )
+          )
+    invoice = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30','CODE')
+    expect {
+      response = xero.email_invoice(invoice)
+    }.to change {Log.count}.by 1
+  end
 end

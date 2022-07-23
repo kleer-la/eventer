@@ -145,7 +145,18 @@ module XeroClientService
     end
 
     def email_invoice(invoice)
-      @client.email_invoice(invoice.invoice_id)
+      begin
+        # GET https://api.xero.com/api.xro/2.0/Invoices/9b9ba9e5-e907-4b4e-8210-54d82b0aa479/OnlineInvoice
+        
+        @client.email_invoice(invoice.invoice_id)
+     rescue StandardError => e 
+       Log.log(:xero, :warn,
+         "invoice not sent :#{invoice.invoice_number}", 
+         e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+        )
+     end
+ 
+
     end
   end
 
