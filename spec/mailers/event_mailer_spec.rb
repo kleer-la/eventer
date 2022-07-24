@@ -19,6 +19,21 @@ describe EventMailer do
     before :each do
       EventMailer.xero_service(XeroClientService.create_null)
     end
+
+    context 'English' do
+      before :each do
+        @participant.event.event_type.lang = :en
+      end
+      it 'English html' do
+        @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        html = @email.html_part.body.to_s
+        expect(html).to include 'Hello'
+        expect(html).to include 'Pay now'
+        expect(html).to include 'Time:'
+        expect(html).not_to include "t('"
+        expect(html).not_to include 'translation'
+      end
+    end
   
     it 'should queue and verify a simple email' do
       @email = EventMailer.welcome_new_event_participant(@participant).deliver_now

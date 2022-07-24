@@ -377,4 +377,23 @@ es:
       item_more: >-
         %{course} -
         %{place} - %{date} - por %{qty} vacantes
- 
+    welcome:
+      hello: Hola, %{name}
+      purpose: Recibes este correo como continuación de la compra que iniciaste en el sitio de Kleer. Quizás recibas otro mail, enviamos de dos maneras para asegurarnos que lo recibas.
+      payment:
+        text: Para completar la compra y reservar tu lugar, te compatimos el link de pago
+        button: Pagar ahora
+        notice: Este link tiene validez hasta el final de período del pago temprano o 6 días, lo que ocurra primero.
+      invoice: Puedes ver la factura correspondiente aquí
+      info:
+        title: Datos del evento
+        time:
+          label: 'Horario: '
+          range: "%{start} - %{end} hs"
+        place:
+          label: 'Lugar: '
+        address:
+          label: 'Dirección: '
+        policy: Política de Cancelación
+      closing: No dudes en contactarnos por cualquier consulta que tengas &#x1F60A;
+      regards: ¡Te esperamos!

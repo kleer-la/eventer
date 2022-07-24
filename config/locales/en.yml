@@ -363,4 +363,27 @@ en:
         %{place} - %{date} - one de %{student_name}
       item_more: >-
         %{course} -
-        %{place} - %{date} - por %{qty} vacantes
+        %{place} - %{date} - for %{qty} seats
+    welcome:
+      hello: Hello, %{name}
+      purpose: You receive this email as a follow up of the purchase you initiated on the Kleer site. You may receive another mail, we use two ways to make sure you receive it.
+      payment:
+        text: To complete the purchase and reserve your place, follow the payment link
+        button: Pay now
+        notice: This link is valid until the end of the early payment period or 6 days, whichever comes first.
+      invoice: You can view and download the invoice with this link
+      info:
+        title: Course information
+        time:
+          label: 'Time:'
+          range: "%{start} - %{end} hs"
+        place:
+          label: 'Time:'
+          range: "%{start} - %{end} hs"
+        place:
+          label: 'Where: '
+        address:
+          label: 'Address: '
+        policy: Cancellation policy
+      closing: Please don-t hesitate to contact us if you have any questions &#x1F60A;
+      regards: Best regards

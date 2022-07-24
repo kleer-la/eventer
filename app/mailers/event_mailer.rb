@@ -12,6 +12,7 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant)
     invoice = create_send_invoice(participant)
     @online_invoice_url = @@xero.get_online_invoice_url(invoice)
+    @lang =  participant.event.event_type.lang 
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
