@@ -33,6 +33,14 @@ describe EventMailer do
         expect(html).not_to include "t('"
         expect(html).not_to include 'translation'
       end
+      it 'English test' do
+        @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        text = @email.text_part.body.to_s
+        expect(text).to include 'Hello'
+        expect(text).to include 'Time:'
+        expect(text).not_to include "t('"
+        expect(text).not_to include 'translation'
+      end
     end
   
     it 'should queue and verify a simple email' do
