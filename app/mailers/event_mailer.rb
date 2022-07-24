@@ -9,10 +9,10 @@ class EventMailer < ApplicationMailer
 
   def welcome_new_event_participant(participant)
     @participant = participant
-    @pih = ParticipantInvoiceHelper.new(participant)
+    @lang =  participant.event.event_type.lang
+    @pih = ParticipantInvoiceHelper.new(participant, @lang)
     invoice = create_send_invoice(participant)
     @online_invoice_url = @@xero.get_online_invoice_url(invoice)
-    @lang =  participant.event.event_type.lang 
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
@@ -33,7 +33,7 @@ class EventMailer < ApplicationMailer
   end
 
   def alert_event_monitor(participant, edit_registration_link)
-    @pih = ParticipantInvoiceHelper.new(participant)
+    @pih = ParticipantInvoiceHelper.new(participant, :es)
     event = participant.event
     event_info = event_data(event.event_type.name, event.country.name, event.human_date)
     body = contact_data(participant) +
@@ -120,12 +120,11 @@ class EventMailer < ApplicationMailer
     date = DateTime.now
     codename = participant.event.online_cohort_codename
 
-    # TODO: add participant notes
     begin
       invoice = @@xero.create_invoices(
         contact.contacts[0].contact_id,
         @pih.item_description, participant.quantity, unit_price,
-        date.to_s, EventMailer.due_date(participant.event).to_s, codename
+        date.to_s, EventMailer.due_date(participant.event).to_s, codename, @lang
       )
     rescue StandardError => e
       Log.log(:xero, :error,  
@@ -142,8 +141,9 @@ class EventMailer < ApplicationMailer
 end
 
 class ParticipantInvoiceHelper
-  def initialize(participant)
+  def initialize(participant, lang)
     @participant = participant
+    @lang =  lang
   end
 
   #TODO: test & change languaje
@@ -152,17 +152,15 @@ class ParticipantInvoiceHelper
     event_name = participant.event.event_type.name
     country = participant.event.country.name.tr('-', '')
     human_date = participant.event.human_date
-    # participant_text = if participant.quantity == 1
-    #                      " por una vacante de #{participant.fname} #{participant.lname}"
-    #                    else
-    #                      " por #{participant.quantity} vacantes"
-    #                    end
 
-    # "#{event_name} - #{country} - #{human_date} -\n#{participant_text}"
     if participant.quantity == 1
-      I18n.t('mail.invoice.item_one', course: event_name, place: country, date: human_date, student_name: "#{participant.fname} #{participant.lname}")
+      I18n.t('mail.invoice.item_one', locale: @lang,
+        course: event_name, place: country, date: human_date, student_name: "#{participant.fname} #{participant.lname}"
+      )
     else
-      I18n.t('mail.invoice.item_more', course: event_name, place: country, date: human_date, qty: participant.quantity)
+      I18n.t('mail.invoice.item_more', locale: @lang,
+        course: event_name, place: country, date: human_date, qty: participant.quantity
+      )
     end
   end
 

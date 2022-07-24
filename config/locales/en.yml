@@ -360,10 +360,10 @@ en:
     invoice:
       item_one: >-
         %{course} -
-        %{place} - %{date} - one de %{student_name}
+        %{place} - %{date} - one seat for %{student_name}
       item_more: >-
         %{course} -
-        %{place} - %{date} - for %{qty} seats
+        %{place} - %{date} - #%{qty} seats
     welcome:
       hello: Hello, %{name}
       purpose: You receive this email as a follow up of the purchase you initiated on the Kleer site. You may receive another mail, we use two ways to make sure you receive it.
