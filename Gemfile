@@ -16,7 +16,6 @@ end
 group :development do
   gem 'listen'
   gem 'rubocop'
-  gem 'web-console', '~> 2.0'
   gem 'brakeman'
 end
 
