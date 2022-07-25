@@ -219,6 +219,32 @@ describe Event do
     end
   end
 
+  context 'English' do
+    before(:each) do
+      @event.date = '15/01/2015'
+    end
+    it "should have a human time in English that returns 'from 9:00 to 18:00hs'" do
+      I18n.with_locale(:en) {
+        expect(@event.human_time).to eq 'from 09:00 to 18:00 hs'
+      }
+    end
+
+    it "should have a human date in English if duration is 1" do
+      @event.duration = 1
+      I18n.with_locale(:en) {
+        expect(@event.human_date).to eq 'Jan 15'
+      }
+    end
+
+    it "should have a human date in English that returns '15 Ene' if finish date is '15 Ene'" do
+      @event.finish_date = '01/02/2015'
+      I18n.with_locale(:en) {
+        expect(@event.human_date).to eq 'Jan 15-Feb 01'
+      }
+    end
+
+   end
+
   context 'A private event' do
     before(:each) do
       @event.visibility_type = 'pr'

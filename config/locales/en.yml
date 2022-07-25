@@ -387,3 +387,9 @@ en:
         policy: Cancellation policy
       closing: "Please don't hesitate to contact us if you have any questions"
       regards: Best regards
+  certificate:
+    dod: The learning and skill acquisition process has been successfully completed.
+    how: CLASSROOM STYLE
+    date: DATE
+    length: LENGTH
+    code: 'Certification code: %{code}'

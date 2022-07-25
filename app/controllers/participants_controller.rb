@@ -236,8 +236,10 @@ class ParticipantsController < ApplicationController
   end
 
   def render_certificate
-    @certificate = ParticipantsHelper::Certificate.new(@participant)
-    render
+    I18n.with_locale(@participant.event.event_type.lang) {
+      @certificate = ParticipantsHelper::Certificate.new(@participant)
+      render
+    }
   rescue ArgumentError, ActionView::Template::Error => e
     certificate_error "#{e.message} (#{e.backtrace[0]})"
   end

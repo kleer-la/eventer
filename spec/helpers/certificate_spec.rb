@@ -27,6 +27,26 @@ describe Certificate do
     @participant.event = @e
   end
 
+  context 'English course' do
+    before(:each) do
+      # @et.lang = :en
+      
+    end
+    it 'event human readable date across year`s eve' do
+      @e.date = Date.new(2021, 12, 31)
+      I18n.with_locale(:en) {
+        cert = Certificate.new(@participant)
+        expect(cert.date).to eq 'Dec 31 2021-Jan 01 2022'
+      }
+    end
+    it 'DoD' do
+      I18n.with_locale(:en) {
+        cert = Certificate.new(@participant)
+        expect(cert.description).to include 'learning and skill acquisition'
+      }
+    end
+  end
+
   it 'new (2021) certificate wo/file' do
     @participant.event.event_type.kleer_cert_seal_image = ''
     cert = Certificate.new(@participant)

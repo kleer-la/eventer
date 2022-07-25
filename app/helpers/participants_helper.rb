@@ -153,7 +153,7 @@ module ParticipantsHelper
         (Setting.get(CERTIFICATE_KLEER)          if certified? && kleer_certification?),
         (Setting.get(CERTIFICATE_SCRUM_ALLIANCE) if certified? && csd_eligible?),
         Setting.get(CERTIFICATE_NONE),
-        'Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias.'
+        I18n.t('certificate.dod')
       ].find(&:present?)
     end
   end
@@ -220,9 +220,9 @@ module ParticipantsHelper
     end
 
     def certificate_info
-      text_box "<color rgb='#{@kcolor}'><b>MODALIDAD:</b></color>#{@data.place}<br>" \
-               "<color rgb='#{@kcolor}'><b>REALIZADO:</b></color> #{@data.date}<br>" \
-               "<color rgb='#{@kcolor}'><b>DEDICACIÓN:</b></color> #{@data.event_duration_hours} hs",
+      text_box "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.how')}: </b></color>#{@data.place}<br>" \
+               "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.date')}:</b></color> #{@data.date}<br>" \
+               "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.length')}:</b></color> #{@data.event_duration_hours} hs",
                at: [0, 250], align: :left,
                size: 14,
                inline_format: true
@@ -230,7 +230,7 @@ module ParticipantsHelper
 
     def verification_code
       fill_color @kcolor
-      text_box "Código de verificación de la certificación:#{@data.verification_code}",
+      text_box I18n.t('certificate.code', code: @data.verification_code),
                at: [0, 180], align: :left,
                size: 10
     end
@@ -275,12 +275,15 @@ module ParticipantsHelper
   end
 
   def self.generate_certificate(participant, page_size, store)
-    certificate = Certificate.new(participant)
-
     certificate_filename = store.tmp_path "#{participant.verification_code}p#{participant.id}-#{page_size}.pdf"
-    Prawn::Document.generate(certificate_filename,
-                             page_layout: :landscape, page_size: page_size) do |pdf|
-      render_certificate(pdf, certificate, page_size, store)
+
+    I18n.with_locale(participant.event.event_type.lang) do
+      certificate = Certificate.new(participant)
+
+      Prawn::Document.generate(certificate_filename,
+                              page_layout: :landscape, page_size: page_size) do |pdf|
+        render_certificate(pdf, certificate, page_size, store)
+      end
     end
     certificate_filename
   end

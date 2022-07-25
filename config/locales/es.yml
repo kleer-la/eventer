@@ -397,3 +397,9 @@ es:
         policy: Política de Cancelación
       closing: No dudes en contactarnos por cualquier consulta que tengas
       regards: ¡Te esperamos!
+  certificate:
+    dod: Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias.
+    how: MODALIDAD
+    date: REALIZADO
+    length: DEDICACIÓN
+    code: 'Código de verificación de la certificación: %{code}'
