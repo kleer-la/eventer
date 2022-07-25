@@ -389,7 +389,7 @@ en:
       regards: Best regards
   certificate:
     dod: The learning and skill acquisition process has been successfully completed.
-    how: STYLE
+    how: CLASSROOM STYLE
     date: DATE
     length: LENGTH
     code: 'Certification code: %{code}'
