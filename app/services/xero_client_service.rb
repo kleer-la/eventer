@@ -106,7 +106,7 @@ module XeroClientService
                                                    account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE,
                                                    tracking: [{ name: 'Cód. Proyecto', option: codename }] }],
                                     date: date, due_date: due_date, reference: codename,
-                                    branding_theme_id: BRANDING_THEME[lang],
+                                    branding_theme_id: BRANDING_THEME[lang.to_sym],
                                     status: XeroRuby::Accounting::Invoice::AUTHORISED }] } # DRAFT / AUTHORISED
       begin
         @client.create_invoices(invoice_data)

@@ -122,7 +122,7 @@ en:
         payment_type: "Payment type"
         is_payed: "Paid"
         accept_terms: "I have read and accepted <a href='http://www.kleer.la/en/privacy'>the privacy policy</a>."
-        confirm_with_mail: "Thanks! We have sent you an e-mail with the payment link. Your seat is confirmed with the payment."
+        confirm_with_mail: "Thanks! We have sent you an e-mail with the payment link. Your seat will be confirmed with the payment."
         confirm_without_mail: "Thanks! We will contact you shortly."
       trainer:
         new_title: "New Trainer"
@@ -385,5 +385,5 @@ en:
         address:
           label: 'Address: '
         policy: Cancellation policy
-      closing: Please don-t hesitate to contact us if you have any questions &#x1F60A;
+      closing: "Please don't hesitate to contact us if you have any questions"
       regards: Best regards

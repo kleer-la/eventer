@@ -23,6 +23,7 @@
     %br
     %br
     = t('mail.welcome.info.title', locale: @lang)
+    %br
     %b
       = t('mail.welcome.info.time.label', locale: @lang)
     = t('mail.welcome.info.time.range', locale: @lang, start: @participant.event.start_time.strftime('%H:%M'), end: @participant.event.end_time.strftime('%H:%M') )
@@ -46,9 +47,10 @@
       %br
       %br
       = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
-    %br
+      %br
     %br
     = t('mail.welcome.closing', locale: @lang)
+    &#x1F60A;
     %br
     %br
     = t('mail.welcome.regards', locale: @lang)
