@@ -122,7 +122,7 @@ en:
         payment_type: "Payment type"
         is_payed: "Paid"
         accept_terms: "I have read and accepted <a href='http://www.kleer.la/en/privacy'>the privacy policy</a>."
-        confirm_with_mail: "Thanks! We have sent you an e-mail with the payment link. Your seat is confirmed with the payment."
+        confirm_with_mail: "Thanks! We have sent you an e-mail with the payment link. Your seat will be confirmed with the payment."
         confirm_without_mail: "Thanks! We will contact you shortly."
       trainer:
         new_title: "New Trainer"
@@ -360,7 +360,30 @@ en:
     invoice:
       item_one: >-
         %{course} -
-        %{place} - %{date} - one de %{student_name}
+        %{place} - %{date} - one seat for %{student_name}
       item_more: >-
         %{course} -
-        %{place} - %{date} - por %{qty} vacantes
+        %{place} - %{date} - #%{qty} seats
+    welcome:
+      hello: Hello, %{name}
+      purpose: You receive this email as a follow up of the purchase you initiated on the Kleer site. You may receive another mail, we use two ways to make sure you receive it.
+      payment:
+        text: To complete the purchase and reserve your place, follow the payment link
+        button: Pay now
+        notice: This link is valid until the end of the early payment period or 6 days, whichever comes first.
+      invoice: You can view and download the invoice with this link
+      info:
+        title: Course information
+        time:
+          label: 'Time:'
+          range: "%{start} - %{end} hs"
+        place:
+          label: 'Time:'
+          range: "%{start} - %{end} hs"
+        place:
+          label: 'Where: '
+        address:
+          label: 'Address: '
+        policy: Cancellation policy
+      closing: "Please don't hesitate to contact us if you have any questions"
+      regards: Best regards

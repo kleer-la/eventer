@@ -1,51 +1,47 @@
-= "Hola #{@participant.fname},"
-= ""
-= "¡Gracias por tu interés en #{@participant.event.event_type.name}!"
-= ""
-Te enviamos la información de este taller:
-- if @participant.event.custom_prices_email_text.blank?
-  - iso_code= @participant.event.currency_iso_code
-  - #currency_symbol = currency_symbol_for(@participant.event.currency_iso_code)
-  - def currency_format(money) sprintf("%.0f", money) end
-  - eb_end_date= @participant.event.eb_end_date&.strftime('%d-%b-%Y')
 
-  = "Precio de lista: #{iso_code} #{currency_format(@participant.event.list_price)}"
-  - if !@participant.event.eb_price.nil? && @participant.event.eb_price > 0
-    Pronto pago:
-    = "#{iso_code} #{currency_format(@participant.event.eb_price)} abonando antes del #{eb_end_date}."
-  - if !@participant.event.couples_eb_price.nil?
-    En parejas:
-    = "#{iso_code} #{currency_format(@participant.event.couples_eb_price)} cada uno abonando antes del #{eb_end_date}."
-  Formas de pago: Tarjeta de crédito.
-  = ""
-  - if false #@participant.influence_zone.country.iso_code == 'AR'
-    - # Nota: Para pagos desde Argentina los valores se convierten a pesos con tipo de cambio del BNA y no se aplica impuesto PAIS.
-    = ""
-    IMPORTANTE: Te enviaremos en las próx. 24hs hábiles un link de pago. Reservarás tu lugar con el pago. 
-  - if !@participant.event.business_eb_price.nil?
-    Grupos (5 o más):
-    = "#{iso_code} #{currency_format(@participant.event.business_eb_price)} cada uno abonando antes del #{eb_end_date}."
-    Para grupos, responde a este mail indicando cuantas personas son y si puedes pagar con tarjeta.
-- else
-  = @participant.event.custom_prices_email_text
-
-= ""
-= "El evento #{@participant.event.event_type.name} será facilitado por #{@participant.event.trainer.name} el día #{@participant.event.human_date} de #{@participant.event.start_time.strftime( '%H:%M' )} a #{@participant.event.end_time.strftime( '%H:%M' )} hs."
-= ""
-= "Fecha: #{@participant.event.human_date}"
-= "Lugar: #{@participant.event.place}"
-= "Dirección: #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
-= ""
-= ""
-- if !@participant.event.cancellation_policy.nil? && @participant.event.cancellation_policy != ""
-  Política de Cancelación:
-  = @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date
-= ""
-No dudes en contactarnos por cualquier consulta que tengas :)
-= ""
-!Te esperamos!
-= ""
+- title = "#{@participant.event.event_type.name} - #{@participant.event.human_date}"
+= '-' * title.length
+= title
+= '-' * title.length
+= ''
+= t('mail.welcome.hello', locale: @lang, name: @participant.fname)
+= ''
+= t('mail.welcome.purpose', locale: @lang)
+= ''
+= t('mail.welcome.payment.text', locale: @lang)
+= "#{@online_invoice_url}?utm_source=emailpaynowbutton#paynow"
+= ''
+= t('mail.welcome.payment.notice', locale: @lang)
+= ''
+= t('mail.welcome.invoice', locale: @lang)
+= @online_invoice_url
+= ''
+= t('mail.welcome.info.title', locale: @lang)
+= ''
+= t('mail.welcome.info.time.label', locale: @lang) + t('mail.welcome.info.time.range', locale: @lang, start: @participant.event.start_time.strftime('%H:%M'), end: @participant.event.end_time.strftime('%H:%M') )
+= ''
+= t('mail.welcome.info.place.label', locale: @lang) + @participant.event.place
+= ''
+- unless @participant.event.country.name.downcase.include? 'online'
+  = t('mail.welcome.info.address.label', locale: @lang) + "#{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
+= ''
+- if @participant.event.custom_prices_email_text.present?
+  = ''
+  = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
+- if @participant.event.cancellation_policy.present?
+  = ''
+  = t('mail.welcome.info.policy.label', locale: @lang)
+  = ''
+  = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
+= ''
+= t('mail.welcome.closing', locale: @lang)
+= ''
+= t('mail.welcome.regards', locale: @lang)
+= ''
 Kleer - Agile Coaching & Training
+= ''
+= ADMIN_MAIL
+= ''
 website | http://www.kleer.la
 facebook | http://www.facebook.com/kleer.la
 twitter | https://twitter.com/kleer_la

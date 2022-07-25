@@ -16,22 +16,21 @@ end
 group :development do
   gem 'listen'
   gem 'rubocop'
-  gem 'web-console', '~> 2.0'
   gem 'brakeman'
 end
 
 group :development, :test do
   # https://github.com/lemurheavy/coveralls-ruby/issues/161 (thor>=0.20 => railties >=5.0)
-  gem 'coveralls_reborn', require: false
   gem 'pdf-inspector', require: 'pdf/inspector'
   gem 'rspec-mocks'
   gem 'rspec-rails'
   gem 'sqlite3'
-  # gem 'coveralls' #, '~> 0.7', require: false   # https://github.com/lemurheavy/coveralls-ruby/issues/161
   gem 'database_cleaner-active_record'
   gem 'debase'
   gem 'ruby-debug-ide'
   gem 'next_rails'
+  gem 'simplecov'
+  gem 'simplecov-lcov', '~> 0.8.0'
 end
 
 group :test do

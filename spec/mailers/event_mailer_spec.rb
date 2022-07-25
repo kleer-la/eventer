@@ -19,6 +19,29 @@ describe EventMailer do
     before :each do
       EventMailer.xero_service(XeroClientService.create_null)
     end
+
+    context 'English' do
+      before :each do
+        @participant.event.event_type.lang = :en
+      end
+      it 'English html' do
+        @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        html = @email.html_part.body.to_s
+        expect(html).to include 'Hello'
+        expect(html).to include 'Pay now'
+        expect(html).to include 'Time:'
+        expect(html).not_to include "t('"
+        expect(html).not_to include 'translation'
+      end
+      it 'English test' do
+        @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        text = @email.text_part.body.to_s
+        expect(text).to include 'Hello'
+        expect(text).to include 'Time:'
+        expect(text).not_to include "t('"
+        expect(text).not_to include 'translation'
+      end
+    end
   
     it 'should queue and verify a simple email' do
       @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
@@ -150,4 +173,29 @@ describe EventMailer do
       expect(@email.body).to include('2 personas')
     end
   end
+end
+
+describe ParticipantInvoiceHelper do
+  before :each do
+    @participant = FactoryBot.create(:participant)
+  end
+  it 'item_description one seat es' do
+    pih = ParticipantInvoiceHelper.new(@participant, :es)
+    expect(pih.item_description).to include 'por una vacante'
+  end
+  it 'item_description three seats es' do
+    @participant.quantity =3
+    pih = ParticipantInvoiceHelper.new(@participant, :es)
+    expect(pih.item_description).to include 'por 3 vacantes'
+  end
+  it 'item_description one seat en' do
+    pih = ParticipantInvoiceHelper.new(@participant, :en)
+    expect(pih.item_description).to include 'one seat for'
+  end
+  it 'item_description three seats es' do
+    @participant.quantity = 3
+    pih = ParticipantInvoiceHelper.new(@participant, :en)
+    expect(pih.item_description).to include '#3 seats'
+  end
+  
 end

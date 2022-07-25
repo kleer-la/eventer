@@ -5,36 +5,37 @@
     
 %div{ :style => "padding:6px;font-size:12px" }
   %font{ :face => "raleway, verdana, sans-serif"}
-    = "Hola, " + @participant.fname + "."
+    = t('mail.welcome.hello', locale: @lang, name: @participant.fname)
     %br
     %br
-    Recibes este correo como continuación de la compra que iniciaste en el sitio de Kleer. Quizás recibas otro mail, enviamos de dos maneras para asegurarnos que lo recibas.
+    = t('mail.welcome.purpose', locale: @lang)
     %br
     %br
-    Para completar la compra y reservar tu lugar, te compatimos el link de pago:
+    = t('mail.welcome.payment.text', locale: @lang)
     %br
-    %a{href: "#{@online_invoice_url}?utm_source=emailpaynowbutton#paynow", style: "background: rgb(87, 196, 10); border: 0px solid rgb(87, 196, 10); border-radius: 3px; color: rgb(254, 254, 254); display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 5px 0px; text-align: center; text-decoration: none; width: 110px;"} Pagar ahora
+    %a{href: "#{@online_invoice_url}?utm_source=emailpaynowbutton#paynow", style: "background: rgb(87, 196, 10); border: 0px solid rgb(87, 196, 10); border-radius: 3px; color: rgb(254, 254, 254); display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 5px 0px; text-align: center; text-decoration: none; width: 110px;"}= t('mail.welcome.payment.button', locale: @lang)
     %br
-    Este link tiene validez hasta el final de período del pago temprano o 6 días, lo que ocurra primero.
+    = t('mail.welcome.payment.notice', locale: @lang)
     %br
     %br
-    Puedes ver la factura correspondiente aquí
+    = t('mail.welcome.invoice', locale: @lang)
     = @online_invoice_url
     %br
     %br
-    Datos del evento
-    %b
-      Horario:
-    =@participant.event.start_time.strftime( '%H:%M' ) + " a " + @participant.event.end_time.strftime( '%H:%M ' ) + "hs."
+    = t('mail.welcome.info.title', locale: @lang)
     %br
     %b
-      Lugar:
-    =" #{@participant.event.place}"
+      = t('mail.welcome.info.time.label', locale: @lang)
+    = t('mail.welcome.info.time.range', locale: @lang, start: @participant.event.start_time.strftime('%H:%M'), end: @participant.event.end_time.strftime('%H:%M') )
+    %br
+    %b
+      = t('mail.welcome.info.place.label', locale: @lang)
+    = @participant.event.place
     %br
     - unless @participant.event.country.name.downcase.include? 'online'
       %b
-        Dirección:
-      = " #{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
+      = t('mail.welcome.info.address.label', locale: @lang)
+      = "#{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
     %br
     - if @participant.event.custom_prices_email_text.present?
       %br
@@ -42,16 +43,17 @@
       %br
     - if @participant.event.cancellation_policy.present?
       %b
-        Política de Cancelación
+        = t('mail.welcome.info.policy.label', locale: @lang)
       %br
       %br
       = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
+      %br
+    %br
+    = t('mail.welcome.closing', locale: @lang)
+    &#x1F60A;
     %br
     %br
-    No dudes en contactarnos por cualquier consulta que tengas &#x1F60A;  
-    %br
-    %br
-    ¡Te esperamos!
+    = t('mail.welcome.regards', locale: @lang)
     %br
     %br
     %strong Kleer - Agile Coaching & Training
