@@ -1,19 +1,6 @@
 # frozen_string_literal: true
 
 class ApiController < ApplicationController
-  def index
-    # .public_commercial_visible
-    @events = Event.public_commercial_visible.all(order: 'date')
-    respond_to do |format|
-      format.json do
-        render json: @events.to_json(
-          only: %i[id date finish_date city specific_subtitle],
-          methods: %i[name country_name country_iso]
-        )
-      end
-    end
-  end
-
   def participants_synch
     api_token_provided = params[:api_token]
     api_password_provided = params[:api_password]

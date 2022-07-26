@@ -1,6 +1,52 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
+
+  def catalog
+    open = Event.public_and_visible.order('date').reduce([]) do |list, ev|
+      et = ev.event_type
+      list << {
+        event_id: ev.id,
+        date: ev.date,
+        finish_date: ev.date,
+        city: ev.date,
+        specific_subtitle: ev.specific_subtitle,
+        country_name: ev.country.name,
+        country_iso: ev.country.iso_code,
+        event_type_id: et.id,
+        name: et.name,
+        cover: et.cover,
+        categories: et.categories.pluck(:id, :name).map { |id, name| { id: id, name: name } },
+        lang: et.lang,
+        slug: et.slug,
+        csd_eligible: et.csd_eligible,
+        is_kleer_certification: et.is_kleer_certification
+      }
+    end
+
+    incompany = EventType.where(include_in_catalog: true, deleted: false).reduce([]) do |list, et|
+      list << {
+        event_id: nil,
+        date: nil,
+        finish_date: nil,
+        city: nil,
+        specific_subtitle: nil,
+        country_name: nil,
+        country_iso: nil,
+        event_type_id: et.id,
+        name: et.name,
+        cover: et.cover,
+        categories: et.categories.pluck(:id, :name).map { |id, name| { id: id, name: name } },
+        lang: et.lang,
+        slug: et.slug,
+        csd_eligible: et.csd_eligible,
+        is_kleer_certification: et.is_kleer_certification
+      } unless open.find { |ev| ev[:event_type_id] == et.id}
+    end
+
+    render json: open.to_a + incompany.to_a
+  end
+
   def index
     @events = Event.public_courses
     respond_to do |format|

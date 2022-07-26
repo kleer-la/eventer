@@ -32,6 +32,15 @@ Rails.application.routes.draw do
 
   resources :trainers
 
+  get 'events/filter/:country_iso' => 'events#index'
+
+  get 'events/:id/send_certificate' => 'events#send_certificate'
+
+  get 'events/:event_id/participant_confirmed' => 'participants#confirm'
+  get 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
+  get 'events/:event_id/participants_print' => 'participants#print'
+  get 'events/:event_id/participants_survey' => 'participants#survey'
+  post 'events/:event_id/participants_batch_load' => 'participants#batch_load'
   resources :events do
     resources :participants
   end
@@ -60,25 +69,15 @@ Rails.application.routes.draw do
   get 'api/event_types/:id' => 'home#event_type_show'
   get 'api/event_types/:id/trainers' => 'home#show_event_type_trainers'
   get 'api/categories' => 'home#categories'
-
-  get 'api/2/upcoming_events' => 'api#index'
+  get 'api/catalog' => 'home#catalog'
+  
   get 'api/2/participants/synch' => 'api#participants_synch'
-
+  
   get 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
   get 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
   get 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'
   get 'events/load_cancellation_policy/:id' => 'ajax#load_cancellation_policy'
-
-  get 'events/filter/:country_iso' => 'events#index'
-
-  get 'events/:id/send_certificate' => 'events#send_certificate'
-
-  get 'events/:event_id/participant_confirmed' => 'participants#confirm'
-  get 'events/:event_id/participants/:id/certificate' => 'participants#certificate'
-  get 'events/:event_id/participants_print' => 'participants#print'
-  get 'events/:event_id/participants_survey' => 'participants#survey'
-  post 'events/:event_id/participants_batch_load' => 'participants#batch_load'
-
+  
   get 'participants/search' => 'participants#search'
   get 'participants/followup' => 'participants#followup'
 
