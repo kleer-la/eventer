@@ -91,7 +91,6 @@ gem 'aws-sdk', '~> 2' # v2 change to Aws instead of AWS
 gem 'newrelic_rpm'
 
 # Gemas necesarias para integracion con mailchimp workflow
-gem 'json'
 
 # reCaptcha
 gem 'recaptcha', require: 'recaptcha/rails' # , :github => "ambethia/recaptcha"
