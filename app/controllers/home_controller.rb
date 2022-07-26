@@ -24,7 +24,9 @@ class HomeController < ApplicationController
       }
     end
 
-    incompany = EventType.where(include_in_catalog: true, deleted: false).reduce([]) do |list, et|
+    incompany = EventType.where(include_in_catalog: true, deleted: false).
+                select {|et| open.find { |ev| ev[:event_type_id] == et.id}}.
+                reduce([]) do |list, et|
       list << {
         event_id: nil,
         date: nil,
@@ -41,7 +43,7 @@ class HomeController < ApplicationController
         slug: et.slug,
         csd_eligible: et.csd_eligible,
         is_kleer_certification: et.is_kleer_certification
-      } unless open.find { |ev| ev[:event_type_id] == et.id}
+        }
     end
 
     render json: open.to_a + incompany.to_a
