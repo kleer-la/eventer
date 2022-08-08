@@ -8,8 +8,8 @@ class HomeController < ApplicationController
       list << {
         event_id: ev.id,
         date: ev.date,
-        finish_date: ev.date,
-        city: ev.date,
+        finish_date: ev.finish_date,
+        city: ev.city,
         specific_subtitle: ev.specific_subtitle,
         country_name: ev.country.name,
         country_iso: ev.country.iso_code,
