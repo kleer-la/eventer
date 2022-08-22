@@ -21,7 +21,7 @@ describe 'GET catalog', type: :request do
     json = JSON.parse(response.body)
     expect(json.size).to eq 1
   end
-  it 'one event one event_type in catalog' do
+  it 'one event + other event_type in catalog' do
     event = FactoryBot.create(:event)
     event_type = FactoryBot.create(:event_type, include_in_catalog: true)
  
@@ -31,5 +31,17 @@ describe 'GET catalog', type: :request do
     json = JSON.parse(response.body)
     expect(json.size).to eq 2
     expect(json[0]['event_type_id']).not_to eq json[1]['event_type_id']
+  end
+  it 'one event & w/ event_type in catalog' do
+    event = FactoryBot.create(:event)
+    event.event_type.include_in_catalog = true
+ 
+    event.event_type.save!
+
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 1
   end
 end

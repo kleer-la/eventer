@@ -27,7 +27,7 @@ class HomeController < ApplicationController
     end
 
     incompany = EventType.where(include_in_catalog: true, deleted: false).
-                # select {|et| open.find { |ev| ev[:event_type_id] == et.id}}.
+                select {|et| (open.find { |ev| ev[:event_type_id] == et.id}).nil?}.
                 reduce([]) do |list, et|
       list << {
         event_id: nil,
