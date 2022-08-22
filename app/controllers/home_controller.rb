@@ -3,7 +3,7 @@
 class HomeController < ApplicationController
 
   def catalog
-    open = Event.public_and_visible.order('date').reduce([]) do |list, ev|
+    open = Event.public_and_visible.where(draft: false, cancelled: false).order('date').reduce([]) do |list, ev|
       et = ev.event_type
       list << {
         event_id: ev.id,
@@ -13,6 +13,16 @@ class HomeController < ApplicationController
         specific_subtitle: ev.specific_subtitle,
         country_name: ev.country.name,
         country_iso: ev.country.iso_code,
+        list_price: ev.list_price, 
+        event_type: ev.event_type, 
+        event_duration: ev.duration,
+        eb_price: ev.eb_price, 
+        eb_end_date: ev.eb_end_date, 
+        is_sold_out: ev.is_sold_out,
+        start_time: ev.start_time , 
+        end_time: ev.end_time,
+        mode: ev.mode, 
+        time_zone_name: ev.time_zone_name,
         event_type_id: et.id,
         name: et.name,
         subtitle: et.subtitle,
@@ -37,6 +47,14 @@ class HomeController < ApplicationController
         specific_subtitle: nil,
         country_name: nil,
         country_iso: nil,
+        event_duration: nil,
+        eb_price: nil,
+        eb_end_date: nil,
+        is_sold_out: nil,
+        start_time: nil,
+        end_time: nil,
+        mode: nil,
+        time_zone_name: nil,
         event_type_id: et.id,
         name: et.name,
         subtitle: et.subtitle,
