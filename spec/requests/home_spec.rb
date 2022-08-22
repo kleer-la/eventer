@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'GET catalog', type: :request do
+  before(:all) do
+    Event.all.each {|e| e.destroy}
+  end
+
   it 'no event one event_type' do
     event_type = FactoryBot.create(:event_type, include_in_catalog: true)
     get '/api/catalog', params: { format: 'json' }
