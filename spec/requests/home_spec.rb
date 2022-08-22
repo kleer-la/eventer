@@ -3,17 +3,33 @@
 require 'rails_helper'
 
 describe 'GET catalog', type: :request do
-  include Rack::Test::Methods
-  def app
-    Rack::Builder.parse_file('config.ru').first
-  end
-  pending 'no event one event_type' do
-    event_type = FactoryBot.create(:event_type)
+  it 'no event one event_type' do
+    event_type = FactoryBot.create(:event_type, include_in_catalog: true)
     get '/api/catalog', params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
     
-    # json = JSON.parse(last_response.body)
-    # expect(json.size).to eq 10
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 1
+  end
+  it 'one event one event_type in catalog' do
+    event = FactoryBot.create(:event)
+
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 1
+  end
+  it 'one event one event_type in catalog' do
+    event = FactoryBot.create(:event)
+    event_type = FactoryBot.create(:event_type, include_in_catalog: true)
+ 
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 2
+    expect(json[0]['event_type_id']).not_to eq json[1]['event_type_id']
   end
 end
