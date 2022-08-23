@@ -14,7 +14,6 @@ class HomeController < ApplicationController
         country_name: ev.country.name,
         country_iso: ev.country.iso_code,
         list_price: ev.list_price, 
-        event_type: ev.event_type, 
         event_duration: ev.duration,
         eb_price: ev.eb_price, 
         eb_end_date: ev.eb_end_date, 
