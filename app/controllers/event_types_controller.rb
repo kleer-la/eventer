@@ -150,6 +150,11 @@ class EventTypesController < ApplicationController
   def testimonies
     @event_type = EventType.find(params[:id])
     @participants = @event_type.testimonies.sort_by(&:created_at).reverse
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @participants.first(10) }
+    end
   end
 
   private
