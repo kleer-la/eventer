@@ -22,7 +22,7 @@ class EventType < ApplicationRecord
     end
   end
   def unique_name
-    "#{name} (#{lang}) ##{id}"
+    "#{name} (#{tag_name}#{lang}) ##{id}"
   end
 
 
