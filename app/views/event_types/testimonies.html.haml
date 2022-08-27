@@ -15,8 +15,7 @@
           %thead
             %tr
               %th Fecha
-              %th Nombre
-              %th Apellido
+              %th Participante
               %th Comentario
             %tbody
               - @participants.each do |participant|
@@ -26,10 +25,7 @@
                       = participant.event.date
                   %td
                     %a{ :href => "/events/#{participant.event.id}/participants_survey" }
-                      = participant.fname
-                  %td
-                    %a{ :href => "/events/#{participant.event.id}/participants_survey" }
-                      =participant.lname
+                      = "#{participant.fname} #{participant.lname}"
                   %td{ :style => "white-space:normal;"}
                     %a{ :href => "/events/#{participant.event.id}/participants_survey" }
                       =participant.testimony
