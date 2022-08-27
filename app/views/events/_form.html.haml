@@ -78,13 +78,12 @@
                 %label.control-label{ :for => :country_id }= t("formtastic.labels.event.country")
                 = f.collection_select :country_id, Country.all, :id, :name, :input_html => { :style => "width: 200px" }
           .row-fuid
-            .span12
+            .span3
               .control-group
                 %label.control-label{ :for => :trainer_id }= t("formtastic.labels.event.trainer")
                 #trainer_select
                   = render :partial => 'trainers_select'
-          .row-fuid
-            .span12
+            .span3
               .control-group
                 %label.control-label{ :for => :trainer2_id }= t("formtastic.labels.event.trainer2")
                 #trainer2_select
@@ -93,8 +92,7 @@
                   - else
                     = f.collection_select :trainer2_id, [], :id, :name, {include_blank: 'No hay entrenadores disponibles'}
                   -# = render :partial => 'trainers2_select'
-          .row-fuid
-            .span12
+            .span3
               .control-group
                 %label.control-label{ :for => :trainer3_id }= t("formtastic.labels.event.trainer2")
                 #trainer3_select
@@ -215,16 +213,19 @@
           .row-fuid
             .span4
               .control-group
-                %label.control-label{ :for => :should_ask_for_referer_code }= t("formtastic.labels.event.enable_online_payment")
+                %label.control-label.muted{ :for => :should_ask_for_referer_code }= t("formtastic.labels.event.enable_online_payment")
                 = f.check_box :enable_online_payment
+                %small.muted
+                  Deprecado
             .span4
               .control-group
-                %label.control-label{ :for => :online_course_codename }= t("formtastic.labels.event.online_course_codename")
-                = f.text_field :online_course_codename, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.online_course_codename")
+                %label.control-label.muted{ :for => :online_course_codename }= t("formtastic.labels.event.online_course_codename")
+                = f.text_field :online_course_codename, :class => 'input-block-level', :placeholder => "Deprecado"
             .span4
               .control-group
-                %label.control-label{ :for => :registration_link }= t("formtastic.labels.event.online_cohort_codename")
-                = f.text_field :online_cohort_codename, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.online_cohort_codename")
+                %label.control-label{ :for => :registration_link }
+                  Cód Proyecto
+                = f.text_field :online_cohort_codename, :class => 'input-block-level', :placeholder => "En Bag(u)el"
           .row-fuid
             .span12
               .control-group
@@ -475,7 +476,9 @@
 
     var eb_new_date = eb_date_day + "-" + eb_date_month + "-" + eb_date_year;
     $("#event_eb_end_date").val( eb_new_date );
-
+    var tag_name = "#{@event&.event_type&.tag_name}";
+    if (tag_name != "")
+      $("#event_online_cohort_codename").val(tag_name+value.slice(2,4)+value.slice(5,7)+value.slice(8))
   }
 
   function eventOnLineToggle() {
