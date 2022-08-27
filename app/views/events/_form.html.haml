@@ -475,7 +475,9 @@
 
     var eb_new_date = eb_date_day + "-" + eb_date_month + "-" + eb_date_year;
     $("#event_eb_end_date").val( eb_new_date );
-
+    var tag_name = "#{@event&.event_type&.tag_name}";
+    if (tag_name != "")
+      $("#event_online_cohort_codename").val(tag_name+value.slice(2,4)+value.slice(5,7)+value.slice(8))
   }
 
   function eventOnLineToggle() {
