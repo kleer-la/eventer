@@ -162,6 +162,15 @@ class HomeController < ApplicationController
     end
   end
 
+  def show_event_type_testimonies
+    event_type = EventType.find(params[:id])
+    participants = event_type.testimonies.sort_by(&:created_at).reverse
+
+    respond_to do |format|
+      format.json { render json: participants.first(10) }
+    end
+  end
+
   private
 
   def event_data_to_include
