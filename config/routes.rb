@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   get 'api/event_types' => 'home#event_type_index'
   get 'api/event_types/:id' => 'home#event_type_show'
   get 'api/event_types/:id/trainers' => 'home#show_event_type_trainers'
+  get 'api/event_types/:id/testimonies' => 'home#show_event_type_testimonies'
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
   

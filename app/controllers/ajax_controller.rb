@@ -32,6 +32,6 @@ class AjaxController < ApplicationController
 
   def load_cancellation_policy
     @cancellation_policy = EventType.find(params[:id]).cancellation_policy
-    render text: @cancellation_policy.html_safe, layout: false
+    render plain: @cancellation_policy.html_safe, layout: false
   end
 end
