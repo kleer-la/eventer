@@ -57,8 +57,8 @@ describe 'GET api/event_type/1.json', type: :request do
     get "/api/event_types/#{event.event_type.id}.json", params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
-    p response    
+  
     json = JSON.parse(response.body)
-    expect(json.size).to gt 1 
+    expect(json.size).to be > 1 
   end
 end
