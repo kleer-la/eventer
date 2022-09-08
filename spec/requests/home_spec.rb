@@ -49,3 +49,16 @@ describe 'GET catalog', type: :request do
     expect(json.size).to eq 1
   end
 end
+
+
+describe 'GET api/event_type/1.json', type: :request do
+  it 'no event one event_type' do
+    event = FactoryBot.create(:event)
+    get "/api/event_type/#{event.event_type.id}.json", params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    p response    
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 1
+  end
+end

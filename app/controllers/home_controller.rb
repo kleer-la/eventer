@@ -138,7 +138,7 @@ class HomeController < ApplicationController
     @event_type = EventType.find(params[:id])
 
     respond_to do |format|
-      format.json { render json: @event_type }
+      format.json { render json: event_type_to_json(@event_type) }
       format.xml { render xml: @event_type.to_xml(methods: %i[slug canonical_slug], include: :categories) }
     end
   end
@@ -170,6 +170,56 @@ class HomeController < ApplicationController
       format.json { render json: participants.first(10) }
     end
   end
+
+  # json used in v2022 landing
+  def event_type_to_json(event_type)
+    event_type.to_json(
+      only: [:id, :name, :description, :recipients, :program, :created_at, :updated_at, :goal, 
+      :duration, :faq, :elevator_pitch, :learnings, :takeaways, :subtitle, :csd_eligible, :is_kleer_certification, 
+      :external_site_url, :deleted, :noindex, :lang, :cover], 
+      methods: %i[slug canonical_slug], include: :categories )
+  
+    # "id": 1,
+    # "name": "Introducción a los Métodos Ágiles ",
+    # "description": "Esta jornada recorre la situación general de la industria de software hasta finales del siglo XX, y el surgimiento del movimiento que culminaría en el Manifiesto Ágil, sentando los valores y principios de las metodologías ágiles.\r\nEl curso deja espacio para la discusión de estos principios a fin de que los asistentes puedan comprender en profundidad cuáles son los puntos principales de cambio y que se despejen dudas y algunos errores comunes sobre el movimiento.\r\nFinalmente se recorren las principales vertientes metodológicas y sus características principales, separando dónde pone cada una su foco y qué es lo que dejan fuera de su alcance.",
+    # "recipients": "- Líderes de Equipo\r\n- Project Managers\r\n- Consultores\r\n- Integrantes de equipos de trabajo interesados en mejorar (Desarrolladores, Analistas, Diseñadores, etc).",
+    # "program": "- Problemas recurrentes en la industria de software\r\n- Manifiesto Ágil\r\n    - Principios y Valores\r\n    - Metodologías más populares\r\n- Scrum\r\n- XP\r\n- Lean / Kanban\r\n- Crystal, FDD, Agile UP y otras\r\n    - Discusión de casos y alternativas con los asistentes",
+    # "created_at": "2012-08-23T20:44:48.360Z",
+    # "updated_at": "2022-06-29T18:53:44.036Z",
+    # "goal": "Los asistentes tendrán una perspectiva general sobre los métodos ágiles, su motivación histórica y los principios generales sobre los que están basados. También conocerán los principales métodos, para poder decidir cuáles resultan más apropiados para su contexto, a fin de profundizar en ellos a través de lecturas u otros entrenamientos especializados.",
+    # "duration": 4,
+    # "faq": "",
+    # "elevator_pitch": "Esta jornada recorre la situación general de la industria de software hasta finales del siglo XX",
+    # "learnings": "",
+    # "takeaways": "",
+    # "subtitle": "",
+    # "csd_eligible": false,
+    # "is_kleer_certification": false,
+    # "external_site_url": "",
+    # "canonical_id": 268, -> canonical (string)
+    # "deleted": true,
+    # "noindex": false,
+    # "lang": "es",
+    # "cover": ""
+
+    # trainers (prox evento o los del tipo de evento) - gravatar / bio(lang) / nombre / usr tw / linkedin / credential
+    # events (proximos) - mismo que catálogo
+    # testimonies (limite 10 - futuro solo seleccionados)
+    # event_types misma categoria (todas) - mismo que catálogo
+
+    
+    # "materials": "",
+    # "include_in_catalog": false,
+    # "tag_name": "",
+    # "average_rating": "4.61",
+    # "net_promoter_score": 67,
+    # "surveyed_count": 18,
+    # "promoter_count": 12,
+    # "cancellation_policy": "",
+    # "kleer_cert_seal_image": "",
+
+  end
+
 
   private
 

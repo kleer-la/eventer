@@ -152,4 +152,12 @@ describe EventType do
       expect(et.noindex).to be false
     end
   end
+  context 'v2022 website fields' do
+    it 'New event type has new fields: side_image, brochure, new_version' do
+      et = FactoryBot.create(:event_type, side_image: 'alpha', brochure: 'beta')
+      expect(et.new_version).to be false
+      expect(et.side_image).to eq 'alpha'
+      expect(et.brochure).to eq 'beta'
+    end
+  end
 end
