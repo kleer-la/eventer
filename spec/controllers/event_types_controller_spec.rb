@@ -76,6 +76,15 @@ describe EventTypesController do
         post :create, params: { event_type: @event_type_att }
         expect(assigns(:event_type)[:cover]).to eq 'rambandanga'
       end
+      it 'v2022 fields side_image brochure new_version' do
+        @event_type_att[:new_version] = true
+        @event_type_att[:side_image] = 'zandanga'
+        @event_type_att[:brochure] = 'ajdasd'
+        post :create, params: { event_type: @event_type_att }
+        expect(assigns(:event_type)[:new_version]).to be true
+        expect(assigns(:event_type)[:side_image]).to eq 'zandanga'
+        expect(assigns(:event_type)[:brochure]).to eq 'ajdasd'
+      end
 
       it 'redirects to the created event_type' do
         post :create, params: { event_type: @event_type_att }

@@ -70,19 +70,24 @@
                 %small.muted
                   Ejemplo "PASOL" generará cód proyecto "PASOL221218"
           .row-fluid
-            .span12
-              .control-group
-                %label.control-label{ :for => :csd_eligible }= t("formtastic.labels.event_type.csd_eligible")
-                = f.check_box :csd_eligible
-          .row-fluid
             .span4
               .control-group
                 %label.control-label{ :for => :is_kleer_certification }= t("formtastic.labels.event_type.is_kleer_certification")
                 = f.check_box :is_kleer_certification
             .span4
               .control-group
+                %label.control-label{ :for => :csd_eligible }= t("formtastic.labels.event_type.csd_eligible")
+                = f.check_box :csd_eligible
+          .row-fluid
+            .span4
+              .control-group
                 %label.control-label{ :for => :cover }= t("formtastic.labels.event_type.cover")
                 = f.text_field :cover, :class => 'input-block-level'
+            .span4
+              .control-group
+                %label.control-label{ :for => :cover }
+                  Imagen a la derecha 
+                = f.text_field :side_image, :class => 'input-block-level'
             .span4
               .control-group
                 %label.control-label{ :for => :subtitle }= t("formtastic.labels.event_type.kleer_cert_seal_image")
@@ -176,12 +181,17 @@
                   %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown
                   y HTML. Se mostrará en su própio tab ("Preguntas Frecuentes"), en kleer.la.
           .row-fluid
-            .span12
+            .span6
+              .control-group
+                %label.control-label{ :for => :external_site_url }
+                  Link público a Brochure (pdf)
+                = f.text_field :brochure, :class => "input-block-level"
+            .span6
               .control-group
                 %label.control-label{ :for => :external_site_url }= t("formtastic.labels.event_type.external_site_url")
                 = f.text_field :external_site_url, :class => "input-block-level"
                 %small.muted
-                  Si la configura kleer.la redirigirá a ella en lugar del landing del taller.
+                  Si este campo existe, la landing normal en kleer.la no se mostrará, se redirigirá este lugar.
           .row-fluid
             .span12
               .control-group
@@ -190,20 +200,27 @@
                 %small.muted
                   Para SEO, se incluira en HEAD de la landing.
           .row-fluid
-            .span6
+            .span4
               .control-group
                 %label.control-label{ :for => :deleted }
                   Borrado
                 = f.check_box :deleted
                 %small.muted
                   Redireccionará a canonical o 404
-            .span6
+            .span4
               .control-group
                 %label.control-label{ :for => :noindex }
                   No Indexar
                 = f.check_box :noindex
                 %small.muted
                   Pedirá no ser indexada por buscador (es un draft o tiene canonical).
+            .span4
+              .control-group
+                %label.control-label{ :for => :noindex }
+                  Nueva Versión
+                = f.check_box :new_version
+                %small.muted
+                  Se visualizará (landing) con nueva versión (si hubiera)
           .row-fuid
             .span12
               .form-actions

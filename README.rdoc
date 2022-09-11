@@ -23,6 +23,7 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Ejecutar pruebas rápidas: bundle exec rails ci
 - Ejecutar pruebas lentas: bundle exec rails slow_tests
 - Ejecutar alguna prueba: bundle exec rails spec SPEC=<path relativo>
+- Migration antes de pruebas: RAILS_ENV=test;rails db:migrate
 
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
     #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
