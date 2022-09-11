@@ -62,3 +62,25 @@ describe 'GET api/event_type/1.json', type: :request do
     expect(json.size).to be > 1 
   end
 end
+describe 'GET api/event_type/1/testimonies', type: :request do
+  it 'one testimony' do
+    ev = FactoryBot.create(:event)
+    FactoryBot.create(:participant, event: ev, testimony: 'Hi!')
+    get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+  
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 1
+  end
+  it 'one empty testimony' do
+    ev = FactoryBot.create(:event)
+    FactoryBot.create(:participant, event: ev, testimony: '')
+    get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+  
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 0
+  end
+end
