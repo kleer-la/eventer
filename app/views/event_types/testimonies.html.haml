@@ -20,6 +20,7 @@
               %th Comentario
             %tbody
               - @participants.each do |participant|
+                - path= "/events/#{participant.event.id}/participants/#{participant.id}"
                 %tr
                   %td
                     %a{ :href => "/events/#{participant.event.id}/participants" }
@@ -27,8 +28,14 @@
                   %td
                     %a{ :href => "/events/#{participant.event.id}/participants_survey" }
                       = "#{participant.fname} #{participant.lname}"
-                  %td
-                    = participant.selected
                   %td{ :style => "white-space:normal;"}
-                    %a{ :href => "/events/#{participant.event.id}/participants_survey" }
-                      = participant.testimony
+                    = best_in_place participant, :selected, :as => :checkbox, :url => path, :class => ['editable','editable-click']
+                  %td{ :style => "white-space:pre-line;"}
+                    = best_in_place participant, :testimony, :as => :textarea, :url => path, :class => ['editable','editable-click']
+
+:javascript
+
+  $(document).ready(function() {
+    /* Activating Best In Place */
+    jQuery(".best_in_place").best_in_place();
+  });
