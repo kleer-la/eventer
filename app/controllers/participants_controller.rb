@@ -312,7 +312,7 @@ class ParticipantsController < ApplicationController
     params.require(:participant)
           .permit :email, :fname, :lname, :phone, :event_id,
                   :status, :notes, :influence_zone_id, :influence_zone, :quantity,
-                  :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony,
+                  :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony, :selected,
                   :xero_invoice_number, :invoice_id, :is_payed,
                   :campaign_source, :campaign, :accept_terms, :id_number, :address
   end

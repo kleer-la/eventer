@@ -106,6 +106,15 @@ describe EventType do
       FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
       expect(@event_type.testimonies.count).to eq 1
     end
+    it 'participant w/2 testimones one selected' do
+      ev = FactoryBot.create(:event, event_type: @event_type)
+      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
+      FactoryBot.create(:participant, event: ev, testimony: 'Yeah', selected: true)
+      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
+      testimonies = @event_type.testimonies
+      expect(testimonies.count).to eq 3
+      expect(testimonies[0].testimony).to eq 'Yeah'
+    end
     it "shouldn't include participant other event type" do
       et = FactoryBot.create(:event_type)
       ev = FactoryBot.create(:event, event_type: et)

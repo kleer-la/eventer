@@ -14,6 +14,11 @@
   %h1.pull-left
     %i.icon-group
     %span Encuesta de Satisfacción
+  .pull-right
+    %a.btn.btn-white{ :href => edit_event_type_path(@event.event_type), :title => "Editar Tipo de Evento" }
+      %i.icon-tasks
+    %a.btn.btn-white{ :href => "/events/#{@event.id}/participants", :title => "Editar Participantes" }
+      %i.icon-group
 
 = render '/commons/notice'
 
@@ -27,7 +32,7 @@
 
   %br
 - rating_options = [["5", "5 - Muy Bueno"], ["4", "4"], ["3", "3 - Medio"], ["2", "2"], ["1", "1 - Muy Malo"] ]
-- promoter_options = [["10", "10 - Definitivamente Si"], ["9", "9 - Seguramente Si"], ["8", "8 - Probablemente Si"], ["7", "7"], ["6", "6"], ["5", "5"], ["4", "4"], ["3", "3"], ["2", "2"], ["1","1 - No"], ["0", "0 - Definitivamente No"]]
+- promoter_options = [["10", "10 Definitivamente"], ["9", "9 Seguramente Si"], ["8", "8 Probablemente Si"], ["7", "7"], ["6", "6"], ["5", "5"], ["4", "4"], ["3", "3"], ["2", "2"], ["1","1 - No"], ["0", "0 No!!"]]
 .row-fluid
   .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
     .box-header.green-background
@@ -41,11 +46,12 @@
             %thead
               %tr
                 %th Participante
+                %th Mostrar
+                %th Testimonio
                 %th Rating Evento
                 %th Rating Entrenador
                 %th Rating CoEntrenador
-                %th ¿Lo recomendaría a un colega?
-                %th Testimonio
+                %th Recomendarías
             %tbody
               - @participants.each do |participant|
                 - path= "/events/#{participant.event.id}/participants/#{participant.id}"
@@ -57,6 +63,10 @@
                       = " "
                       = participant.lname
                   %td{ :style => "white-space:normal;"}
+                    = best_in_place participant, :selected, :as => :checkbox, :url => path, :class => ['editable','editable-click']
+                  %td{ :style => "white-space:pre-line;"}
+                    = best_in_place participant, :testimony, :as => :textarea, :url => path, :class => ['editable','editable-click']
+                  %td{ :style => "white-space:normal;"}
                     = best_in_place participant, :event_rating, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
                     = best_in_place participant, :trainer_rating, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => rating_options
@@ -64,8 +74,6 @@
                     = best_in_place participant, :trainer2_rating, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => rating_options
                   %td{ :style => "white-space:normal;"}
                     = best_in_place participant, :promoter_score, :as => :select, :url => path, :class => ['editable','editable-click'], :collection => promoter_options
-                  %td{ :style => "white-space:pre-line;"}
-                    = best_in_place participant, :testimony, :as => :textarea, :url => path, :class => ['editable','editable-click']
 
 :javascript
 

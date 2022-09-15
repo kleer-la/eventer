@@ -164,7 +164,7 @@ class HomeController < ApplicationController
 
   def show_event_type_testimonies
     event_type = EventType.find(params[:id])
-    participants = event_type.testimonies.sort_by(&:created_at).reverse.reject {|t|t['testimony']==''}
+    participants = event_type.testimonies
 
     respond_to do |format|
       format.json { render json: participants.first(10) }

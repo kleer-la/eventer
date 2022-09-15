@@ -2,5 +2,8 @@
   %h1.pull-left
     %i.icon-tasks
     %span Tipos de Evento
+  .pull-right
+    %a.btn.btn-white{ :href => "/event_types/#{@event_type.id}/testimonies", :title => "Testimonios" }
+      %i.icon-comment
 
 = render 'form'

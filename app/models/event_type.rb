@@ -27,11 +27,13 @@ class EventType < ApplicationRecord
 
 
   def testimonies
-    part = []
-    events.all.each do |e|
-      part += e.participants.reject { |p| p.testimony.nil? }
-    end
-    part
+    # part = []
+    # events.all.each do |e|
+    #   part += e.participants.order(selected: :desc, updated_at: :desc).reject { |p| p.testimony.nil? }
+    # end
+    # part
+    Participant.joins(:event).where(events: {event_type_id: id}).where.not(testimony: '').
+      order(selected: :desc, updated_at: :desc)
   end
 
   def slug
