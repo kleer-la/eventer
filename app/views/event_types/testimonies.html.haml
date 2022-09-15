@@ -16,6 +16,7 @@
             %tr
               %th Fecha
               %th Participante
+              %th Mostrar
               %th Comentario
             %tbody
               - @participants.each do |participant|
@@ -26,6 +27,8 @@
                   %td
                     %a{ :href => "/events/#{participant.event.id}/participants_survey" }
                       = "#{participant.fname} #{participant.lname}"
+                  %td
+                    = participant.selected
                   %td{ :style => "white-space:normal;"}
                     %a{ :href => "/events/#{participant.event.id}/participants_survey" }
-                      =participant.testimony
+                      = participant.testimony
