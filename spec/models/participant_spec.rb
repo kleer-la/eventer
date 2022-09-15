@@ -172,6 +172,10 @@ describe Participant do
       expect(@participant.testimony).to eq 'me ha gustado mucho'
     end
 
+    it 'initially not selected' do
+      expect(@participant.selected).to eq false
+    end
+
     it 'should have a promoter_score from a participant satisfaction survey' do
       @participant.promoter_score = 8
       expect(@participant.promoter_score).to eq 8

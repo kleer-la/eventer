@@ -103,7 +103,6 @@ FactoryBot.define do
   end
 
   factory :participant do
-    id { '10' }
     fname { 'Juan Carlos' }
     lname { 'Perez Luasó' }
     email { 'malaimo@gmail.com' }

@@ -29,7 +29,7 @@ class EventType < ApplicationRecord
   def testimonies
     part = []
     events.all.each do |e|
-      part += e.participants.reject { |p| p.testimony.nil? }
+      part += e.participants.order(selected: :desc, updated_at: :desc).reject { |p| p.testimony.nil? }
     end
     part
   end
