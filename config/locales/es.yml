@@ -380,6 +380,7 @@ es:
     welcome:
       hello: Hola, %{name}
       purpose: Recibes este correo como continuación de la compra que iniciaste en el sitio de Kleer. Quizás recibas otro mail, enviamos de dos maneras para asegurarnos que lo recibas.
+      is_sold_out: Has sido agregado a la lista de espera del curso, dado que el curso está completo. Nos comunicaremos contigo si hay novedades.
       payment:
         text: Para completar la compra y reservar tu lugar, te compatimos el link de pago
         button: Pagar ahora

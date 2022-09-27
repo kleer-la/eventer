@@ -367,6 +367,7 @@ en:
     welcome:
       hello: Hello, %{name}
       purpose: You receive this email as a follow up of the purchase you initiated on the Kleer site. You may receive another mail, we use two ways to make sure you receive it.
+      is_sold_out: You have been added to the course waiting list, as the course is sold out. We will contact you if there is any news.
       payment:
         text: To complete the purchase and reserve your seat, follow the payment link
         button: Pay now

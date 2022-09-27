@@ -54,6 +54,19 @@ describe EventMailer do
       expect(@email.from).to eq ['entrenamos@kleer.la']
     end
 
+    it 'When sold out canT pay' do
+      @participant.event.is_sold_out = true
+      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      expect(email.html_part.body.to_s).to include 'lista de espera'
+      expect(email.html_part.body.to_s).not_to include 'Pagar'
+    end
+    it 'When NOT sold out can pay' do
+      @participant.event.is_sold_out = false
+      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      expect(email.html_part.body.to_s).not_to include 'lista de espera'
+      expect(email.html_part.body.to_s).to include 'Pagar'
+    end
+
     it 'should send the custom text in HTML format if custom text markdown is present' do
       @participant.event.custom_prices_email_text = '**texto customizado**: 16'
 
