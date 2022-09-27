@@ -367,7 +367,12 @@ en:
     welcome:
       hello: Hello, %{name}
       purpose: You are receiving this email because you started a purchase process on the Kleer site.
-      is_sold_out: You have been added to the course waiting list, as the course is sold out. We will contact you if there is any news.
+      is_sold_out: >-
+        Thank you for your interest in our training.
+        Sadly, the course you are trying to register for is full and we are unable to process your purchase.
+
+        We added you to the waiting list. If a place is released we will contact you again by this means.
+      
       payment:
         text: Complete your purchase to reserve your spot
         button: Pay now
