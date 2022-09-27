@@ -11,8 +11,10 @@ class EventMailer < ApplicationMailer
     @participant = participant
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
-    invoice = create_send_invoice(participant)
-    @online_invoice_url = @@xero.get_online_invoice_url(invoice)
+    unless participant.event.is_sold_out
+      invoice = create_send_invoice(participant)
+      @online_invoice_url = @@xero.get_online_invoice_url(invoice)
+    end
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
@@ -36,9 +38,11 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant, :es)
     event = participant.event
     event_info = event_data(event.event_type.name, event.country.name, event.human_date)
+    extra_message = "Lista de espera, no se creó invoice" if event.is_sold_out
+
     body = contact_data(participant) +
            invoice_data(participant) +
-           "\n\nPuedes ver/editar el registro en #{edit_registration_link}"
+           "\n#{extra_message} \nPuedes ver/editar el registro en #{edit_registration_link}"
 
     mail(to: event.monitor_email.presence || ALERT_MAIL,
          subject: "[Keventer] Nuevo registro a #{event_info}: #{participant.fname} #{participant.lname}",

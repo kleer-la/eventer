@@ -54,6 +54,19 @@ describe EventMailer do
       expect(@email.from).to eq ['entrenamos@kleer.la']
     end
 
+    it 'When sold out canT pay' do
+      @participant.event.is_sold_out = true
+      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      expect(email.html_part.body.to_s).to include 'lista de espera'
+      expect(email.html_part.body.to_s).not_to include 'Pagar'
+    end
+    it 'When NOT sold out can pay' do
+      @participant.event.is_sold_out = false
+      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      expect(email.html_part.body.to_s).not_to include 'lista de espera'
+      expect(email.html_part.body.to_s).to include 'Pagar'
+    end
+
     it 'should send the custom text in HTML format if custom text markdown is present' do
       @participant.event.custom_prices_email_text = '**texto customizado**: 16'
 
@@ -109,7 +122,7 @@ describe EventMailer do
       end
       it 'Fail w/ Standard exceptions ' do
         EventMailer.xero_service(XeroClientService.create_null(
-           invoice_exception: StandardError.new('Invoice error')
+          invoice_exception: StandardError.new('Invoice error')
         ))
         expect {
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
@@ -117,9 +130,15 @@ describe EventMailer do
       end
     end
     context 'Create Invoice' do
+      it 'when event is sold out registration doesnt create an invoice' do
+        @participant.event.is_sold_out = true
+        @participant.event.save!
+        email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+        expect(@participant.xero_invoice_number).to be_nil
+      end
       it 'Fail w/ Standard exceptions ' do
         EventMailer.xero_service(XeroClientService.create_null(
-           email_exception: StandardError.new('Email Invoice error')
+          email_exception: StandardError.new('Email Invoice error')
         ))
         expect {
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
