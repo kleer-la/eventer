@@ -379,13 +379,18 @@ es:
         %{place} - %{date} - por %{qty} vacantes
     welcome:
       hello: Hola, %{name}
-      purpose: Recibes este correo como continuación de la compra que iniciaste en el sitio de Kleer. Quizás recibas otro mail, enviamos de dos maneras para asegurarnos que lo recibas.
-      is_sold_out: Has sido agregado a la lista de espera del curso, dado que el curso está completo. Nos comunicaremos contigo si hay novedades.
+      purpose: Recibes este correo porque iniciaste un proceso de compra en el sitio de Kleer.
+      is_sold_out: >-
+        Agradecemos tu interés en nuestra capacitación.
+        Sin embargo, el curso en el que intentas registrarte está completo y no podemos procesar tu compra.
+
+        Te agregamos a la lista de espera. Si se libera una vacante nos comunicaremos contigo nuevamente por este medio.
+
       payment:
-        text: Para completar la compra y reservar tu lugar, te compatimos el link de pago
+        text: Completa tu compra para reservar tu lugar
         button: Pagar ahora
-        notice: Este link tiene validez hasta el final de período del pago temprano o 6 días, lo que ocurra primero.
-      invoice: Puedes ver la factura correspondiente aquí
+        notice: Tiene validez por 72 hs.
+      invoice: Puedes ver y descargar la factura en este enlace
       info:
         title: Datos del evento
         time:

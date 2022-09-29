@@ -366,12 +366,17 @@ en:
         %{place} - %{date} - #%{qty} seats
     welcome:
       hello: Hello, %{name}
-      purpose: You receive this email as a follow up of the purchase you initiated on the Kleer site. You may receive another mail, we use two ways to make sure you receive it.
-      is_sold_out: You have been added to the course waiting list, as the course is sold out. We will contact you if there is any news.
+      purpose: You are receiving this email because you started a purchase process on the Kleer site.
+      is_sold_out: >-
+        Thank you for your interest in our training.
+        Sadly, the course you are trying to register for is full and we are unable to process your purchase.
+
+        We added you to the waiting list. If a place is released we will contact you again by this means.
+      
       payment:
-        text: To complete the purchase and reserve your seat, follow the payment link
+        text: Complete your purchase to reserve your spot
         button: Pay now
-        notice: This link is valid until the end of the early payment period or 6 days, whichever comes first.
+        notice: It is valid for 72 hours.
       invoice: You can view and download the invoice with this link
       info:
         title: Course information

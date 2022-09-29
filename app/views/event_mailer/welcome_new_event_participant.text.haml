@@ -16,31 +16,30 @@
   = ''
   = t('mail.welcome.invoice', locale: @lang)
   = @online_invoice_url
+  = ''
+  = t('mail.welcome.info.title', locale: @lang)
+  = ''
+  = t('mail.welcome.info.time.label', locale: @lang) + t('mail.welcome.info.time.range', locale: @lang, start: @participant.event.start_time.strftime('%H:%M'), end: @participant.event.end_time.strftime('%H:%M') )
+  = ''
+  = t('mail.welcome.info.place.label', locale: @lang) + @participant.event.place
+  = ''
+  - unless @participant.event.country.name.downcase.include? 'online'
+    = t('mail.welcome.info.address.label', locale: @lang) + "#{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
+  = ''
+  - if @participant.event.custom_prices_email_text.present?
+    = ''
+    = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
+  - if @participant.event.cancellation_policy.present?
+    = ''
+    = t('mail.welcome.info.policy.label', locale: @lang)
+    = ''
+    = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
+  = ''
+  = t('mail.welcome.closing', locale: @lang)
+  = ''
+  = t('mail.welcome.regards', locale: @lang)
 - else
   = t('mail.welcome.is_sold_out', locale: @lang)
-
-= ''
-= t('mail.welcome.info.title', locale: @lang)
-= ''
-= t('mail.welcome.info.time.label', locale: @lang) + t('mail.welcome.info.time.range', locale: @lang, start: @participant.event.start_time.strftime('%H:%M'), end: @participant.event.end_time.strftime('%H:%M') )
-= ''
-= t('mail.welcome.info.place.label', locale: @lang) + @participant.event.place
-= ''
-- unless @participant.event.country.name.downcase.include? 'online'
-  = t('mail.welcome.info.address.label', locale: @lang) + "#{@participant.event.address}, #{@participant.event.city}, #{@participant.event.country.name}"
-= ''
-- if @participant.event.custom_prices_email_text.present?
-  = ''
-  = @markdown_renderer.render( @participant.event.custom_prices_email_text ).html_safe
-- if @participant.event.cancellation_policy.present?
-  = ''
-  = t('mail.welcome.info.policy.label', locale: @lang)
-  = ''
-  = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
-= ''
-= t('mail.welcome.closing', locale: @lang)
-= ''
-= t('mail.welcome.regards', locale: @lang)
 = ''
 Kleer - Agile Coaching & Training
 = ''
