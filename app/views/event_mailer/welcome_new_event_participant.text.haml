@@ -36,10 +36,10 @@
     = @markdown_renderer.render( @participant.event.cancellation_policy.gsub "{cancellation_limit_date}", @participant.event.human_cancellation_limit_date ).html_safe
   = ''
   = t('mail.welcome.closing', locale: @lang)
+  = ''
+  = t('mail.welcome.regards', locale: @lang)
 - else
   = t('mail.welcome.is_sold_out', locale: @lang)
-= ''
-= t('mail.welcome.regards', locale: @lang)
 = ''
 Kleer - Agile Coaching & Training
 = ''
