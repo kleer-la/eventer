@@ -24,24 +24,29 @@
       = semantic_form_for @article do |f|
         %fieldset.inputs
           = f.inputs do
-            = f.input :lang, :as => :radio, wrapper_html:  {class: 'control-group'}
+            .row-fluid
+              .span8
+                .control-group
+                  = f.input :lang, :as => :radio
+              .span4
+                .control-group
+                  = f.input :published
+                  = f.input :category
             = f.input :title, input_html: {class: 'input-block-level'}
             = f.input :tabtitle, input_html: {class: 'input-block-level'}
-            = f.input :body, input_html: {rows: 8, class: 'input-block-level'}
+            = f.input :description, input_html: {class: 'input-block-level'}
+            = f.input :body, input_html: {rows: 20, class: 'input-block-level'}
             %small.muted 
               Este texto soporta 
               %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
               y HTML.
             .row-fuid{id:'warnings', class: 'text-warning'}
-            = f.input :description, input_html: {class: 'input-block-level'}
             = f.input :slug, input_html: {class: 'input-block-level'}
             %small.muted 
               Dejar en blanco para generar automáticamente.
             %br
             %br
-            = f.input :trainers, as: :check_boxes, collection: Trainer.order(name: :asc), wrapper_html: { class: 'box-content'}
-            = f.input :category
-            = f.input :published
+            = f.input :trainers, as: :check_boxes, collection: Trainer.order(name: :asc), wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
           .row-fuid
             .span12
               .form-actions

@@ -5,7 +5,7 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    @articles = Article.all
+    @articles = Article.all.order(updated_at: :desc)
     respond_to do |format|
       format.html
       format.json do
@@ -62,7 +62,7 @@ class ArticlesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_article
-    @article = Article.friendly.find(params[:id].downcase)
+    @article = Article.friendly.find(params[:id]) #.downcase)
   end
 
   # Only allow a trusted parameter "white list" through.
