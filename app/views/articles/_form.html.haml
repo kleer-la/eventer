@@ -12,7 +12,8 @@
   .alert.alert-error
     %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
     =msg
-
+-if notice.present?
+  .alert.notice= notice
 .row-fluid
   .span12.box
     .box-header.red-background

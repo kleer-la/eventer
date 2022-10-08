@@ -79,7 +79,7 @@ RSpec.describe '/articles', type: :request do
 
       it 'redirects to the created article' do
         post articles_url, params: { article: FactoryBot.attributes_for(:article) }
-        expect(response).to redirect_to(article_url(Article.last))
+        expect(response).to redirect_to(edit_article_path(Article.last))
       end
     end
 
