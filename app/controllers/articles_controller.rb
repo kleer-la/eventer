@@ -46,7 +46,7 @@ class ArticlesController < ApplicationController
   # PATCH/PUT /articles/1
   def update
     if @article.update(article_params)
-      redirect_to @article, notice: 'Article was successfully updated.'
+      redirect_to edit_article_path(@article), notice: 'Article was successfully updated.'
     else
       render :edit
     end
@@ -62,11 +62,12 @@ class ArticlesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_article
-    @article = Article.friendly.find(params[:id]) #.downcase)
+    @article = Article.friendly.find(params[:id].downcase)
   end
 
   # Only allow a trusted parameter "white list" through.
   def article_params
+    params[:article][:slug] = params[:article][:slug].downcase if params[:article][:slug].present?
     params.require(:article)
           .permit(:title, :slug, :body, :lang, :description, :published, :tabtitle, :category_id, trainer_ids: [])
   end
