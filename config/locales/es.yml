@@ -124,6 +124,8 @@ es:
         accept_terms: "He leído y aceptado <a href='http://www.kleer.la/es/privacy'>la política de privacidad</a>."
         confirm_with_mail: "¡Gracias! Te hemos enviado un e-mail con la información para el pago. Tu vacante se reservara al realizar el pago."
         confirm_without_mail: "¡Gracias! En breve un asesor se comunicará contigo con la información del evento."
+      article:
+        new_title: "Nuevo Artículo"
       trainer:
         new_title: "Nuevo Entrenador"
         bio_en: "Bio EN"

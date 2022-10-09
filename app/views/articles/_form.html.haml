@@ -19,7 +19,7 @@
     .box-header.red-background
       .title
         .icon-edit
-          = @article.title.nil? ? t("formtastic.labels.trainer.new_title") : @article.title
+          = @article.title.nil? ? t("formtastic.labels.article.new_title") : @article.title
 
     .box-content
       = semantic_form_for @article do |f|
