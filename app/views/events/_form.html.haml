@@ -339,9 +339,12 @@
                   %a.btn.btn-large{ :href => events_path }
                     %i.icon-undo
                     Cancelar
+- event_type_codes = @event_types.reduce('') do |acum, et|
+  - acum += "\"#{et.id}\": \"#{et.tag_name}\","
+  - acum
 
 :javascript
-
+  var event_type_codes= {#{event_type_codes.html_safe}}
   $event_country_id_before_ol = "";
   $event_city_before_ol = "";
   $event_place_before_ol = "";
@@ -452,11 +455,11 @@
   }
 
   function eventDateChanged( value ) {
-
     if ($("#event_registration_ends").val() == "")
       $("#event_registration_ends").val( value );
 
     var date_string = value.substr(6,4) + "-" + value.substr(3,2) + "-" + value.substr(0,2);
+    var short_date = value.substr(8,2) + value.substr(3,2) + value.substr(0,2);
 
     var event_date = new Date( date_string );
 
@@ -472,9 +475,9 @@
 
     var eb_new_date = eb_date_day + "-" + eb_date_month + "-" + eb_date_year;
     $("#event_eb_end_date").val( eb_new_date );
-    var tag_name = "#{@event&.event_type&.tag_name}";
+    var tag_name = event_type_codes[$('#event_event_type_id').val()];
     if (tag_name != "")
-      $("#event_online_cohort_codename").val(tag_name+value.slice(2,4)+value.slice(5,7)+value.slice(8))
+      $("#event_online_cohort_codename").val(tag_name+short_date)
   }
 
   function eventOnLineToggle() {
