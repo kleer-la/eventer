@@ -5,7 +5,7 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    @articles = Article.all
+    @articles = Article.all.order(updated_at: :desc)
     respond_to do |format|
       format.html
       format.json do
@@ -37,7 +37,7 @@ class ArticlesController < ApplicationController
     @article = Article.new(article_params)
 
     if @article.save
-      redirect_to @article, notice: 'Article was successfully created.'
+      redirect_to edit_article_path(@article), notice: 'Article was successfully created.'
     else
       render :new
     end
@@ -46,7 +46,7 @@ class ArticlesController < ApplicationController
   # PATCH/PUT /articles/1
   def update
     if @article.update(article_params)
-      redirect_to @article, notice: 'Article was successfully updated.'
+      redirect_to edit_article_path(@article), notice: 'Article was successfully updated.'
     else
       render :edit
     end
@@ -67,6 +67,7 @@ class ArticlesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def article_params
+    params[:article][:slug] = params[:article][:slug].downcase if params[:article][:slug].present?
     params.require(:article)
           .permit(:title, :slug, :body, :lang, :description, :published, :tabtitle, :category_id, trainer_ids: [])
   end

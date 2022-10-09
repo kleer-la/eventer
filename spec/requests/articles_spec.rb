@@ -79,7 +79,7 @@ RSpec.describe '/articles', type: :request do
 
       it 'redirects to the created article' do
         post articles_url, params: { article: FactoryBot.attributes_for(:article) }
-        expect(response).to redirect_to(article_url(Article.last))
+        expect(response).to redirect_to(edit_article_path(Article.last))
       end
     end
 
@@ -110,7 +110,7 @@ RSpec.describe '/articles', type: :request do
         article = FactoryBot.create(:article)
         patch article_url(article), params: { article: FactoryBot.attributes_for(:article, title: 'new title') }
         article.reload
-        expect(response).to redirect_to(article_url(article))
+        expect(response).to redirect_to(edit_article_path(article))
       end
       it 'lang-> en' do
         article = FactoryBot.create(:article)
