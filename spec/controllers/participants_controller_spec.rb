@@ -86,6 +86,15 @@ describe ParticipantsController do
           end.to change(Participant, :count).by(1)
           expect(assigns(:participant)[:notes]).to match(/^Some question$/)
         end
+        it 'persist photo and profile url' do
+          @participant_attr[:photo_url] = 'https://pepe.pep.ep'
+          @participant_attr[:profile_url] = 'https://papa.pap.ap'
+          expect do
+            post :create, params: { participant: @participant_attr, event_id: @participant.event.id }
+          end.to change(Participant, :count).by(1)
+          expect(assigns(:participant)[:photo_url]).to eq 'https://pepe.pep.ep'
+          expect(assigns(:participant)[:profile_url]).to eq 'https://papa.pap.ap'
+        end
       end
 
       describe 'with invalid params' do

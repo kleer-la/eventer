@@ -8,8 +8,8 @@ class Participant < ApplicationRecord
   belongs_to :campaign
   belongs_to :campaign_source
 
-  validates :email, :fname, :lname, :event, :address, presence: true
-  # validates :phone, :influence_zone, :id_number
+  validates :email, :fname, :lname, :event, presence: true
+  # validates :address, :phone, :influence_zone, :id_number
 
   validates :email, email: true
   validates_acceptance_of :accept_terms, message: 'No podemos contactarlo si no acepta los términos.'
