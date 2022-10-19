@@ -176,8 +176,8 @@ class HomeController < ApplicationController
     event_type.to_json(
       only: [:id, :name, :description, :recipients, :program, :created_at, :updated_at, :goal, 
       :duration, :faq, :elevator_pitch, :learnings, :takeaways, :subtitle, :csd_eligible, :is_kleer_certification, 
-      :external_site_url, :deleted, :noindex, :lang, :cover], 
-      methods: %i[slug canonical_slug], include: :categories )
+      :external_site_url, :deleted, :noindex, :lang, :cover, :side_image, :brochure, :new_version], 
+      methods: %i[slug canonical_slug], include: %i[categories next_events testimonies])
   
     # "id": 1,
     # "name": "Introducción a los Métodos Ágiles ",
