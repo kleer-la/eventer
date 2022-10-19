@@ -177,7 +177,7 @@ class HomeController < ApplicationController
       only: [:id, :name, :description, :recipients, :program, :created_at, :updated_at, :goal, 
       :duration, :faq, :elevator_pitch, :learnings, :takeaways, :subtitle, :csd_eligible, :is_kleer_certification, 
       :external_site_url, :deleted, :noindex, :lang, :cover, :side_image, :brochure, :new_version], 
-      methods: %i[slug canonical_slug], include: %i[categories next_events testimonies])
+      methods: %i[slug canonical_slug], include: [:categories, :testimonies, next_events: {methods: :trainers} ])
   
     # "id": 1,
     # "name": "Introducción a los Métodos Ágiles ",
