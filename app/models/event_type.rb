@@ -25,6 +25,9 @@ class EventType < ApplicationRecord
     "#{name} (#{tag_name}#{lang}) ##{id}"
   end
 
+  def next_events
+    Event.visible.where(event_type_id: id)
+  end
 
   def testimonies
     # part = []

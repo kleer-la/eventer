@@ -176,6 +176,11 @@ describe Participant do
       expect(@participant.selected).to eq false
     end
 
+    it 'can assign photo and profile url' do
+      expect { @participant.photo_url = 'a' }.not_to raise_error
+      expect { @participant.profile_url = 'b' }.not_to raise_error
+    end
+
     it 'should have a promoter_score from a participant satisfaction survey' do
       @participant.promoter_score = 8
       expect(@participant.promoter_score).to eq 8
