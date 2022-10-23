@@ -89,7 +89,11 @@ module XeroClientService
       begin
         @client.create_contacts(contacts, summarize_errors: summarize_errors)
       rescue XeroRuby::ApiError => e
-        puts "Exception when calling create_contacts: #{e}"
+        Log.log(:xero, :error,
+          "Exception when calling create_contacts:#{contact_id}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+         )
+
         @client.get_contacts({ search_term: name })
       end
     end
@@ -100,6 +104,8 @@ module XeroClientService
 
     SERVICE_ACCOUNT = '4300'
     def create_invoices(contact_id, description, quantity, unit, date, due_date, codename, lang)
+      TrackingCategories.new(@client).validate_or_create(codename)
+
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
                                     contact: { contact_id: contact_id },
                                     line_items: [{ description: description, quantity: quantity, unit_amount: unit,
@@ -135,7 +141,7 @@ module XeroClientService
         #   @prepayments=[], @overpayments=[], @amount_due=0.18e3, @amount_paid=0.0, @updated_date_utc=Thu, 24 Mar 2022 18:24:08 +0000>
         #
       rescue XeroRuby::ApiError => e
-        Log.log(:xero, :error,  
+        Log.log(:xero, :error,
           "contact:#{contact_id}", 
           e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
          )
