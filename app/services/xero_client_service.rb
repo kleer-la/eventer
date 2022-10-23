@@ -89,8 +89,8 @@ module XeroClientService
       begin
         @client.create_contacts(contacts, summarize_errors: summarize_errors)
       rescue XeroRuby::ApiError => e
-        Log.log(:xero, :error,
-          "Exception when calling create_contacts:#{contact_id}", 
+        Log.log(:xero, :warn,
+          "Exception when calling create_contacts:#{contacts}", 
           e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
          )
 
