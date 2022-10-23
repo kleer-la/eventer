@@ -39,4 +39,22 @@ describe XeroClientService do
     invoice = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30','CODE', :es)
     expect(xero.get_online_invoice_url(invoice)).to eq 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
   end
+  describe XeroClientService::TrackingCategories do
+    # to try on dev environment
+    # rails c
+    # tracking_categories = XeroClientService::TrackingCategories.new(XeroClientService.create_xero
+    it 'validate_or_create doesnt raise error' do
+      tracking_categories = XeroClientService::TrackingCategories.new(
+        XeroClientService.create_null
+      )
+      expect {tracking_categories.validate_or_create('_CLEARING_CO')}.not_to raise_error
+    end
+    it 'valid? yeap / nop' do
+      tracking_categories = XeroClientService::TrackingCategories.new(
+        XeroClientService.create_null
+      )
+      expect(tracking_categories.valid?('_CLEARING_CO')).to be true
+      expect(tracking_categories.valid?('_CLEARING_C')).to be false
+    end
+  end
 end
