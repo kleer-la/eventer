@@ -89,7 +89,11 @@ module XeroClientService
       begin
         @client.create_contacts(contacts, summarize_errors: summarize_errors)
       rescue XeroRuby::ApiError => e
-        puts "Exception when calling create_contacts: #{e}"
+        Log.log(:xero, :warn,
+          "Exception when calling create_contacts:#{contacts}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+         )
+
         @client.get_contacts({ search_term: name })
       end
     end
@@ -100,6 +104,8 @@ module XeroClientService
 
     SERVICE_ACCOUNT = '4300'
     def create_invoices(contact_id, description, quantity, unit, date, due_date, codename, lang)
+      TrackingCategories.new(@client).validate_or_create(codename)
+
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
                                     contact: { contact_id: contact_id },
                                     line_items: [{ description: description, quantity: quantity, unit_amount: unit,
@@ -135,7 +141,7 @@ module XeroClientService
         #   @prepayments=[], @overpayments=[], @amount_due=0.18e3, @amount_paid=0.0, @updated_date_utc=Thu, 24 Mar 2022 18:24:08 +0000>
         #
       rescue XeroRuby::ApiError => e
-        Log.log(:xero, :error,  
+        Log.log(:xero, :error,
           "contact:#{contact_id}", 
           e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
          )
@@ -162,6 +168,47 @@ module XeroClientService
     end
   end
 
+  class TrackingCategories
+    def initialize(client)
+      @client = client
+      @tracking_tategory_name = 'Cód. Proyecto'
+      @tracking_category_id = '63a79b77-227b-4144-9be8-06e7a839d946'
+    end
+    def validate_or_create(option_name) 
+      	unless valid? option_name
+          create option_name
+        end
+    end
+    def valid?(option_name)
+      begin
+        response = @client.get_tracking_category(@tracking_category_id)
+        
+        !!response.tracking_categories[0].options.find {|e| e.name == option_name}
+      rescue XeroRuby::ApiError => e
+        Log.log(:xero, :warn,
+          "category cant be read:#{option_name}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+        )        
+      end
+    end
+
+    def create(option_name)
+      trackingOption = { 
+        name: option_name
+      }  
+    
+      begin
+        response = @client.create_tracking_options(@tracking_category_id, trackingOption)
+        return response
+      rescue XeroRuby::ApiError => e
+        Log.log(:xero, :warn,
+          "category option not created:#{option_name}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+        )
+      end
+    end
+  end
+
   def self.create_null(...)
     NullXero.new(...)
   end
@@ -174,6 +221,13 @@ module XeroClientService
     def initialize
       @xero_client,
       @xero_tenant_id = XeroClientService.initialized_client
+    end
+
+    def create_tracking_options(...)
+      @xero_client.accounting_api.create_tracking_options(@xero_tenant_id, ...)
+    end
+    def get_tracking_category(...)
+      @xero_client.accounting_api.get_tracking_category(@xero_tenant_id, ...)
     end
 
     def create_contacts(...)
