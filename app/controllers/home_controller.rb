@@ -2,6 +2,31 @@
 
 class HomeController < ApplicationController
 
+# let response = fetch('/api/contact_us', {
+#   method: 'POST',
+#   headers: {
+#     'Content-Type': 'application/json;charset=utf-8'
+#   },
+#   data: {
+#           "name": "Joe Doe",
+#           "mail": 'AR',
+#           "context": '/catalog',
+#           "subject": 'new@gmail.com',
+#           "message": 'New comment'
+#         }
+# });
+  def contact_us
+    ApplicationMailer.delay.contact_us(
+      params[:name],
+      params[:email],
+      params[:context],
+      params[:subject],
+      params[:message],
+    )
+    puts params
+    render json: { data: nil }, status: 200
+  end
+
   def catalog
     open = Event.public_and_visible.where(draft: false, cancelled: false).order('date').reduce([]) do |list, ev|
       et = ev.event_type
