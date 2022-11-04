@@ -71,6 +71,7 @@ Rails.application.routes.draw do
   get 'api/event_types/:id/testimonies' => 'home#show_event_type_testimonies'
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
+  put 'api/contact_us' => 'home#contact_us'
   
   get 'api/2/participants/synch' => 'api#participants_synch'
   
