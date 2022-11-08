@@ -16,6 +16,7 @@ class HomeController < ApplicationController
 #         }
 # });
   def contact_us
+    # params.from_jsonapi.permit(:name, :email, :context, :subject, :message)
     ApplicationMailer.delay.contact_us(
       params[:name],
       params[:email],
