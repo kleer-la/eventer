@@ -51,7 +51,9 @@ class MarketingController < ApplicationController
       @camapign_ids = CampaignView.where('created_at >= ?', @since).where('created_at < ?', @until).map(&:campaign_id)
       @camapigns = Campaign.real.where('id in (?)', @camapign_ids).order('updated_at DESC')
     end
-    @eventos = helpers.training(Date.parse('2021-1-1')..Date.parse('2021-12-31'))
+    this_year =  DateTime.now.year
+    @eventos = helpers.training(Date.parse("#{this_year}-1-1")..Date.parse("#{this_year}-1-1"))
+    # @eventos = helpers.training(@since..@until)
   end
 
   def campaign
