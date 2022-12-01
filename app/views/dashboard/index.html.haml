@@ -59,6 +59,8 @@
                         %span.pull-left
                           %a{ :href => "/events/#{event.id}/participants" }
                             %b= event.event_type.name
+                            = " #{event.event_type.lang} "
+                            = #image_tag "/images/flags/#{event.event_type.lang=='es'? 'es' : 'us'}.png"
                             = "| #{event.city} | #{human_hours} | #{event.place} | #{trainers}"
                         %small.pull-right
                           - if event.registration_link == ""
