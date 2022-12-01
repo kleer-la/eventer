@@ -26,7 +26,7 @@ class EventType < ApplicationRecord
   end
 
   def next_events
-    Event.visible.where(event_type_id: id)
+    Event.visible.where(event_type_id: id).order(:date)
   end
 
   def testimonies
