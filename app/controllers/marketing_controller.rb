@@ -52,7 +52,7 @@ class MarketingController < ApplicationController
       @camapigns = Campaign.real.where('id in (?)', @camapign_ids).order('updated_at DESC')
     end
     this_year =  DateTime.now.year
-    @eventos = helpers.training(Date.parse("#{this_year}-1-1")..Date.parse("#{this_year}-1-1"))
+    @eventos = helpers.training(Date.parse("#{this_year}-1-1")..Date.parse("#{this_year}-12-31"))
     # @eventos = helpers.training(@since..@until)
   end
 
