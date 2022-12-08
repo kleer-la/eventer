@@ -4,7 +4,14 @@ class WebHooksController < ActionController::API
   require 'json'
 
   def index
-    render html: 'WebHooks controller respondiendo a GET'
+    xero = XeroClientService::create_xero
+    XeroWebHookJob.perform_later({'events' => {
+      'tenantId' => xero.xero_tenant_id,
+      'eventCategory' => 'INVOICE',
+      'eventType' => 'UPDATE',
+      'resourceId' => params[:invoice_id]
+      }})
+    render html: "WebHooks controller respondiendo a GET con invoice_id #{params[:invoice_id]}"
   end
 
   def post
@@ -12,11 +19,11 @@ class WebHooksController < ActionController::API
     signature = request.env['HTTP_X_XERO_SIGNATURE']
 
     if validate(payload, signature)
-      # XeroWebHookJob.perform_later(JSON.parse(payload))
+      XeroWebHookJob.perform_later(JSON.parse(payload))
       puts 'ok hook' + payload.to_s
       head :ok
     else
-      puts 'unauthrized hook' + payload.to_s
+      puts 'unauthorized hook' + payload.to_s
       head :unauthorized
     end
   end

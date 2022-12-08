@@ -54,6 +54,10 @@ module XeroClientService
       @client = client
     end
 
+    def tenant_id
+      @client.xero_tenant_id
+    end
+
     def create_contact(name, fname, lname, email, phone, address)
       summarize_errors = true
 
@@ -218,9 +222,16 @@ module XeroClientService
   end
 
   class Xero
+    attr_reader :xero_tenant_id
+
     def initialize
       @xero_client,
       @xero_tenant_id = XeroClientService.initialized_client
+    end
+
+    def get_invoice(invoice_id)
+      # ensure_full_initialization
+      @api_client.accounting_api.get_invoice(@xero_tenant_id, invoice_id).invoices[0]
     end
 
     def create_tracking_options(...)

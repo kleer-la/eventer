@@ -57,4 +57,10 @@ describe XeroClientService do
       expect(tracking_categories.valid?('_CLEARING_C')).to be false
     end
   end
+  describe 'get tenant_id' do
+    it 'null xero' do
+      xero = XeroClientService::XeroApi.new(XeroClientService.create_null(tenant_id: 'pepe'))  
+      expect(xero.tenant_id).to eq 'pepe'
+      end
+  end
 end

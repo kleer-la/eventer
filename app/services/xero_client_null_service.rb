@@ -1,13 +1,16 @@
 module XeroClientService
   class NullXero
-    def initialize(has_validation_error: false, invoice_exception: nil, email_exception: nil)
+    attr_reader :xero_tenant_id
+
+    def initialize(has_validation_error: false, invoice_exception: nil, 
+      email_exception: nil, tenant_id: nil)
       @has_validation_error = has_validation_error
       @invoice_exception = invoice_exception
       @email_exception = email_exception
+      @xero_tenant_id = tenant_id
     end
 
     def create_tracking_options(...)
-
     end
 
     def get_tracking_category(...)
