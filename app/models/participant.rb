@@ -145,6 +145,16 @@ class Participant < ApplicationRecord
     present? || certified?
   end
 
+  def paid!
+    return if paid?
+    status = STATUS[:confirmed] 
+    is_payed = true
+  end
+  def paid?
+    # TODO is_payed seems to be redundant, could be removed?
+    status != STATUS[:contacted] # && !is_payed
+  end
+
   def influence_zone_tag
     influence_zone.nil? ? '' : influence_zone.tag_name
   end
@@ -213,6 +223,10 @@ class Participant < ApplicationRecord
   def self.search(searching)
     s = searching.downcase
     Participant.select { |p| "#{p.fname} #{p.lname}#{p.verification_code}".downcase.include?(s) }
+  end
+
+  def self.search_by_invoice(invoice_id)
+    Participant.where(invoice_id: invoice_id)[0]
   end
 
   def accept_terms
