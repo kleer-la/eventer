@@ -392,6 +392,9 @@ en:
         policy: Cancellation policy
       closing: "Please don't hesitate to contact us if you have any questions"
       regards: Best regards
+      paid: >-
+        We received your payment. Everything is ready!
+        You will receive an email with information of the course a couple of days before the start.
   certificate:
     dod: The learning and skill acquisition process has been successfully completed.
     how: CLASSROOM STYLE

@@ -82,3 +82,7 @@ heroku git:remote -a keventer
 # cada deploy a prod
 git push heroku master:master
 ```
+
+
+== Claves para CONTACT_US_SECRET
+openssl rand -base64 128

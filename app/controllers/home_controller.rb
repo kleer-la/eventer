@@ -17,6 +17,8 @@ class HomeController < ApplicationController
 # });
   def contact_us
     # params.from_jsonapi.permit(:name, :email, :context, :subject, :message)
+    secret = ENV['CONTACT_US_SECRET'].to_s
+    return if secret != '' && secret != params[:secret]
     ApplicationMailer.delay.contact_us(
       params[:name],
       params[:email],
@@ -24,7 +26,7 @@ class HomeController < ApplicationController
       params[:subject],
       params[:message],
     )
-    puts params
+
     render json: { data: nil }, status: 200
   end
 

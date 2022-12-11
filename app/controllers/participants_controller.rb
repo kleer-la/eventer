@@ -8,6 +8,18 @@ class ParticipantsController < ApplicationController
 
   STATUS_LIST = [%w[Nuevo N], %w[Contactado T], %w[Confirmado C], %w[Presente A], %w[Certificado K],
                  %w[Cancelado X], %w[Pospuesto D]].freeze
+
+  def self.update_payment_status(invoice_id, xero_service = nil)
+    xero =  XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero)
+    participant = Participant.search_by_invoice invoice_id
+    return if participant.nil? || participant.paid?
+    if xero.invoice_paid?(invoice_id)
+      EventMailer.delay.participant_paid(participant)
+      participant.paid!
+      participant.save!
+    end
+  end
+               
   # GET /participants
   # GET /participants.json
   def index

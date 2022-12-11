@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  get '/webhooks' => 'web_hooks#index'
+  post '/webhooks' => 'web_hooks#post'
+
   resources :logs, only: [:index, :show]
   resources :articles
   namespace :api do

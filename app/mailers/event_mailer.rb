@@ -7,6 +7,18 @@ class EventMailer < ApplicationMailer
   default from: ALERT_MAIL
   add_template_helper(DashboardHelper)
 
+  def participant_paid(participant)
+    @participant = participant
+    @lang =  participant.event.event_type.lang
+    @pih = ParticipantInvoiceHelper.new(participant, @lang)
+    
+    # to: @participant.email
+    mail(to: ADMIN_MAIL, cc: ADMIN_MAIL, subject: "Kleer | Pago recibido #{@participant.event.event_type.name}") do |format|
+      format.text
+      format.html { render layout: 'event_mailer' }
+    end
+  end
+
   def welcome_new_event_participant(participant)
     @participant = participant
     @lang =  participant.event.event_type.lang

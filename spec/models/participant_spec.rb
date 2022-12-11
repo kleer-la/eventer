@@ -350,4 +350,30 @@ describe Participant do
       expect(found[0].verification_code).to eq '065BECBA36F903CF6PPP'
     end
   end
+
+  context 'payments' do
+    before(:each) do
+      @participant = FactoryBot.create(:participant,
+                                      fname: 'Pedro',
+                                      invoice_id: 'xanadu')
+    end
+    it 'exists w/invoice_id' do
+      found = Participant.search_by_invoice 'xanadu'
+      expect(found.fname).to eq 'Pedro'
+    end
+    it 'doesnt exists w/invoice_id' do
+      found = Participant.search_by_invoice 'Zanadu'
+      expect(found).to be nil
+    end
+    it 'paid? no!' do
+      @participant.contact!
+      expect(@participant.paid?).to be false
+    end
+    it 'paid? yes!' do
+      @participant.contact!
+      @participant.is_payed = false
+      @participant.paid!
+      expect(@participant.paid?).to be true
+    end
+  end
 end
