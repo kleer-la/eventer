@@ -1,0 +1,26 @@
+%div{ :style => "background-color:rgb(110, 233, 241);margin-bottom:20px;padding:10px;font-size:34px;" }
+  %font{ :face => "raleway, verdana, sans-serif", :size => "5" }
+    %span{ :style => "line-height: 22px;" }
+    = "#{@participant.event.event_type.name} - #{@participant.event.human_date}"
+%div{ :style => "padding:6px;font-size:12px" }
+  %font{ :face => "raleway, verdana, sans-serif"}
+    = t('mail.welcome.hello', locale: @lang, name: @participant.fname)
+    %br
+    Hemos recibido el pago correspondiente y te confirmamos tu lugar.
+    Un par de días antes del inicio del curso recibirás un mail con la información correponciente.
+
+    %br
+    = t('mail.welcome.closing', locale: @lang)
+    &#x1F60A;
+    %br
+    %br
+    = t('mail.welcome.regards', locale: @lang)
+    %br
+    %br
+    %strong Kleer - Agile Coaching & Training
+    %br
+    = ADMIN_MAIL
+    %br
+    = "website | "
+    %a{ :href => "http://www.kleer.la", :target => "_blank" }
+      http://www.kleer.la

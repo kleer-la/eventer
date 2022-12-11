@@ -14,7 +14,7 @@ class ParticipantsController < ApplicationController
     participant = Participant.search_by_invoice invoice_id
     return if participant.nil? || participant.paid?
     if xero.invoice_paid?(invoice_id)
-       # mail de confirmación al participante, con copia a administracion
+      EventMailer.delay.participant_paid(participant)
       participant.paid!
       participant.save!
     end

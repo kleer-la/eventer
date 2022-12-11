@@ -192,6 +192,17 @@ describe EventMailer do
       expect(@email.body).to include('2 personas')
     end
   end
+
+  context 'Paid' do
+    it 'Paid' do
+      @email = EventMailer.participant_paid(@participant).deliver_now
+      html = @email.html_part.body.to_s
+      expect(html).to include 'recibido el pago'
+      expect(html).not_to include "t('"
+      expect(html).not_to include 'translation'
+    end
+
+  end
 end
 
 describe ParticipantInvoiceHelper do
