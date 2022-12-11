@@ -3,6 +3,13 @@
 require 'rails_helper'
 
 describe XeroClientService do
+  it 'Invoice paid' do
+    xero = XeroClientService::XeroApi.new(XeroClientService.create_null)
+
+    paid = xero.invoice_paid?('xanadu')
+
+    expect(paid).to be true
+  end
   it 'Create Contact has no error' do
     xero = XeroClientService::XeroApi.new(XeroClientService.create_null)
 

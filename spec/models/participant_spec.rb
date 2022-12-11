@@ -370,6 +370,8 @@ describe Participant do
       expect(@participant.paid?).to be false
     end
     it 'paid? yes!' do
+      @participant.contact!
+      @participant.is_payed = false
       @participant.paid!
       expect(@participant.paid?).to be true
     end

@@ -146,13 +146,13 @@ class Participant < ApplicationRecord
   end
 
   def paid!
-    return if paid?
-    status = STATUS[:confirmed] 
-    is_payed = true
+    return if self.paid?
+    self.status = STATUS[:confirmed] 
+    self.is_payed = true
   end
   def paid?
     # TODO is_payed seems to be redundant, could be removed?
-    status != STATUS[:contacted] # && !is_payed
+    (self.status == STATUS[:confirmed]) && self.is_payed
   end
 
   def influence_zone_tag

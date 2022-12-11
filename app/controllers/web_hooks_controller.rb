@@ -5,12 +5,13 @@ class WebHooksController < ActionController::API
 
   def index
     xero = XeroClientService::create_xero
-    XeroWebHookJob.perform_later({'events' => {
-      'tenantId' => xero.xero_tenant_id,
+    XeroWebHookJob.perform_later({'events' => [{
+      'tenantId' => xero.tenant_id,
       'eventCategory' => 'INVOICE',
       'eventType' => 'UPDATE',
       'resourceId' => params[:invoice_id]
-      }})
+      }]
+    })
     render html: "WebHooks controller respondiendo a GET con invoice_id #{params[:invoice_id]}"
   end
 

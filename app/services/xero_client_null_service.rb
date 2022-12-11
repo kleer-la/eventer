@@ -1,13 +1,13 @@
 module XeroClientService
   class NullXero
-    attr_reader :xero_tenant_id
+    attr_reader :tenant_id
 
     def initialize(has_validation_error: false, invoice_exception: nil, 
       email_exception: nil, tenant_id: nil)
       @has_validation_error = has_validation_error
       @invoice_exception = invoice_exception
       @email_exception = email_exception
-      @xero_tenant_id = tenant_id
+      @tenant_id = tenant_id
     end
 
     def create_tracking_options(...)
@@ -33,6 +33,9 @@ module XeroClientService
 
     def get_online_invoice(_)
       NullOnlineInvoices.new
+    end
+    def get_invoice(_)
+      NullInvoice.new
     end
   end
 
@@ -126,10 +129,11 @@ module XeroClientService
   end
  
   class NullInvoice
-    attr_reader :invoice_number, :invoice_id
+    attr_reader :invoice_number, :invoice_id, :amount_paid
     def initialize
       @invoice_number = 'INV-0100'
       @invoice_id = 'a12346' * 6 # 36 char
+      @amount_paid = 720.0
     end
   end
 
