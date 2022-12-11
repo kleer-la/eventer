@@ -392,6 +392,9 @@ en:
         policy: Cancellation policy
       closing: "Please don't hesitate to contact us if you have any questions"
       regards: Best regards
+      paid: >-
+        Hemos recibido el pago correspondiente y te confirmamos tu lugar.
+        Un par de días antes del inicio del curso recibirás un mail con la información correponciente.
   certificate:
     dod: The learning and skill acquisition process has been successfully completed.
     how: CLASSROOM STYLE
