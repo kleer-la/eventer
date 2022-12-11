@@ -19,7 +19,6 @@ class EventMailer < ApplicationMailer
     end
   end
 
-
   def welcome_new_event_participant(participant)
     @participant = participant
     @lang =  participant.event.event_type.lang
