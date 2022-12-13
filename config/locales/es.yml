@@ -405,9 +405,14 @@ es:
         policy: Política de Cancelación
       closing: No dudes en contactarnos por cualquier consulta que tengas
       regards: ¡Te esperamos!
-      paid: >-
+    paid:
+      subject: Kleer | Pago recibido %{event}
+      hello: Hola, %{name}
+      body: >-
         Hemos recibido el pago correspondiente y te confirmamos tu lugar.
-        Un par de días antes del inicio del curso recibirás un mail con la información correponciente.
+        Un par de días antes del inicio del curso recibirás un mail con la información necesaria para ingresar.
+      closing: No dudes en contactarnos por cualquier consulta que tengas
+      regards: ¡Te esperamos!
   certificate:
     dod: Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias.
     how: MODALIDAD

@@ -13,9 +13,24 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
     
     # to: @participant.email
-    mail(to: ADMIN_MAIL, cc: ADMIN_MAIL, subject: "Kleer | Pago recibido #{@participant.event.event_type.name}") do |format|
+    mail( to: ADMIN_MAIL, 
+          cc: ALERT_MAIL, 
+          subject: I18n.t('mail.paid.subject', locale: @lang, event:@participant.event.event_type.name)
+    ) do |format|
       format.text
-      format.html { render layout: 'event_mailer' }
+      format.html { render layout: false }
+    end
+  end
+
+  def participant_void(participant)
+    @participant = participant
+    @lang =  participant.event.event_type.lang
+    @pih = ParticipantInvoiceHelper.new(participant, @lang)
+    
+    # to: @participant.email
+    mail(to: ADMIN_MAIL, cc: ALERT_MAIL, subject: "Kleer | Pago recibido #{@participant.event.event_type.name}") do |format|
+      format.text
+      format.html { render layout: false }
     end
   end
 

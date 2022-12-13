@@ -141,6 +141,13 @@ class Participant < ApplicationRecord
     status == STATUS[:certified]
   end
 
+  def cancelled?
+    status == STATUS[:cancelled]
+  end
+  def cancelled!
+    self.status = STATUS[:cancelled]
+  end
+
   def could_receive_certificate?
     present? || certified?
   end
