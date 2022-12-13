@@ -13,10 +13,15 @@ class ParticipantsController < ApplicationController
     xero =  XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero)
     participant = Participant.search_by_invoice invoice_id
     return if participant.nil? || participant.paid?
+
     if xero.invoice_paid?(invoice_id)
       EventMailer.delay.participant_paid(participant)
       participant.paid!
       participant.save!
+    # elsif !participant.cancelled? && xero.invoice_void?(invoice_id)
+    #   EventMailer.delay.participant_void(participant)
+    #   participant.cancelled!
+    #   participant.save!
     end
   end
                

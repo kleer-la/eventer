@@ -8,6 +8,7 @@ class XeroWebHookJob < ActiveJob::Base
   end
 # ccb1c26d-0113-47e2-826e-a9b1429b1a78 unpaid
 # 6f352e28-585f-4ccd-a952-560a8f0e5af0 paid // AmountPaid
+# a61366ff-a7f3-4da2-9a4e-01bc9c54ef9e // status VOIDED
 # 
 # hook{"events":[{
 #    "resourceUrl": "https://api.xero.com/api.xro/2.0/Invoices/ccb1c26d-0113-47e2-826e-a9b1429b1a78",

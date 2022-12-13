@@ -152,11 +152,14 @@ module XeroClientService
          nil
       end
     end
-
   
     def invoice_paid?(invoice_id)
       invoice = get_invoice(invoice_id)
       invoice.amount_paid > 0
+    end
+    def invoice_void?(invoice_id)
+      invoice = get_invoice(invoice_id)
+      invoice.status == "VOIDED"
     end
 
     def email_invoice(invoice)
@@ -190,10 +193,9 @@ module XeroClientService
  
     def get_online_invoice_url(invoice)
       return nil if invoice.nil?
-      data = @client.get_online_invoice(invoice)
+      data = @client.get_online_invoice(invoice.invoice_id)
       data.online_invoices[0].online_invoice_url
     end
-
   end
 
   class TrackingCategories
