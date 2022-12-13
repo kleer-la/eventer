@@ -25,9 +25,12 @@ def perform(data)
 
     # ret_val = runner.execute do |api_run|
       data['events'].each do |event|
+p ">>>>>>>>>>>>>>> #{event}"
+
         next if event['tenantId'] != @xero_client.tenant_id
 
         if invoice_update?(event)
+          p "---------  #{event['resourceId']}"
           ParticipantsController.update_payment_status(event['resourceId'], @xero_client)
         else
           # api_run.log_message('Saliendo por tipo de evento no procesado')

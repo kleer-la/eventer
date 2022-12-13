@@ -22,16 +22,22 @@ class EventMailer < ApplicationMailer
     end
   end
 
-  def participant_void(participant)
+  def participant_voided(participant)
     @participant = participant
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
     
     # to: @participant.email
-    mail(to: ADMIN_MAIL, cc: ALERT_MAIL, subject: "Kleer | Pago recibido #{@participant.event.event_type.name}") do |format|
+    mail(to: ADMIN_MAIL, cc: ALERT_MAIL, subject: "Kleer | Invoice voided #{@participant.event.event_type.name}") do |format|
       format.text
       format.html { render layout: false }
     end
+    edit_registration_link = "http://eventos.kleer.la/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
+
+    mail(to: ADMIN_MAIL, cc: ALERT_MAIL, 
+      subject: "[Keventer] Invoice voided #{@participant.event.event_type.name}: #{participant.fname} #{participant.lname}",
+      body: "Invoice: #{participant.lname}  \nLink para editar: #{edit_registration_link}"
+    )
   end
 
   def welcome_new_event_participant(participant)
@@ -39,8 +45,16 @@ class EventMailer < ApplicationMailer
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
     unless participant.event.is_sold_out
-      invoice = create_send_invoice(participant)
-      @online_invoice_url = @@xero.get_online_invoice_url(invoice)
+      begin
+        invoice = create_send_invoice(participant)
+        @online_invoice_url = @@xero.get_online_invoice_url(invoice)
+      rescue StandardError => e
+        Log.log(:xero, :error,  
+          "create_send_invoice:#{participant.fname + participant.lname}", 
+          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+         )
+        return
+      end
     end
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|

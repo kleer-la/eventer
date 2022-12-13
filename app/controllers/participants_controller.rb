@@ -15,13 +15,15 @@ class ParticipantsController < ApplicationController
     return if participant.nil? || participant.paid?
 
     if xero.invoice_paid?(invoice_id)
-      EventMailer.delay.participant_paid(participant)
+      EventMailer.participant_paid(participant)
+      participant.notes << "\n#{DateTime.now.localtime} - Pagado"
       participant.paid!
       participant.save!
-    # elsif !participant.cancelled? && xero.invoice_void?(invoice_id)
-    #   EventMailer.delay.participant_void(participant)
-    #   participant.cancelled!
-    #   participant.save!
+    elsif !participant.cancelled? && xero.invoice_void?(invoice_id)
+      EventMailer.participant_voided(participant)
+      participant.notes << "\n#{DateTime.now.localtime} - Voided"
+      participant.cancelled!
+      participant.save!
     end
   end
                
