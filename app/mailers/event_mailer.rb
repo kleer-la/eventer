@@ -28,10 +28,6 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
     
     # to: @participant.email
-    mail(to: ADMIN_MAIL, cc: ALERT_MAIL, subject: "Kleer | Invoice voided #{@participant.event.event_type.name}") do |format|
-      format.text
-      format.html { render layout: false }
-    end
     edit_registration_link = "http://eventos.kleer.la/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
 
     mail(to: ADMIN_MAIL, cc: ALERT_MAIL, 
