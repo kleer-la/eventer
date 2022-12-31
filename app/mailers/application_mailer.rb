@@ -21,7 +21,9 @@ class ApplicationMailer < ActionMailer::Base
 
   def self.valid_name?(name)
     return false if name.to_s == ''
+    name = name.strip
     return false if !!/^[a-z]+[A-Z]/.match(name)
+    return false if !!/[a-z]+[A-Z]+[a-z]/.match(name)
     return false if name.length > 50
     true
   end

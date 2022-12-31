@@ -10,6 +10,7 @@ describe ApplicationMailer do
   end
   [ ['', 'empty'],
     ['skyreveryLiz', 'uppercase not first char'],
+    ['FjqDTZHrLzJWQ ', 'internal uppercase'],
     ["HeyaMr...: ) the passive income it's 999eu a day C'mon -", 'too long'],
   ].each do |ex|
     it "name <#{ex[0]}> is invalid. Reason: #{ex[1]} " do
