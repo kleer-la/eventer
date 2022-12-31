@@ -83,6 +83,10 @@ heroku git:remote -a keventer
 git push heroku master:master
 ```
 
+== Contact Us
+Configurar el mail de destino con CONTACT_US_MAILTO
 
-== Claves para CONTACT_US_SECRET
+Ejemplo como generar Claves para CONTACT_US_SECRET
+```cli
 openssl rand -base64 128
+```
