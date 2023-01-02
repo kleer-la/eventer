@@ -5,7 +5,7 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    @articles = Article.all.order(updated_at: :desc)
+    @articles = Article.order(selected: :desc, created_at: :desc)
     respond_to do |format|
       format.html
       format.json do
@@ -69,6 +69,6 @@ class ArticlesController < ApplicationController
   def article_params
     params[:article][:slug] = params[:article][:slug].downcase if params[:article][:slug].present?
     params.require(:article)
-          .permit(:title, :slug, :body, :lang, :description, :published, :tabtitle, :category_id, trainer_ids: [])
+          .permit(:title, :slug, :body, :lang, :description, :published, :tabtitle, :cover, :selected, :category_id, trainer_ids: [])
   end
 end

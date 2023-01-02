@@ -18,11 +18,16 @@
             %thead
               %tr
                 %th= t('formtastic.labels.trainer.name')
+                %th= t('formtastic.labels.trainer.deleted')
                 %th
             %tbody
               - @trainers.each do |trainer|
                 %tr
                   %td= link_to trainer.name, trainer
+                  %td
+                    - if trainer.deleted
+                      %i.icon-ban-circle
+
                   %td
                     .text-right
                       %a.btn.btn-warning.btn-mini{ :href => edit_trainer_path(trainer) }
