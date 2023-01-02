@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_14_171521) do
+ActiveRecord::Schema.define(version: 2023_01_02_123045) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -329,25 +329,8 @@ ActiveRecord::Schema.define(version: 2022_10_14_171521) do
     t.datetime "updated_at"
   end
 
-  create_table "trainers", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text "bio"
-    t.string "gravatar_email"
-    t.string "twitter_username"
-    t.string "linkedin_url"
-    t.boolean "is_kleerer"
-    t.integer "country_id"
-    t.string "tag_name"
-    t.string "signature_image"
-    t.string "signature_credentials"
-    t.decimal "average_rating", precision: 4, scale: 2
-    t.integer "net_promoter_score"
-    t.integer "surveyed_count"
-    t.integer "promoter_count"
-    t.text "bio_en"
-  end
+# Could not dump table "trainers" because of following StandardError
+#   Unknown type 'bool' for column 'deleted'
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false

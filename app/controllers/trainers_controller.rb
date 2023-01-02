@@ -95,6 +95,6 @@ class TrainersController < ApplicationController
 
   def trainer_params
     params.require(:trainer).permit :name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url, :tag_name,
-                                    :signature_image, :signature_credentials, :is_kleerer
+                                    :signature_image, :signature_credentials, :is_kleerer, :deleted
   end
 end

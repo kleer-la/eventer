@@ -133,6 +133,7 @@ es:
         is_kleerer: "Es Kleerer?"
         twitter_username: "Usuario de Twitter"
         gravatar_email: "Email de Gravatar"
+        deleted: Borrado
       role:
         name: "Nombre"
       user:

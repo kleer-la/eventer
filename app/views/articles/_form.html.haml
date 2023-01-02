@@ -47,7 +47,7 @@
               Dejar en blanco para generar automáticamente.
             %br
             %br
-            = f.input :trainers, as: :check_boxes, collection: Trainer.order(name: :asc), wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+            = f.input :trainers, as: :check_boxes, collection: Trainer.sorted, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
           .row-fuid
             .span12
               .form-actions
