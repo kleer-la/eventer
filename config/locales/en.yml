@@ -132,7 +132,8 @@ en:
         linedin_url: "URL de LinedIn"
         is_kleerer: "Es Kleerer?"
         twitter_username: "Usuario de Twitter"
-        gravatar_email: "Email de Gravatar"
+        gravatar_email: Gravatar email
+        deleted: Deleted
       role:
         name: "Nombre"
       user:

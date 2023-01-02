@@ -13,7 +13,7 @@ class Trainer < ApplicationRecord
   has_and_belongs_to_many :articles
 
   scope :kleerer, -> { where(is_kleerer: true) }
-  scope :sorted, -> { order('name asc') }  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+  scope :sorted, -> { where(deleted: false).order('name asc') }  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 
   validates :name, presence: true
 

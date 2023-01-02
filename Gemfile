@@ -5,7 +5,7 @@ end
 
 source 'http://rubygems.org'
 
-ruby '~> 2.7.6'
+ruby '~> 2.7.7'
 
 if next?
   gem 'rails', '~> 6.0.0'
@@ -85,6 +85,7 @@ gem 'valid_email'
 gem 'best_in_place' # for editing participants
 
 # Amazon AWS API Client
+# TODO AWS v3
 gem 'aws-sdk', '~> 2' # v2 change to Aws instead of AWS
 
 # App Monitoring Heroku Plug-In

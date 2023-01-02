@@ -8,9 +8,14 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 (ver alternativa docker más abajo)
 
 - Instalá las dependencias: bundle install
-- Creá la base de dates: rails db:migrate
-- Cargá los datos iniciales: rails db:seed
-- Preparar db de prueba: rails db:test:prepare
+- Base de datos
+
+```cli
+rails db:migrate        # Creá la base de dates
+rails db:seed           # Cargá los datos iniciales
+rails db:test:prepare   # Preparar db de prueba
+```
+
 
 - Ejecutar todas las pruebas: rails spec;rails feature
     NOTA: en este momento no funciona cucumber + selenium en ambiente desarrollo
