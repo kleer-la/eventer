@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_02_123045) do
+ActiveRecord::Schema.define(version: 2023_01_02_162816) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 2023_01_02_123045) do
     t.datetime "updated_at", null: false
     t.integer "lang", default: 0, null: false
     t.integer "category_id"
+    t.string "cover"
+    t.boolean "selected", default: false, null: false
     t.index ["category_id"], name: "index_articles_on_category_id"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
   end

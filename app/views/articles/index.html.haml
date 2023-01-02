@@ -14,8 +14,9 @@
             %tr
               %th Title
               %th Slug
-              %th Updated
+              %th Created
               %th Published
+              %th Sel
               %th
 
           %tbody
@@ -23,12 +24,15 @@
               %tr
                 %td= link_to article.title, edit_article_path(article)
                 %td= article.slug
-                %td= article.updated_at
+                %td= article.created_at
                 %td
                   -if article.published
-                    %i.icon-play.text-success{ :alr => 'publicado'}
+                    %i.icon-play.text-success{ :alt => 'publicado'}
                   -else
-                    %i.icon-pause.text-warning{ :alr => 'sin publicar'}
+                    %i.icon-pause.text-warning{ :alt => 'sin publicar'}
+                %td
+                  -if article.selected
+                    %i.icon-star.text-success
                 %td
                   .text-right
                     %a.btn.btn-warning.btn-mini{ :href => edit_article_path(article) }

@@ -26,28 +26,46 @@
         %fieldset.inputs
           = f.inputs do
             .row-fluid
-              .span8
+              .span3
                 .control-group
                   = f.input :lang, :as => :radio
+              .span1
               .span4
                 .control-group
                   = f.input :published
+                  = f.input :selected
+              .span4
+                .control-group
                   = f.input :category
             = f.input :title, input_html: {class: 'input-block-level'}
             = f.input :tabtitle, input_html: {class: 'input-block-level'}
             = f.input :description, input_html: {class: 'input-block-level'}
-            = f.input :body, input_html: {rows: 20, class: 'input-block-level'}
-            %small.muted 
-              Este texto soporta 
-              %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
-              y HTML.
-            .row-fuid{id:'warnings', class: 'text-warning'}
-            = f.input :slug, input_html: {class: 'input-block-level'}
-            %small.muted 
-              Dejar en blanco para generar automáticamente.
-            %br
-            %br
-            = f.input :trainers, as: :check_boxes, collection: Trainer.sorted, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+            .row-fuid
+              .span5
+                .control-group
+                  = f.input :slug, input_html: {class: 'input-block-level'}
+                  %small.muted
+                    Empty -> automatic
+              .span7
+                .control-group
+                  = f.input :cover, input_html: {class: 'input-block-level'}
+                  %small.muted
+                    Image URL
+            .row-fuid
+              = f.input :body, input_html: {rows: 20, class: 'input-block-level'}
+              %small.muted 
+                Este texto soporta 
+                %a{ :href => "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet", :target => "_blank"}Markdown 
+                y HTML.
+            .row-fluid
+              = f.input :trainers, as: :check_boxes, collection: Trainer.sorted, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+            .row-fluid
+              .span6
+                Created at
+                = @article.created_at
+              .span6
+                Updated at
+                = @article.updated_at
           .row-fuid
             .span12
               .form-actions
