@@ -65,25 +65,19 @@ Enjoy!
 
 
 == Deploy Heroku sin pipeline
-```cli
-# una vez - ambiente test (qa2.kleer.la)
-heroku git:remote -a keventer-test
-git remote rename heroku heroku-test
-# cada deploy a test
-git push heroku-test develop:master
-```
+  # una vez - ambiente test (qa2.kleer.la)
+  heroku git:remote -a keventer-test
+  git remote rename heroku heroku-test
+  # cada deploy a test
+  git push heroku-test develop:master
 
-```cli
-# una vez - ambiente prod (www.kleer.la)
-heroku git:remote -a keventer
-# cada deploy a prod
-git push heroku master:master
-```
+  # una vez - ambiente prod (www.kleer.la)
+  heroku git:remote -a keventer
+  # cada deploy a prod
+  git push heroku master:master
 
 == Contact Us
 Configurar el mail de destino con CONTACT_US_MAILTO
 
 Ejemplo como generar Claves para CONTACT_US_SECRET
-```cli
-openssl rand -base64 128
-```
+  openssl rand -base64 128
