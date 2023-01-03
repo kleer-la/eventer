@@ -17,6 +17,8 @@ group :development do
   gem 'listen'
   gem 'rubocop'
   gem 'brakeman'
+  gem 'derailed_benchmarks'
+  gem 'stackprof'
 end
 
 group :development, :test do
@@ -45,13 +47,6 @@ group :test, :production do
   gem 'pg', '~> 1.00'
 end
 
-# Gems used only for assets and not required
-# in production environments by default.
-if next?
-  gem 'coffee-rails', '~> 5.0'
-else
-  gem 'coffee-rails', '~> 4' # wait until rails 5.2 to update to 5.0
-end
 gem 'sassc-rails'
 # cant remove: cannot load such file -- coffee_script sprockets/autoload/coffee_script
 

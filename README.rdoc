@@ -10,12 +10,9 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Instalá las dependencias: bundle install
 - Base de datos
 
-```cli
-rails db:migrate        # Creá la base de dates
-rails db:seed           # Cargá los datos iniciales
-rails db:test:prepare   # Preparar db de prueba
-```
-
+    rails db:migrate        # Creá la base de dates
+    rails db:seed           # Cargá los datos iniciales
+    rails db:test:prepare   # Preparar db de prueba
 
 - Ejecutar todas las pruebas: rails spec;rails feature
     NOTA: en este momento no funciona cucumber + selenium en ambiente desarrollo
@@ -26,21 +23,16 @@ rails db:test:prepare   # Preparar db de prueba
     #export RECAPTCHA_SECRET_KEY="6Ld_iSIUAAAAAClJtl3YV7HfT4B4idylgMrBLQ9k"
 
 - Ejecutar pruebas rápidas: 
-```cli
-bundle exec rails ci
-```
+    bundle exec rails ci
+
 - Ejecutar pruebas lentas: 
-```cli
-bundle exec rails slow_tests
-```
+    bundle exec rails slow_tests
+
 - Ejecutar alguna prueba: 
-```cli
-bundle exec rails spec SPEC=<path relativo>
-```
+    bundle exec rails spec SPEC=<path relativo>
 - Migration antes de pruebas
-```cli
-RAILS_ENV=test rails db:migrate
-```
+
+    RAILS_ENV=test rails db:migrate
 
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
     #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
