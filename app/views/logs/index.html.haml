@@ -12,13 +12,12 @@
             %tr
               %th Area
               %th Level
-              %th Message
               %th Date
-
+              %th Message
           %tbody
             - @logs.each do |log|
               %tr
                 %td= log.area
                 %td= log.level
-                %td= link_to log.message, log
                 %td= log.created_at
+                %td= link_to log.message.first(40), log
