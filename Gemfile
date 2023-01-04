@@ -49,14 +49,13 @@ end
 
 group :assets do
   gem 'coffee-rails', '~> 5.0'
+  gem 'sassc-rails'
+  gem 'uglifier', '>= 1.3.0'
 end
-
-gem 'sassc-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer'
 gem 'execjs', '~> 2.7.0'    # fail with 2.8.1
-gem 'uglifier', '>= 1.3.0'
 
 gem 'haml'
 gem 'haml-rails'
