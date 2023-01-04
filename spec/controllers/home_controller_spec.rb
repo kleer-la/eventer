@@ -54,4 +54,37 @@ describe HomeController do
       expect(assigns(:event_type)).to eq et
     end
   end
+
+  describe 'contact us' do
+    ['hola', 'Peter', 'Bruce Lee', 'PEter'].each do |name|
+      it "#{name} is a valid name" do
+        expect(HomeController.valid_name?(name)).to be true
+      end
+    end
+    [ ['', 'empty'],
+      ['skyreveryLiz', 'uppercase not first char'],
+      ['FjqDTZHrLzJWQ ', 'internal uppercase'],
+      ["HeyaMr...: ) the passive income it's 999eu a day C'mon -", 'too long'],
+    ].each do |ex|
+      it "name <#{ex[0]}> is invalid. Reason: #{ex[1]} " do
+        expect(HomeController.valid_name?(ex[0])).to be false
+      end
+    end
+    [ ['Papa', 'e@ma.il', '/', '', 'hi there'],
+    ].each do |(name, email, context, subject, message)|
+      it "Contact is valid (#{name},#{email},#{context},#{subject},#{message},)" do
+        expect(HomeController.valid_contact_us(name, email, context, subject, message, nil)).to be nil
+      end
+    end
+    [ ['aPPa', '', '', '', '', 'bad name'],
+      ['Papa', '', '', '', '', 'empty message'],
+      ['Papa', '', '', '', 'hi there', 'empty email'],
+      ['Papa', 'e@ma.il', '', '', 'hi there', 'empty context'],
+      ['Papa', 'e@ma.il', '/', 'oops', 'hi there', 'subject honeypot'],
+    ].each do |(name, email, context, subject, message, error)|
+      it "Contact is invalid (#{name},#{email},#{context},#{subject},#{message},). Reason: #{error} " do
+        expect(HomeController.valid_contact_us(name, email, context, subject, message, nil)).to eq error
+      end
+    end
+  end
 end

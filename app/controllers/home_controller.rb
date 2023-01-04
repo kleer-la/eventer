@@ -2,30 +2,48 @@
 
 class HomeController < ApplicationController
 
-# let response = fetch('/api/contact_us', {
-#   method: 'POST',
-#   headers: {
-#     'Content-Type': 'application/json;charset=utf-8'
-#   },
-#   data: {
-#           "name": "Joe Doe",
-#           "mail": 'AR',
-#           "context": '/catalog',
-#           "subject": 'new@gmail.com',
-#           "message": 'New comment'
-#         }
-# });
+  def self.valid_name?(name)
+    return false if name.to_s == ''
+    name = name.strip
+    return false if !!/^[a-z]+[A-Z]/.match(name)
+    return false if !!/[a-z]+[A-Z]+[a-z]/.match(name)
+    return false if name.length > 50
+    true
+  end
+  def self.valid_contact_us(name, email, context, subject, message, secret)
+    local_secret = ENV['CONTACT_US_SECRET'].to_s
+
+    ('bad secret' if local_secret != '' && local_secret != secret ) ||
+    ('bad name' if !self.valid_name?(name)) ||
+    ('empty message' if !message.present?) ||
+    ('empty email' if !email.present?) ||
+    ('empty context' if !context.present?) ||
+    ('subject honeypot' if subject.present?)
+  end
+
   def contact_us
     # params.from_jsonapi.permit(:name, :email, :context, :subject, :message)
-    secret = ENV['CONTACT_US_SECRET'].to_s
-    return if secret != '' && secret != params[:secret]
-    ApplicationMailer.delay.contact_us(
-      params[:name],
-      params[:email],
-      params[:context],
-      params[:subject],
-      params[:message],
-    )
+    name = params[:name]
+    email = params[:email]
+    context = params[:context]
+    subject = params[:subject]
+    message = params[:message]
+
+    error = self.class.valid_contact_us(name, email, context, subject, message, params[:secret])
+    if error.present?
+      Log.log(:mail, :info,  
+        "Contact Us - #{error}", 
+        "name:#{name} #{email} #{context}, message: #{message} // subject: #{subject}"
+       )
+    else
+      ApplicationMailer.delay.contact_us(
+        name,
+        email,
+        context,
+        subject,
+        message
+      )
+    end
 
     render json: { data: nil }, status: 200
   end
