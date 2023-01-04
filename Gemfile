@@ -47,7 +47,7 @@ group :test, :production do
   gem 'pg', '~> 1.00'
 end
 
-group :assets do
+group :assets, :production do
   # Gems used only for assets and not required
   # in production environments by default.
   if next?
