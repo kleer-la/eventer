@@ -1,2 +1,2 @@
 web: bundle exec puma -C config/puma.rb
-release: rake db:migrate --trace tmp:clear
+release: rake db:migrate --trace
