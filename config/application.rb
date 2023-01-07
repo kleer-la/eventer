@@ -30,6 +30,5 @@ module Eventer
     # config.autoloader = :classic
     # config.load_defaults 5.2
 
-    config.active_record.sqlite3.represent_boolean_as_integer = true
   end
 end
