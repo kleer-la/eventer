@@ -201,11 +201,11 @@ es:
       event_type:
         name: "Tipo de Evento"
         subtitle: "Subtitulo"
-        description: "Descripción"
+        description: "Descripción (Body)"
         recipients: "Destinado A"
         program: "Programa"
         goal: "Objetivo"
-        elevator_pitch: "Elevator Pitch"
+        elevator_pitch: "SEO Descripción"
         learnings: "¿Qué voy a aprender?"
         takeaways: "¿Qué voy a obtener?"
         faq: "Preguntas Frecuentes"
