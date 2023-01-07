@@ -10,14 +10,20 @@ class HomeController < ApplicationController
     return false if name.length > 50
     true
   end
+  def self.valid_message?(msg)
+    return false if msg.to_s == ''
+    return false if msg.include? 'http://'
+    true
+  end
+
   def self.valid_contact_us(name, email, context, subject, message, secret)
     local_secret = ENV['CONTACT_US_SECRET'].to_s
 
-    ('bad secret' if local_secret != '' && local_secret != secret ) ||
-    ('bad name' if !self.valid_name?(name)) ||
-    ('empty message' if !message.present?) ||
-    ('empty email' if !email.present?) ||
-    ('empty context' if !context.present?) ||
+    ('bad secret'     if local_secret != '' && local_secret != secret ) ||
+    ('bad name'       unless self.valid_name?(name)) ||
+    ('bad message'  unless self.valid_message?(message)) ||
+    ('empty email'    unless email.present?) ||
+    ('empty context'  unless context.present?) ||
     ('subject honeypot' if subject.present?)
   end
 
