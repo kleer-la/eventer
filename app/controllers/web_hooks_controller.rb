@@ -12,7 +12,7 @@ class WebHooksController < ActionController::API
       'resourceId' => params[:invoice_id]
       }]
     })
-    render html: "WebHooks controller respondiendo a GET con invoice_id #{params[:invoice_id]}"
+    render html: "WebHooks controller respondiendo a GET con invoice_id: #{params[:invoice_id] || '<vacío>'}"
   end
 
   def post
@@ -20,6 +20,8 @@ class WebHooksController < ActionController::API
     signature = request.env['HTTP_X_XERO_SIGNATURE']
 
     if validate(payload, signature)
+      Log.log(:xero, :info, 'Procesando webhook', payload.to_s) if Settings.get(:LOG_LEVEL).to_i > 0 
+
       XeroWebHookJob.perform_later(JSON.parse(payload))
       puts 'ok hook' + payload.to_s
       head :ok
