@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require File.expand_path('boot', __dir__)
+require_relative 'boot'
 
 require 'rails/all'
 
@@ -10,25 +8,18 @@ Bundler.require(*Rails.groups)
 
 module Eventer
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    # config.load_defaults 6.0  # test fail :(
+
     # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
-
-    # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
-
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     I18n.config.enforce_available_locales = false
     I18n.default_locale = :es
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = 'utf-8'
-
-    # config.load_defaults 6.0
-    # config.autoloader = :classic
-    # config.load_defaults 5.2
-
-  end
+    config.encoding = 'utf-8'  end
 end
