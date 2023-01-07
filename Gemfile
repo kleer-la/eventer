@@ -6,12 +6,13 @@ end
 source 'http://rubygems.org'
 
 ruby '~> 2.7.7'
+gem 'rails', '~> 6.0.0'
 
-if next?
-  gem 'rails', '~> 6.0.0'
-else
-  gem 'rails', '~> 5.2'
-end
+# if next?
+#   gem 'rails', '~> 6.0.0'
+# else
+#   gem 'rails', '~> 5.2'
+# end
 
 group :development do
   gem 'listen'
@@ -100,11 +101,7 @@ gem 'activemodel-serializers-xml' # to_xml  (rails 5)
 gem 'puma'
 gem 'rails-controller-testing' # assigns (rails 5)
 
-if next?
-  gem 'responders', '~> 3.0'
-else
-  gem 'responders', '~> 2.0' # for respond_to at the class level (Rails 4.2) used(?) in application_controller
-end
+gem 'responders', '~> 3.0'
 
 gem 'friendly_id' # slug for blog Articles
 
