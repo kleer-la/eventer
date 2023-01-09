@@ -1,18 +1,9 @@
-def next?
-  File.basename(__FILE__) == "Gemfile.next"
-end
 # frozen_string_literal: true
 
 source 'http://rubygems.org'
 
 ruby '~> 2.7.7'
 gem 'rails', '~> 6.0.0'
-
-# if next?
-#   gem 'rails', '~> 6.0.0'
-# else
-#   gem 'rails', '~> 5.2'
-# end
 
 group :development do
   gem 'listen'
@@ -31,7 +22,6 @@ group :development, :test do
   gem 'database_cleaner-active_record'
   gem 'debase'
   gem 'ruby-debug-ide'
-  gem 'next_rails'
   gem 'simplecov'
   gem 'simplecov-lcov', '~> 0.8.0'
 end
@@ -49,7 +39,7 @@ group :test, :production do
 end
 
 group :assets do
-  gem 'coffee-rails', '~> 5.0'
+  gem 'coffee-rails'  #, '~> 5.0'
   gem 'sassc-rails'
   gem 'uglifier', '>= 1.3.0'
 end
