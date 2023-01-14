@@ -37,7 +37,7 @@ class HomeController < ApplicationController
 
     error = self.class.valid_contact_us(
       name, email, context, subject, message, 
-      params[:secret], Settings.get('CONTACT_US_MESSAGE_FILTER'))
+      params[:secret], Setting.get('CONTACT_US_MESSAGE_FILTER'))
     if error.present?
       Log.log(:mail, :info,  
         "Contact Us - #{error}", 
