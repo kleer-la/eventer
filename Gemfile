@@ -20,8 +20,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'sqlite3'
   gem 'database_cleaner-active_record'
-  gem 'debase'
-  gem 'ruby-debug-ide'
   gem 'simplecov'
   gem 'simplecov-lcov', '~> 0.8.0'
 end

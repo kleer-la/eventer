@@ -81,3 +81,10 @@ Configurar el mail de destino con CONTACT_US_MAILTO
 
 Ejemplo como generar Claves para CONTACT_US_SECRET
   openssl rand -base64 128
+
+
+== Migrar a Ruby 3.1
+* Reemplazar therubyracer a nodejs
+* Resolver el problema con Psyco 4
+  https://stackoverflow.com/questions/71191685/visit-psych-nodes-alias-unknown-alias-default-psychbadalias
+* ... 

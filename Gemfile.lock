@@ -1495,9 +1495,6 @@ GEM
     database_cleaner-core (2.0.1)
     date (3.3.3)
     dead_end (4.0.0)
-    debase (0.2.4.1)
-      debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (0.10.12)
     delayed_job (4.1.11)
       activesupport (>= 3.0, < 8.0)
     delayed_job_active_record (4.1.7)
@@ -1735,8 +1732,6 @@ GEM
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.24.1)
       parser (>= 3.1.1.0)
-    ruby-debug-ide (0.7.3)
-      rake (>= 0.8.1)
     ruby-progressbar (1.11.0)
     ruby-rc4 (0.1.5)
     ruby-statistics (3.0.1)
@@ -1833,7 +1828,6 @@ DEPENDENCIES
   cucumber-rails
   daemons
   database_cleaner-active_record
-  debase
   delayed_job_active_record
   derailed_benchmarks
   devise (~> 4)
@@ -1865,7 +1859,6 @@ DEPENDENCIES
   rspec-mocks
   rspec-rails
   rubocop
-  ruby-debug-ide
   sassc-rails
   selenium-webdriver
   simplecov
