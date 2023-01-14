@@ -10,18 +10,18 @@ class HomeController < ApplicationController
     return false if name.length > 50
     true
   end
-  def self.valid_message?(msg)
+  def self.valid_message?(msg, filter = 'http://')
     return false if msg.to_s == ''
-    return false if msg.include? 'http://'
+    return false if filter.split(',').map {|f| msg.include? f}.reduce(false){|r, elem| r || elem}
     true
   end
 
-  def self.valid_contact_us(name, email, context, subject, message, secret)
+  def self.valid_contact_us(name, email, context, subject, message, secret, filter)
     local_secret = ENV['CONTACT_US_SECRET'].to_s
 
     ('bad secret'     if local_secret != '' && local_secret != secret ) ||
     ('bad name'       unless self.valid_name?(name)) ||
-    ('bad message'  unless self.valid_message?(message)) ||
+    ('bad message'    unless self.valid_message?(message, filter)) ||
     ('empty email'    unless email.present?) ||
     ('empty context'  unless context.present?) ||
     ('subject honeypot' if subject.present?)
@@ -35,7 +35,9 @@ class HomeController < ApplicationController
     subject = params[:subject]
     message = params[:message]
 
-    error = self.class.valid_contact_us(name, email, context, subject, message, params[:secret])
+    error = self.class.valid_contact_us(
+      name, email, context, subject, message, 
+      params[:secret], Settings.get('CONTACT_US_MESSAGE_FILTER'))
     if error.present?
       Log.log(:mail, :info,  
         "Contact Us - #{error}", 
