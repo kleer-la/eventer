@@ -73,8 +73,7 @@ gem 'valid_email'
 gem 'best_in_place' # for editing participants
 
 # Amazon AWS API Client
-# TODO AWS v3
-gem 'aws-sdk', '~> 2' # v2 change to Aws instead of AWS
+gem 'aws-sdk', '~> 3'
 
 # App Monitoring Heroku Plug-In
 gem 'newrelic_rpm'
