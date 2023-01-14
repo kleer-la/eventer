@@ -6,7 +6,7 @@ class ApplicationMailer < ActionMailer::Base
   def contact_us(name, email, context, subject, message)
 
     mail(to: ENV['CONTACT_US_MAILTO'] || 'entrenamos@kleer.la',
-      subject: "[Consulta] #{name} consulto sobre #{context} #{subject}",
+      subject: "[Consulta] En #{context} por #{name}",
       body: "#{message} \n#{'-'*10}\n#{context}\n#{name}<#{email}>"
     )
   end
