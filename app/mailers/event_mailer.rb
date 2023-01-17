@@ -142,7 +142,7 @@ class EventMailer < ApplicationMailer
     EventMailer.xero
 
     contact = @@xero.create_contact(
-      "#{participant.fname} #{participant.lname}", participant.fname, participant.lname,
+      "#{participant.fname}.strip #{participant.lname.strip}", participant.fname, participant.lname,
       participant.email, participant.phone, participant.address
     )
 
