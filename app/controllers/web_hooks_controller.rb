@@ -26,6 +26,7 @@ class WebHooksController < ActionController::API
       puts 'ok hook' + payload.to_s
       head :ok
     else
+      Log.log(:xero, :info, 'unauthorized hook', payload.to_s)
       puts 'unauthorized hook' + payload.to_s
       head :unauthorized
     end
