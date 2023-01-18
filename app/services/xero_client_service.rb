@@ -27,6 +27,10 @@ module XeroClientService
 
   def self.initialized_client
     oauth_token = OauthToken.first
+    if oauth_token.nil?
+      Log.log(:xero, :error, 'oauth_token nil', caller.to_s)
+      return
+    end
 
     xero_client = build_client
     xero_client.set_token_set(oauth_token.token_set)

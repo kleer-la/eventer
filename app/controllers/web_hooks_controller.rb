@@ -36,6 +36,11 @@ class WebHooksController < ActionController::API
 
   def validate(payload, signature)
     key = ENV['XERO_WEBHOOK_KEY']
+    if key.nil?
+      Log.log(:xero, :error, 'Procesando webhook', 'XERO_WEBHOOK_KEY no definida')
+      return false
+    end
+
     calculated_signature = Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha256'), key, payload)).strip
 
     (signature == calculated_signature)
