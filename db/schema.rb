@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_07_150943) do
+ActiveRecord::Schema.define(version: 2023_01_21_143522) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -297,6 +297,8 @@ ActiveRecord::Schema.define(version: 2023_01_07_150943) do
     t.boolean "selected", default: false, null: false
     t.string "profile_url"
     t.string "photo_url"
+    t.string "name"
+    t.string "company_name"
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
 

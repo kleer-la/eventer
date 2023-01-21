@@ -110,6 +110,7 @@ en:
         fname: "First name"
         lname: "Last name"
         phone: "(optional) Phone"
+        company_name: "Company Name"
         id_number: "ID Number(for invoice)"
         address: "Address (for invoice)"
         quantity: "How many learners?"

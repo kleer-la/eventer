@@ -48,6 +48,10 @@
           .row-fluid
             .span4
               .control-group
+                %label.control-label{ :for => :company_name }= I18n.t("formtastic.labels.participant.company_name")
+                = f.text_field :company_name
+            .span4
+              .control-group
                 %label.control-label{ :for => :id_number }= I18n.t("formtastic.labels.participant.id_number")
                 = f.text_field :id_number
             .span4

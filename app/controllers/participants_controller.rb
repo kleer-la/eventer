@@ -345,6 +345,6 @@ class ParticipantsController < ApplicationController
                   :status, :notes, :influence_zone_id, :influence_zone, :quantity,
                   :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony, :selected,
                   :xero_invoice_number, :invoice_id, :is_payed, :photo_url, :profile_url,
-                  :campaign_source, :campaign, :accept_terms, :id_number, :address
+                  :campaign_source, :campaign, :accept_terms, :company_name, :id_number, :address
   end
 end

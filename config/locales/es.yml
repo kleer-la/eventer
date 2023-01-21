@@ -110,6 +110,7 @@ es:
         fname: "Nombre"
         lname: "Apellido"
         phone: "(opcional) Teléfono de contacto"
+        company_name: "Razon Social"
         id_number: "ID tributario para facturación (RUT/RUC/CUIT/NIT)"
         address: "Dirección de facturación"
         quantity: "Cantidad de cupos a comprar"
