@@ -36,6 +36,25 @@ describe Participant do
     end
   end
 
+  describe 'create callback' do
+    it 'strip fname' do
+      part =  FactoryBot.create(:participant, fname: '  pepe  ')
+      expect(part.fname).to eq 'pepe'
+    end
+    it 'strip lname' do
+      part =  FactoryBot.create(:participant, lname: '  pepe  ')
+      expect(part.lname).to eq 'pepe'
+    end
+    it 'calc company name if missing' do
+      part =  FactoryBot.create(:participant, fname: 'pepe', lname: 'smith')
+      expect(part.company_name).to eq 'pepe smith'
+    end
+    it 'DONT calc company name if present' do
+      part =  FactoryBot.create(:participant, company_name: 'ACME')
+      expect(part.company_name).to eq 'ACME'
+    end
+  end
+
   context 'default' do
     it "should have a default status of 'N'" do
       expect(@participant.status).to eq 'N'

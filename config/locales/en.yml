@@ -111,6 +111,7 @@ en:
         lname: "Last name"
         phone: "(optional) Phone"
         company_name: "Company Name"
+        invoice_name: "Invoice to (or empty for invoice to you)"
         id_number: "ID Number(for invoice)"
         address: "Address (for invoice)"
         quantity: "How many learners?"

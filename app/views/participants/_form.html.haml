@@ -32,6 +32,9 @@
         = f.email_field :email, required: true, :class => "span12", :placeholder => email_placeholder
     .row-fluid
       .control-group
+        = f.text_field :company_name, required: false, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.invoice_name")
+    .row-fluid
+      .control-group
         = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
     - if @event.should_ask_for_referer_code
       .row-fluid

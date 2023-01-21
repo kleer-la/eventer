@@ -8,6 +8,12 @@ class Participant < ApplicationRecord
   belongs_to :campaign
   belongs_to :campaign_source
 
+  before_create do
+    self.fname = fname.strip
+    self.lname = lname.strip
+    self.company_name = "#{fname} #{lname}" unless company_name.present?
+  end
+
   validates :email, :fname, :lname, :event, presence: true
   # validates :address, :phone, :influence_zone, :id_number
 
