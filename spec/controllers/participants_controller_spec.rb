@@ -154,6 +154,19 @@ describe ParticipantsController do
       end
     end
 
+    describe 'POST Copy' do
+      it 'one copy w/qty 1' do
+        expect do
+          post :copy, params: { id: @participant.to_param, event_id: @participant.event.id }
+        end.to change(Participant, :count).by(+1)
+        expect(@participant.quantity).to eq 1
+      end
+
+      it 'redirects to the participants list' do
+        post :copy, params: { id: @participant.to_param, event_id: @participant.event.id }
+        expect(response).to redirect_to("/events/#{@participant.event.id}/participants")
+      end
+    end
     describe 'DELETE destroy' do
       it 'destroys the requested participant' do
         expect do

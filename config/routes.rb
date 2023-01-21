@@ -45,7 +45,9 @@ Rails.application.routes.draw do
   get 'events/:event_id/participants_survey' => 'participants#survey'
   post 'events/:event_id/participants_batch_load' => 'participants#batch_load'
   resources :events do
-    resources :participants
+    resources :participants do
+      post 'copy', on: :member
+    end
   end
   patch 'events/:id/edit' => 'events#update'
 

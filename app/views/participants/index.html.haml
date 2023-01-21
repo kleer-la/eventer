@@ -223,8 +223,10 @@
                     = best_in_place participant, :notes, :as => :textarea, :url => url, :class => ['editable','editable-click']
                     = participant.pay_notes
                   %td
-                    %a.btn.btn-warning.btn-mini{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
+                    %a.btn.btn-warning.btn-small{ :href => edit_event_participant_path(participant.event, participant), :id => "modificar" }
                       %i.icon-edit{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Editar participante"}
+                    %a.btn.btn-danger.btn-mini{ :href => copy_event_participant_path(participant.event, participant), "data-confirm" => "Se realizarán #{[1,participant.quantity - 1 ].max} copias. ¿Estás seguro?", "data-method" => "copy", :rel => "nofollow" }
+                      %i.icon-copy
                     - if "AK".include? participant.status
                       - cert_url= "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}"
                       &nbsp;

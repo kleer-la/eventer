@@ -26,7 +26,7 @@ class ParticipantsController < ApplicationController
       participant.save!
     end
   end
-               
+
   # GET /participants
   # GET /participants.json
   def index
@@ -41,6 +41,18 @@ class ParticipantsController < ApplicationController
       format.csv { render csv: @participants, filename: "participantes_event_#{@event.id}.csv" }
       format.json { render json: @participants }
     end
+  end
+
+  def copy
+    original = Participant.find(params[:id])
+
+    qty = [1, original.quantity - 1].max
+    original.quantity = 1
+    original.save!
+
+    qty.times { original.dup.save! }
+
+    redirect_to polymorphic_path([original.event]) + '/participants'
   end
 
   def survey

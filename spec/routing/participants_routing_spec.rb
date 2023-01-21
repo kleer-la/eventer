@@ -24,6 +24,10 @@ describe ParticipantsController do
       expect(post('/events/1/participants')).to route_to('participants#create', event_id: '1')
     end
 
+    it 'routes to #copy' do
+      expect(post('/events/1/participants/1/copy')).to route_to('participants#copy', id: '1', event_id: '1')
+    end
+
     it 'routes to #update' do
       expect(put('/events/1/participants/1')).to route_to('participants#update', id: '1', event_id: '1')
     end
