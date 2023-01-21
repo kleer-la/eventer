@@ -23,7 +23,6 @@ class WebHooksController < ActionController::API
       Log.log(:xero, :info, 'Procesando webhook', payload.to_s) if Setting.get(:LOG_LEVEL).to_i > 0 
 
       XeroWebHookJob.perform_later(JSON.parse(payload))
-      puts 'ok hook' + payload.to_s
       head :ok
     else
       Log.log(:xero, :info, 'unauthorized hook', payload.to_s + ' signature' + signature.to_s )
