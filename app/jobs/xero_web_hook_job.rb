@@ -25,18 +25,17 @@ def perform(data)
 
     # ret_val = runner.execute do |api_run|
       data['events'].each do |event|
-p ">>>>>>>>>>>>>>> #{event}"
+        Log.log(:xero, :info, 'Procesando webhook job', event.to_s) if Setting.get(:LOG_LEVEL).to_i > 1
 
         next if event['tenantId'] != @xero_client.tenant_id
 
         if invoice_update?(event)
-          p "---------  #{event['resourceId']}"
+          Log.log(:xero, :info, 'webhook invoice', event.to_s) if Setting.get(:LOG_LEVEL).to_i > 0
           ParticipantsController.update_payment_status(event['resourceId'], @xero_client)
         else
-          # api_run.log_message('Saliendo por tipo de evento no procesado')
+          Log.log(:xero, :info, 'Saliendo por tipo de evento no procesado', event.to_s) if Setting.get(:LOG_LEVEL).to_i > 1
         end
       end
-    # end
 
     # raise 'Internal error processing webhook handler' unless ret_val
   end
@@ -46,5 +45,4 @@ p ">>>>>>>>>>>>>>> #{event}"
   def invoice_update?(event)
     event['eventCategory'] == 'INVOICE' && event['eventType'] == 'UPDATE'
   end
-
 end

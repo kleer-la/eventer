@@ -12,9 +12,8 @@ class EventMailer < ApplicationMailer
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
     
-    # to: @participant.email
-    mail( to: ADMIN_MAIL, 
-          cc: ALERT_MAIL, 
+    mail( to: participant.email,
+          cc: ADMIN_MAIL + ',' + ALERT_MAIL, 
           subject: I18n.t('mail.paid.subject', locale: @lang, event:@participant.event.event_type.name)
     ) do |format|
       format.text
