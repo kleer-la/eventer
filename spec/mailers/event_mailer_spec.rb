@@ -165,6 +165,7 @@ describe EventMailer do
     it 'send registration in event with alert email address' do
       @participant.event = FactoryBot.create(:event)
       @participant.event.monitor_email = 'eventos@k.com'
+      @participant.company_name = 'ACME'
       @participant.fname = 'Martin'
       @participant.lname = 'Salias'
       @participant.phone = '1234-5678'
@@ -174,7 +175,7 @@ describe EventMailer do
 
       edit_registration_link = 'http://fighters.foo/events/1/participants/2/edit'
       @email = EventMailer.alert_event_monitor(@participant, edit_registration_link)
-      expect(@email.subject).to include('Martin Salias')
+      expect(@email.subject).to include('ACME')
       expect(@email.body).to include('app_test@kleer.la')
       expect(@email.body).to include('Martin Salias')
       expect(@email.body).to include('1234-5678')

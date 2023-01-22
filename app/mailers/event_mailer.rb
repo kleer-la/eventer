@@ -31,8 +31,8 @@ class EventMailer < ApplicationMailer
     edit_registration_link = "http://eventos.kleer.la/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
 
     mail(to: ADMIN_MAIL, cc: ALERT_MAIL, 
-      subject: "[Keventer] Invoice voided #{@participant.event.event_type.name}: #{participant.fname} #{participant.lname}",
-      body: "Invoice: #{participant.lname}  \nLink para editar: #{edit_registration_link}"
+      subject: "[Keventer] Invoice voided #{@participant.event.event_type.name}: #{participant.company_name}",
+      body: "Invoice: #{participant.company_name}\n#{participant.fname} #{participant.lname} <#{participant.email}>\n\nLink para editar: #{edit_registration_link}"
     )
   end
 
@@ -46,7 +46,7 @@ class EventMailer < ApplicationMailer
         @online_invoice_url = @@xero.get_online_invoice_url(invoice)
       rescue StandardError => e
         Log.log(:xero, :error,  
-          "create_send_invoice:#{participant.fname + participant.lname}", 
+          "create_send_invoice:#{participant.company_name} #{participant.fname} #{participant.lname}",
           e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
          )
         return
@@ -82,7 +82,7 @@ class EventMailer < ApplicationMailer
            "\n#{extra_message} \nPuedes ver/editar el registro en #{edit_registration_link}"
 
     mail(to: event.monitor_email.presence || ALERT_MAIL,
-         subject: "[Keventer] Nuevo registro a #{event_info}: #{participant.fname} #{participant.lname}",
+         subject: "[Keventer] Nuevo registro a #{event_info}: #{participant.company_name}",
          body: body)
   end
 
@@ -91,7 +91,7 @@ class EventMailer < ApplicationMailer
   end
 
   def contact_data(participant)
-    "Contact #{participant.fname} #{participant.lname}
+    "Contact #{participant.company_name}
   FName: #{participant.fname} / Lname: #{participant.lname}
   email: #{participant.email}
   phone: #{participant.phone}
@@ -142,7 +142,7 @@ class EventMailer < ApplicationMailer
     EventMailer.xero
 
     contact = @@xero.create_contact(
-      "#{participant.fname.strip} #{participant.lname.strip}", participant.fname.strip, participant.lname.strip,
+      participant.company_name, participant.fname, participant.lname,
       participant.email, participant.phone, participant.address
     )
 
