@@ -15,6 +15,14 @@ class FileStoreService
     @store = store
   end
 
+  def upload(tempfile, file_path, bucket= 'kleer-images')
+    object = @store.objects(file_path, bucket)
+    object.upload_file(tempfile)
+    object.acl.put({ acl: 'public-read' })
+
+    "https://s3.amazonaws.com/#{bucket}/#{file_path}"
+  end
+
   def write(filename)
     key = File.basename(filename)
     object = @store.objects("certificates/#{key}")
@@ -42,6 +50,11 @@ class FileStoreService
     Dir.mkdir(temp_dir) unless Dir.exist?(temp_dir)
     "#{temp_dir}/#{basename}"
   end
+
+  def list(folder = 'certificate-images')
+    @store.list_objects(bucket: 'kleer-images')
+  end
+
 end
 
 class NullFileStore
@@ -49,7 +62,7 @@ class NullFileStore
     @exists = exists
   end
 
-  def objects(key)
+  def objects(key, bucket_name= nil)
     NullStoreObject.new(key, exists: @exists)
   end
 end
@@ -83,15 +96,24 @@ end
 
 class S3FileStore
   def initialize(access_key_id: nil, secret_access_key: nil)
-    client = Aws::S3::Client.new(
+    @client = Aws::S3::Client.new(
       access_key_id: access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
       secret_access_key: secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY']
     )
-    resource = Aws::S3::Resource.new(client: client)
-    @bucket = resource.bucket('Keventer')
+    @resource = Aws::S3::Resource.new(client: @client)
+    @bucket = @resource.bucket('Keventer')
   end
 
-  def objects(key)
-    @bucket.object(key)
+  def objects(key, bucket_name= nil)
+p key, bucket_name
+    bucket = (@resource.bucket(bucket_name) if bucket_name.present?
+            ) || @bucket
+p bucket
+    bucket.object(key)
   end
+
+  def list_objects(bucket:)
+    resp = @client.list_objects(bucket: bucket)
+  end
+
 end

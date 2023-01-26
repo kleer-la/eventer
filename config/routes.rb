@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  get 'images' => 'images#index'
+  get 'images/new'
+  post 'images/create'
+  get 'images/show'
+  get 'images/edit'
+  put 'images/update'
+  
   get '/webhooks' => 'web_hooks#index'
   post '/webhooks' => 'web_hooks#post'
 
