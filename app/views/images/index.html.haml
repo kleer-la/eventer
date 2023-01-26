@@ -1,0 +1,36 @@
+.page-header
+  %h1.pull-left
+    %i.icon-folder-open
+      = 'Imágenes'
+  .pull-right
+    %a.btn.btn-white{ :href => '/images/new' }
+      %i.icon-upload
+      Subir Imagen
+
+- def img_url(key) 
+  - "https://kleer-images.s3.sa-east-1.amazonaws.com/#{key.gsub(' ','+')}"
+
+.row-fluid
+  .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
+    .box-header.blue-background
+      .title Imágenes para usar en artículos / tipos de evento
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th Fecha
+                %th Modificado
+                %th Tamaño
+            %tbody
+              - @images.contents.each do |img|
+                %tr
+                  %td
+                    %a{ :href => img_url(img.key)}
+                      = img.key
+                  %td
+                    = img.last_modified
+                  %td
+                    = img.size
+  
