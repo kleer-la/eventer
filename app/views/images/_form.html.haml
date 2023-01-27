@@ -41,3 +41,10 @@
     -#               %a.btn.btn-large{ :href => events_path }
     -#                 %i.icon-undo
     -#                 Cancelar
+:javascript
+  $(document).ready(function() {
+    $("#image").change(function() {
+      var fileName = $(this).val().split("\\").pop();
+      $("#path").val(fileName);
+    });
+  });

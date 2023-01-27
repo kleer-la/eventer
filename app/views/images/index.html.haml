@@ -7,8 +7,10 @@
       %i.icon-upload
       Subir Imagen
 
+- require 'uri'
 - def img_url(key) 
-  - "https://kleer-images.s3.sa-east-1.amazonaws.com/#{key.gsub(' ','+')}"
+  -# - "https://kleer-images.s3.sa-east-1.amazonaws.com/#{key.gsub(' ','+')}"
+  - "/images/show?i=#{URI.encode_www_form_component(key)}"
 
 .row-fluid
   .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }

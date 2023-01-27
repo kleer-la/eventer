@@ -18,14 +18,10 @@ end
 
     store = FileStoreService.create_s3
     @uri = store.upload(@file.tempfile, file_path, 'kleer-images')
-    # s3.put_object(
-    #   body: file.tempfile,
-    #   bucket: 'YOUR_BUCKET_NAME',
-    #   key: file.original_filename
-    # )
   end
 
   def show
+    @img_name = URI.decode_www_form_component(params[:i])
   end
 
   def edit

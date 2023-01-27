@@ -1,2 +1,13 @@
-%h1 Images#show
-%p Find me in app/views/images/show.html.haml
+.page-header
+  %h1.pull-left
+    %i.icon-open-folder
+    %span Imágenes - Ver
+
+= "https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}"
+
+.row-fuid
+  .span12.box
+    %a{ :href => "" }
+      %img{src: "https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}"}
+
+= link_to 'Back', images_path
