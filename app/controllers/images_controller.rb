@@ -2,7 +2,7 @@ require 'ostruct'
 
 class ImagesController < ApplicationController
   def index
-    store = FileStoreService.create_s3
+    store = FileStoreService.current
     @images = store.list
   end
 
@@ -16,7 +16,7 @@ end
     @file = params[:image]
     file_path = params[:path]
 
-    store = FileStoreService.create_s3
+    store = FileStoreService.current
     @uri = store.upload(@file.tempfile, file_path, 'kleer-images')
   end
 

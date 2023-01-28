@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Images", type: :request do
+  before(:all) do
+    FileStoreService.create_null
+  end
   describe "GET /index" do
     it "returns http success" do
       get "/images"

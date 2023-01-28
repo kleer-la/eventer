@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 require 'aws-sdk'
+require 'ostruct'
 
 class FileStoreService
   def self.create_null(exists: {})
-    FileStoreService.new NullFileStore.new(exists: exists)
+    @@current = FileStoreService.new NullFileStore.new(exists: exists)
   end
 
   def self.create_s3
-    FileStoreService.new S3FileStore.new
+    @@current = FileStoreService.new S3FileStore.new
+  end
+
+  def self.current
+    @@current
   end
 
   def initialize(store)
@@ -65,14 +70,23 @@ class NullFileStore
   def objects(key, bucket_name= nil)
     NullStoreObject.new(key, exists: @exists)
   end
+  def list_objects(bucket:)
+    list = OpenStruct.new
+    list.contents = [NullStoreObject.new('some file.png', exists: @exists)]
+    list
+  end
+
 end
 
 class NullStoreObject
-  attr_writer :key, :acl
+  attr_writer :acl
+  attr_accessor :key, :last_modified, :size
 
   def initialize(key, exists:)
     @key = key
     @exists = exists
+    @last_modified = Date.yesterday
+    @size = 12345
   end
 
   def download_file(file)
@@ -105,10 +119,7 @@ class S3FileStore
   end
 
   def objects(key, bucket_name= nil)
-p key, bucket_name
-    bucket = (@resource.bucket(bucket_name) if bucket_name.present?
-            ) || @bucket
-p bucket
+    bucket = @resource.bucket(bucket_name) if bucket_name.present?
     bucket.object(key)
   end
 
