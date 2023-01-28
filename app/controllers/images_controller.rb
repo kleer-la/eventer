@@ -17,7 +17,9 @@ end
     file_path = params[:path]
 
     store = FileStoreService.current
-    @uri = store.upload(@file.tempfile, file_path, 'kleer-images')
+
+    @img_name = store.upload(@file.tempfile, file_path, 'kleer-images')
+    render :show
   end
 
   def show
