@@ -2,12 +2,28 @@
   %h1.pull-left
     %i.icon-open-folder
     %span Imágenes - Ver
-
-= "https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}"
-
+- uri = "https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}"
+- markdown = "![alt text](https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}  \"Titulo\")"
 .row-fuid
   .span12.box
+    %h4
+      URL para colocar en campos cover o side image
+    %p
+      = uri
+      %button.btn.btn-secondary{type: "button", onclick: "copyText('#{uri})'"} Copiar Clipboard
+    %h4
+      Markdown para colocar en campos description de Articulos y tipos de evento
+    %p
+      = markdown
+      %button.btn.btn-secondary{type: "button", onclick: "copyText('#{markdown}')"} Copiar Clipboard
+    %h4
+      Imagen
     %a{ :href => "" }
-      %img{src: "https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}"}
+      %img{src: "#{uri}"}
 
 = link_to 'Back', images_path
+
+:javascript
+  function copyText(textToCopy) {
+      navigator.clipboard.writeText(textToCopy)
+  };

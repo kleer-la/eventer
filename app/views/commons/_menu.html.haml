@@ -32,16 +32,20 @@
           %a{ :href => "/articles" }
             %i.icon-file
             %span Articles
-        - if can? :manage, Category.new
-          %li{ :class => menu_item_class(@active_menu, "categories") }
-            %a{ :href => categories_path }
-              %i.icon-sitemap
-              %span= t('menu.categories')
         - if can? :manage, Trainer.new
           %li{ :class => menu_item_class(@active_menu, "trainers") }
             %a{ :href => trainers_path }
               %i.icon-briefcase
               %span= t('menu.trainers')
+        %li{ :class => menu_item_class(@active_menu, "images") }
+          %a{ :href => "/images" }
+            %i.icon-folder-open
+            %span= t('menu.images')
+        - if can? :manage, Category.new
+          %li{ :class => menu_item_class(@active_menu, "categories") }
+            %a{ :href => categories_path }
+              %i.icon-sitemap
+              %span= t('menu.categories')
         %li{ :class => menu_item_class(@active_menu, "roles") }
           %a{ :href => roles_path }
             %i.icon-cogs
