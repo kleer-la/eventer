@@ -14,11 +14,11 @@ end
   def create
     return "Falta información #{params[:image]} #{params[:path]}" if !params[:image].present? || !params[:path].present?
     @file = params[:image]
-    file_path = params[:path]
+    @img_name = params[:path]
 
     store = FileStoreService.current
 
-    @img_name = store.upload(@file.tempfile, file_path, 'kleer-images')
+    file_path = store.upload(@file.tempfile, @img_name, 'kleer-images')
     render :show
   end
 

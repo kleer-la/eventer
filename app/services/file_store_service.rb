@@ -13,6 +13,7 @@ class FileStoreService
   end
 
   def self.current
+    self.create_s3 unless defined? @@current
     @@current
   end
 
