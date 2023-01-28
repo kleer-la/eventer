@@ -21,7 +21,7 @@ end
   end
 
   def show
-    @img_name = URI.decode_www_form_component(params[:i])
+    @img_name = URI.decode_www_form_component(params[:i]) if params[:i].present?
   end
 
   def edit
