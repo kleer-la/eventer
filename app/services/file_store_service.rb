@@ -13,7 +13,7 @@ class FileStoreService
   end
 
   def self.current
-    self.create_s3 unless defined? @@current
+    self.create_s3 unless defined? @@current 
     @@current
   end
 
@@ -121,7 +121,7 @@ class S3FileStore
 
   def objects(key, bucket_name= nil)
     bucket = @resource.bucket(bucket_name) if bucket_name.present?
-    bucket.object(key)
+    (bucket || @bucket).object(key)
   end
 
   def list_objects(bucket:)
