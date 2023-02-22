@@ -11,7 +11,7 @@ class ArticlesController < ApplicationController
       format.json do
         render json: @articles.order(created_at: :desc),
                methods: %i[abstract category_name],
-               include: { trainers: { only: [:name, :gravatar_email, :twitter_username, :linkedin_url] } }
+               include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
       end
     end
   end
@@ -20,7 +20,7 @@ class ArticlesController < ApplicationController
   def show
     respond_to do |format|
       format.html
-      format.json { render json: @article, include: { trainers: { only: [:name, :gravatar_email, :twitter_username, :linkedin_url] } } }
+      format.json { render json: @article, include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
     end
   end
 
