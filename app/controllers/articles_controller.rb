@@ -20,7 +20,9 @@ class ArticlesController < ApplicationController
   def show
     respond_to do |format|
       format.html
-      format.json { render json: @article, include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
+      format.json { render json: @article, 
+        methods: [:category_name],
+        include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
     end
   end
 
