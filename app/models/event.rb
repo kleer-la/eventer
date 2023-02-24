@@ -33,6 +33,7 @@ class Event < ApplicationRecord
 
   validates :capacity, numericality: { greater_than: 0, message: :capacity_should_be_greater_than_0 }
   validates :duration, numericality: { greater_than: 0, message: :duration_should_be_greater_than_0 }
+  validates :time_zone_name, presence: true, if: :online?
 
   validates_each :eb_end_date do |record, attr, value|
     record.errors.add(attr, :eb_end_date_should_be_earlier_than_event_date) unless value.nil? || value < record.date
