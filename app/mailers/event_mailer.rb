@@ -5,7 +5,7 @@ ADMIN_MAIL = 'admin@kleer.la'
 
 class EventMailer < ApplicationMailer
   default from: ALERT_MAIL
-  add_template_helper(DashboardHelper)
+  helper DashboardHelper
 
   def participant_paid(participant)
     @participant = participant

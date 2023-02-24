@@ -3,7 +3,7 @@
 source 'http://rubygems.org'
 
 ruby '~> 3.0.5'
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.1'
 
 group :development do
   gem 'listen'
@@ -68,7 +68,8 @@ gem 'prawn_rails'
 gem 'redcarpet'
 gem 'valid_email'
 
-gem 'best_in_place' # for editing participants
+# from git to solve ActionView::Base.new parameters 
+gem 'best_in_place', git: 'https://github.com/bernat/best_in_place'   # for editing participants
 
 # Amazon AWS API Client
 gem 'aws-sdk', '~> 3'
