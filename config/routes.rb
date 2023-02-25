@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     resources :participants do
       post 'copy', on: :member
     end
+    get 'copy', on: :member
   end
   patch 'events/:id/edit' => 'events#update'
 

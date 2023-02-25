@@ -48,6 +48,19 @@ describe Event do
       expect(@event.valid?).to be false
     end
 
+    it 'ol w/o time_zone not valid' do
+      @event.mode = 'ol'
+
+      expect(@event.valid?).to be false
+    end
+
+    it 'ol requieres time_zone' do
+      @event.mode = 'ol'
+      @event.time_zone_name = 'Hawaii'
+
+      expect(@event.valid?).to be true
+    end
+
     it 'should require its list_price' do
       @event.list_price = ''
 

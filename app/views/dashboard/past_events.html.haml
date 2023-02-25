@@ -101,5 +101,7 @@
                           &nbsp;
                           %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants_survey" }
                             %i.icon-check
+                          %a.btn.btn-danger.btn-mini{ :href => "/events/#{event.id}/copy" }
+                            %i.icon-copy
             .digg_pagination
               = will_paginate @events

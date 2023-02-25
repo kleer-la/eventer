@@ -41,6 +41,16 @@ describe EventsController do
       end
     end
 
+    describe 'GET copy' do
+      it 'Change the date' do
+        event = FactoryBot.create(:event, date: Date.today)
+        get :copy, params: { id: event.to_param }
+        new_event = assigns(:event)
+        expect(response).to render_template(:new)
+        expect(new_event.date).to be nil
+      end
+    end
+
     describe 'GET edit' do
       it 'assigns the requested event as @event' do
         event = FactoryBot.create(:event)

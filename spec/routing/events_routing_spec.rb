@@ -19,6 +19,9 @@ describe EventsController do
     it 'routes to #edit' do
       expect(get('/events/1/edit')).to route_to('events#edit', id: '1')
     end
+    it 'routes to #copy' do
+      expect(get('/events/1/copy')).to route_to('events#copy', id: '1')
+    end
 
     it 'routes to #create' do
       expect(post('/events')).to route_to('events#create')

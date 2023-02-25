@@ -55,6 +55,17 @@ class EventsController < ApplicationController
       format.json { render json: @event }
     end
   end
+  
+  def copy
+    @event = Event.find(params[:id]).dup
+    @event.date =  nil
+    @event.finish_date =  nil
+    pre_edit
+
+    @event_type_cancellation_policy = @event.event_type.cancellation_policy
+
+    render :new
+  end
 
   # GET /events/1/edit
   def edit
