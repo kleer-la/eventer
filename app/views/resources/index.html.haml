@@ -1,0 +1,31 @@
+.page-header
+  %h1.pull-left
+    %i.icon-book
+    %span Resources
+  .pull-right
+    %a.btn.btn-white{ :href => new_resource_path }= t('formtastic.actions.new')
+
+.row-fluid
+  .box-content.box-no-padding
+    .responsive-table
+      .scrollable-area
+        %table.table.table-striped{ :style => "margin-bottom:0;" }
+          %thead
+            %tr
+              %th Title
+              %th Slug
+              %th Created
+              %th
+
+          %tbody
+            - @resources.each do |resource|
+              %tr
+                %td= link_to resource.title_es, edit_resource_path(resource)
+                %td= resource.slug
+                %td= resource.created_at
+                %td
+                  .text-right
+                    %a.btn.btn-warning.btn-mini{ :href => edit_resource_path(resource) }
+                      %i.icon-edit
+                    %a.btn.btn-danger.btn-mini{ :href => resources_path(resource), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                      %i.icon-trash

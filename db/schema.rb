@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_21_143522) do
+ActiveRecord::Schema.define(version: 2023_03_06_221642) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -33,6 +33,16 @@ ActiveRecord::Schema.define(version: 2023_01_21_143522) do
     t.integer "article_id", null: false
     t.integer "trainer_id", null: false
     t.index ["article_id", "trainer_id"], name: "index_articles_trainers_on_article_id_and_trainer_id"
+  end
+
+  create_table "authorships", force: :cascade do |t|
+    t.integer "resource_id", null: false
+    t.integer "trainer_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["resource_id", "trainer_id"], name: "index_authorships_on_resource_id_and_trainer_id", unique: true
+    t.index ["resource_id"], name: "index_authorships_on_resource_id"
+    t.index ["trainer_id"], name: "index_authorships_on_trainer_id"
   end
 
   create_table "campaign_sources", force: :cascade do |t|
@@ -315,6 +325,34 @@ ActiveRecord::Schema.define(version: 2023_01_21_143522) do
     t.index ["user_id"], name: "index_ratings_on_user_id"
   end
 
+  create_table "resources", force: :cascade do |t|
+    t.integer "format"
+    t.integer "categories_id"
+    t.integer "trainers_id"
+    t.string "slug", null: false
+    t.string "landing_es"
+    t.string "cover_es"
+    t.string "title_es"
+    t.text "description_es"
+    t.string "share_link_es"
+    t.string "share_text_es"
+    t.string "tags_es"
+    t.text "comments_es"
+    t.string "landing_en"
+    t.string "cover_en"
+    t.string "title_en"
+    t.text "description_en"
+    t.string "share_link_en"
+    t.string "share_text_en"
+    t.string "tags_en"
+    t.text "comments_en"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["categories_id"], name: "index_resources_on_categories_id"
+    t.index ["slug"], name: "index_resources_on_slug", unique: true
+    t.index ["trainers_id"], name: "index_resources_on_trainers_id"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
@@ -371,4 +409,8 @@ ActiveRecord::Schema.define(version: 2023_01_21_143522) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "authorships", "resources"
+  add_foreign_key "authorships", "trainers"
+  add_foreign_key "resources", "categories", column: "categories_id"
+  add_foreign_key "resources", "trainers", column: "trainers_id"
 end

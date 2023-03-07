@@ -1,0 +1,69 @@
+:css
+  ol {
+     list-style:none;
+  }
+  .label {
+    color:black;
+    background-color:white;
+    font-weight: normal;
+  }
+
+- @resource.errors.full_messages.each do |msg|
+  .alert.alert-error
+    %a.close{ "data-dismiss" => :alert, :href => "#" } &times;
+    =msg
+-if notice.present?
+  .alert.notice= notice
+.row-fluid
+  .span12.box
+    .box-header.red-background
+      .title
+        .icon-edit
+          = @resource.title_es.nil? ? t("formtastic.labels.article.new_title") : @resource.title_es
+
+    .box-content
+      = semantic_form_for @resource do |f|
+        %fieldset.inputs
+          = f.inputs do
+            .row-fuid
+              = f.input :title_es, input_html: {class: 'input-block-level'}
+            .row-fuid
+              .span6
+                .control-group
+                  = f.input :format
+              .span6
+                .control-group
+                  = #f.input :category
+                  = f.input :categories, as: :check_boxes, collection: Category.all, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+
+            = f.input :slug, input_html: {class: 'input-block-level'}
+            %small.muted
+              Empty -> automatic
+            .row-fuid
+              = f.input :landing_es, input_html: {class: 'input-block-level'}
+              = f.input :cover_es, input_html: {class: 'input-block-level'}
+              = f.input :description_es, input_html: {class: 'input-block-level'}
+              = f.input :comments_es, input_html: {class: 'input-block-level'}
+              = f.input :share_link_es, input_html: {class: 'input-block-level'}
+              = f.input :share_text_es, input_html: {class: 'input-block-level'}
+              = f.input :tags_es, input_html: {class: 'input-block-level'}
+            .row-fluid
+              = f.input :authors, as: :check_boxes, collection: Trainer.sorted, input_html: { multiple: true,  required: false}, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+              = #f.input :translators, as: :check_boxes, collection: Trainer.sorted, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+            .row-fluid
+              .span6
+                Created at
+                = @resource.created_at
+              .span6
+                Updated at
+                = @resource.updated_at
+          .row-fuid
+            .span12
+              .form-actions
+                .text-right
+                  %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
+                    %i.icon-save
+                    Guardar y Seguir
+                  %a.btn.btn-large{ :href => articles_path }
+                    %i.icon-undo
+                    Cancelar

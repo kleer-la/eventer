@@ -11,6 +11,10 @@ class Trainer < ApplicationRecord
   has_many :cotrained_participants, through: :cotrained_events, source: :participants
 
   has_and_belongs_to_many :articles
+  has_many :authorships
+  has_many :resources, through: :authorships
+    # has_and_belongs_to_many  :resources, through: :translators
+
 
   scope :kleerer, -> { where(is_kleerer: true) }
   scope :sorted, -> { where(deleted: false).order('name asc') }  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}

@@ -127,6 +127,15 @@ FactoryBot.define do
     slug { 'mi-historia' }
   end
 
+  factory :resource do
+    id { '2' }
+    format { 0 }
+    landing_es { '/blog/my-resource' }
+    title_es { 'Mi historia' }
+    description_es { 'My resource' }
+    slug { 'my-resource' }
+  end
+
   factory :oauth_token do
     issuer { 'Xero' }
     token_set { 'Lots of encripted data' }

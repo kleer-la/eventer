@@ -12,7 +12,8 @@ Rails.application.routes.draw do
   post '/webhooks' => 'web_hooks#post'
 
   resources :logs, only: [:index, :show]
-  resources :articles
+  resources :articles,
+            :resources
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
