@@ -5,13 +5,13 @@ class ResourcesController < ApplicationController
 
   # GET /resources
   def index
-    @resources = Resource.order(selected: :desc, created_at: :desc)
+    @resources = Resource.order(created_at: :desc)
     respond_to do |format|
       format.html
       format.json do
         render json: @resources.order(created_at: :desc),
                methods: %i[category_name],
-               include: { authorships: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
+               include: { authors: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
       end
     end
   end
