@@ -13,7 +13,8 @@ class Trainer < ApplicationRecord
   has_and_belongs_to_many :articles
   has_many :authorships
   has_many :resources, through: :authorships
-    # has_and_belongs_to_many  :resources, through: :translators
+  has_many :translations
+  has_many :translators, through: :translations
 
 
   scope :kleerer, -> { where(is_kleerer: true) }

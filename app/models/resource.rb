@@ -9,7 +9,8 @@ class Resource < ApplicationRecord
   
   has_many  :authorships
   has_many  :authors, through: :authorships, source: :trainer
-  # has_and_belongs_to_many  :translators, class_name: 'Trainer'
+  has_many  :translations
+  has_many  :translators, through: :translations, source: :trainer
   
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }

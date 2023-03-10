@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_06_221642) do
+ActiveRecord::Schema.define(version: 2023_03_10_213415) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -392,6 +392,16 @@ ActiveRecord::Schema.define(version: 2023_03_06_221642) do
     t.boolean "deleted", default: false
   end
 
+  create_table "translations", force: :cascade do |t|
+    t.integer "resource_id", null: false
+    t.integer "trainer_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["resource_id", "trainer_id"], name: "index_translations_on_resource_id_and_trainer_id", unique: true
+    t.index ["resource_id"], name: "index_translations_on_resource_id"
+    t.index ["trainer_id"], name: "index_translations_on_trainer_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -413,4 +423,6 @@ ActiveRecord::Schema.define(version: 2023_03_06_221642) do
   add_foreign_key "authorships", "trainers"
   add_foreign_key "resources", "categories", column: "categories_id"
   add_foreign_key "resources", "trainers", column: "trainers_id"
+  add_foreign_key "translations", "resources"
+  add_foreign_key "translations", "trainers"
 end
