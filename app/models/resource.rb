@@ -13,13 +13,11 @@ class Resource < ApplicationRecord
   
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }
-
-  # validates :title, presence: true
-  # validates :description, presence: true, length: { maximum: 160 }
+  validates :description_es, presence: true, length: { maximum: 160 }
   
-  # def should_generate_new_friendly_id?
-  #   !slug.present?
-  # end
+  def should_generate_new_friendly_id?
+    !slug.present?
+  end
   
   def category_name
     category&.name

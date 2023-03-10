@@ -37,8 +37,7 @@
                   = f.input :categories, as: :check_boxes, collection: Category.all, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
 
             = f.input :slug, input_html: {class: 'input-block-level'}
-            %small.muted
-              Empty -> automatic
+            %small.muted= 'Empty -> automatic from title es (this as id in url)'
             .row-fuid
               = f.input :landing_es, input_html: {class: 'input-block-level'}
               = f.input :cover_es, input_html: {class: 'input-block-level'}
@@ -77,6 +76,6 @@
                   %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
                     %i.icon-save
                     Guardar y Seguir
-                  %a.btn.btn-large{ :href => articles_path }
+                  %a.btn.btn-large{ :href => resources_path }
                     %i.icon-undo
                     Cancelar

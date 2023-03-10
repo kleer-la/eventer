@@ -32,6 +32,12 @@
           %a{ :href => "/articles" }
             %i.icon-file
             %span Articles
+        %li{ :class => menu_item_class(@active_menu, "resources") }
+          %a{ :href => "/resources" }
+            %i.icon-book
+            %span Resources
+            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
+              new
         - if can? :manage, Trainer.new
           %li{ :class => menu_item_class(@active_menu, "trainers") }
             %a{ :href => trainers_path }
@@ -46,27 +52,29 @@
             %a{ :href => categories_path }
               %i.icon-sitemap
               %span= t('menu.categories')
-        %li{ :class => menu_item_class(@active_menu, "roles") }
-          %a{ :href => roles_path }
-            %i.icon-cogs
-            %span= t('menu.roles')
-        %li{ :class => menu_item_class(@active_menu, "users") }
-          %a{ :href => users_path }
-            %i.icon-user
-            %span= t('menu.users')
-        - if can? :manage, OauthToken.new
-          %li{ :class => menu_item_class(@active_menu, "oauth_tokens") }
-            %a{ :href => '/oauth_tokens' }
-              %i.icon-cog
-              %span= t('menu.oauth_tokens')
-        - if can? :manage, Setting.new
-          %li{ :class => menu_item_class(@active_menu, "settings") }
-            %a{ :href => settings_path }
-              %i.icon-cog
-              %span= t('menu.settings')
-        %li{ :class => menu_item_class(@active_menu, "logs") }
-          %a{ :href => logs_path }
-            %i.icon-cog
-            %span= t('menu.logs')
-            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
-              new
+        %li
+          %ul
+            Tools
+          %li{ :class => menu_item_class(@active_menu, "roles") }
+            %a{ :href => roles_path }
+              %i.icon-cogs
+              %span= t('menu.roles')
+          %li{ :class => menu_item_class(@active_menu, "users") }
+            %a{ :href => users_path }
+              %i.icon-user
+              %span= t('menu.users')
+          - if can? :manage, OauthToken.new
+            %li{ :class => menu_item_class(@active_menu, "oauth_tokens") }
+              %a{ :href => '/oauth_tokens' }
+                %i.icon-cog
+                %span= t('menu.oauth_tokens')
+          - if can? :manage, Setting.new
+            %li{ :class => menu_item_class(@active_menu, "settings") }
+              %a{ :href => settings_path }
+                %i.icon-cog
+                %span= t('menu.settings')
+            %li{ :class => menu_item_class(@active_menu, "logs") }
+              %a{ :href => logs_path }
+                %i.icon-cog
+                %span= t('menu.logs')
+                
