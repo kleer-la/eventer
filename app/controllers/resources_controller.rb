@@ -71,7 +71,10 @@ class ResourcesController < ApplicationController
   def resources_params
     params[:resource][:slug] = params[:resource][:slug].downcase if params[:resource][:slug].present?
     params.require(:resource)
-          .permit(:title_es, :format, :slug, :description_es, :cover_es, category_id: [],
-                  author_ids: [], translator_ids: [])
+          .permit(:format, :slug, 
+                  :title_es, :description_es, :cover_es, :landing_es, :share_link_es, :share_text_es, :tags_es, :comments_es,
+                  :title_en, :description_en, :cover_en, :landing_en, :share_link_en, :share_text_en, :tags_en, :comments_en,
+                  category_id: [], author_ids: [], translator_ids: []
+                )
   end
 end

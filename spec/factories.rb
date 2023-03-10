@@ -129,11 +129,12 @@ FactoryBot.define do
 
   factory :resource do
     id { '2' }
-    format { 0 }
-    landing_es { '/blog/my-resource' }
-    title_es { 'Mi historia' }
-    description_es { 'My resource' }
+    format { :card }
     slug { 'my-resource' }
+    title_es { 'Mi recurso' }
+    description_es { 'My resource' }
+    cover_es {'my-resource.png'}
+    landing_es { '/blog/my-resource' }
   end
 
   factory :oauth_token do
