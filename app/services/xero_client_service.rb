@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'xero-ruby'
-require 'xero_client_null_service'
 
 # https://github.com/XeroAPI/xero-ruby/blob/master/lib/xero-ruby/api/accounting_api.rb
 

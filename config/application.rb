@@ -10,6 +10,7 @@ module Eventer
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     # config.load_defaults 6.0  # test fail :(
+    config.autoloader = :zeitwerk # If you need to stick with the defaults of an older Rails version, you can choose to only activate Zeitwerk separate from the Rails 6.0 defaults
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
