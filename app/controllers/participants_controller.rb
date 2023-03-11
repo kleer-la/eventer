@@ -10,6 +10,8 @@ class ParticipantsController < ApplicationController
                  %w[Cancelado X], %w[Pospuesto D]].freeze
 
   def self.update_payment_status(invoice_id, xero_service = nil)
+    return unless invoice_id.present?
+
     xero =  XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero)
     participant = Participant.search_by_invoice invoice_id
     return if participant.nil? || participant.paid?
