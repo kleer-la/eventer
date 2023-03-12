@@ -37,11 +37,12 @@
                   = f.input :categories, as: :check_boxes, collection: Category.all, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
 
             = f.input :slug, input_html: {class: 'input-block-level'}
-            %small.muted= 'Empty -> automatic from title es (this as id in url)'
+            %small.muted= 'Empty -> automatic from "title es" (slug an id for human readable links)'
             .row-fuid
               = f.input :landing_es, input_html: {class: 'input-block-level'}
               = f.input :cover_es, input_html: {class: 'input-block-level'}
-              = f.input :description_es, input_html: {class: 'input-block-level', rows: 5}
+              = f.input :description_es, input_html: {class: 'input-block-level', maxlength: "220",rows: 5}
+              %span#resource_description_es-count
               = f.input :comments_es, input_html: {class: 'input-block-level', rows: 2}
               = f.input :share_link_es, input_html: {class: 'input-block-level'}
               = f.input :share_text_es, input_html: {class: 'input-block-level'}
@@ -79,3 +80,19 @@
                   %a.btn.btn-large{ :href => resources_path }
                     %i.icon-undo
                     Cancelar
+
+:javascript
+  function updateCharCount(fieldId) {
+    var countId = fieldId + '-count'
+    var maxLength = $(fieldId).attr('maxlength');
+    var length = $(fieldId).val().length;
+    $(countId).html(length + '/' + maxLength);
+  }
+
+  $(document).ready(function() {
+    var fieldId = '#resource_description_es'
+    updateCharCount(fieldId);
+    $(fieldId).keyup(function() {
+      updateCharCount(fieldId);
+    });
+  })

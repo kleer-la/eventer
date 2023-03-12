@@ -14,7 +14,7 @@ class Resource < ApplicationRecord
   
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }
-  validates :description_es, presence: true, length: { maximum: 160 }
+  validates :description_es, presence: true, length: { maximum: 220 }
   
   def should_generate_new_friendly_id?
     !slug.present?
