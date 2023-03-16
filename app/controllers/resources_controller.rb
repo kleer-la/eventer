@@ -13,10 +13,10 @@ class ResourcesController < ApplicationController
                methods: %i[category_name],
                include: { 
                   authors: { 
-                    only: [:name, :gravatar_email, :twitter_username, :linkedin_url],
+                    only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url],
                     order: { updated_at: :desc } 
                   },
-                  translators: { only: [:name, :gravatar_email, :twitter_username, :linkedin_url] },
+                  translators: { only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url] },
                  }
       end
     end
