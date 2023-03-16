@@ -12,10 +12,7 @@ class ResourcesController < ApplicationController
         render json: @resources.order(created_at: :desc),
                methods: %i[category_name],
                include: { 
-                  authors: { 
-                    only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url],
-                    order: { updated_at: :desc } 
-                  },
+                  authors: { only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url, :updated_at]},
                   translators: { only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url] },
                  }
       end

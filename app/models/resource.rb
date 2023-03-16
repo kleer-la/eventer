@@ -7,7 +7,7 @@ class Resource < ApplicationRecord
 
   enum format: { card: 0, book: 1, infographic: 2, canvas: 3, guide: 4 } # example of enum definition
   
-  has_many  :authorships
+  has_many  :authorships, -> { order(updated_at: :desc) }
   has_many  :authors, through: :authorships, source: :trainer
   has_many  :translations
   has_many  :translators, through: :translations, source: :trainer
