@@ -43,6 +43,11 @@
           .row-fluid
             .span8
               .control-group
+                %label.control-label{ :for => :landing }= t("formtastic.labels.trainer.landing")
+                = f.text_field :landing
+          .row-fluid
+            .span8
+              .control-group
                 %label.control-label{ :for => :twitter_username }= t("formtastic.labels.trainer.twitter_username")
                 = f.text_field :twitter_username
           .row-fluid

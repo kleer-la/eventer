@@ -104,7 +104,6 @@ es:
       place: "Lugar"
       city: "Ciudad"
       country: "País"
-      trainer: "Entrenador"
       participant: "Participante"
       participant:
         fname: "Nombre"
@@ -128,9 +127,11 @@ es:
         confirm_without_mail: "¡Gracias! En breve un asesor se comunicará contigo con la información del evento."
       article:
         new_title: "Nuevo Artículo"
+      trainer: "Entrenador"
       trainer:
         new_title: "Nuevo Entrenador"
         bio_en: "Bio EN"
+        landing: "URL principal (para link en el nombre)"
         linedin_url: "URL de LinedIn"
         is_kleerer: "Es Kleerer?"
         twitter_username: "Usuario de Twitter"

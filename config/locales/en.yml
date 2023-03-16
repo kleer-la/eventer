@@ -104,7 +104,6 @@ en:
       place: "Place"
       city: "City"
       country: "Country"
-      trainer: "Trainer"
       participant: "Participant"
       participant:
         fname: "First name"
@@ -128,9 +127,11 @@ en:
         confirm_without_mail: "Thanks! We will contact you shortly."
       article:
         new_title: "New Article"
+      trainer: "Trainer"
       trainer:
         new_title: "New Trainer"
         bio_en: "Bio EN"
+        landing: "main URL (link on the name)"
         linedin_url: "URL de LinedIn"
         is_kleerer: "Es Kleerer?"
         twitter_username: "Usuario de Twitter"

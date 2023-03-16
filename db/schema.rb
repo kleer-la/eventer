@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_10_213415) do
+ActiveRecord::Schema.define(version: 2023_03_16_184326) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -390,6 +390,7 @@ ActiveRecord::Schema.define(version: 2023_03_10_213415) do
     t.integer "promoter_count"
     t.text "bio_en"
     t.boolean "deleted", default: false
+    t.string "landing"
   end
 
   create_table "translations", force: :cascade do |t|
