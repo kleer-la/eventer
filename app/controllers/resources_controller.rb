@@ -12,8 +12,8 @@ class ResourcesController < ApplicationController
         render json: @resources.order(created_at: :desc),
                methods: %i[category_name],
                include: { 
-                  authors: { only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url, :updated_at]},
-                  translators: { only: [:name, :gravatar_email, :landing, :twitter_username, :linkedin_url] },
+                  authors: { only: [:name, :landing]},
+                  translators: { only: [:name, :landing] },
                  }
       end
     end
@@ -74,9 +74,9 @@ class ResourcesController < ApplicationController
   def resources_params
     params[:resource][:slug] = params[:resource][:slug].downcase if params[:resource][:slug].present?
     params.require(:resource)
-          .permit(:format, :slug, :category_id,
-                  :title_es, :description_es, :cover_es, :landing_es, :share_link_es, :share_text_es, :tags_es, :comments_es,
-                  :title_en, :description_en, :cover_en, :landing_en, :share_link_en, :share_text_en, :tags_en, :comments_en,
+          .permit(:format, :slug, :category_id, :downloadable,
+                  :title_es, :description_es, :cover_es, :landing_es, :share_link_es, :share_text_es, :tags_es, :comments_es, :getit_es,
+                  :title_en, :description_en, :cover_en, :landing_en, :share_link_en, :share_text_en, :tags_en, :comments_en, :getit_en,
                   author_ids: [], translator_ids: []
                 )
   end

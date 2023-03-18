@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_16_184326) do
+ActiveRecord::Schema.define(version: 2023_03_18_123258) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -348,6 +348,9 @@ ActiveRecord::Schema.define(version: 2023_03_16_184326) do
     t.text "comments_en"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "downloadable"
+    t.string "getit_es"
+    t.string "getit_en"
     t.index ["categories_id"], name: "index_resources_on_categories_id"
     t.index ["slug"], name: "index_resources_on_slug", unique: true
     t.index ["trainers_id"], name: "index_resources_on_trainers_id"
