@@ -31,9 +31,9 @@
               .span6
                 .control-group
                   = f.input :format
-                  = f.input :downloadable
-                  %small.muted
-                    Relacionado con "Get It: Comprar o descargar". Marcar si se puede bajar el pdf o va a página de compras
+                  -# = f.input :downloadable
+                  -# %small.muted
+                  -#   Relacionado con "Get It: Comprar o descargar". Marcar si se puede bajar el pdf o va a página de compras
               .span6
                 .control-group
                   = #f.input :category
@@ -50,7 +50,7 @@
               = f.input :description_es, input_html: {class: 'input-block-level', maxlength: "220",rows: 5}
               %span#resource_description_es-count
               = f.input :comments_es, input_html: {class: 'input-block-level', rows: 2}
-              = f.input :share_link_es, input_html: {class: 'input-block-level'}
+              -# = f.input :share_link_es, input_html: {class: 'input-block-level'}
               = f.input :share_text_es, input_html: {class: 'input-block-level'}
               = f.input :tags_es, input_html: {class: 'input-block-level'}
             .row-fluid
@@ -69,7 +69,7 @@
               = f.input :cover_en, input_html: {class: 'input-block-level'}
               = f.input :description_en, input_html: {class: 'input-block-level', rows: 5}
               = f.input :comments_en, input_html: {class: 'input-block-level', rows: 2}
-              = f.input :share_link_en, input_html: {class: 'input-block-level'}
+              -# = f.input :share_link_en, input_html: {class: 'input-block-level'}
               = f.input :share_text_en, input_html: {class: 'input-block-level'}
               = f.input :tags_en, input_html: {class: 'input-block-level'}
             .row-fluid
