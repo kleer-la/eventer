@@ -4,9 +4,9 @@ require 'valid_email'
 
 class Participant < ApplicationRecord
   belongs_to :event
-  belongs_to :influence_zone
-  belongs_to :campaign
-  belongs_to :campaign_source
+  belongs_to :influence_zone, optional: true
+  belongs_to :campaign, optional: true
+  belongs_to :campaign_source, optional: true
 
   before_create do
     self.fname = fname.strip

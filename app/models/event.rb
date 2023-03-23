@@ -7,8 +7,8 @@ class Event < ApplicationRecord
 
   belongs_to :country
   belongs_to :trainer
-  belongs_to :trainer2, class_name: 'Trainer', foreign_key: 'trainer2_id'
-  belongs_to :trainer3, class_name: 'Trainer', foreign_key: 'trainer3_id'
+  belongs_to :trainer2, class_name: 'Trainer', foreign_key: 'trainer2_id', optional: true
+  belongs_to :trainer3, class_name: 'Trainer', foreign_key: 'trainer3_id', optional: true
   belongs_to :event_type
   has_many :participants
   has_many :categories, through: :event_type

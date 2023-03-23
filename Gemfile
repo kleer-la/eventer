@@ -3,7 +3,7 @@
 source 'http://rubygems.org'
 
 ruby '~> 3.0.5'
-gem 'rails', '~> 6.1'
+gem 'rails', '~> 7.0'
 
 group :development do
   gem 'listen'
@@ -96,3 +96,4 @@ gem 'friendly_id' # slug for blog Articles
 # Xero API
 gem 'jwt'
 gem 'xero-ruby'
+gem 'sprockets-rails'

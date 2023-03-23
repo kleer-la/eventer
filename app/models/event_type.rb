@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EventType < ApplicationRecord
-  belongs_to :canonical, class_name: 'EventType'
+  belongs_to :canonical, class_name: 'EventType', optional: true
   has_and_belongs_to_many :trainers
   has_and_belongs_to_many :categories
   has_many :events

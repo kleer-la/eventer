@@ -3,7 +3,7 @@
 class Resource < ApplicationRecord
   extend FriendlyId
   friendly_id :title_es, use: :slugged
-  belongs_to :category
+  belongs_to :category, optional: true
 
   enum format: { card: 0, book: 1, infographic: 2, canvas: 3, 
                 guide: 4,  game: 5}
