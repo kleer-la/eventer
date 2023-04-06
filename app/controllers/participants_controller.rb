@@ -118,7 +118,6 @@ class ParticipantsController < ApplicationController
       return
     end
     @participant = Participant.new
-    session[:payment_on_eventer] = params[:payment_on_eventer] ? true : false
     @influence_zones = InfluenceZone.sort_wo_republica
     @nakedform = !params[:nakedform].nil?
     I18n.locale = (:es if params[:lang].nil? || params[:lang].downcase == 'es') || :en
@@ -173,7 +172,7 @@ class ParticipantsController < ApplicationController
   end
 
   def create_mails
-    if @event.should_welcome_email && !session[:payment_on_eventer]
+    if @event.should_welcome_email
       EventMailer.delay.welcome_new_event_participant(@participant)
     end
 

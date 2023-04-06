@@ -28,7 +28,7 @@
     .row-fluid
       .control-group
         - email_placeholder = '* '+ I18n.t("formtastic.labels.participant.email")
-        - email_placeholder += " (confirmaremos tu registro en este email)"
+        - email_placeholder += I18n.t("formtastic.labels.participant.email_hint")
         = f.email_field :email, required: true, :class => "span12", :placeholder => email_placeholder
     .row-fluid
       .control-group
@@ -61,16 +61,11 @@
     .row-fluid
       .form-actions{ :style => "padding: 4px 20px 4px; margin-top: 0px;"}
         .text-center
-          - if session[:payment_on_eventer]
-            %button.btn.btn-success.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-              %i.icon-flag
-              = I18n.t("formtastic.button.participant.pay")
-          - else
-            %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
-              %i.icon-save
-              - if @event.community_event?
-                = I18n.t("formtastic.button.participant.register")
-              - else
-                = I18n.t("formtastic.button.participant.buy")
+          %button.btn.btn-primary.btn-large{:name => "commit", :type => "submit", :style => "margin-top: 0px;"}
+            %i.icon-save
+            - if @event.community_event?
+              = I18n.t("formtastic.button.participant.register")
+            - else
+              = I18n.t("formtastic.button.participant.buy")
 
 = @event.experimental_features
