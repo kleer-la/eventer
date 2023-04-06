@@ -119,6 +119,7 @@ en:
         status: "Status"
         influence_zone: "Influence Zone"
         referer_code: "Discount code"
+        referer_code_message:  Price will be adjusted after reviewing your discount code
         notes: "(optional) additional data or question"
         zone: "Where are you?"
         payment_type: "Payment type"

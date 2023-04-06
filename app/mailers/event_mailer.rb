@@ -95,6 +95,7 @@ class EventMailer < ApplicationMailer
   email: #{participant.email}
   phone: #{participant.phone}
   Nro fiscal:#{participant.id_number} / Dirección:#{participant.address}
+  Código de descuento: #{participant.referer_code}
   --------------\n"
   end
 
@@ -107,7 +108,7 @@ class EventMailer < ApplicationMailer
     # online_course_codename
     # online_cohort_codename
 
-    "Código de referencia: #{participant.referer_code}
+    "Código de descuento: #{participant.referer_code}\n
       Texto: \n#{@pih.item_description}
       Linea: #{participant.quantity} personas x #{unit_price} = #{participant.quantity * unit_price} COD: #{codename}\n
       #{online_payment}\n
@@ -151,7 +152,7 @@ class EventMailer < ApplicationMailer
 
     return if invoice.nil?
     @pih.update_participant(invoice)
-    @@xero.email_invoice(invoice)
+    @@xero.email_invoice(invoice) unless participant.referer_code.present?
     invoice
   end
 

@@ -40,6 +40,7 @@
       .row-fluid
         .control-group
           = f.text_field :referer_code, :class => "span6", :placeholder => I18n.t("formtastic.labels.participant.referer_code")
+          %div#referer-code-message
     .row_fluid
       .control-group
         %small.muted
@@ -69,3 +70,16 @@
               = I18n.t("formtastic.button.participant.buy")
 
 = @event.experimental_features
+
+:javascript
+  $(document).ready(function() {
+    var refererCodeInput = $('input[name="participant[referer_code]"]');
+
+    refererCodeInput.on('change', function() {
+      if ($(this).val() !== '') {
+        $('#referer-code-message').text("#{I18n.t('formtastic.labels.participant.referer_code_message')}");
+      } else {
+        $('#referer-code-message').text('');
+      }
+    });
+  });

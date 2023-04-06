@@ -119,6 +119,7 @@ es:
         status: "Estado"
         influence_zone: "Zona de Influencia"
         referer_code: "Código de Descuento"
+        referer_code_message:  Los precios serán ajustados cuando validemos tu código de descuento
         notes: "(opcional) Datos adicionales, por ejemplo asistentes: nombre <email>, ..."
         zone: "Tu lugar más próximo ..."
         payment_type: "Forma de Pago"
