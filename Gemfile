@@ -37,12 +37,9 @@ group :test, :production do
 end
 group :assets do
   gem 'coffee-rails'  #, '~> 5.0'
+  gem 'sassc-rails'
+  gem 'uglifier', '>= 1.3.0'
 end
-# group :assets do
-#   gem 'coffee-rails'  #, '~> 5.0'
-#   gem 'sassc-rails'
-#   gem 'uglifier', '>= 1.3.0'
-# end
 group :production do
   gem 'rails_12factor'
 end
