@@ -1480,13 +1480,6 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
-    coffee-rails (5.0.0)
-      coffee-script (>= 2.2.0)
-      railties (>= 5.2.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     comma (4.7.0)
       activesupport (>= 4.2.0)
     concurrent-ruby (1.2.2)
@@ -1761,14 +1754,6 @@ GEM
     ruby-statistics (3.0.1)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     selenium-webdriver (4.8.1)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
@@ -1805,8 +1790,6 @@ GEM
     ttfunk (1.7.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
@@ -1846,7 +1829,6 @@ DEPENDENCIES
   brakeman
   cancancan
   capybara
-  coffee-rails
   comma
   cucumber-rails
   daemons
@@ -1883,7 +1865,6 @@ DEPENDENCIES
   rspec-mocks
   rspec-rails
   rubocop
-  sassc-rails
   selenium-webdriver
   simplecov
   simplecov-lcov (~> 0.8.0)
@@ -1891,7 +1872,6 @@ DEPENDENCIES
   sqlite3
   stackprof
   therubyracer
-  uglifier (>= 1.3.0)
   valid_email
   webdrivers
   will_paginate (~> 3)
