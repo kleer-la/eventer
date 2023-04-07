@@ -1701,6 +1701,11 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.5.0)
       loofah (~> 2.19, >= 2.19.1)
+    rails_12factor (0.0.3)
+      rails_serve_static_assets
+      rails_stdout_logging
+    rails_serve_static_assets (0.0.5)
+    rails_stdout_logging (0.0.5)
     railties (7.0.4.3)
       actionpack (= 7.0.4.3)
       activesupport (= 7.0.4.3)
@@ -1871,6 +1876,7 @@ DEPENDENCIES
   puma
   rails (~> 7.0)
   rails-controller-testing
+  rails_12factor
   recaptcha
   redcarpet
   responders (~> 3.0)
