@@ -20,7 +20,7 @@ module Eventer
     config.load_defaults 7.0
 
     config.assets.digest = true
-    
+
     config.active_record.legacy_connection_handling = false
 
     # Configuration for the application, engines, and railties goes here.

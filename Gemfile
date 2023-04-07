@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '~> 3.0.5'
+ruby '~> 3.1'
 gem 'rails', '~> 7.0'
 
 group :development do
@@ -46,7 +46,8 @@ end
 
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-gem 'therubyracer'
+# gem 'therubyracer'
+gem 'mini_racer'
 gem 'execjs', '~> 2.7.0'    # fail with 2.8.1
 
 gem 'haml'
