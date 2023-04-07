@@ -35,7 +35,9 @@ end
 group :test, :production do
   gem 'pg', '~> 1.00'
 end
-
+group :assets do
+  gem 'coffee-rails'  #, '~> 5.0'
+end
 # group :assets do
 #   gem 'coffee-rails'  #, '~> 5.0'
 #   gem 'sassc-rails'
