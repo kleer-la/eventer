@@ -69,6 +69,7 @@ gem 'formtastic-bootstrap'
 gem 'money'
 gem 'prawn'
 gem 'prawn_rails'
+gem "matrix", "~> 0.4" # needed to solve an error when migrating to ruby 3.1 (prawn related)
 gem 'redcarpet'
 gem 'valid_email'
 
