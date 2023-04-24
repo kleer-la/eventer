@@ -1,0 +1,22 @@
+.page-header
+  %h1.pull-left
+    %i.icon-tasks
+    %span Tipos de Evento - Preview certificados
+
+.box-content
+  = form_tag "/event_types/#{@event.event_type.id}/certificate_preview", method: :post, multipart: true do
+    = hidden_field_tag :format, :pdf
+    %fieldset.inputs
+      .row-fuid
+        .span12
+          = file_field_tag :image
+      .row-fuid
+        .span12
+          .control-group
+            %label.control-label{ :for => :path }= 'Path:' #t("formtastic.labels.event.registration_link")
+            = text_field_tag :path
+      .row-fuid
+        .span12
+          .form-actions
+            .text-right
+              = submit_tag 'Preview'
