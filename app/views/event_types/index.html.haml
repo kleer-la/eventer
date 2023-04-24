@@ -44,6 +44,8 @@
                     .text-right
                       - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
                       - #  %i.icon-eye-open
+                      %a.btn.btn-warning.btn-mini{ :href => "/event_types/#{event_type.id}/events" }
+                        %i.icon-calendar-empty
                       %a.btn.btn-warning.btn-mini{ :href => "/event_types/#{event_type.id}/testimonies" }
                         %i.icon-comment
                       -# %a.btn.btn-warning.btn-mini{ :href => edit_event_type_path(event_type) }

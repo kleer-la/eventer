@@ -152,6 +152,11 @@ class EventTypesController < ApplicationController
     @participants = @event_type.testimonies.sort_by(&:created_at).reverse
   end
 
+  def events
+    @event_type = EventType.find(params[:id])
+    @events =  @event_type.events.order(date: :desc)
+  end
+
   private
 
   def activate_menu

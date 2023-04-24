@@ -1,0 +1,61 @@
+.page-header
+  %h1.pull-left
+    %i.icon-tasks
+      = @event_type.name
+
+= render '/commons/notice'
+
+.row-fluid
+  .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }
+    .box-header.blue-background
+      .title Eventos
+    .box-content.box-no-padding
+      .responsive-table
+        .scrollable-area
+          %table.table{ :style => "margin-bottom:0;" }
+            %thead
+              %tr
+                %th Fecha
+                %th Tipo de Evento
+                %th Detalles
+                %th
+                %th
+            %tbody
+              - @events.each do |event|
+                %tr
+                  %td= event.human_long_date
+                  - if event.event_type.nil?
+                    %td= link_to "Sin Tipo de Evento", event
+                  - else
+                    %td= link_to event.event_type.short_name, edit_event_path(event)
+                  %td{ :style => "white-space:normal;"}
+                    -if !event.country.nil?
+                      %i{ :class => "flag flag-#{event.country.iso_code.downcase}"}
+                    = event.city
+                    %br
+                    = event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
+                    -if !event.address.nil?
+                      = ", " + event.address
+                  %td
+                    -if event.visibility_type == "pu"
+                      %span.label.label-success Público
+                    -elsif event.visibility_type == "pr"
+                      %span.label.label-important Privado
+                    -elsif event.visibility_type == "co"
+                      %span.label.label-info Comunitario
+                    %br
+                    -if event.draft
+                      %span.label.label-important Borrador
+                    -else
+                      %span.label.label-success Publicado
+                    %br
+                    -if event.cancelled
+                      %span.label.label-important Cancelado
+                  %td
+                    .text-right
+                      %a.btn.btn-warning.btn-mini{ :href => "/events/#{event.id}/participants", :title => "Ver los Participantes" }
+                        %i.icon-group
+                      %a.btn.btn-warning.btn-mini{ :href => edit_event_path(event) }
+                        %i.icon-edit
+                      %a.btn.btn-danger.btn-mini{ :href => copy_event_path(event) }
+                        %i.icon-copy
