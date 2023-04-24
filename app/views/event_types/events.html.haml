@@ -33,7 +33,7 @@
                       %i{ :class => "flag flag-#{event.country.iso_code.downcase}"}
                     = event.city
                     %br
-                    = event.start_time.strftime( "%H:%Mhs." ) + " | " + event.place
+                    = (event.start_time.strftime( "%H:%Mhs." ) if event.start_time.present?) + " | " + event.place
                     -if !event.address.nil?
                       = ", " + event.address
                   %td
