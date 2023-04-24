@@ -1,14 +1,17 @@
-- if !@nakedform
+- unless @nakedform
   .controls
     .form-wrapper
       = render '/commons/notice'
-      - if @event.should_welcome_email
-        = I18n.t("formtastic.labels.participant.confirm_with_mail")
-      - else
-        = I18n.t("formtastic.labels.participant.confirm_without_mail")
+      %p 
+        - unless @cancelled
+          - if @event.should_welcome_email
+            = I18n.t("formtastic.labels.participant.confirm_with_mail")
+          - else
+            = I18n.t("formtastic.labels.participant.confirm_without_mail")
 - else
   :css
     body {bgcolor:#FFFFFF;}
   = render '/commons/notice'
-  %p 
-    = I18n.t("formtastic.labels.participant.confirm_with_mail")
+  - unless @cancelled
+    %p
+      = I18n.t("formtastic.labels.participant.confirm_with_mail")

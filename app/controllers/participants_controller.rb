@@ -112,8 +112,14 @@ class ParticipantsController < ApplicationController
   def new
     @event = Event.find(params[:event_id])
     
+
+    if @event.cancelled || @event.draft
+      redirect_to "/events/#{@event.id}/participant_confirmed?cancelled=1#{@nakedform ? '&nakedform=1' : ''}",
+      notice: 'No es posible registrarse a ese evento. Puedes buscar los eventos disponibles en la <a href="https://kleer.la/es/agenda">agenda</a>'
+      return
+    end
     if !ENV['RECAPTCHA_SITE_KEY'].present?
-      redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
+      redirect_to "/events/#{@event.id}/participant_confirmed?cancelled=1#{@nakedform ? '&nakedform=1' : ''}",
       notice: 'An unexpected problem just happen! Our bad!. Please contact info@kleer.la saying that "Enviroment not properly set."'
       return
     end
@@ -146,6 +152,7 @@ class ParticipantsController < ApplicationController
     @event = Event.find(params[:event_id])
     I18n.locale = @event.event_type.lang.to_sym
     @nakedform = !params[:nakedform].nil?
+    @cancelled = !params[:cancelled].nil?
 
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
