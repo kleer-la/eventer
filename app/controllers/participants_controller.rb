@@ -307,7 +307,7 @@ class ParticipantsController < ApplicationController
   def certificate_preview_do
     @event = Event.new
     @event.event_type = EventType.find(params[:id])
-    @event.trainer = Trainer.find(1)
+    @event.trainer = Trainer.where.not(signature_image: [nil, ""]).first
     @event.country = Country.find(1)
     @event.date = Date.today
     
