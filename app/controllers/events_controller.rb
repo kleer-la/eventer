@@ -15,13 +15,11 @@ class EventsController < ApplicationController
     country_filter = CountryFilter.new(params[:country_iso], session[:country_filter])
     session[:country_filter] = @country = country_filter.country_iso
 
-    @events = Event.visible.order('date').select do |ev|
-      country_filter.select?(ev.country_id)
-    end
+    @events = Event.visible.order('date')
 
     respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @events }
+      format.html { @events.select {|ev| country_filter.select?(ev.country_id)} ; render }
+      format.json { render json: @events.where(draft: false) }
     end
   end
 
