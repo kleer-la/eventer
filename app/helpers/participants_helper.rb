@@ -37,6 +37,10 @@ module ParticipantsHelper
       seal
     end
 
+    def new_version
+      @participant.event.event_type.new_version
+    end
+
     def valid?
       trainers[0].signature_image.present?
     end
@@ -127,6 +131,9 @@ module ParticipantsHelper
     def human_event_finish_date
       @participant.event.human_finish_date
     end
+    def finish_date
+      @participant.event.finish_date
+    end
 
     def date
       @participant.event.human_long_date
@@ -173,9 +180,13 @@ module ParticipantsHelper
     def font_update
       font_families.update(
         'Raleway' => {
-          normal: Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf'),
+          normal: Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf'), # TODO: replace with regular
+          regular: Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf'),
+          thin: Rails.root.join('vendor/assets/fonts/Raleway-Thin.ttf'),
+          light: Rails.root.join('vendor/assets/fonts/Raleway-Light.ttf'),
           italic: Rails.root.join('vendor/assets/fonts/Raleway-Italic.ttf'),
           bold: Rails.root.join('vendor/assets/fonts/Raleway-Bold.ttf'),
+          semibold: Rails.root.join('vendor/assets/fonts/Raleway-SemiBold.ttf'),
           bold_italic: Rails.root.join('vendor/assets/fonts/Raleway-BoldItalic.ttf')
         }
       )
@@ -255,10 +266,16 @@ module ParticipantsHelper
       image signature_file, at: [trainer_x, 60 + 100], height: 130 if signature_file.present?
     end
 
+    def body(&block)
+      bounding_box [300, @top_right[1]], width: @top_right[0], height: 500 do
+        yield if block_given?
+      end
+    end
+
     def render
       # stroke_axis
       fill_image(@data.background_file) if @data.background_file.present?
-      bounding_box [300, @top_right[1]], width: @top_right[0], height: 500 do
+      body do
         event_name
         participant_name
         certificate_description
@@ -269,9 +286,92 @@ module ParticipantsHelper
       fill_image(@data.foreground_file) if @data.foreground_file.present?
     end
   end
+  # =---------------------------------------------------------------------
+  #  New version
+  class PdfCertificateV2 < PdfCertificate
+    def initialize(doc, data, store = nil)
+      super(doc, data, store)
+      @kcolor = '606060'
+      @top_right = [380, 500]
+    end
+    def event_name
+      fill_color '000000'
+      font 'Raleway', style: :bold
+      text_box @data.event_name,
+               at: [0, @top_right[1]], width: @top_right[0], height: 75, align: :left,
+               size: 40,
+               overflow: :shrink_to_fit
+    end
+
+    def participant_name
+      font 'Raleway', style: :semibold
+      text_box @data.name,
+               at: [0, 347 + 19], width: @top_right[0], height: 30, align: :left,
+               size: 27,
+               overflow: :shrink_to_fit
+      # stroke { horizontal_line 0, @top_right[0], at: 355 }
+    end
+
+    def certificate_description
+      font 'Raleway', style: :regular
+      fill_color @kcolor
+      text_box @data.description,
+               at: [0, 347 - 36], width: @top_right[0], align: :left,
+               size: 12,
+               overflow: :shrink_to_fit
+    end
+
+    def certificate_info
+      font 'Raleway', style: :regular
+      text_box "<color rgb='#{@kcolor}'>Modalidad <b>Online</b><br>",
+               at: [0, 250], align: :left,
+               size: 13,
+               inline_format: true
+      text_box "<color rgb='#{@kcolor}'>Finalizado: </color> <b>#{@data.finish_date}</b> | " \
+               "<color rgb='#{@kcolor}'>Dedicación </color> <b>#{@data.event_duration_hours} hs</b>",
+               at: [0, 220], align: :left,
+               size: 13,
+               inline_format: true
+    end
+
+
+    def fill_image(img_file)
+      offset = [-38, 576]
+      height = 613
+      bk_image = @store.read(img_file, nil)
+      image bk_image, at: offset, height: height
+    end
+    def body(&block)
+      bounding_box [45, @top_right[1]], width: @top_right[0], height: 500 do
+        yield if block_given?
+      end
+    end
+    def trainer(t_ord)
+      trainer_width = 132
+      trainer_height = 69
+      trainer_y = 31
+      trainer_x = [@top_right[0] - trainer_width - 10,
+                   @top_right[0] - 2 * trainer_width - 20][t_ord]
+
+      stroke { horizontal_line trainer_x, trainer_x + trainer_width, at: trainer_y }
+
+      font 'Raleway', style: :thin
+      text_box "#{@data.trainer(t_ord)}<br>#{@data.trainer_credentials(t_ord)}",
+               at: [trainer_x, trainer_y - 5], width: trainer_width, align: :center,
+               size: 11,
+               inline_format: true
+      signature_file = @store.read(@data.trainer_signature(t_ord), nil, 'certificate-signatures')
+      image signature_file, at: [trainer_x, trainer_y + trainer_height], height: trainer_height if signature_file.present?
+    end
+  end
 
   def self.render_certificate(pdf, certificate, _page_size, store)
-    PdfCertificate.new(pdf, certificate, store).render
+    if certificate.new_version
+      pdf_certificate = PdfCertificateV2.new(pdf, certificate, store)
+    else
+      pdf_certificate = PdfCertificate.new(pdf, certificate, store)
+    end
+    pdf_certificate.render
   end
 
   def self.generate_certificate(participant, page_size, store)

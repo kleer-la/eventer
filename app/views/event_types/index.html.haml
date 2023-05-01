@@ -42,11 +42,11 @@
                       autorref
                   %td
                     .text-right
-                      - #%a.btn.btn-success.btn-mini{ :href => event_path(event) }
-                      - #  %i.icon-eye-open
-                      %a.btn.btn-warning.btn-mini{ :href => "/event_types/#{event_type.id}/events" }
+                      %a.btn.btn-warning.btn-mini{ href: certificate_preview_event_type_path(event_type), title: 'Certificate Preview'}
+                        %i.icon-eye-open
+                      %a.btn.btn-warning.btn-mini{ href: "/event_types/#{event_type.id}/events", title: 'Event list' }
                         %i.icon-calendar-empty
-                      %a.btn.btn-warning.btn-mini{ :href => "/event_types/#{event_type.id}/testimonies" }
+                      %a.btn.btn-warning.btn-mini{ href: "/event_types/#{event_type.id}/testimonies", title: 'Testimonies' }
                         %i.icon-comment
                       -# %a.btn.btn-warning.btn-mini{ :href => edit_event_type_path(event_type) }
                       -#   %i.icon-edit
