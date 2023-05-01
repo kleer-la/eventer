@@ -37,12 +37,12 @@ Rails.application.routes.draw do
 
   resources :categories
 
-  resources :event_types
+  resources :event_types do
+    get 'certificate_preview', on: :member
+  end  
   get 'event_types/:id/testimonies', to: 'event_types#testimonies'
   get 'event_types/filter/:lang/active/:active/dur/:duration/ic/:indexcanonical' => 'event_types#index'
   get 'event_types/:id/events' => 'event_types#events'
-  get 'event_types/:id/certificate_preview' => 'participants#certificate_preview'
-  post 'event_types/:id/certificate_preview' => 'participants#certificate_preview_do'
   
   resources :trainers
 

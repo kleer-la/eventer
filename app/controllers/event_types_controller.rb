@@ -157,6 +157,51 @@ class EventTypesController < ApplicationController
     @events =  @event_type.events.order(date: :desc)
   end
 
+
+  def certificate_preview
+    @event = Event.new
+    @event.event_type = EventType.find(params[:id])
+    @participant = Participant.new
+    @participant.event = @event
+    @certificate_values = params.permit!.to_h[:event_type] || {}
+
+    @certificate_values[:certificate_background_image_url] ||= @event.event_type.kleer_cert_seal_image.presence || ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+    @certificate_values[:certificate_city] ||= 'Bogotá'
+    @certificate_values[:certificate_name] ||= 'Camilo Leonardo Padilla Restrepo'
+    @certificate_values[:certificate_date] ||= Date.today.prev_day.to_s
+    @certificate_values[:certificate_finish_date] ||= Date.today.to_s
+    @certificate_values[:certificate_new_version] ||= '1'
+    @page_size = 'LETTER'
+
+# p @certificate_values
+    # @verification_code = params[:verification_code]
+    # @is_download = (params[:download] == 'true')
+
+    @certificate_store = FileStoreService.create_s3
+    
+    respond_to do |format|
+      format.html {
+        @trainers = Trainer.where.not(signature_image: [nil, ""])    
+        
+        render :certificate_preview
+      }
+      format.pdf {
+        @event.trainer = Trainer.where.not(signature_image: [nil, ""]).first
+        @event.country = Country.find( @certificate_values[:certificate_country].to_i)
+        @event.date = Date.strptime @certificate_values[:certificate_date]
+        @event.finish_date = Date.strptime @certificate_values[:certificate_finish_date]
+
+        @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url]
+        @event.city = @certificate_values[:certificate_city]
+        @participant.fname = @certificate_values[:certificate_name]
+        I18n.with_locale(@participant.event.event_type.lang) {
+          @certificate = ParticipantsHelper::Certificate.new(@participant)
+          render
+        }
+      }
+    end
+  end
+
   private
 
   def activate_menu

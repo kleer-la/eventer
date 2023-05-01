@@ -18,7 +18,7 @@
             .span12
               .control-group
                 %label.control-label{ :for => :event_type_id } Tipo de Evento
-                = f.collection_select :event_type_id, (@event_types || []), :id, :unique_name, {include_blank: 'Selecciona uno...'}
+                = f.collection_select :event_type_id, (@event_types || []), :id, :unique_name, {include_blank: 'Selecciona uno...'}, style: 'width: 50%;'
           .row-fluid
             .span2
               .control-group
@@ -26,7 +26,7 @@
                 = f.text_field :date, :class => 'datepicker-class input-small'
             .span2
               .control-group
-                %label.control-label{ :for => :date }= t("formtastic.labels.event.finish_date")
+                %label.control-label{ :for => :finish_date }= t("formtastic.labels.event.finish_date")
                 = f.text_field :finish_date, :class => 'datepicker-class input-small'
             .span2
               .control-group
@@ -67,19 +67,19 @@
                 = f.text_field :address, :class => "span-3"
             .span3
               .control-group
-                %label.control-label{ :for => :country_id }= t("formtastic.labels.event.city")
+                %label.control-label{ :for => :city }= t("formtastic.labels.event.city")
                 = f.text_field :city, :class => "span-3"
             .span3
               .control-group
                 %label.control-label{ :for => :country_id }= t("formtastic.labels.event.country")
                 = f.collection_select :country_id, Country.all, :id, :name, :input_html => { :style => "width: 200px" }
           .row-fuid
-            .span3
+            .span4
               .control-group
                 %label.control-label{ :for => :trainer_id }= t("formtastic.labels.event.trainer")
                 #trainer_select
                   = render :partial => 'trainers_select'
-            .span3
+            .span4
               .control-group
                 %label.control-label{ :for => :trainer2_id }= t("formtastic.labels.event.trainer2")
                 #trainer2_select
@@ -88,7 +88,7 @@
                   - else
                     = f.collection_select :trainer2_id, [], :id, :name, {include_blank: 'No hay entrenadores disponibles'}
                   -# = render :partial => 'trainers2_select'
-            .span3
+            .span4
               .control-group
                 %label.control-label{ :for => :trainer3_id }= t("formtastic.labels.event.trainer2")
                 #trainer3_select
@@ -185,13 +185,14 @@
                   %label.control-label{ :for => :eb_end_date }= t("formtastic.labels.event.eb_end_date")
                   = f.text_field :eb_end_date, :class => 'datepicker-class input-small'
             .row-fluid
-              .span3
+              .span4
                 .control-group
                   %label.control-label{ :for => :currency_iso_code}= t("formtastic.labels.event.currency_iso_code")
                   - priority_currencies = @currencies.collect{ |c| [ c[1][:iso_code], c[1][:iso_code]+" - "+c[1][:name]]}
                   - priority_currencies.unshift priority_currencies.find { |c| c[0]=='USD'}
                   = f.collection_select :currency_iso_code, priority_currencies, :first, :last
-              .span9
+              .span1
+              .span7
                 .control-group
                   %label.control-label{ :for => :show_pricing }= t("formtastic.labels.event.show_pricing")
                   = f.check_box :show_pricing

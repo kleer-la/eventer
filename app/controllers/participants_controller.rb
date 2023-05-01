@@ -296,46 +296,6 @@ class ParticipantsController < ApplicationController
     render_certificate
   end
 
-  def certificate_preview
-    @event = Event.new
-    @event.event_type = EventType.find(params[:id])
-    # @page_size = params[:page_size]
-    # @verification_code = params[:verification_code]
-    # @participant = Participant.find(params[:id])
-    # @is_download = (params[:download] == 'true')
-
-    # error_msg = certificate_validate
-    # (return certificate_error(error_msg)) if error_msg.present?
-
-    # @certificate_store = FileStoreService.create_s3
-    # render_certificate
-  
-  end
-  def certificate_preview_do
-    @event = Event.new
-    @event.event_type = EventType.find(params[:id])
-    @event.trainer = Trainer.where.not(signature_image: [nil, ""]).first
-    @event.country = Country.find(1)
-    @event.date = Date.today
-    
-    @participant =  Participant.new
-    @participant.event = @event
-    @participant.fname = 'Camilo Leonardo'
-    @participant.lname = 'Padilla Restrepo'
-
-    @certificate_store = FileStoreService.create_s3
-
-    I18n.with_locale(@participant.event.event_type.lang) {
-      @certificate = ParticipantsHelper::Certificate.new(@participant)
-
-      respond_to do |format|
-        format.pdf do
-          render pdf: "certificate", template: "participants/certificate"
-        end
-      end
-    }
-    
-  end
 
   def batch_load
     success_loads, errored_loads, errored_lines = Participant.batch_load(
