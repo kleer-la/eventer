@@ -192,6 +192,7 @@ class EventTypesController < ApplicationController
         @event.finish_date = Date.strptime @certificate_values[:certificate_finish_date]
 
         @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url]
+        @event.event_type.new_version = (@certificate_values[:certificate_new_version] == '1')
         @event.city = @certificate_values[:certificate_city]
         @participant.fname = @certificate_values[:certificate_name]
         I18n.with_locale(@participant.event.event_type.lang) {
