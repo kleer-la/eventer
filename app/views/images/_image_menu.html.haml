@@ -1,0 +1,12 @@
+%span.dropdown.btn.btn-white
+  %a.dropdown-toggle{ "data-toggle" => "dropdown", :href => "#" }
+    %span.hidden-phone
+    = @image_bucket || "carpeta"
+    %b.caret
+  %ul.dropdown-menu
+    %li
+      %a(href='#{top}/image')image
+    %li
+      %a(href='#{top}/signature')signature
+    %li
+      %a(href='#{top}/certificate')certificate

@@ -2,23 +2,28 @@ require 'ostruct'
 
 class ImagesController < ApplicationController
   def index
+    @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
+    session[:image_bucket] = @image_bucket
+
     store = FileStoreService.current
-    @images = store.list
+    @images = store.list(@image_bucket)
   end
 
   def new
+    @image_bucket = session[:image_bucket]
     @image= OpenStruct.new
     @image.key = nil
-end
+  end
 
   def create
     return "Falta información #{params[:image]} #{params[:path]}" if !params[:image].present? || !params[:path].present?
+    @image_bucket = params[:image_bucket]
     @file = params[:image]
     @img_name = params[:path]
 
     store = FileStoreService.current
 
-    file_path = store.upload(@file.tempfile, @img_name, 'kleer-images')
+    file_path = store.upload(@file.tempfile, @img_name, @image_bucket)
     render :show
   end
 

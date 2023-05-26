@@ -2,6 +2,7 @@
   %h1.pull-left
     %i.icon-folder-open
       = 'Imágenes'
+    = render partial: 'image_menu', locals: {top: '/images/filter'}
   .pull-right
     %a.btn.btn-white{ :href => '/images/new' }
       %i.icon-upload
@@ -26,7 +27,7 @@
                 %th Modificado
                 %th Tamaño
             %tbody
-              - @images.contents.each do |img|
+              - @images.each do |img|
                 %tr
                   %td
                     %a{ :href => img_url(img.key)}

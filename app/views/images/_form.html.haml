@@ -1,9 +1,14 @@
+- def my_radio(image_type)
+  - if image_type == @image_bucket
+    - radio_button_tag :image_bucket, 'image', checked: true
+  - else
+    - radio_button_tag :image_bucket, 'image'
 .row-fluid
   .span12.box
     .box-header.red-background
       .title
         - if @image.key.nil?
-          Nueva Imagen
+          Nueva Imagen 
         - else
           = @image.key
     .box-content
@@ -11,11 +16,28 @@
         %fieldset.inputs
           .row-fuid
             .span12
-              = file_field_tag :image
+              .control-group
+                %label.radio.inline
+                  = my_radio 'image'
+                  Image (for articles & event type, to be used incover and descriptions)
+                %br
+                %label.radio.inline
+                  = my_radio 'signature'
+                  Trainer Signature
+                %br
+                %label.radio.inline
+                  = my_radio 'certificate'
+                  Certificate background
+                %br
           .row-fuid
             .span12
               .control-group
-                %label.control-label{ :for => :path }= 'Path:' #t("formtastic.labels.event.registration_link")
+                %label.control-label{ :for => :image }= 'Image to upload:' #t("formtastic.labels.event.registration_link")
+                = file_field_tag :image
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :path }= 'Path/name to store:' #t("formtastic.labels.event.registration_link")
                 = text_field_tag :path
           .row-fuid
             .span12
@@ -23,24 +45,6 @@
                 .text-right
                   = submit_tag 'Upload'
           
-    -# .box-content
-    -#   = form_for @image do |f|  # = form_tag(controller: :search , action: :query)
-    -#     %fieldset.inputs
-    -#       .row-fuid
-    -#         .span12
-    -#           .control-group
-    -#             %label.control-label{ :for => :registration_link }= t("formtastic.labels.event.registration_link")
-    -#             = f.text_field :registration_link, :type => :url, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.registration_link")
-    -#       .row-fuid
-    -#         .span12
-    -#           .form-actions
-    -#             .text-right
-    -#               %button.btn.btn-primary.btn-large{:id => "guardar", :name => "commit", :type => "submit"}
-    -#                 %i.icon-save
-    -#                 Guardar
-    -#               %a.btn.btn-large{ :href => events_path }
-    -#                 %i.icon-undo
-    -#                 Cancelar
 :javascript
   $(document).ready(function() {
     $("#image").change(function() {

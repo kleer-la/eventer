@@ -21,7 +21,10 @@ class FileStoreService
     @store = store
   end
 
-  def upload(tempfile, file_path, bucket= 'kleer-images')
+  def upload(tempfile, file_path, image_bucket= 'image')
+    bucket, folder = image_location(image_bucket)
+
+    file_path = folder.to_s + file_path
     object = @store.objects(file_path, bucket)
     object.upload_file(tempfile)
     object.acl.put({ acl: 'public-read' })
@@ -57,10 +60,23 @@ class FileStoreService
     "#{temp_dir}/#{basename}"
   end
 
-  def list(folder = 'certificate-images')
-    @store.list_objects(bucket: 'kleer-images')
+  def image_location(image_type)
+    bucket = 'Keventer'
+    bucket = 'kleer-images' if image_type == 'image'
+    folder = {
+      'image' => nil,
+      'certificate' => 'certificate-images/',
+      'signature' => 'certificate-signatures/'
+    }[image_type]
+    [bucket, folder]    
   end
 
+  def list(image_type = 'image')
+    bucket, folder = image_location(image_type)
+    result = @store.list_objects(bucket: bucket).contents
+    result = result.select { |img| img.key.to_s.start_with? folder} unless folder.nil?
+    result
+  end
 end
 
 class NullFileStore
