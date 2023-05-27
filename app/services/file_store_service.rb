@@ -17,12 +17,23 @@ class FileStoreService
     @@current
   end
 
+  def self.image_location(image_type)
+    bucket = 'Keventer'
+    bucket = 'kleer-images' if image_type == 'image'
+    folder = {
+      'image' => nil,
+      'certificate' => 'certificate-images/',
+      'signature' => 'certificate-signatures/'
+    }[image_type]
+    [bucket, folder]    
+  end
+
   def initialize(store)
     @store = store
   end
 
   def upload(tempfile, file_path, image_bucket= 'image')
-    bucket, folder = image_location(image_bucket)
+    bucket, folder = self.class.image_location(image_bucket)
 
     file_path = folder.to_s + file_path
     object = @store.objects(file_path, bucket)
@@ -60,19 +71,8 @@ class FileStoreService
     "#{temp_dir}/#{basename}"
   end
 
-  def image_location(image_type)
-    bucket = 'Keventer'
-    bucket = 'kleer-images' if image_type == 'image'
-    folder = {
-      'image' => nil,
-      'certificate' => 'certificate-images/',
-      'signature' => 'certificate-signatures/'
-    }[image_type]
-    [bucket, folder]    
-  end
-
   def list(image_type = 'image')
-    bucket, folder = image_location(image_type)
+    bucket, folder = self.class.image_location(image_type)
     result = @store.list_objects(bucket: bucket).contents
     result = result.select { |img| img.key.to_s.start_with? folder} unless folder.nil?
     result

@@ -2,15 +2,14 @@
   %h1.pull-left
     %i.icon-open-folder
     %span Imágenes - Ver
-- uri = "https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}"
-- markdown = "![alt text](https://kleer-images.s3.sa-east-1.amazonaws.com/#{@img_name}  \"Titulo\")"
+- markdown = "![alt text](#{@public_url}  \"Titulo\")"
 .row-fuid
   .span12.box
     %h4
       URL para colocar en campos cover o side image
     %p
-      = uri
-      %button.btn.btn-secondary{type: "button", onclick: "copyText('#{uri}')"} Copiar Clipboard
+      = @public_url
+      %button.btn.btn-secondary{type: "button", onclick: "copyText('#{@public_url}')"} Copiar Clipboard
     %h4
       Markdown para colocar en campos description de Articulos y tipos de evento
     %p
@@ -19,7 +18,7 @@
     %h4
       Imagen
     %a{ :href => "" }
-      %img{src: "#{uri}"}
+      %img{src: "#{@public_url}"}
 
 = link_to 'Back', images_path
 

@@ -28,7 +28,9 @@ class ImagesController < ApplicationController
   end
 
   def show
+    bucket, folder = FileStoreService.image_location(@image_bucket)
     @img_name = URI.decode_www_form_component(params[:i]) if params[:i].present?
+    @public_url = "https://s3.amazonaws.com/#{bucket}/#{@img_name}"    
   end
 
   def edit
