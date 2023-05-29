@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_18_123258) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_05_29_173416) do
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
     t.text "body"
@@ -19,8 +18,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.string "slug", null: false
     t.string "description"
     t.string "tabtitle"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "lang", default: 0, null: false
     t.integer "category_id"
     t.string "cover"
@@ -38,8 +37,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
   create_table "authorships", force: :cascade do |t|
     t.integer "resource_id", null: false
     t.integer "trainer_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["resource_id", "trainer_id"], name: "index_authorships_on_resource_id_and_trainer_id", unique: true
     t.index ["resource_id"], name: "index_authorships_on_resource_id"
     t.index ["trainer_id"], name: "index_authorships_on_trainer_id"
@@ -47,16 +46,16 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
 
   create_table "campaign_sources", force: :cascade do |t|
     t.string "codename"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["codename"], name: "index_campaign_sources_on_codename"
   end
 
   create_table "campaign_views", force: :cascade do |t|
     t.integer "campaign_id"
     t.integer "event_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "campaign_source_id"
     t.string "element_viewed"
     t.integer "event_type_id"
@@ -70,8 +69,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
   create_table "campaigns", force: :cascade do |t|
     t.string "codename"
     t.text "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["codename"], name: "index_campaigns_on_codename"
   end
 
@@ -79,8 +78,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.string "name"
     t.text "description"
     t.string "codename"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "tagline"
     t.boolean "visible"
     t.integer "order", default: 0
@@ -97,8 +96,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.string "iso_code"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "crm_push_transaction_items", force: :cascade do |t|
@@ -106,15 +105,15 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.integer "participant_id"
     t.text "log"
     t.string "result"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "crm_push_transactions", force: :cascade do |t|
     t.integer "event_id"
     t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -122,13 +121,13 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.integer "attempts", default: 0
     t.text "handler"
     t.text "last_error"
-    t.datetime "run_at"
-    t.datetime "locked_at"
-    t.datetime "failed_at"
+    t.datetime "run_at", precision: nil
+    t.datetime "locked_at", precision: nil
+    t.datetime "failed_at", precision: nil
     t.string "locked_by"
     t.string "queue"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
@@ -137,8 +136,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.text "description"
     t.text "recipients"
     t.text "program"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "goal"
     t.integer "duration"
     t.text "faq"
@@ -187,8 +186,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.date "eb_end_date"
     t.boolean "draft"
     t.boolean "cancelled"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "event_type_id"
     t.string "registration_link"
     t.boolean "is_sold_out"
@@ -242,7 +241,7 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
@@ -252,8 +251,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.string "zone_name"
     t.string "tag_name"
     t.integer "country_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "logs", force: :cascade do |t|
@@ -261,16 +260,16 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.integer "level"
     t.string "message"
     t.text "details"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "oauth_tokens", force: :cascade do |t|
     t.string "issuer"
     t.string "token_set"
     t.string "tenant_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "participants", force: :cascade do |t|
@@ -279,8 +278,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.string "email"
     t.string "phone"
     t.integer "event_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "status"
     t.text "notes"
     t.integer "influence_zone_id"
@@ -320,8 +319,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.integer "global_trainer_rating_count"
     t.decimal "global_event_rating", precision: 4, scale: 2
     t.integer "global_event_rating_count"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["user_id"], name: "index_ratings_on_user_id"
   end
 
@@ -346,8 +345,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.string "share_text_en"
     t.string "tags_en"
     t.text "comments_en"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "downloadable"
     t.string "getit_es"
     t.string "getit_en"
@@ -358,8 +357,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
 
   create_table "roles", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "roles_users", id: false, force: :cascade do |t|
@@ -370,14 +369,14 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
   create_table "settings", force: :cascade do |t|
     t.string "key"
     t.text "value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "trainers", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "bio"
     t.string "gravatar_email"
     t.string "twitter_username"
@@ -399,8 +398,8 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
   create_table "translations", force: :cascade do |t|
     t.integer "resource_id", null: false
     t.integer "trainer_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["resource_id", "trainer_id"], name: "index_translations_on_resource_id_and_trainer_id", unique: true
     t.index ["resource_id"], name: "index_translations_on_resource_id"
     t.index ["trainer_id"], name: "index_translations_on_trainer_id"
@@ -410,15 +409,15 @@ ActiveRecord::Schema.define(version: 2023_03_18_123258) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
