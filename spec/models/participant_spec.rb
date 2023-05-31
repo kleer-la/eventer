@@ -345,26 +345,26 @@ describe Participant do
                                        lname: 'Picasso')
     end
     it 'By last name' do
-      found = Participant.search 'Pica'
+      found = Participant.search 'Pica', 1, 1000
       expect(found.count).to be 1
       expect(found[0].lname).to eq 'Picasso'
     end
     it 'Not found' do
-      found = Participant.search 'Ramanaya'
+      found = Participant.search 'Ramanaya', 1, 1000
       expect(found).to eq []
     end
     it 'By first name' do
-      found = Participant.search 'Pabl'
+      found = Participant.search 'Pabl', 1, 1000
       expect(found.count).to eq 1
       expect(found[0].lname).to eq 'Picasso'
     end
     it 'By first name lowercase' do
-      found = Participant.search 'pabl'
+      found = Participant.search 'pabl', 1, 1000
       expect(found.count).to be 1
       expect(found[0].lname).to eq 'Picasso'
     end
     it 'By verification code' do
-      found = Participant.search '065BECBA36F903CF6ppp'
+      found = Participant.search '065BECBA36F903CF6ppp', 1, 1000
       expect(found.count).to be 1
       expect(found[0].verification_code).to eq '065BECBA36F903CF6PPP'
     end

@@ -233,9 +233,15 @@ class Participant < ApplicationRecord
     [batch.lines.count - errored_lines.count, errored_lines.count, errored_lines.join(',')]
   end
 
-  def self.search(searching)
+  def self.search(searching, page, per_page)
     s = searching.downcase
-    Participant.select { |p| "#{p.fname} #{p.lname}#{p.verification_code}".downcase.include?(s) }
+    offset_value = per_page * (page - 1)
+  
+    participants = Participant.where("lower(fname || ' ' || lname || verification_code) LIKE ?", "%#{s}%")
+                              .offset(offset_value)
+                              .limit(per_page)
+  
+    participants
   end
 
   def self.search_by_invoice(invoice_id)

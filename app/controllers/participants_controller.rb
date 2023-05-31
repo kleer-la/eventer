@@ -311,10 +311,12 @@ class ParticipantsController < ApplicationController
     redirect_to event_participants_path
   end
 
+  MAX_SEARCH_RESULT_SIZE = 1000
   def search
     searching = params[:name]
-    @participants = Participant.search searching
-    flash[:notice] = "No encontré '#{searching}'" if @participants.count.zero?
+    @participants = Participant.search searching, 1, MAX_SEARCH_RESULT_SIZE
+    flash.now[:notice] = "No encontré '#{searching}'" if @participants.count.zero?
+    flash.now[:notice] = "Encontré más de #{MAX_SEARCH_RESULT_SIZE} resultados, mostrando solo los primeros" if @participants.count == MAX_SEARCH_RESULT_SIZE
     respond_to do |format|
       format.html # search.html.erb
     end

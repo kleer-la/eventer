@@ -53,7 +53,7 @@
                         = t('menu.exit')
               %span.pull-right
                 %form{ :action=> "/participants/search", :method => 'GET' }
-                  %input#search_name{ :name => 'name', :placeholder => 'nombre y/o apellido', :pattern => '.{3,}'}
+                  %input#search_name{ :name => 'name', :placeholder => 'nombre y/o apellido o código verificación', :pattern => '.{3,}'}
                   %button.btn.btn-primary#search{ :type=>"submit" }
                     %i.icon-search
                   %span.hidden-phone &nbsp;
