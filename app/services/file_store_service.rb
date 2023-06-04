@@ -58,7 +58,14 @@ class FileStoreService
     suffix = "-#{suffix}" if suffix.present?
     key = File.basename(filename, '.*') + suffix.to_s + File.extname(filename)
 
-    raise ArgumentError, "#{key} image not found" unless @store.objects("#{folder}/#{key}").exists?
+    
+    unless @store.objects("#{folder}/#{key}").exists?
+      Log.log(:aws, :error,  
+        "get file - Image not found", 
+        "filename:#{filename} suffix:#{suffix} folder: #{folder}"+ ' - \n' + caller.grep_v(%r{/gems/}).join('\n')
+      )
+      raise ArgumentError, "#{folder}/#{key} image not found" 
+    end
 
     tmp_filename = tmp_path filename
     @store.objects("#{folder}/#{key}").download_file tmp_filename
