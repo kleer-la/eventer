@@ -88,7 +88,7 @@ gem 'newrelic_rpm'
 gem 'recaptcha', require: 'recaptcha/rails' # , :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
-gem 'will_paginate', '~> 3'
+gem 'will_paginate'
 
 gem 'activemodel-serializers-xml' # to_xml  (rails 5)
 gem 'puma'
