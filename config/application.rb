@@ -31,6 +31,6 @@ module Eventer
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     #x I18n.config.enforce_available_locales = false
-    #x I18n.default_locale = :es    
+    I18n.default_locale = :es    
   end
 end

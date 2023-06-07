@@ -469,6 +469,37 @@ describe Event do
     end
   end
 
+  context 'registration_ended?' do
+    it 'Not started' do
+      event = FactoryBot.create(:event, date: Date.today+10)
+      expect(event.registration_ended?).to be false
+    end
+    it 'Started today' do
+      today = Date.today
+      event = FactoryBot.create(:event, date: today)
+      expect(event.registration_ended? today).to be true
+    end
+    it 'Started yestertoday' do
+      today = Date.today
+      event = FactoryBot.create(:event, date: today-1)
+      expect(event.registration_ended? today).to be true
+    end
+    it 'registration not ended' do
+      event = FactoryBot.create(:event, date: Date.today+10, registration_ends: Date.today+8)
+      expect(event.registration_ended?).to be false
+    end
+    it 'registration ended today' do
+      today = Date.today
+      event = FactoryBot.create(:event, date: today+1, registration_ends:today)
+      expect(event.registration_ended? today).to be true
+    end
+    it 'registration ended yestertoday' do
+      today = Date.today
+      event = FactoryBot.create(:event, date: today, registration_ends:today-1)
+      expect(event.registration_ended? today).to be true
+    end
+  end
+
   context 'New interested participant' do
     before(:each) do
       c = FactoryBot.create(:country, iso_code: 'AR')

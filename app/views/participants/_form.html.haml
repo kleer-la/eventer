@@ -6,7 +6,11 @@
   - if @participant.errors.full_messages.count > 0 || @captcha_error
     .alert.alert-danger{:id => "validation_msg"}
       = "Complete los campos con * y el captcha"
-  %fieldset.inputs
+  - if @event.registration_ended?
+    .alert
+      = I18n.t("formtastic.labels.event.alert.registration_ended").html_safe
+  - else
+    %fieldset.inputs
     - if @nakedform
       %input{ :type => "hidden", :name => "nakedform", :value => "1" }
 

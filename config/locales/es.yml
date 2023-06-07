@@ -203,6 +203,7 @@ es:
           title: "Edit title"
         alert:
           is_sold_out: "<strong>Este evento está completo.</strong> Tu registro quedará en lista de espera."
+          registration_ended: La fecha de registración ha pasado, no registramos más en este evento.<br/> Por favor busque la próxima <a href="https://www.kleer.la/es/agenda">fecha disponinble</a>.
       event_type:
         name: "Tipo de Evento"
         subtitle: "Subtitulo"

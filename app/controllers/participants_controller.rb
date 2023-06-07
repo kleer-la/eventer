@@ -111,7 +111,6 @@ class ParticipantsController < ApplicationController
   # GET /participants/new.json
   def new
     @event = Event.find(params[:event_id])
-    
 
     if @event.cancelled || @event.draft
       redirect_to "/events/#{@event.id}/participant_confirmed?cancelled=1#{@nakedform ? '&nakedform=1' : ''}",

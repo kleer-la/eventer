@@ -197,6 +197,7 @@ en:
           title: "Edit title"
         alert:
           is_sold_out: "This event is sold out. You will be added to its waitlist."
+          registration_ended: Registrations date is over.<br/> Please look for <a href="https://www.kleer.la/en/agenda">the next event </a>.
       event_type:
         name: "Tipo de Evento"
         subtitle: "Subtitle"

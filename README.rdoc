@@ -48,6 +48,9 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 - Inicia la aplicación: bundle exec rails s -b 0
  rails s -b 'ssl://0:3000?key=localhost.key&cert=localhost.crt'
  
+- Alternativamente, podés iniciar la aplicación
+  ./runserver.sh
+
  https://www.opensourceagenda.com/projects/rails-puma-ssl
 Enjoy!
 

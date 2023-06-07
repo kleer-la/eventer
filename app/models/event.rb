@@ -158,6 +158,10 @@ class Event < ApplicationRecord
     end
   end
 
+  def registration_ended?(current_date = Date.today)
+    [self.date, self.registration_ends].compact.min <= current_date
+  end
+
   def finished?
     timezone = TimeZone.new(time_zone_name) unless time_zone_name.nil?
 
