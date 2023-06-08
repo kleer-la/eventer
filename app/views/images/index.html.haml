@@ -8,10 +8,12 @@
       %i.icon-upload
       Subir Imagen
 
+= render '/commons/notice'
+
 - require 'uri'
 - def img_url(key) 
   -# - "https://kleer-images.s3.sa-east-1.amazonaws.com/#{key.gsub(' ','+')}"
-  - "/images/show?i=#{URI.encode_www_form_component(key)}"
+  - "/images/show?#{URI.encode_www_form(i: key, bucket: @image_bucket)}"
 
 .row-fluid
   .span12.box.bordered-box.blue-border{ :style => "margin-bottom:0;" }

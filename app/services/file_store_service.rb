@@ -28,19 +28,33 @@ class FileStoreService
     [bucket, folder]    
   end
 
+  def self.image_url(image_name, image_type)
+    if image_type == 'image'
+      return "https://kleer-images.s3.sa-east-1.amazonaws.com/#{image_name&.gsub(' ','+')}"
+    end
+
+    bucket = 'Keventer'
+    folder = {
+      'certificate' => 'certificate-images/',
+      'signature' => 'certificate-signatures/'
+    }[image_type]
+    "https://s3.amazonaws.com/#{bucket}/#{image_name&.gsub(' ','+')}"
+  end
+
   def initialize(store)
     @store = store
   end
 
-  def upload(tempfile, file_path, image_bucket= 'image')
+  def upload(tempfile, file_name, image_bucket= 'image')
     bucket, folder = self.class.image_location(image_bucket)
 
-    file_path = folder.to_s + file_path
+    file_path = folder.to_s + file_name
     object = @store.objects(file_path, bucket)
     object.upload_file(tempfile)
     object.acl.put({ acl: 'public-read' })
 
-    "https://s3.amazonaws.com/#{bucket}/#{file_path}"
+    # "https://s3.amazonaws.com/#{bucket}/#{file_path}"
+    self.class.image_url(file_name, image_bucket)
   end
 
   def write(filename)

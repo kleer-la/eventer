@@ -5,9 +5,14 @@ class ImagesController < ApplicationController
     @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
     session[:image_bucket] = @image_bucket
 
-    store = FileStoreService.current
-    @images = store.list(@image_bucket)
-  end
+    begin
+      store = FileStoreService.current
+      @images = store.list(@image_bucket)
+    rescue Aws::Errors::MissingCredentialsError
+      flash.now[:error] = 'AWS credentials are missing. Please check your configuration.'
+      @images = []
+    end
+  end 
 
   def new
     @image_bucket = session[:image_bucket]
@@ -17,20 +22,22 @@ class ImagesController < ApplicationController
 
   def create
     return "Falta información #{params[:image]} #{params[:path]}" if !params[:image].present? || !params[:path].present?
-    @image_bucket = params[:image_bucket]
+    session[:image_bucket] = @image_bucket = params[:image_bucket]
+    
     @file = params[:image]
     @img_name = params[:path]
 
     store = FileStoreService.current
 
-    file_path = store.upload(@file.tempfile, @img_name, @image_bucket)
+    @public_url = store.upload(@file.tempfile, @img_name, @image_bucket)
+
     render :show
   end
 
   def show
-    bucket, folder = FileStoreService.image_location(@image_bucket)
-    @img_name = URI.decode_www_form_component(params[:i]) if params[:i].present?
-    @public_url = "https://s3.amazonaws.com/#{bucket}/#{@img_name}"    
+    @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
+    
+    @public_url = FileStoreService.image_url(params[:i], @image_bucket)
   end
 
   def edit
