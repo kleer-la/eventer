@@ -11,6 +11,7 @@ group :development do
   gem 'brakeman'
   gem 'derailed_benchmarks'
   gem 'stackprof'
+  gem 'solargraph'
 end
 
 group :development, :test do
