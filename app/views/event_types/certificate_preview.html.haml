@@ -7,19 +7,22 @@
   = form_with(model: @event_type, url: certificate_preview_event_type_path(@event_type), method: :get) do |f|
     = hidden_field_tag :format, :pdf
 
-    = f.label :certificate_background_image_url, 'Background image URL'
-    = f.text_field :certificate_background_image_url, value: @certificate_values[:certificate_background_image_url]
-
-    .row-fuid
-      .span4
+    .row-fluid
+      .span6
         .control-group
-          %label.control-label{ :for => :certificate_place }= t("formtastic.labels.event.place")
-          = f.text_field :certificate_place, :class => "span-3", value: @certificate_values[:certificate_place]
-      .span4
+          %label.control-label{ :for => :certificate_background_image_url }= 'Background image URL'
+          = f.select :certificate_background_image_url, @images, :input_html => { :style => "width: 400px" }
+      .span6
+        %label.control-label{ :for => :certificate_new_version }
+          Nueva Versión
+        = f.check_box :certificate_new_version, checked: (@certificate_values[:certificate_new_version] == '1')
+
+    .row-fluid
+      .span6
         .control-group
           %label.control-label{ :for => :certificate_city }= t("formtastic.labels.event.city")
-          = f.text_field :certificate_city, :class => "span-3", value: @certificate_values[:certificate_city]
-      .span4
+          = f.text_field :certificate_city, :class => "span-3", value: @certificate_values[:certificate_city], :input_html => { :style => "width: 300px" }
+      .span6
         .control-group
           %label.control-label{ :for => :certificate_country }= t("formtastic.labels.event.country")
           = f.collection_select :certificate_country, Country.all, :id, :name, :input_html => { :style => "width: 200px" }
@@ -35,13 +38,15 @@
           = f.date_field :certificate_finish_date, value: @certificate_values[:certificate_finish_date]
 
     .row-fluid
-      .span6
+      .span4
         = f.label :certificate_name, 'Name'
         = f.text_field :certificate_name, value: @certificate_values[:certificate_name]
       .span4
-        %label.control-label{ :for => :certificate_new_version }
-          Nueva Versión
-        = f.check_box :certificate_new_version, checked: (@certificate_values[:certificate_new_version] == '1')
+        = f.label :certificate_trainer1, 'Trainer 1'
+        = f.collection_select :certificate_trainer1, @trainers, :id, :name
+      .span4
+        = f.label :certificate_trainer2, 'Trainer 2'
+        = f.collection_select :certificate_trainer2, @trainers, :id, :name, include_blank: true
 
     .row-fuid
       .span12

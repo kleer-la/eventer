@@ -157,28 +157,35 @@ class EventTypesController < ApplicationController
     @events =  @event_type.events.order(date: :desc)
   end
 
+  def load_preview_default(param_values)
+    param_values[:certificate_background_image_url] ||= @event.event_type.kleer_cert_seal_image.presence || ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+    param_values[:certificate_city] ||= 'Bogotá'
+    param_values[:certificate_name] ||= 'Camilo Leonardo Padilla Restrepo'
+    param_values[:certificate_date] ||= Date.today.prev_day.to_s
+    param_values[:certificate_finish_date] ||= Date.today.to_s
+    param_values[:certificate_new_version] ||= '1'
+    param_values
+  end
 
+  def background_list(store)
+    list = store.list('certificate').map {|obj| File.basename(obj.key)}
+    list.shift # remove first (folder)
+    list.reject {|key| key.include?('-A4.')}
+  end
+  
   def certificate_preview
     @event = Event.new
     @event.event_type = EventType.find(params[:id])
     @participant = Participant.new
     @participant.event = @event
-    @certificate_values = params.permit!.to_h[:event_type] || {}
-
-    @certificate_values[:certificate_background_image_url] ||= @event.event_type.kleer_cert_seal_image.presence || ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
-    @certificate_values[:certificate_city] ||= 'Bogotá'
-    @certificate_values[:certificate_name] ||= 'Camilo Leonardo Padilla Restrepo'
-    @certificate_values[:certificate_date] ||= Date.today.prev_day.to_s
-    @certificate_values[:certificate_finish_date] ||= Date.today.to_s
-    @certificate_values[:certificate_new_version] ||= '1'
+    @certificate_values = load_preview_default(params.permit!.to_h[:event_type] || {})
+    
     @page_size = 'LETTER'
 
-# p @certificate_values
-    # @verification_code = params[:verification_code]
-    # @is_download = (params[:download] == 'true')
-
     @certificate_store = FileStoreService.create_s3
-    
+
+    @images = self.background_list(@certificate_store)
+
     respond_to do |format|
       format.html {
         @trainers = Trainer.where.not(signature_image: [nil, ""])    
@@ -186,19 +193,28 @@ class EventTypesController < ApplicationController
         render :certificate_preview
       }
       format.pdf {
-        @event.trainer = Trainer.where.not(signature_image: [nil, ""]).first
+        @event.trainer = Trainer.find(@certificate_values[:certificate_trainer1].to_i)
+        @event.trainer2 = Trainer.find(@certificate_values[:certificate_trainer2].to_i) if @certificate_values[:certificate_trainer2].to_i > 0
         @event.country = Country.find( @certificate_values[:certificate_country].to_i)
         @event.date = Date.strptime @certificate_values[:certificate_date]
         @event.finish_date = Date.strptime @certificate_values[:certificate_finish_date]
-
-        @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url]
+        @event.mode = @certificate_values[:certificate_country].to_i == 1 ? 'ol' : 'cl'
         @event.event_type.new_version = (@certificate_values[:certificate_new_version] == '1')
+        if @event.event_type.new_version
+          @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url]
+        else
+          @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url].sub(/-(A4|LETTER)/, '')
+        end
         @event.city = @certificate_values[:certificate_city]
         @participant.fname = @certificate_values[:certificate_name]
-        I18n.with_locale(@participant.event.event_type.lang) {
-          @certificate = ParticipantsHelper::Certificate.new(@participant)
-          render
-        }
+        begin
+          I18n.with_locale(@participant.event.event_type.lang) {
+            @certificate = ParticipantsHelper::Certificate.new(@participant)
+            render
+          }
+        rescue Aws::Errors::MissingCredentialsError
+          return redirect_to event_types_url
+        end
       }
     end
   end

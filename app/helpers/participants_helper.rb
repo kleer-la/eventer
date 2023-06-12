@@ -102,6 +102,13 @@ module ParticipantsHelper
         "#{@participant.event.city}, #{@participant.event.country.name}"
       end
     end
+    def place_v2
+      if @participant.event.online?
+        "#{I18n.t('certificate.how')}: <b>Online</b>"
+      else
+        "<b>#{@participant.event.city}, #{@participant.event.country.name}</b>"
+      end
+    end
 
     def event_date
       @participant.event.human_date
@@ -131,6 +138,11 @@ module ParticipantsHelper
     def human_event_finish_date
       @participant.event.human_finish_date
     end
+
+    def long_finish_date
+      I18n.l @participant.event.finish_date, format: :long
+    end
+
     def finish_date
       @participant.event.finish_date
     end
@@ -231,9 +243,9 @@ module ParticipantsHelper
     end
 
     def certificate_info
-      text_box "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.how')}: </b></color>#{@data.place}<br>" \
-               "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.date')}:</b></color> #{@data.date}<br>" \
-               "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.length')}:</b></color> #{@data.event_duration_hours} hs",
+      text_box "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.how').upcase}: </b></color>#{@data.place}<br>" \
+               "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.date').upcase}:</b></color> #{@data.date}<br>" \
+               "<color rgb='#{@kcolor}'><b>#{I18n.t('certificate.length').upcase}:</b></color> #{@data.event_duration_hours} hs",
                at: [0, 250], align: :left,
                size: 14,
                inline_format: true
@@ -323,17 +335,19 @@ module ParticipantsHelper
 
     def certificate_info
       font 'Raleway', style: :regular
-      text_box "<color rgb='#{@kcolor}'>Modalidad <b>Online</b><br>",
-               at: [0, 250], align: :left,
+      margin = 5
+
+      text_box "<color rgb='#{@kcolor}'>#{@data.place_v2}<br>",
+               at: [margin, 250], align: :left,
                size: 13,
                inline_format: true
-      text_box "<color rgb='#{@kcolor}'>Finalizado: </color> <b>#{@data.finish_date}</b> | " \
-               "<color rgb='#{@kcolor}'>Dedicación </color> <b>#{@data.event_duration_hours} hs</b>",
-               at: [0, 220], align: :left,
+
+      text_box "<color rgb='#{@kcolor}'>#{I18n.t('certificate.finish_date')}: </color> <b>#{@data.long_finish_date}</b> | " \
+               "<color rgb='#{@kcolor}'>#{I18n.t('certificate.length')}: </color> <b>#{@data.event_duration_hours} hs</b>",
+               at: [margin, 220], align: :left,
                size: 13,
                inline_format: true
     end
-
 
     def fill_image(img_file)
       offset = [-38, 576]
@@ -351,7 +365,7 @@ module ParticipantsHelper
       trainer_height = 69
       trainer_y = 31
       trainer_x = [@top_right[0] - trainer_width - 10,
-                   @top_right[0] - 2 * trainer_width - 20][t_ord]
+                   @top_right[0] - 2 * trainer_width - 85][t_ord]
 
       stroke { horizontal_line trainer_x, trainer_x + trainer_width, at: trainer_y }
 

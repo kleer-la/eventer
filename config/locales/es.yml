@@ -422,7 +422,8 @@ es:
       regards: ¡Te esperamos!
   certificate:
     dod: Ha culminado con éxito el proceso de aprendizaje y adquisición de competencias.
-    how: MODALIDAD
-    date: REALIZADO
-    length: DEDICACIÓN
+    how: Modalidad
+    date: Fecha
+    finish_date: Finalizado
+    length: Dedicación
     code: 'Código de verificación de la certificación: %{code}'

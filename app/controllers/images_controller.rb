@@ -16,6 +16,7 @@ class ImagesController < ApplicationController
 
   def new
     @image_bucket = session[:image_bucket]
+
     @image= OpenStruct.new
     @image.key = nil
   end
