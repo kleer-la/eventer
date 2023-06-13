@@ -139,8 +139,8 @@ module ParticipantsHelper
       @participant.event.human_finish_date
     end
 
-    def long_finish_date
-      I18n.l @participant.event.finish_date, format: :long
+    def finish_date_v2
+      I18n.l @participant.event.finish_date, format: :short_with_year
     end
 
     def finish_date
@@ -342,7 +342,7 @@ module ParticipantsHelper
                size: 13,
                inline_format: true
 
-      text_box "<color rgb='#{@kcolor}'>#{I18n.t('certificate.finish_date')}: </color> <b>#{@data.long_finish_date}</b> | " \
+      text_box "<color rgb='#{@kcolor}'>#{I18n.t('certificate.finish_date')}: </color> <b>#{@data.finish_date_v2}</b> | " \
                "<color rgb='#{@kcolor}'>#{I18n.t('certificate.length')}: </color> <b>#{@data.event_duration_hours} hs</b>",
                at: [margin, 220], align: :left,
                size: 13,

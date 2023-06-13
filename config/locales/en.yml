@@ -3,6 +3,7 @@ en:
     formats:
       default: "%d/%m/%Y"
       short: "%b %d"
+      short_with_year: "%b %d, %Y"
       long: "%B, %d of %Y"
     day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
     abbr_day_names: [Dom, Lun, Mar, Mie, Jue, Vie, Sáb]
