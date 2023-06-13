@@ -3,70 +3,75 @@
     %i.icon-tasks
     %span Tipos de Evento - Preview certificados
 
-.box-content
-  = form_with(model: @event_type, url: certificate_preview_event_type_path(@event_type), method: :get) do |f|
-    = hidden_field_tag :format, :pdf
+.row-fluid
+  .span12.box
+    .box-header.red-background
+      .title
+        = "#{@event_type.name} (#{@event_type.lang})"
+    .box-content
+      = form_with(model: @event_type, url: certificate_preview_event_type_path(@event_type), method: :get) do |f|
+        = hidden_field_tag :format, :pdf
 
-    .row-fluid
-      .span6
-        .control-group
-          %label.control-label{ :for => :certificate_background_image_url }= 'Background image URL'
-          = f.select :certificate_background_image_url, @images, :input_html => { :style => "width: 400px" }
-      .span6
-        %label.control-label{ :for => :certificate_new_version }
-          Nueva Versión
-        = f.check_box :certificate_new_version, checked: (@certificate_values[:certificate_new_version] == '1')
+        .row-fluid
+          .span6
+            .control-group
+              %label.control-label{ :for => :certificate_background_image_url }= 'Background image URL'
+              = f.select :certificate_background_image_url, @images, :input_html => { :style => "width: 400px" }
+          .span6
+            %label.control-label{ :for => :certificate_new_version }
+              Nueva Versión
+            = f.check_box :certificate_new_version, checked: (@certificate_values[:certificate_new_version] == '1')
 
-    .row-fluid
-      .span6
-        .control-group
-          %label.control-label{ :for => :certificate_city }= t("formtastic.labels.event.city")
-          = f.text_field :certificate_city, :class => "span-3", value: @certificate_values[:certificate_city], :input_html => { :style => "width: 300px" }
-      .span6
-        .control-group
-          %label.control-label{ :for => :certificate_country }= t("formtastic.labels.event.country")
-          = f.collection_select :certificate_country, Country.all, :id, :name, :input_html => { :style => "width: 200px" }
+        .row-fluid
+          .span6
+            .control-group
+              %label.control-label{ :for => :certificate_city }= t("formtastic.labels.event.city")
+              = f.text_field :certificate_city, :class => "span-3", value: @certificate_values[:certificate_city], :input_html => { :style => "width: 300px" }
+          .span6
+            .control-group
+              %label.control-label{ :for => :certificate_country }= t("formtastic.labels.event.country")
+              = f.collection_select :certificate_country, Country.all, :id, :name, :input_html => { :style => "width: 200px" }
 
-    .row-fluid
-      .span4
-        .control-group
-          %label.control-label{ :for => :certificate_date }= t("formtastic.labels.event.date")
-          = f.date_field :certificate_date, value: @certificate_values[:certificate_date]
-      .span4
-        .control-group
-          %label.control-label{ :for => :certificate_finish_date }= t("formtastic.labels.event.finish_date")
-          = f.date_field :certificate_finish_date, value: @certificate_values[:certificate_finish_date]
+        .row-fluid
+          .span4
+            .control-group
+              %label.control-label{ :for => :certificate_date }= t("formtastic.labels.event.date")
+              = f.date_field :certificate_date, value: @certificate_values[:certificate_date]
+          .span4
+            .control-group
+              %label.control-label{ :for => :certificate_finish_date }= t("formtastic.labels.event.finish_date")
+              = f.date_field :certificate_finish_date, value: @certificate_values[:certificate_finish_date]
 
-    .row-fluid
-      .span4
-        = f.label :certificate_name, 'Name'
-        = f.text_field :certificate_name, value: @certificate_values[:certificate_name]
-      .span4
-        = f.label :certificate_trainer1, 'Trainer 1'
-        = f.collection_select :certificate_trainer1, @trainers, :id, :name
-      .span4
-        = f.label :certificate_trainer2, 'Trainer 2'
-        = f.collection_select :certificate_trainer2, @trainers, :id, :name, include_blank: true
+        .row-fluid
+          .span4
+            = f.label :certificate_name, 'Name'
+            = f.text_field :certificate_name, value: @certificate_values[:certificate_name]
+          .span4
+            = f.label :certificate_trainer1, 'Trainer 1'
+            = f.collection_select :certificate_trainer1, @trainers, :id, :name
+          .span4
+            = f.label :certificate_trainer2, 'Trainer 2'
+            = f.collection_select :certificate_trainer2, @trainers, :id, :name, include_blank: true
 
-    .row-fuid
-      .span12
-        .form-actions
-          .text-right
-            = f.submit 'Preview'
+        .row-fuid
+          .span12
+            .form-actions
+              .text-right
+                = f.submit 'Preview'
 
--#   = form_tag "/event_types/#{@event.event_type.id}/certificate_preview", method: :post, multipart: true do
--#     = hidden_field_tag :format, :pdf
--#     %fieldset.inputs
--#       .row-fuid
--#         .span12
--#           = file_field_tag :image
--#       .row-fuid
--#         .span12
--#           .control-group
--#             %label.control-label{ :for => :path }= 'Path:' #t("formtastic.labels.event.registration_link")
--#             = text_field_tag :path
--#       .row-fuid
--#         .span12
--#           .form-actions
--#             .text-right
--#               = submit_tag 'Preview'
+    -#   = form_tag "/event_types/#{@event.event_type.id}/certificate_preview", method: :post, multipart: true do
+    -#     = hidden_field_tag :format, :pdf
+    -#     %fieldset.inputs
+    -#       .row-fuid
+    -#         .span12
+    -#           = file_field_tag :image
+    -#       .row-fuid
+    -#         .span12
+    -#           .control-group
+    -#             %label.control-label{ :for => :path }= 'Path:' #t("formtastic.labels.event.registration_link")
+    -#             = text_field_tag :path
+    -#       .row-fuid
+    -#         .span12
+    -#           .form-actions
+    -#             .text-right
+    -#               = submit_tag 'Preview'
