@@ -30,7 +30,7 @@
           .span6
             .control-group
               %label.control-label{ :for => :certificate_country }= t("formtastic.labels.event.country")
-              = f.collection_select :certificate_country, Country.all, :id, :name, :input_html => { :style => "width: 200px" }
+              = f.collection_select :certificate_country, Country.order(:name), :id, :name, :input_html => { :style => "width: 200px" }
 
         .row-fluid
           .span4

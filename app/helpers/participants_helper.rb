@@ -304,7 +304,7 @@ module ParticipantsHelper
     def initialize(doc, data, store = nil)
       super(doc, data, store)
       @kcolor = '606060'
-      @top_right = [380, 500]
+      @top_right = [400, 500]
     end
     def event_name
       fill_color '000000'
@@ -318,8 +318,8 @@ module ParticipantsHelper
     def participant_name
       font 'Raleway', style: :semibold
       text_box @data.name,
-               at: [0, 347 + 19], width: @top_right[0], height: 30, align: :left,
-               size: 27,
+               at: [0, 347 + 19], width: @top_right[0] + 250, height: 50, align: :left,
+               size: 36,
                overflow: :shrink_to_fit
       # stroke { horizontal_line 0, @top_right[0], at: 355 }
     end
@@ -337,7 +337,7 @@ module ParticipantsHelper
       font 'Raleway', style: :regular
       margin = 5
 
-      text_box "<color rgb='#{@kcolor}'>#{@data.place_v2}<br>",
+      text_box "<color rgb='FFFFFF'>#{@data.place_v2}<br>",
                at: [margin, 250], align: :left,
                size: 13,
                inline_format: true
