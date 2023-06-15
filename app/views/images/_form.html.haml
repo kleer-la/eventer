@@ -1,8 +1,8 @@
 - def my_radio(image_type)
   - if image_type == @image_bucket
-    - radio_button_tag :image_bucket, 'image', checked: true
+    - radio_button_tag :image_bucket, image_type, checked: true
   - else
-    - radio_button_tag :image_bucket, 'image'
+    - radio_button_tag :image_bucket, image_type
 .row-fluid
   .span12.box
     .box-header.red-background
@@ -19,7 +19,7 @@
               .control-group
                 %label.radio.inline
                   = my_radio 'image'
-                  Image (for articles & event type, to be used incover and descriptions)
+                  Image / PDF (for articles & event type, to be used incover and descriptions or brochure)
                 %br
                 %label.radio.inline
                   = my_radio 'signature'

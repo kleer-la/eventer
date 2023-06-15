@@ -38,7 +38,8 @@ class FileStoreService
       'certificate' => 'certificate-images/',
       'signature' => 'certificate-signatures/'
     }[image_type]
-    "https://s3.amazonaws.com/#{bucket}/#{image_name&.gsub(' ','+')}"
+    file_name = image_name&.gsub(' ','+').gsub("#{folder}", '')
+    "https://s3.amazonaws.com/#{bucket}/#{folder}#{file_name}"
   end
 
   def initialize(store)

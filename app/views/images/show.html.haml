@@ -16,9 +16,12 @@
       = markdown
       %button.btn.btn-secondary{type: "button", onclick: "copyText('#{markdown}')"} Copiar Clipboard
     %h4
-      Imagen
-    %a{ :href => "" }
-      %img{src: "#{@public_url}"}
+      Imagen / PDF
+    - if @public_url.end_with? '.pdf'
+      %embed{ src: "#{@public_url}", type: "application/pdf", width: "100%", height: "600px" }
+    - else
+      %a{ :href => "" }
+        %img{src: "#{@public_url}"}
 
 = link_to 'Back', images_path
 
