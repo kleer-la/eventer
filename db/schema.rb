@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_29_173416) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_17_124050) do
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
     t.text "body"
@@ -350,6 +350,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_29_173416) do
     t.boolean "downloadable"
     t.string "getit_es"
     t.string "getit_en"
+    t.string "buyit_es"
+    t.string "buyit_en"
     t.index ["categories_id"], name: "index_resources_on_categories_id"
     t.index ["slug"], name: "index_resources_on_slug", unique: true
     t.index ["trainers_id"], name: "index_resources_on_trainers_id"

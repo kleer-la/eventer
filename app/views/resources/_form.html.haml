@@ -45,7 +45,10 @@
               = f.input :landing_es, input_html: {class: 'input-block-level'}
               = f.input :getit_es, input_html: {class: 'input-block-level'}
               %small.muted
-                URL para Comprar o descargar. Downloadeable define uno u otro
+                URL para descargar.
+              = f.input :buyit_es, input_html: {class: 'input-block-level'}
+              %small.muted
+                URL para Comprar.
               = f.input :cover_es, input_html: {class: 'input-block-level'}
               = f.input :description_es, input_html: {class: 'input-block-level', maxlength: "220",rows: 5}
               %span#resource_description_es-count
@@ -65,7 +68,10 @@
               = f.input :landing_en, input_html: {class: 'input-block-level'}
               = f.input :getit_en, input_html: {class: 'input-block-level'}
               %small.muted
-                URL para Comprar o descargar. Downloadeable define uno u otro
+                URL para descargar
+              = f.input :buyit_en, input_html: {class: 'input-block-level'}
+              %small.muted
+                URL para Comprar
               = f.input :cover_en, input_html: {class: 'input-block-level'}
               = f.input :description_en, input_html: {class: 'input-block-level', rows: 5}
               = f.input :comments_en, input_html: {class: 'input-block-level', rows: 2}

@@ -130,7 +130,9 @@ FactoryBot.define do
   factory :resource do
     id { '2' }
     format { :card }
-    slug { 'my-resource' }
+    slug { "resource-#{SecureRandom.hex(4)}" } 
+    # sequence(:slug) { |n| "resource-#{n}" }
+    # slug { 'my-resource' }
     title_es { 'Mi recurso' }
     description_es { 'My resource' }
     cover_es {'my-resource.png'}
