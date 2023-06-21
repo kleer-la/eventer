@@ -198,7 +198,7 @@ class EventTypesController < ApplicationController
         @event.country = Country.find( @certificate_values[:certificate_country].to_i)
         @event.date = Date.strptime @certificate_values[:certificate_date]
         @event.finish_date = Date.strptime @certificate_values[:certificate_finish_date]
-        @event.mode = @certificate_values[:certificate_country].to_i == 1 ? 'ol' : 'cl'
+        @event.mode = Country.find(@certificate_values[:certificate_country].to_i).iso_code == 'OL' ? 'ol' : 'cl'
         @event.event_type.new_version = (@certificate_values[:certificate_new_version] == '1')
         if @event.event_type.new_version
           @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url]
@@ -213,6 +213,7 @@ class EventTypesController < ApplicationController
             render
           }
         rescue Aws::Errors::MissingCredentialsError
+          flash.now[:error] = 'Missing AWS credentials - call support'
           return redirect_to event_types_url
         end
       }

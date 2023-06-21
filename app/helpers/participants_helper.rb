@@ -333,14 +333,23 @@ module ParticipantsHelper
                overflow: :shrink_to_fit
     end
 
+    def rounded_rectangle_text(x, y, padding, size, text)
+      fill_color '90' * 3
+
+      text_width = width_of(text, size: size)
+      fill_rounded_rectangle([x, y], text_width, size + 14, padding)
+
+      text_box "<color rgb='FFFFFF'>#{text}<br>",
+        at: [padding, 250], align: :left,
+        size: 13,
+        inline_format: true
+    end
+  
     def certificate_info
       font 'Raleway', style: :regular
       margin = 5
 
-      text_box "<color rgb='FFFFFF'>#{@data.place_v2}<br>",
-               at: [margin, 250], align: :left,
-               size: 13,
-               inline_format: true
+      rounded_rectangle_text(0, 252 + margin, margin, 13, @data.place_v2)
 
       text_box "<color rgb='#{@kcolor}'>#{I18n.t('certificate.finish_date')}: </color> <b>#{@data.finish_date_v2}</b> | " \
                "<color rgb='#{@kcolor}'>#{I18n.t('certificate.length')}: </color> <b>#{@data.event_duration_hours} hs</b>",
