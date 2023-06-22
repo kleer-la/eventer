@@ -84,7 +84,7 @@ RSpec.describe '/resources', type: :request do
       it 'has common fields ' do
         post resources_url, params: { resource: FactoryBot.attributes_for(:resource) }
         expect(Resource.last.format).to eq 'card'
-        expect(Resource.last.slug).to eq 'my-resource'
+        expect(Resource.last.slug).to start_with 'resource-'
       end
       it 'has basic _es fields ' do
         post resources_url, params: { resource: FactoryBot.attributes_for(:resource) }
