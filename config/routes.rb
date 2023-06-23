@@ -14,11 +14,13 @@ Rails.application.routes.draw do
 
   resources :logs, only: [:index, :show]
   resources :articles,
-            :resources
+            :resources,
+            :news
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
     end
+    get 'news'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

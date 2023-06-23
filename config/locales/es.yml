@@ -130,6 +130,8 @@ es:
         confirm_without_mail: "¡Gracias! En breve un asesor se comunicará contigo con la información del evento."
       article:
         new_title: "Nuevo Artículo"
+      news:
+        new_title: "Nueva Novedad"
       trainer: "Entrenador"
       trainer:
         new_title: "Nuevo Entrenador"

@@ -130,6 +130,8 @@ en:
         confirm_without_mail: "Thanks! We will contact you shortly."
       article:
         new_title: "New Article"
+      news:
+        new_title: "New News"
       trainer: "Trainer"
       trainer:
         new_title: "New Trainer"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_17_124050) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_19_195902) do
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
     t.text "body"
@@ -262,6 +262,27 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_17_124050) do
     t.text "details"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+  end
+
+  create_table "news", force: :cascade do |t|
+    t.integer "lang", default: 0, null: false
+    t.string "title"
+    t.string "where"
+    t.text "description"
+    t.string "url"
+    t.string "img"
+    t.string "video"
+    t.string "audio"
+    t.date "event_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "news_trainers", id: false, force: :cascade do |t|
+    t.integer "news_id", null: false
+    t.integer "trainer_id", null: false
+    t.index ["news_id", "trainer_id"], name: "index_news_trainers_on_news_id_and_trainer_id"
+    t.index ["trainer_id", "news_id"], name: "index_news_trainers_on_trainer_id_and_news_id"
   end
 
   create_table "oauth_tokens", force: :cascade do |t|

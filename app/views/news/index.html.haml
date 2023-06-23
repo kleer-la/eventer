@@ -1,0 +1,33 @@
+.page-header
+  %h1.pull-left
+    %i.icon-file
+    %span News
+  .pull-right
+    %a.btn.btn-white{ :href => new_news_path }= t('formtastic.actions.new')
+
+.row-fluid
+  .box-content.box-no-padding
+    .responsive-table
+      .scrollable-area
+        %table.table.table-striped{ :style => "margin-bottom:0;" }
+          %thead
+            %tr
+              %th Title
+              %th Event Date
+              %th Description
+              %th
+
+          %tbody
+            - @news.each do |news|
+              %tr
+                %td= link_to news.title, edit_news_path(news)
+                %td= news.event_date
+                %td.description{ style: "max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" }
+                  = news.description
+                %td= news.created_at
+                %td
+                  .text-right
+                    %a.btn.btn-warning.btn-mini{ :href => edit_news_path(news) }
+                      %i.icon-edit
+                    %a.btn.btn-danger.btn-mini{ :href => news_path(news), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                      %i.icon-trash

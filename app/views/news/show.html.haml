@@ -1,0 +1,24 @@
+%p#notice= notice
+
+%p
+  %b Title:
+  = @news.title
+%p
+  %b Slug:
+  = @news.slug
+%p
+  %b Body:
+  = @news.body
+%p
+  %b Description:
+  = @news.description
+%p
+  %b Trainers:
+  = @news.trainers.pluck(:name).join(',')
+%p
+  %b Published:
+  = @news.published
+
+= link_to 'Edit', edit_news_path(@news)
+\|
+= link_to 'Back', news_path
