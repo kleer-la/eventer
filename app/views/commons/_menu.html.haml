@@ -32,12 +32,16 @@
           %a{ :href => "/articles" }
             %i.icon-file
             %span Articles
+        %li{ :class => menu_item_class(@active_menu, "news") }
+          %a{ :href => "/news" }
+            %i.icon-bolt
+            %span News
+            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
+              new
         %li{ :class => menu_item_class(@active_menu, "resources") }
           %a{ :href => "/resources" }
             %i.icon-book
             %span Resources
-            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
-              new
         - if can? :manage, Trainer.new
           %li{ :class => menu_item_class(@active_menu, "trainers") }
             %a{ :href => trainers_path }
