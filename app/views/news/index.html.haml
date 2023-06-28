@@ -33,5 +33,5 @@
                   .text-right
                     %a.btn.btn-warning.btn-mini{ :href => edit_news_path(news) }
                       %i.icon-edit
-                    %a.btn.btn-danger.btn-mini{ :href => news_path(news), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }
+                    %a.btn.btn-danger.btn-mini{ :href => news_path(news), "data-confirm" => "Seguro que lo quieres borrar? #{news.title}", "data-method" => "delete", :rel => "nofollow" }
                       %i.icon-trash

@@ -57,8 +57,10 @@ class NewsController < ApplicationController
 
   # DELETE /news/1
   def destroy
-    @news.destroy
-    redirect_to news_url, notice: 'News was successfully destroyed.'
+    news = News.find(params[:id])
+    title = news.title
+    news.destroy
+    redirect_to news_index_path, notice: "News was successfully destroyed. Title: #{title}"
   end
 
   private
