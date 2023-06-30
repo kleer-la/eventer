@@ -81,4 +81,8 @@
               %a{ :href => logs_path }
                 %i.icon-cog
                 %span= t('menu.logs')
+            %li{ :class => menu_item_class(@active_menu, "admin_nuevo") }
+              %a{ :href => admin_root_path }
+                %i.icon-cog
+                %span= t('menu.admin_nuevo')
                 
