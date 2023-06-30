@@ -11,5 +11,7 @@ class Ability
     elsif user.role? :comercial
       can :manage, [Event]
     end
+
+    can :read, ActiveAdmin::Page, name: 'Dashboard', namespace_name: 'admin'
   end
 end

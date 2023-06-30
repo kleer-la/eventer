@@ -103,3 +103,5 @@ gem 'friendly_id' # slug for blog Articles
 gem 'jwt'
 gem 'xero-ruby'
 gem 'sprockets-rails'
+
+gem 'activeadmin'
