@@ -118,15 +118,11 @@ ActiveAdmin.setup do |config|
   # This setting changes the path where the link points to. If it's
   # a string, the strings is used as the path. If it's a Symbol, we
   # will call the method to return the path.
-  #
-  # Default:
   config.logout_link_path = :destroy_user_session_path
 
   # This setting changes the http method used when rendering the
   # link. For example :get, :delete, :put, etc..
-  #
-  # Default:
-  # config.logout_link_method = :get
+  config.logout_link_method = :delete
 
   # == Root
   #
