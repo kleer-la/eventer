@@ -11,19 +11,19 @@ ActiveAdmin.register User do
     selectable_column
     id_column
     column 'Email', :email
-    actions
+    column 'Roles' do |o|
+      o.roles.map { |r| r.name }.join(', ')
+    end
+    actions defaults: true do |item|
+      item 'Cambiar clave', edit_admin_user_path(item) + '?change_password=1', method: :get
+    end
   end
 
   show do |user|
     panel 'Información de usuario' do
       attributes_table_for user do
-        row('Email') { |o| o.email }
-      end
-    end
-
-    panel 'Roles' do
-      table_for user.roles do
-        column :name
+        row('Email') { |user| user.email }
+        row('Roles') { |user| user.roles.map { |role| role.name }.join(', ') }
       end
     end
   end
@@ -31,12 +31,18 @@ ActiveAdmin.register User do
   form do |f|
     f.semantic_errors
     f.inputs 'Información de usuario' do
-      f.input :email, label: 'Email'
-      f.input :password, label: 'Clave'
-      f.input :password_confirmation, label: 'Confirme clave'
-    end
-    f.inputs 'Roles' do
-      f.input :role_ids, as: :check_boxes, collection: Role.all
+      if f.object.new_record?
+        f.input :email, label: 'Email'
+        f.input :role_ids, label: 'Roles', as: :tags, collection: Role.all
+        f.input :password, label: 'Clave'
+        f.input :password_confirmation, label: 'Confirme clave'
+      elsif params['change_password'].present?
+        f.input :password, label: 'Clave'
+        f.input :password_confirmation, label: 'Confirme clave'
+      else
+        f.input :email, label: 'Email'
+        f.input :role_ids, label: 'Roles', as: :tags, collection: Role.all
+      end
     end
     f.actions
   end
