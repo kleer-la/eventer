@@ -105,3 +105,4 @@ gem 'xero-ruby'
 gem 'sprockets-rails'
 
 gem 'activeadmin'
+gem 'activeadmin_addons'
