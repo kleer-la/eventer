@@ -13,7 +13,7 @@ ActiveAdmin.register Category do
     selectable_column
     column 'Nombre', :name
     column 'Código', :codename
-    column 'Visible', :visible
+    toggle_bool_column 'Visible', :visible
     column 'Orden', :order
     column 'Descripción', :description
     actions
@@ -31,14 +31,14 @@ ActiveAdmin.register Category do
       attributes_table_for category do
         row('Nombre') { |o| o.name }
         row('Subtítulo') { |o| o.tagline }
-        row('Descripción') { |o| o.description }
+        markdown_row('Descripción') { |o| o.description }
       end
     end
     panel 'Inglés' do
       attributes_table_for category do
         row('Nombre') { |o| o.name_en }
         row('Subtítulo') { |o| o.tagline_en }
-        row('Descripción') { |o| o.description_en }
+        markdown_row('Descripción') { |o| o.description_en }
       end
     end
   end
