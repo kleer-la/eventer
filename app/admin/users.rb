@@ -14,8 +14,8 @@ ActiveAdmin.register User do
     column 'Roles' do |o|
       o.roles.map { |r| r.name }.join(', ')
     end
-    actions defaults: true do |item|
-      item 'Cambiar clave', edit_admin_user_path(item) + '?change_password=1', method: :get
+    actions defaults: true do |user|
+      item 'Cambiar clave', edit_admin_user_path(user) + '?change_password=1', method: :get
     end
   end
 
