@@ -62,9 +62,13 @@ module ParticipantsHelper
       @participant.event.event_type.is_kleer_certification
     end
 
-    def kleer_cert_seal_image
+    def kleer_certification_for_this_participant?
+      kleer_certification? && @participant.certified?
+    end
+
+    def use_this_seal
       seal = @participant.event.event_type.kleer_cert_seal_image
-      if seal.present? && kleer_certification? && @participant.certified?
+      if seal.present? && (kleer_certification_for_this_participant? || !kleer_certification?)
         seal
       else
         return nil
@@ -75,7 +79,7 @@ module ParticipantsHelper
       @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
       @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2 if new_version
 
-      @cert_image = kleer_cert_seal_image || @cert_image
+      @cert_image = use_this_seal || @cert_image
     end
 
     def background_file
@@ -412,7 +416,7 @@ module ParticipantsHelper
 
   def self.render_certificate(pdf, certificate, _page_size, store)
     if certificate.new_version
-      if certificate.kleer_cert_seal_image.present?
+      if certificate.kleer_certification_for_this_participant?
         pdf_certificate = PdfKleerCertificateV2.new(pdf, certificate, store)
       else
         pdf_certificate = PdfCertificateV2.new(pdf, certificate, store)

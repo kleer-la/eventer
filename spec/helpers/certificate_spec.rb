@@ -324,6 +324,8 @@ describe 'render certificates' do
 
     it 'default Background image' do
       cert = ParticipantsHelper::Certificate.new(@participant)
+      @participant.event.event_type.is_kleer_certification = false
+
       expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
       expect(cert.foreground_file).to be nil
     end
