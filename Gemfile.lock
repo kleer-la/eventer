@@ -55,6 +55,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_material (1.5.2)
     activeadmin (2.14.0)
       arbre (~> 1.2, >= 1.2.1)
       formtastic (>= 3.1, < 5.0)
@@ -64,8 +65,16 @@ GEM
       kaminari (~> 1.0, >= 1.2.1)
       railties (>= 6.1, < 7.1)
       ransack (>= 2.1.1, < 4)
-    activejob (7.0.6)
-      activesupport (= 7.0.6)
+    activeadmin_addons (1.10.0)
+      active_material
+      railties
+      redcarpet
+      require_all
+      sassc
+      sassc-rails
+      xdan-datetimepicker-rails (~> 2.5.1)
+    activejob (7.0.5)
+      activesupport (= 7.0.5)
       globalid (>= 0.3.6)
     activemodel (7.0.6)
       activesupport (= 7.0.6)
@@ -1801,6 +1810,7 @@ GEM
     recaptcha (5.14.0)
     redcarpet (3.6.0)
     regexp_parser (2.8.1)
+    require_all (3.0.0)
     responders (3.1.0)
       actionpack (>= 5.2)
       railties (>= 5.2)
@@ -1921,7 +1931,10 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     will_paginate (4.0.0)
-    xero-ruby (4.3.1)
+    xdan-datetimepicker-rails (2.5.4)
+      jquery-rails
+      rails (>= 3.2.16)
+    xero-ruby (4.2.0)
       faraday (>= 2.0, < 3.0)
       json (~> 2.1, >= 2.1.0)
       json-jwt (~> 1.16, >= 1.16.3)
@@ -1936,6 +1949,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin
+  activeadmin_addons
   activemodel-serializers-xml
   aws-sdk (~> 3)
   best_in_place!
