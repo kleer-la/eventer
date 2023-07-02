@@ -4,6 +4,7 @@ require 'dimensions'
 
 module ParticipantsHelper
   DEFAULT_BACKGROUND_IMAGE = 'base2021.png'
+  DEFAULT_BACKGROUND_IMAGE_V2 = 'certificado-generico.jpg'
   CERTIFICATE_SCRUM_ALLIANCE = 'CERTIFICATE_SCRUM_ALLIANCE'
   CERTIFICATE_KLEER = 'CERTIFICATE_KLEER'
   CERTIFICATE_NONE = 'CERTIFICATE_NONE'
@@ -63,6 +64,7 @@ module ParticipantsHelper
 
     def seal
       @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+      @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2 if new_version
       seal = @participant.event.event_type.kleer_cert_seal_image
       @cert_image = seal if seal.present? && (!kleer_certification? || @participant.certified?)
     end
@@ -334,13 +336,13 @@ module ParticipantsHelper
     end
 
     def rounded_rectangle_text(x, y, padding, size, text)
-      fill_color '90' * 3
+      # fill_color '90' * 3
 
-      text_width = width_of(text, size: size)
-      fill_rounded_rectangle([x, y], text_width, size + 14, padding)
+      # text_width = width_of(text, size: size)
+      # fill_rounded_rectangle([x, y+padding], text_width, size + 14, padding)
 
       text_box "<color rgb='FFFFFF'>#{text}<br>",
-        at: [padding, 250], align: :left,
+        at: [padding, y], align: :left,
         size: 13,
         inline_format: true
     end
@@ -349,7 +351,7 @@ module ParticipantsHelper
       font 'Raleway', style: :regular
       margin = 5
 
-      rounded_rectangle_text(0, 252 + margin, margin, 13, @data.place_v2)
+      rounded_rectangle_text(0, 252, margin, 13, @data.place_v2)
 
       text_box "<color rgb='#{@kcolor}'>#{I18n.t('certificate.finish_date')}: </color> <b>#{@data.finish_date_v2}</b> | " \
                "<color rgb='#{@kcolor}'>#{I18n.t('certificate.length')}: </color> <b>#{@data.event_duration_hours} hs</b>",
