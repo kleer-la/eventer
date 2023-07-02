@@ -62,11 +62,20 @@ module ParticipantsHelper
       @participant.event.event_type.is_kleer_certification
     end
 
+    def kleer_cert_seal_image
+      seal = @participant.event.event_type.kleer_cert_seal_image
+      if seal.present? && kleer_certification? && @participant.certified?
+        seal
+      else
+        return nil
+      end
+    end
+
     def seal
       @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
       @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2 if new_version
-      seal = @participant.event.event_type.kleer_cert_seal_image
-      @cert_image = seal if seal.present? && (!kleer_certification? || @participant.certified?)
+
+      @cert_image = kleer_cert_seal_image || @cert_image
     end
 
     def background_file
@@ -189,6 +198,7 @@ module ParticipantsHelper
       @kcolor = '39a2da'
       @top_right = { 'A4' => [400, 500],
                      'LETTER' => [380, 510] }[ @doc.page.size]
+      @verification_code_y =  180
     end
 
     def font_update
@@ -256,7 +266,7 @@ module ParticipantsHelper
     def verification_code
       fill_color @kcolor
       text_box I18n.t('certificate.code', code: @data.verification_code),
-               at: [0, 180], align: :left,
+               at: [0, @verification_code_y], align: :left,
                size: 10
     end
 
@@ -306,7 +316,9 @@ module ParticipantsHelper
     def initialize(doc, data, store = nil)
       super(doc, data, store)
       @kcolor = '606060'
-      @top_right = [400, 500]
+      @top_right = [370, 500]
+      @participant_y = 366
+      @info_y = 252
     end
     def event_name
       fill_color '000000'
@@ -320,7 +332,7 @@ module ParticipantsHelper
     def participant_name
       font 'Raleway', style: :semibold
       text_box @data.name,
-               at: [0, 347 + 19], width: @top_right[0] + 250, height: 50, align: :left,
+               at: [0, @participant_y], width: @top_right[0] + 250, height: 50, align: :left,
                size: 36,
                overflow: :shrink_to_fit
       # stroke { horizontal_line 0, @top_right[0], at: 355 }
@@ -330,7 +342,7 @@ module ParticipantsHelper
       font 'Raleway', style: :regular
       fill_color @kcolor
       text_box @data.description,
-               at: [0, 347 - 36], width: @top_right[0], align: :left,
+               at: [0, @participant_y - 55], width: @top_right[0], align: :left,
                size: 12,
                overflow: :shrink_to_fit
     end
@@ -351,11 +363,11 @@ module ParticipantsHelper
       font 'Raleway', style: :regular
       margin = 5
 
-      rounded_rectangle_text(0, 252, margin, 13, @data.place_v2)
+      rounded_rectangle_text(0, @info_y, margin, 13, @data.place_v2)
 
       text_box "<color rgb='#{@kcolor}'>#{I18n.t('certificate.finish_date')}: </color> <b>#{@data.finish_date_v2}</b> | " \
                "<color rgb='#{@kcolor}'>#{I18n.t('certificate.length')}: </color> <b>#{@data.event_duration_hours} hs</b>",
-               at: [margin, 220], align: :left,
+               at: [margin, @info_y - 32], align: :left,
                size: 13,
                inline_format: true
     end
@@ -372,8 +384,8 @@ module ParticipantsHelper
       end
     end
     def trainer(t_ord)
-      trainer_width = 132
-      trainer_height = 69
+      trainer_width = 132 * 1.5
+      trainer_height = 69 * 1.5
       trainer_y = 31
       trainer_x = [@top_right[0] - trainer_width - 10,
                    @top_right[0] - 2 * trainer_width - 85][t_ord]
@@ -389,10 +401,22 @@ module ParticipantsHelper
       image signature_file, at: [trainer_x, trainer_y + trainer_height], height: trainer_height if signature_file.present?
     end
   end
+  class PdfKleerCertificateV2 < PdfCertificateV2
+    def initialize(doc, data, store = nil)
+      super(doc, data, store)
+      @participant_y = 350
+      @info_y = 232
+      @verification_code_y =  170
+    end
+  end
 
   def self.render_certificate(pdf, certificate, _page_size, store)
     if certificate.new_version
-      pdf_certificate = PdfCertificateV2.new(pdf, certificate, store)
+      if certificate.kleer_cert_seal_image.present?
+        pdf_certificate = PdfKleerCertificateV2.new(pdf, certificate, store)
+      else
+        pdf_certificate = PdfCertificateV2.new(pdf, certificate, store)
+      end
     else
       pdf_certificate = PdfCertificate.new(pdf, certificate, store)
     end

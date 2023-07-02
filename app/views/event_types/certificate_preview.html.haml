@@ -13,11 +13,15 @@
         = hidden_field_tag :format, :pdf
 
         .row-fluid
-          .span6
+          .span4
             .control-group
               %label.control-label{ :for => :certificate_background_image_url }= 'Background image URL'
               = f.select :certificate_background_image_url, @images, :input_html => { :style => "width: 400px" }
-          .span6
+          .span4
+            %label.control-label{ :for => :certificate_new_version }
+              Cert Kleer
+            = f.check_box :certificate_kleer_cert, checked: (@certificate_values[:certificate_kleer_cert] == '1')
+          .span4
             %label.control-label{ :for => :certificate_new_version }
               Nueva Versión
             = f.check_box :certificate_new_version, checked: (@certificate_values[:certificate_new_version] == '1')

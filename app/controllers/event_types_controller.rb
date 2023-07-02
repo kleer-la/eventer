@@ -205,6 +205,11 @@ class EventTypesController < ApplicationController
         else
           @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url].sub(/-(A4|LETTER)/, '')
         end
+        @participant.attend!
+        if @certificate_values[:certificate_kleer_cert] == '1'
+          @event.event_type.is_kleer_certification = true
+          @participant.certify!
+         end
         @event.city = @certificate_values[:certificate_city]
         @participant.fname = @certificate_values[:certificate_name]
         begin
