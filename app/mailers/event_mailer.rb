@@ -160,6 +160,8 @@ class EventMailer < ApplicationMailer
     unit_price = participant.event.price(participant.quantity, participant.created_at)
     date = DateTime.now
     codename = participant.event.online_cohort_codename
+    
+    return nil if unit_price < 0.01
 
     begin
       invoice = @@xero.create_invoices(
