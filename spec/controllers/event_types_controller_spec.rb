@@ -5,7 +5,9 @@ require_relative '../support/devise'
 
 describe EventTypesController do
   login_admin
-
+  before(:all) do
+    FileStoreService.create_null
+  end
   describe 'GET index' do
     it 'assigns all event_types as @event_types' do
       event_type = FactoryBot.create(:event_type)
