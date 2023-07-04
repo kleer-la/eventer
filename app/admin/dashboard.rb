@@ -47,7 +47,7 @@ def brochure_alert
 end
 
 def cover_alert
-  event_type_alert('Event Type sin brochure', 
+  event_type_alert('Event Type sin cover', 
     EventType.where(include_in_catalog: true, deleted: false, cover: [nil, ''])
   )
 end
