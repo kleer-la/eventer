@@ -74,6 +74,10 @@ class EventTypesController < ApplicationController
     @categories = Category.sorted
     @cancellation_policy_setting = Setting.get('CANCELLATION_POLICY')
     @event_types = EventType.where(deleted: false).where.not(duration: 0..1).order(:name)
+
+    store = FileStoreService.current
+    @bkgd_imgs = self.background_list(store)
+    @image_list = self.image_list(store)
   end
 
   # GET /event_types/new
@@ -169,9 +173,14 @@ class EventTypesController < ApplicationController
 
   def background_list(store)
     list = store.list('certificate').map {|obj| File.basename(obj.key)}
-    list.shift # remove first (folder)
+    list[0] = ''   # remove first (folder) + add empty option
     list.reject {|key| key.include?('-A4.')}
   end
+  def image_list(store)
+    list = store.list('image').map {|obj| obj.key}
+    list.unshift ''   # add empty option
+  end
+
   
   def certificate_preview
     @event = Event.new

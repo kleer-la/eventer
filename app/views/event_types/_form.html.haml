@@ -88,10 +88,12 @@
                 %label.control-label{ :for => :cover }
                   Imagen a la derecha 
                 = f.text_field :side_image, :class => 'input-block-level'
+                -# = f.select :side_image, @image_list, :input_html => { :style => "width: 400px" }
             .span4
               .control-group
                 %label.control-label{ :for => :subtitle }= t("formtastic.labels.event_type.kleer_cert_seal_image")
-                = f.text_field :kleer_cert_seal_image, :class => 'input-block-level'
+                -# = f.text_field :kleer_cert_seal_image, :class => 'input-block-level'
+                = f.select :kleer_cert_seal_image, @bkgd_imgs, :input_html => { :style => "width: 400px" }
           .row-fluid
             .span12
               .control-group

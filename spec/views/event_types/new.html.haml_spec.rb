@@ -8,6 +8,8 @@ describe 'event_types/new' do
     @categories = [FactoryBot.build(:category)]
     assign(:event_type,
            EventType.new)
+    @bkgd_imgs = 
+    @image_list = ['']  
   end
 
   it 'renders new event_type form' do
