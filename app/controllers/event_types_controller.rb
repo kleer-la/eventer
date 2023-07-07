@@ -180,7 +180,14 @@ class EventTypesController < ApplicationController
     list = store.list('image').map {|obj| obj.key}
     list.unshift ''   # add empty option
   end
-
+  def participants 
+    @event_type = EventType.find(params[:id])
+    @participants = @event_type.events.includes(:participants).flat_map(&:participants)
+    respond_to do |format|
+      format.html { render}
+      format.csv { send_data Participant.to_csv(@participants), filename: 'participants.csv' }
+    end
+  end
   
   def certificate_preview
     @event = Event.new

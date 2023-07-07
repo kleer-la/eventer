@@ -44,6 +44,7 @@ Rails.application.routes.draw do
 
   resources :event_types do
     get 'certificate_preview', on: :member
+    get 'participants', on: :member
   end  
   get 'event_types/:id/testimonies', to: 'event_types#testimonies'
   get 'event_types/filter/:lang/active/:active/dur/:duration/ic/:indexcanonical' => 'event_types#index'

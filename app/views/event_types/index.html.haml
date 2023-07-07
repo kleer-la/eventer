@@ -48,6 +48,8 @@
                         %i.icon-calendar-empty
                       %a.btn.btn-warning.btn-mini{ href: "/event_types/#{event_type.id}/testimonies", title: 'Testimonies' }
                         %i.icon-comment
+                      %a.btn.btn-warning.btn-mini{ href: participants_event_type_path(event_type), title: 'Participants' }
+                        %i.icon-cloud-download
                       -# %a.btn.btn-warning.btn-mini{ :href => edit_event_type_path(event_type) }
                       -#   %i.icon-edit
                       - #%a.btn.btn-danger.btn-mini{ :href => event_type_path(event_type), "data-confirm" => "Seguro que lo quieres borrar?", "data-method" => "delete", :rel => "nofollow" }

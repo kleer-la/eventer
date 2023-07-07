@@ -1,0 +1,37 @@
+.page-header
+  %h1.pull-left
+    %i.icon-group
+    %span 
+      Participantes de 
+      = @event_type.name
+  .pull-right
+    %a.btn.btn-white{ :href => participants_event_type_path(@event_type) + ".csv" }
+      %i.icon-cloud-download
+      CSV
+
+= render '/commons/notice'
+
+.row-fluid
+  .span12.box.bordered-box.orange-border{ :style => "margin-bottom:0;" }
+    .responsive-table
+      .scrollable-area
+        %table.table
+          %thead
+            %tr
+              %th Fecha
+              %th Nombre
+              %th Apellido
+              %th Estado
+            %tbody
+              - @participants.each do |participant|
+                - path= "/events/#{participant.event.id}/participants/#{participant.id}"
+                %tr
+                  %td
+                    %a{ :href => "/events/#{participant.event.id}/participants" }
+                      = participant.event.date
+                  %td
+                    = participant.fname
+                  %td
+                    =participant.lname
+                  %td
+                    =participant.human_status

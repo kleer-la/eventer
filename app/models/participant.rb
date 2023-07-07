@@ -101,6 +101,18 @@ class Participant < ApplicationRecord
     influence_zone_tag 'Zona de Influencia (tag)'
   end
 
+  def self.to_csv(collection)
+    attributes = %w[fname lname email human_status]
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+      collection.each do |participant|
+        csv << attributes.map { |attr| participant.send(attr) }
+      end
+    end
+  end
+
+
   def initialize_defaults
     return unless new_record?
 
