@@ -51,6 +51,9 @@ class EventMailer < ApplicationMailer
         return
       end
     end
+    unit_price = participant.event.price(participant.quantity, participant.created_at)
+    return nil if unit_price < 0.01
+
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|
       format.text
