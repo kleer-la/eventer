@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_19_195902) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_10_155937) do
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
     t.text "body"
@@ -165,6 +165,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_19_195902) do
     t.string "side_image"
     t.string "brochure"
     t.boolean "new_version", default: false, null: false
+    t.text "extra_script"
     t.index ["canonical_id"], name: "index_event_types_on_canonical_id"
   end
 

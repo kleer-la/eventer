@@ -48,7 +48,7 @@ class Api::EventTypesController < ApplicationController
     et = event_type.to_json(
       only: [:id, :name, :description, :recipients, :program, :created_at, :updated_at, :goal, 
       :duration, :faq, :elevator_pitch, :learnings, :takeaways, :subtitle, :csd_eligible, :is_kleer_certification, 
-      :external_site_url, :deleted, :noindex, :lang, :cover, :side_image, :brochure, :new_version], 
+      :external_site_url, :deleted, :noindex, :lang, :cover, :side_image, :brochure, :new_version, :extra_script], 
       methods: %i[slug canonical_slug], include: [:categories, 
         next_events: {only: [
           :id, :date, :place, :city, :country_id, :list_price, :eb_price, :eb_end_date, :registration_link, 

@@ -194,6 +194,13 @@
                 = f.text_field :external_site_url, :class => "input-block-level"
                 %small.muted
                   Si este campo existe, la landing normal en kleer.la no se mostrará, se redirigirá este lugar.
+          .row-fuid
+            .span12
+              .control-group
+                %label.control-label{ :for => :extra_script }= t("formtastic.labels.event.extra_script")
+                = f.text_area :extra_script, :rows => 5, :class => 'input-block-level', :placeholder => t("formtastic.hints.event.extra_script")
+                %small.muted
+                  Este texto se mostrará sin modificaciones en la página                  
           .row-fluid
             .span12
               .control-group
