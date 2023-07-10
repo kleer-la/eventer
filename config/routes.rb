@@ -23,6 +23,9 @@ Rails.application.routes.draw do
       post 'participants/interest'
     end
     get 'news'
+    get 'event_types', to: 'event_types#index'
+    get 'event_types/:id' => 'event_types#show'
+    get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -88,10 +91,10 @@ Rails.application.routes.draw do
   get 'api/community_events' => 'home#index_community'
   get 'api/events/:id' => 'home#show'
   get 'api/events/event_types/:id' => 'home#event_by_event_type'
-  get 'api/event_types' => 'home#event_type_index'
-  get 'api/event_types/:id' => 'home#event_type_show'
-  get 'api/event_types/:id/trainers' => 'home#show_event_type_trainers'
-  get 'api/event_types/:id/testimonies' => 'home#show_event_type_testimonies'
+  # get 'api/event_types' => 'home#event_type_index'
+  # get 'api/event_types/:id' => 'home#event_type_show'
+  get 'api/event_types/:id/trainers' => 'home#show_event_type_trainers' #TODO remove - just xml 
+  # get 'api/event_types/:id/testimonies' => 'home#show_event_type_testimonies'
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
   post 'api/contact_us' => 'home#contact_us'

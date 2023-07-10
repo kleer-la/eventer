@@ -39,22 +39,6 @@ describe HomeController do
     end
   end
 
-  describe "GET 'event_types' (/api/event_types/#.<format>)" do
-    it 'fetch a event_type' do
-      et = FactoryBot.create(:event_type)
-      get :event_type_show, params: { id: et.to_param, format: 'json' }
-      expect(assigns(:event_type)).to eq et
-    end
-    it 'fetch a event_type' do
-      et = FactoryBot.create(:event_type)
-      ev = FactoryBot.create(:event, event_type: et)
-      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe', selected: true)
-
-      get :event_type_show, params: { id: et.to_param, format: 'json' }
-      expect(assigns(:event_type)).to eq et
-    end
-  end
-
   describe 'contact us' do
     ['hola', 'Peter', 'Bruce Lee', 'PEter'].each do |name|
       it "#{name} is a valid name" do

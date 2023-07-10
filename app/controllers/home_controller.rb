@@ -186,42 +186,12 @@ class HomeController < ApplicationController
     end
   end
 
-  # GET /event_types/1
-  # GET /event_types/1.json
-  def event_type_show
-    @event_type = EventType.find(params[:id])
-
-    respond_to do |format|
-      format.json { render json: event_type_to_json(@event_type) }
-      format.xml { render xml: @event_type.to_xml(methods: %i[slug canonical_slug], include: :categories) }
-    end
-  end
-
-  # GET /event_types
-  # GET /event_types.json
-  def event_type_index
-    @event_types = EventType.all.sort { |p1, p2| p1.name <=> p2.name }
-
-    respond_to do |format|
-      format.json { render json: @event_types }
-      format.xml { render xml: @event_types.to_xml({ include: :categories }) }
-    end
-  end
-
+  #TODO remove
   def show_event_type_trainers
     @event_type = EventType.find(params[:id])
 
     respond_to do |format|
       format.xml { render xml: @event_type.trainers }
-    end
-  end
-
-  def show_event_type_testimonies
-    event_type = EventType.find(params[:id])
-    participants = event_type.testimonies
-
-    respond_to do |format|
-      format.json { render json: participants.first(10) }
     end
   end
 
