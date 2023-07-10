@@ -4,7 +4,9 @@
       = render '/commons/notice'
       %p 
         - unless @cancelled
-          - if @event.should_welcome_email
+          - if @free
+            = I18n.t("formtastic.labels.participant.auto_confirm")
+          - elsif @event.should_welcome_email
             = I18n.t("formtastic.labels.participant.confirm_with_mail")
           - else
             = I18n.t("formtastic.labels.participant.confirm_without_mail")

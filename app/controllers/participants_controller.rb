@@ -152,6 +152,7 @@ class ParticipantsController < ApplicationController
     I18n.locale = @event.event_type.lang.to_sym
     @nakedform = !params[:nakedform].nil?
     @cancelled = !params[:cancelled].nil?
+    @free = !!ActiveModel::Type::Boolean.new.cast(params[:free])
 
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
@@ -217,8 +218,12 @@ class ParticipantsController < ApplicationController
         end
         create_mails
 
+        unit_price = @event.price(@participant.quantity, @participant.created_at)
+        free = unit_price < 0.01
+    
+    
         format.html do
-          redirect_to "/events/#{@event.id}/participant_confirmed#{@nakedform ? '?nakedform=1' : ''}",
+          redirect_to "/events/#{@event.id}/participant_confirmed?free=#{free}#{@nakedform ? '&nakedform=1' : ''}",
                       notice: t('flash.participant.buy.success')
         end
         format.json { render json: @participant, status: :created, location: @participant }
