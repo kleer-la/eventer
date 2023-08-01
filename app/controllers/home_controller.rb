@@ -15,6 +15,9 @@ class HomeController < ApplicationController
     return false if filter.split(',').map {|f| msg.include? f}.reduce(false){|r, elem| r || elem}
     true
   end
+  def self.valid_email?(email)
+    !!(email =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i)
+  end
 
   def self.valid_contact_us(name, email, context, subject, message, secret, filter)
     local_secret = ENV['CONTACT_US_SECRET'].to_s
@@ -23,6 +26,7 @@ class HomeController < ApplicationController
     ('bad name'       unless self.valid_name?(name)) ||
     ('bad message'    unless self.valid_message?(message, filter)) ||
     ('empty email'    unless email.present?) ||
+    ('invalid email'    unless self.valid_email?(email)) ||
     ('empty context'  unless context.present?) ||
     ('subject honeypot' if subject.present?)
   end

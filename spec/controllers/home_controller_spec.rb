@@ -77,6 +77,7 @@ describe HomeController do
       ['Papa', '', '', '', '', '', 'bad message'],
       ['Papa', '', '', '', 'hi there', '', 'empty email'],
       ['Papa', 'e@ma.il', '', '', 'hi there', '', 'empty context'], 
+      ['Papa', 'e@ma.il\n', '', '', 'hi there', '', 'invalid email'], 
       ['Papa', 'e@ma.il', '/', '', '¿Aún no eres millonario? ¡El robot financiero te convertirá en él! http://go.hojagoak.com/0j35', 'http', 'bad message'],
       ['Papa', 'e@ma.il', '/', 'oops', 'hi there', '', 'subject honeypot'],
     ].each do |(name, email, context, subject, message, filter, error)|
