@@ -117,7 +117,9 @@ module XeroClientService
                                     contact: { contact_id: contact_id },
                                     line_items: [{ description: description, quantity: quantity, unit_amount: unit,
                                                    account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE,
-                                                   tracking: [{ name: 'Cód. Proyecto', option: codename }] }],
+                                                   tracking: [{ name: 'Cód. Proyecto', option: codename },
+                                                              { name: 'Business', option: 'Training abierto' }
+                                                  ] }],
                                     date: date, due_date: due_date, reference: codename,
                                     branding_theme_id: BRANDING_THEME[lang.to_sym],
                                     status: XeroRuby::Accounting::Invoice::AUTHORISED }] } # DRAFT / AUTHORISED
