@@ -85,6 +85,12 @@ describe Event do
       expect(@event.valid?).to be true
     end
 
+    it 'registration_ends should be before event date' do
+      expect { 
+        FactoryBot.create(:event, date: Date.today, registration_ends: Date.today+1)
+      }.to raise_error(ActiveRecord::RecordInvalid) { |error| expect(error.to_s).to include 'Registration ends' }
+    end
+
     it 'should have a capacity greater than 0' do
       @event.capacity = 0
 

@@ -38,6 +38,9 @@ class Event < ApplicationRecord
   validates_each :eb_end_date do |record, attr, value|
     record.errors.add(attr, :eb_end_date_should_be_earlier_than_event_date) unless value.nil? || value < record.date
   end
+  validates_each :registration_ends do |record, attr, value|
+    record.errors.add(attr, :registration_ends_should_be_earlier_than_event_date) unless value.nil? || value < record.date
+  end
 
   validates_each :eb_price do |record, attr, value|
     unless value.nil? || value < record.list_price
@@ -159,8 +162,8 @@ class Event < ApplicationRecord
   end
 
   def registration_ended?(current_date = Date.today)
-    [self.date, self.registration_ends].compact.min <= current_date
-  end
+    [self.date, self.registration_ends].compact.min.to_date <= current_date.to_date
+  end 
 
   def finished?
     timezone = TimeZone.new(time_zone_name) unless time_zone_name.nil?

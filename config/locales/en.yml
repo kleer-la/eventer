@@ -77,6 +77,7 @@ en:
           capacity_should_be_greater_than_0: "el evento no puede tener una capacidad de 0 personas"
           duration_should_be_greater_than_0: "la duración del evento debe ser al menos de 1 día"
           eb_end_date_should_be_earlier_than_event_date: "la fecha de Early Bird no puede ser mayor a la Fecha del Evento"
+          registration_ends_should_be_earlier_than_event_date: "el fin de registración no puede ser posterior a la Fecha del Evento"
           private_event_should_not_have_discounts: "un evento Privado no puede tener descuentos por cantidad de personas"
           event_rating_should_be_between_1_and_5: "el rating del evento debe estar entre 1 y 5"
           trainer_rating_should_be_between_1_and_5: "el rating del entrenador debe estar entre 1 y 5"
