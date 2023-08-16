@@ -58,6 +58,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id]).dup
     @event.date =  nil
     @event.finish_date =  nil
+    @event.registration_ends =  nil
     @event.online_cohort_codename = nil
     pre_edit
 
