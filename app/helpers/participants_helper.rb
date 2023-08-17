@@ -377,7 +377,7 @@ module ParticipantsHelper
     end
 
     def fill_image(img_file)
-      offset = [-38, 576]
+      offset = [-36, 576]
       height = 613
       bk_image = @store.read(img_file, nil)
       image bk_image, at: offset, height: height

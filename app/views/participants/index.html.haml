@@ -227,7 +227,7 @@
                     %a.btn.btn-danger.btn-mini{ :href => copy_event_participant_path(participant.event, participant), "data-confirm" => "Se realizarán #{[1,participant.quantity - 1 ].max} copias. ¿Estás seguro?", "data-method" => "copy", :rel => "nofollow" }
                       %i.icon-copy
                     - if "AK".include? participant.status
-                      - cert_url= "#{url}/certificate.pdf?page_size=A4&verification_code=#{participant.verification_code}"
+                      - cert_url= "#{url}/certificate.pdf?page_size=LETTER&verification_code=#{participant.verification_code}"
                       &nbsp;
                       %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}", :id => "modificar" }
                         %i.icon-certificate{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Ver certificado"}
