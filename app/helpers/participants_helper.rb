@@ -388,11 +388,11 @@ module ParticipantsHelper
       end
     end
     def trainer(t_ord)
-      trainer_width = 132 * 1.5
-      trainer_height = 69 * 1.5
+      trainer_width = 132 * 1.3
+      trainer_height = 69 * 1.3
       trainer_y = 31
       trainer_x = [@top_right[0] - trainer_width - 10,
-                   @top_right[0] - 2 * trainer_width - 85][t_ord]
+                   @top_right[0] - 2 * trainer_width - 20][t_ord]
 
       stroke { horizontal_line trainer_x, trainer_x + trainer_width, at: trainer_y }
 
@@ -402,7 +402,7 @@ module ParticipantsHelper
                size: 11,
                inline_format: true
       signature_file = @store.read(@data.trainer_signature(t_ord), nil, 'certificate-signatures')
-      image signature_file, at: [trainer_x, trainer_y + trainer_height], height: trainer_height if signature_file.present?
+      image signature_file, at: [trainer_x, trainer_y + trainer_height -10], height: trainer_height if signature_file.present?
     end
   end
   class PdfKleerCertificateV2 < PdfCertificateV2
