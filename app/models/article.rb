@@ -16,6 +16,7 @@ class Article < ApplicationRecord
     !slug.present?
   end
 
+  #TODO deprecated!
   def abstract
     max_abstract_length = 500
     double_n = body.index("\r\n\r\n")
