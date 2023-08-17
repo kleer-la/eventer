@@ -63,7 +63,7 @@ class EventMailer < ApplicationMailer
 
   def send_certificate(participant, certificate_url_a4, certificate_url_letter)
     @participant = participant
-    @certificate_link_a4 = certificate_url_a4
+    # @certificate_link_a4 = certificate_url_a4
     @certificate_link_letter = certificate_url_letter
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email,
