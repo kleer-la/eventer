@@ -242,7 +242,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_10_155937) do
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
-    t.datetime "created_at", precision: nil
+    t.datetime "created_at"
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
@@ -328,7 +328,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_10_155937) do
     t.boolean "selected", default: false, null: false
     t.string "profile_url"
     t.string "photo_url"
-    t.string "name"
     t.string "company_name"
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
@@ -446,8 +445,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_10_155937) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "articles", "categories"
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
+  add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "resources", "categories", column: "categories_id"
   add_foreign_key "resources", "trainers", column: "trainers_id"
   add_foreign_key "translations", "resources"
