@@ -268,7 +268,7 @@ module ParticipantsHelper
     end
 
     def verification_code
-      fill_color @kcolor
+      fill_color '000000' #@kcolor
       text_box I18n.t('certificate.code', code: @data.verification_code),
                at: [0, @verification_code_y], align: :left,
                size: 10
@@ -321,7 +321,8 @@ module ParticipantsHelper
       super(doc, data, store)
       @kcolor = '606060'
       @top_right = [370, 500]
-      @participant_y = 366
+      @participant_y = 378
+      @certificate_description_y = @participant_y - 60
       @info_y = 252
     end
     def event_name
@@ -346,7 +347,7 @@ module ParticipantsHelper
       font 'Raleway', style: :regular
       fill_color @kcolor
       text_box @data.description,
-               at: [0, @participant_y - 55], width: @top_right[0], align: :left,
+               at: [0, @certificate_description_y], width: @top_right[0], align: :left,
                size: 12,
                overflow: :shrink_to_fit
     end
@@ -397,6 +398,7 @@ module ParticipantsHelper
       stroke { horizontal_line trainer_x, trainer_x + trainer_width, at: trainer_y }
 
       font 'Raleway', style: :thin
+      fill_color '000000'
       text_box "#{@data.trainer(t_ord)}<br>#{@data.trainer_credentials(t_ord)}",
                at: [trainer_x, trainer_y - 5], width: trainer_width, align: :center,
                size: 11,
