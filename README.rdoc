@@ -62,6 +62,8 @@ Enjoy!
 - Seguir con las instrucciones previas
 - Si usas rails generate, los archivos quedan con usuarios del containter y no se pueden grabar con VS Code.
     sudo chown -R juan .
+- Si aparecen varios archivos como modificados, probar con
+    git config --global core.autocrlf true
 
 == Migrar versiones Rails
 - https://railsbump.org/ compatibilidad de gemas
