@@ -411,6 +411,7 @@ module ParticipantsHelper
     def initialize(doc, data, store = nil)
       super(doc, data, store)
       @participant_y = 350
+      @certificate_description_y = @participant_y - 50
       @info_y = 232
       @verification_code_y =  170
     end
