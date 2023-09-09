@@ -1,5 +1,5 @@
 %script(src="https://www.google.com/recaptcha/api.js")
-= form_for [:event, @participant] do |f|
+= form_for [@event, @participant] do |f|
   - if @event.is_sold_out
     .alert
       = I18n.t("formtastic.labels.event.alert.is_sold_out").html_safe
@@ -48,7 +48,7 @@
     .row_fluid
       .control-group
         %small.muted
-        = f.select :quantity, @quantities, {}, {:class => "span6"}
+        = f.select :quantity, quantity_list, {}, {:class => "span6"}
     .row-fluid
       .control-group
         = f.phone_field :phone, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")

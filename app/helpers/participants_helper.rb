@@ -462,4 +462,22 @@ module ParticipantsHelper
     )
     Aws::S3::Resource.new(client: client)
   end
+
+  def quantity_list
+    seat_text = []
+    5.times {seat_text.push I18n.t('formtastic.button.participant.seats') }
+    seat_text.push I18n.t('formtastic.button.participant.seat')
+
+    (1..6).reduce([]) do |ac, qty|
+      price = @event.price(qty, DateTime.now)
+      formatted_price = number_to_currency(@event.price(qty, DateTime.now),
+        precision: 0, delimiter: '.', unit: '')
+      formatted_total = number_to_currency(price * qty,
+        precision: 0, delimiter: '.', unit: '')
+
+      ac << ["#{qty} #{seat_text.pop} x #{formatted_price} #{@event.currency_iso_code} = #{formatted_total} #{@event.currency_iso_code}", qty]
+    end
+  end
+
+
 end
