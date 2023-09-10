@@ -17,7 +17,8 @@ describe EventMailer do
     ar_text = 'pagos desde Argentina'
 
     before :each do
-      EventMailer.xero_service(XeroClientService.create_null)
+      # EventMailer.xero_service(XeroClientService.create_null)
+      InvoiceService.xero_service(XeroClientService.create_null)
     end
 
     context 'English' do
@@ -100,28 +101,29 @@ describe EventMailer do
         @participant.event.eb_end_date = DateTime.new(2022, 1, 10)
       end
       it 'normal due date' do
-        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 1))
+        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 1))
         expect(due_date.to_date.to_s).to eq '2022-01-08'
       end
       it 'normal due date > eb' do
-        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 4))
+        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 4))
         expect(due_date.to_date.to_s).to eq '2022-01-10'
       end
       it 'normal due date > curse date' do
-        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 14))
+        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 14))
         expect(due_date.to_date.to_s).to eq '2022-01-19'
       end
       it 'no eb' do
         @participant.event.eb_end_date = nil
-        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 4))
+        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 4))
         expect(due_date.to_date.to_s).to eq '2022-01-11'
       end
       it 'today > eb' do
-        due_date = EventMailer.due_date(@participant.event, DateTime.new(2022, 1, 11))
+        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 11))
         expect(due_date.to_date.to_s).to eq '2022-01-18'
       end
       it 'Fail w/ Standard exceptions ' do
-        EventMailer.xero_service(XeroClientService.create_null(
+        # EventMailer.xero_service(XeroClientService.create_null(
+          InvoiceService.xero_service(XeroClientService.create_null(
           invoice_exception: StandardError.new('Invoice error')
         ))
         expect {
@@ -137,7 +139,7 @@ describe EventMailer do
         expect(@participant.xero_invoice_number).to be_nil
       end
       it 'Fail w/ Standard exceptions (w/o discount)' do
-        EventMailer.xero_service(XeroClientService.create_null(
+        InvoiceService.xero_service(XeroClientService.create_null(
           email_exception: StandardError.new('Email Invoice error')
         ))
         expect {
@@ -147,7 +149,8 @@ describe EventMailer do
       it 'dont Fail w/ Standard exceptions (w/ discount)' do
         @participant.referer_code = 'DISCOUNT'
         @participant.save!
-        EventMailer.xero_service(XeroClientService.create_null(
+        # EventMailer.xero_service(XeroClientService.create_null(
+        InvoiceService.xero_service(XeroClientService.create_null(
           email_exception: StandardError.new('Email Invoice error')
         ))
         expect {
