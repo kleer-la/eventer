@@ -1,20 +1,11 @@
 class InvoiceService
   def initialize(participant)
+    self.class.xero
     @participant = participant
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
     end
 
-  def create
-    # Logic to create the invoice using the Xero API
-    xero_invoice = XeroClientService::XeroApi.create_invoice(@participant)
-
-    # Return the created invoice or handle any errors
-    xero_invoice
-  end
-  # -----------------------------
-  # TODO: move code related to Xero to XeroClientService
-  #
   def self.xero_service(xero_service)
     @@xero_service = xero_service
   end
@@ -35,25 +26,24 @@ class InvoiceService
     ].reject(&:nil?).min
   end
 
-  def create_send_invoice(participant = nil)
-    InvoiceService.xero
-    participant = participant || @participant
+  def create_send_invoice()
+    return nil if @participant.event.currency_iso_code != 'USD'
 
     contact = @@xero.create_contact(
-      participant.company_name, participant.fname, participant.lname,
-      participant.email, participant.phone, participant.address
+      @participant.company_name, @participant.fname, @participant.lname,
+      @participant.email, @participant.phone, @participant.address
     )
 
     return if contact.nil?
 
-    @invoice = create_invoice(participant, contact)
+    @invoice = create_invoice(@participant, contact)
 
     return if @invoice.nil?
     @pih.update_participant(@invoice)
-    @@xero.email_invoice(@invoice) unless participant.referer_code.present?
+    @@xero.email_invoice(@invoice) unless @participant.referer_code.present?
     @invoice
   end
-
+ 
   def get_online_invoice_url()
     @@xero.get_online_invoice_url(@invoice)
   end
@@ -80,7 +70,4 @@ class InvoiceService
     end
     invoice
   end
-
-  #  End of code to be moved to XeroClientService
-  # ----------------------------------------------
 end
