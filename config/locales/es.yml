@@ -400,6 +400,11 @@ es:
 
         Te agregamos a la lista de espera. Si se libera una vacante nos comunicaremos contigo nuevamente por este medio.
 
+      we_ll_contact_you: >-
+        Nos comunicaremos contigo dentro de las próximas 24 hs hábiles para concretar la compra.
+
+        Cualquier duda, puedes comunicarte con info@kleer.la
+
       payment:
         text: Completa tu compra para reservar tu lugar
         button: Pagar ahora

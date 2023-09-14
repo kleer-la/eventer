@@ -4,9 +4,9 @@ require 'rails_helper'
 
 describe EventMailer do
   before :each do
-    @participant = FactoryBot.create(:participant)
-    @participant.email = 'app_test@kleer.la'
+    @participant = FactoryBot.create(:participant, email: 'app_test@kleer.la')
     @participant.event.event_type.name = 'Concurso de truco'
+    @participant.event.currency_iso_code = 'USD'
     ActionMailer::Base.deliveries.clear
   end
 
@@ -65,6 +65,13 @@ describe EventMailer do
       email = EventMailer.welcome_new_event_participant(@participant).deliver_now
       expect(email.html_part.body.to_s).not_to include 'lista de espera'
       expect(email.html_part.body.to_s).to include 'Pagar'
+    end
+
+    it 'When currency is COP canT pay' do
+      @participant.event.currency_iso_code = 'COP'
+      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      expect(email.html_part.body.to_s).to include 'Nos comunicaremos'
+      expect(email.html_part.body.to_s).not_to include 'Pagar'
     end
 
     it 'should send the custom text in HTML format if custom text markdown is present' do

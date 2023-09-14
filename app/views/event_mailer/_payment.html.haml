@@ -1,0 +1,9 @@
+= t('mail.welcome.payment.text', locale: @lang)
+%br
+%a{href: "#{@online_invoice_url}?utm_source=emailpaynowbutton#paynow", style: "background: rgb(87, 196, 10); border: 0px solid rgb(87, 196, 10); border-radius: 3px; color: rgb(254, 254, 254); display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 5px 0px; text-align: center; text-decoration: none; width: 110px;"}= t('mail.welcome.payment.button', locale: @lang)
+%br
+= t('mail.welcome.payment.notice', locale: @lang)
+%br
+%br
+= t('mail.welcome.invoice', locale: @lang)
+= @online_invoice_url

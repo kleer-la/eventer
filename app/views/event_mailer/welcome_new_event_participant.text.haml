@@ -9,13 +9,11 @@
 - unless @participant.event.is_sold_out
   = t('mail.welcome.purpose', locale: @lang)
   = ''
-  = t('mail.welcome.payment.text', locale: @lang)
-  = "#{@online_invoice_url}?utm_source=emailpaynowbutton#paynow"
-  = ''
-  = t('mail.welcome.payment.notice', locale: @lang)
-  = ''
-  = t('mail.welcome.invoice', locale: @lang)
-  = @online_invoice_url
+
+  - if @online_invoice_url.nil?
+    = render partial: 'we_ll_contact_you'
+  - else
+    = render partial: 'payment'
   = ''
   = t('mail.welcome.info.title', locale: @lang)
   = ''
