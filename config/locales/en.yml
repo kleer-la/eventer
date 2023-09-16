@@ -387,6 +387,11 @@ en:
 
         We added you to the waiting list. If a place is released we will contact you again by this means.
       
+      we_ll_contact_you: >-
+        We will contact you within the next 24 business hours to complete the purchase.
+
+         If you have any questions, you contact us at info@kleer.la
+
       payment:
         text: Complete your purchase to reserve your spot
         button: Pay now

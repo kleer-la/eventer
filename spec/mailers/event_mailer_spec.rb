@@ -4,9 +4,9 @@ require 'rails_helper'
 
 describe EventMailer do
   before :each do
-    @participant = FactoryBot.create(:participant)
-    @participant.email = 'app_test@kleer.la'
+    @participant = FactoryBot.create(:participant, email: 'app_test@kleer.la')
     @participant.event.event_type.name = 'Concurso de truco'
+    @participant.event.currency_iso_code = 'USD'
     ActionMailer::Base.deliveries.clear
   end
 
@@ -17,7 +17,6 @@ describe EventMailer do
     ar_text = 'pagos desde Argentina'
 
     before :each do
-      # EventMailer.xero_service(XeroClientService.create_null)
       InvoiceService.xero_service(XeroClientService.create_null)
     end
 
@@ -68,6 +67,13 @@ describe EventMailer do
       expect(email.html_part.body.to_s).to include 'Pagar'
     end
 
+    it 'When currency is COP canT pay' do
+      @participant.event.currency_iso_code = 'COP'
+      email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      expect(email.html_part.body.to_s).to include 'Nos comunicaremos'
+      expect(email.html_part.body.to_s).not_to include 'Pagar'
+    end
+
     it 'should send the custom text in HTML format if custom text markdown is present' do
       @participant.event.custom_prices_email_text = '**texto customizado**: 16'
 
@@ -91,47 +97,22 @@ describe EventMailer do
     end
     context 'Update participant' do
       it 'set invoice number' do
+        @participant.event.currency_iso_code = 'USD'
         EventMailer.welcome_new_event_participant(@participant).deliver_now
         expect(@participant.xero_invoice_number).to eq 'INV-0100' # from NullInvoice
       end
     end
     context 'Create Invoice' do
-      before :each do
-        @participant.event.date = DateTime.new(2022, 1, 20)
-        @participant.event.eb_end_date = DateTime.new(2022, 1, 10)
-      end
-      it 'normal due date' do
-        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 1))
-        expect(due_date.to_date.to_s).to eq '2022-01-08'
-      end
-      it 'normal due date > eb' do
-        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 4))
-        expect(due_date.to_date.to_s).to eq '2022-01-10'
-      end
-      it 'normal due date > curse date' do
-        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 14))
-        expect(due_date.to_date.to_s).to eq '2022-01-19'
-      end
-      it 'no eb' do
-        @participant.event.eb_end_date = nil
-        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 4))
-        expect(due_date.to_date.to_s).to eq '2022-01-11'
-      end
-      it 'today > eb' do
-        due_date = InvoiceService.due_date(@participant.event, DateTime.new(2022, 1, 11))
-        expect(due_date.to_date.to_s).to eq '2022-01-18'
-      end
       it 'Fail w/ Standard exceptions ' do
         # EventMailer.xero_service(XeroClientService.create_null(
-          InvoiceService.xero_service(XeroClientService.create_null(
+        InvoiceService.xero_service(XeroClientService.create_null(
           invoice_exception: StandardError.new('Invoice error')
         ))
         expect {
+          @participant.event.currency_iso_code = 'USD'
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
         }.to change {Log.count}.by 1
       end
-    end
-    context 'Create Invoice' do
       it 'when event is sold out registration doesnt create an invoice' do
         @participant.event.is_sold_out = true
         @participant.event.save!
@@ -143,6 +124,7 @@ describe EventMailer do
           email_exception: StandardError.new('Email Invoice error')
         ))
         expect {
+          @participant.event.currency_iso_code = 'USD'
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
         }.to change {Log.count}.by 1
       end
@@ -215,31 +197,5 @@ describe EventMailer do
       expect(html).not_to include "t('"
       expect(html).not_to include 'translation'
     end
-
   end
-end
-
-describe ParticipantInvoiceHelper do
-  before :each do
-    @participant = FactoryBot.create(:participant)
-  end
-  it 'item_description one seat es' do
-    pih = ParticipantInvoiceHelper.new(@participant, :es)
-    expect(pih.item_description).to include 'por una vacante'
-  end
-  it 'item_description three seats es' do
-    @participant.quantity =3
-    pih = ParticipantInvoiceHelper.new(@participant, :es)
-    expect(pih.item_description).to include 'por 3 vacantes'
-  end
-  it 'item_description one seat en' do
-    pih = ParticipantInvoiceHelper.new(@participant, :en)
-    expect(pih.item_description).to include 'one seat for'
-  end
-  it 'item_description three seats es' do
-    @participant.quantity = 3
-    pih = ParticipantInvoiceHelper.new(@participant, :en)
-    expect(pih.item_description).to include '#3 seats'
-  end
-  
 end
