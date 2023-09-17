@@ -12,6 +12,8 @@ group :development do
   gem 'derailed_benchmarks'
   gem 'stackprof'
   gem 'solargraph'
+  # Ruby/debug
+  gem 'debug', '>= 1.0.0'
 end
 
 group :development, :test do
