@@ -39,7 +39,7 @@ class Event < ApplicationRecord
     record.errors.add(attr, :eb_end_date_should_be_earlier_than_event_date) unless value.nil? || value < record.date
   end
   validates_each :registration_ends do |record, attr, value|
-    record.errors.add(attr, :registration_ends_should_be_earlier_than_event_date) unless value.nil? || value < record.date
+    record.errors.add(attr, :registration_ends_should_be_earlier_than_event_date) unless value.nil? || value <= record.date
   end
 
   validates_each :eb_price do |record, attr, value|
