@@ -9,7 +9,7 @@
         = @event.human_date + " " + @event.human_time + "."
         %br
         %i.icon-map-marker
-        = @event.place + ", " + @event.city
+        = [@event.place.to_s, @event.address.to_s, @event.city.to_s].reject{|s| s.empty?}.uniq.join(', ')
       = render 'form'
   - else
     = render 'form'
