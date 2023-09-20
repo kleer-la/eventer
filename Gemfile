@@ -50,8 +50,8 @@ end
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer'
-gem 'mini_racer'
-gem 'execjs', '~> 2.7.0'    # fail with 2.8.1
+# gem 'mini_racer'
+# gem 'execjs', '~> 2.7.0'    # fail with 2.8.1
 
 gem 'haml'
 gem 'haml-rails'

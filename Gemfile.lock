@@ -1694,8 +1694,6 @@ GEM
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
     language_server-protocol (3.17.0.3)
-    libv8-node (18.16.0.0)
-    libv8-node (18.16.0.0-x86_64-linux)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -1717,8 +1715,6 @@ GEM
     mini_histogram (0.3.1)
     mini_mime (1.1.5)
     mini_portile2 (2.8.4)
-    mini_racer (0.8.0)
-      libv8-node (~> 18.16.0.0)
     minitest (5.19.0)
     money (6.16.0)
       i18n (>= 0.6.4, <= 2)
@@ -1981,7 +1977,6 @@ DEPENDENCIES
   devise (~> 4)
   dimensions
   eventmachine (= 1.2.7)
-  execjs (~> 2.7.0)
   factory_bot_rails
   formtastic
   formtastic-bootstrap
@@ -1992,7 +1987,6 @@ DEPENDENCIES
   jwt
   listen
   matrix (~> 0.4)
-  mini_racer
   money
   newrelic_rpm
   nokogiri

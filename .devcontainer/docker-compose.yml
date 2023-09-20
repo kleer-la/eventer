@@ -7,7 +7,7 @@ services:
       dockerfile: .devcontainer/dockerfile
       args:
         # [Choice] Install Node.js
-        INSTALL_NODE: "true"
+        INSTALL_NODE: "false"
         NODE_VERSION: "lts/*"
         # On Linux, you may need to update USER_UID and USER_GID below if not your local UID is not 1000.
         USER_UID: 1000
