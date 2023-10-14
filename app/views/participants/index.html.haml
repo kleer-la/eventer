@@ -228,12 +228,16 @@
                       %i.icon-copy
                     - if "AK".include? participant.status
                       - cert_url= "#{url}/certificate.pdf?page_size=LETTER&verification_code=#{participant.verification_code}"
+                      - validation_url= "https://kleer.la/es/certificado?q=#{participant.verification_code}"
                       &nbsp;
                       %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}", :id => "modificar" }
                         %i.icon-certificate{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Ver certificado"}
                       &nbsp;
                       %a.btn.btn-warning.btn-mini{ :href => "#{cert_url}&download=true", :id => "download"}
                         %i.icon-chevron-down{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Descargar certificado"}
+                      &nbsp;
+                      %a.btn.btn-warning.btn-mini{ :href => validation_url, :id => "verification"}
+                        %i.icon-share{"data-toggle" => "tooltip", "data-html"=>"true" ,:title => "Link de validación"}
                     - if participant.invoice_id.present?
                       - inv_url= "https://go.xero.com/AccountsReceivable/Edit.aspx?InvoiceID=#{participant.invoice_id}"
                       &nbsp;
