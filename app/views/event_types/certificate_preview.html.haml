@@ -2,6 +2,9 @@
   %h1.pull-left
     %i.icon-tasks
     %span Tipos de Evento - Preview certificados
+  .pull-right
+    %a.btn.btn-white{ :href => "/event_types/#{@event_type.id}/edit", :title => "Editar" }
+      %i.icon-tasks
 
 .row-fluid
   .span12.box
@@ -16,7 +19,7 @@
           .span4
             .control-group
               %label.control-label{ :for => :certificate_background_image_url }= 'Background image URL'
-              = f.select :certificate_background_image_url, @images, :input_html => { :style => "width: 400px" }
+              = f.select :certificate_background_image_url, @images, :input_html => { :style => "width: 400px" }, selected: f.object.kleer_cert_seal_image
           .span4
             %label.control-label{ :for => :certificate_new_version }
               Cert Kleer

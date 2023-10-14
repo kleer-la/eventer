@@ -5,5 +5,7 @@
   .pull-right
     %a.btn.btn-white{ :href => "/event_types/#{@event_type.id}/testimonies", :title => "Testimonios" }
       %i.icon-comment
+    %a.btn.btn-white{ :href => "/event_types/#{@event_type.id}/certificate_preview", :title => "Preview Certificados" }
+      %i.icon-eye-open
 
 = render 'form'
