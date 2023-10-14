@@ -29,12 +29,12 @@ RSpec.describe 'generate one certificate' do
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant))
       assign(:participant, participant)
-      certificate_store = FileStoreService.create_null exists: { 'certificate-images/base2021-LETTER.png' => false }
+      certificate_store = FileStoreService.create_null exists: { "certificate-images/#{ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2}" => false}
       assign(:certificate_store, certificate_store)
 
       expect do
         render template: 'participants/certificate', format: :pdf
-      end.to raise_error(ActionView::Template::Error, /2021/)
+      end.to raise_error(ActionView::Template::Error, /#{ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2}/)
     end
     it '2nd trainer wo signature' do
       participant = FactoryBot.create(:participant)

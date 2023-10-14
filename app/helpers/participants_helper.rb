@@ -76,8 +76,9 @@ module ParticipantsHelper
     end
 
     def seal
-      @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
-      @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2 if new_version
+      # @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+      # @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2 if new_version
+      @cert_image = ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2
 
       @cert_image = use_this_seal || @cert_image
     end
@@ -155,7 +156,8 @@ module ParticipantsHelper
     end
 
     def finish_date_v2
-      I18n.l @participant.event.finish_date, format: :short_with_year
+      d = [@participant.event.finish_date, @participant.event.date].compact
+      I18n.l d[0], format: :short_with_year
     end
 
     def finish_date
@@ -335,6 +337,10 @@ module ParticipantsHelper
     end
 
     def participant_name
+      font 'Raleway', style: :light
+      text_box 'CERTIFICADO OTORGADO A',
+               at: [0, @participant_y + 14], width: @top_right[0], height: 20, align: :left,
+               size: 12
       font 'Raleway', style: :semibold
       text_box @data.name,
                at: [0, @participant_y], width: @top_right[0] + 250, height: 50, align: :left,
@@ -413,19 +419,20 @@ module ParticipantsHelper
       @participant_y = 350
       @certificate_description_y = @participant_y - 50
       @info_y = 232
-      @verification_code_y =  170
+      @verification_code_y = 170
     end
   end
 
   def self.render_certificate(pdf, certificate, _page_size, store)
-    if certificate.new_version
+
+    if certificate.kleer_certification_for_this_participant? && !certificate.new_version
+      pdf_certificate = PdfCertificate.new(pdf, certificate, store)
+    else
       if certificate.kleer_certification_for_this_participant?
         pdf_certificate = PdfKleerCertificateV2.new(pdf, certificate, store)
       else
         pdf_certificate = PdfCertificateV2.new(pdf, certificate, store)
       end
-    else
-      pdf_certificate = PdfCertificate.new(pdf, certificate, store)
     end
     pdf_certificate.render
   end

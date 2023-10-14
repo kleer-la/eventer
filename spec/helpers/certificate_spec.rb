@@ -50,7 +50,7 @@ describe Certificate do
   it 'new (2021) certificate wo/file' do
     @participant.event.event_type.kleer_cert_seal_image = ''
     cert = Certificate.new(@participant)
-    expect(cert.background_file).to eq 'base2021.png'
+    expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2
   end
 
   it 'should return name+last name' do
@@ -326,7 +326,7 @@ describe 'render certificates' do
       cert = ParticipantsHelper::Certificate.new(@participant)
       @participant.event.event_type.is_kleer_certification = false
 
-      expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+      expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2
       expect(cert.foreground_file).to be nil
     end
     it 'custom Background image' do
@@ -352,13 +352,13 @@ describe 'render certificates' do
         @participant.attend!
         @participant.event.event_type.kleer_cert_seal_image = 'shamrock.png'
         cert = ParticipantsHelper::Certificate.new(@participant)
-        expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+        expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2
       end
       it 'Present - no custom image' do
         @participant.attend!
         @participant.event.event_type.kleer_cert_seal_image = ''
         cert = ParticipantsHelper::Certificate.new(@participant)
-        expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+        expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2
       end
       it 'Certified - custom image' do
         @participant.certify!
@@ -370,7 +370,7 @@ describe 'render certificates' do
         @participant.certify!
         @participant.event.event_type.kleer_cert_seal_image = ''
         cert = ParticipantsHelper::Certificate.new(@participant)
-        expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
+        expect(cert.background_file).to eq ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2
       end
     end
   end
