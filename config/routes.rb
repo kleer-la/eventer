@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     get 'event_types', to: 'event_types#index'
     get 'event_types/:id' => 'event_types#show'
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
+    get 'articles', to: 'articles#index'
+    get 'articles/:id', to: 'articles#show'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
