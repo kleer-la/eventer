@@ -62,7 +62,11 @@
                 = f.check_box :include_in_catalog
               .control-group
                 = f.input :lang, as: :radio
-                = #f.input :lang, :as => :radio, wrapper_html:  {class: 'input-block-level'}
+              .control-group
+                = f.input :platform, as: :radio
+              .control-group
+                = f.label "Academia ID"
+                = f.number_field :external_id
             .span3
               .control-group
                 %label.control-label{ :for => :tag_name }= t("formtastic.labels.event_type.tag_name")

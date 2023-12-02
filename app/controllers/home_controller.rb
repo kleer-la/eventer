@@ -89,7 +89,8 @@ class HomeController < ApplicationController
         lang: et.lang,
         slug: et.slug,
         csd_eligible: et.csd_eligible,
-        is_kleer_certification: et.is_kleer_certification
+        is_kleer_certification: et.is_kleer_certification,
+        platform: et.platform
       }
     end
 
@@ -121,7 +122,8 @@ class HomeController < ApplicationController
         lang: et.lang,
         slug: et.slug,
         csd_eligible: et.csd_eligible,
-        is_kleer_certification: et.is_kleer_certification
+        is_kleer_certification: et.is_kleer_certification,
+        platform: et.platform
         }
     end
 
