@@ -3,20 +3,16 @@
 require 'rails_helper'
 
 describe 'API Events GET /events' do
-  include Rack::Test::Methods
-  def app
-    Rack::Builder.parse_file('config.ru').first
-  end
   context 'event list in XML' do
     before(:example) do
       FactoryBot.create(:event)
       event_url = '/api/events.xml'
       get event_url
-      @parsed = Nokogiri::XML(last_response.body)
+      @parsed = Nokogiri::XML(response.body)
     end
     it 'XML?' do
-      expect(last_response.status).to eq 200
-      expect(last_response.body).to start_with('<?xml')
+      expect(response.status).to eq 200
+      expect(response.body).to start_with('<?xml')
     end
 
     it 'one public and visible course' do
@@ -39,7 +35,7 @@ describe 'API Events GET /events' do
       FactoryBot.create(:event)
       event_url = '/api/events.json'
       get event_url
-      @json = JSON.parse(last_response.body)
+      @json = JSON.parse(response.body)
     end
     it 'JSON?' do
       expect(@json.count).to be > 0

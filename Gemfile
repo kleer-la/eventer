@@ -3,7 +3,7 @@
 source 'http://rubygems.org'
 
 ruby '~> 3.1'
-gem 'rails', '~> 7.0'
+gem 'rails', '~> 7.1'
 
 group :development do
   gem 'listen'
@@ -32,7 +32,6 @@ group :test do
   gem 'cucumber-rails', require: false
   gem 'factory_bot_rails', require: false
   gem 'selenium-webdriver' # , '~> 3'
-  gem 'webdrivers' # , '~> 4.0'
 end
 
 group :test, :production do

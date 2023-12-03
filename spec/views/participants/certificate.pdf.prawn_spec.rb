@@ -15,8 +15,9 @@ RSpec.describe 'generate one certificate' do
     assign(:participant, participant)
     assign(:certificate_store, FileStoreService.create_null)
 
-    render template: 'participants/certificate', format: :pdf
-    texts = PDF::Inspector::Text.analyze(rendered).strings
+    pdf_io = StringIO.new( render template: 'participants/certificate', format: :pdf)
+    texts = PDF::Inspector::Text.analyze(pdf_io).strings
+
     expect(texts.join(' ')).to include 'Juan Carlos Perez Luasó'
   end
 

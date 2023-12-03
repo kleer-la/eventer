@@ -1,5 +1,4 @@
 require_relative "boot"
-require_relative '../app/services/file_store_service.rb'
 
 require "rails/all"
 
@@ -10,17 +9,12 @@ Bundler.require(*Rails.groups)
 module Eventer
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    # config.load_defaults 6.0  # test fail :(
-    config.autoloader = :zeitwerk # If you need to stick with the defaults of an older Rails version, you can choose to only activate Zeitwerk separate from the Rails 6.0 defaults
-
-    # config.autoload_paths << "#{Rails.root}/app/services"
-
-    # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.assets.digest = true
-
-    config.active_record.legacy_connection_handling = false
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w(assets tasks))
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -29,7 +23,5 @@ module Eventer
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    #x I18n.config.enforce_available_locales = false
-    I18n.default_locale = :es    
   end
 end

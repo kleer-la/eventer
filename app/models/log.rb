@@ -10,5 +10,7 @@ class Log < ApplicationRecord
     l.details = details
     l.save!
   end
-
+  def self.ransackable_attributes(auth_object = nil)
+    ["area", "created_at", "details", "id", "id_value", "level", "message", "updated_at"]
+  end
 end
