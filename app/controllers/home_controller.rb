@@ -90,6 +90,7 @@ class HomeController < ApplicationController
         slug: et.slug,
         csd_eligible: et.csd_eligible,
         is_kleer_certification: et.is_kleer_certification,
+        external_site_url: et.external_site_url,
         platform: et.platform
       }
     end
@@ -123,6 +124,7 @@ class HomeController < ApplicationController
         slug: et.slug,
         csd_eligible: et.csd_eligible,
         is_kleer_certification: et.is_kleer_certification,
+        external_site_url: et.external_site_url,
         platform: et.platform
         }
     end
