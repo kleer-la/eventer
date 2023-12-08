@@ -144,4 +144,32 @@ FactoryBot.define do
     token_set { 'Lots of encripted data' }
     tenant_id { 'global-unique-identifier' }
   end
+
+  factory :coupon do
+    coupon_type { [:couponless, :percent_off, :amount_off].sample }
+    code { Faker::Alphanumeric.alpha(number: 10).upcase }
+    internal_name { "Discount Coupon" }
+    icon { "sample_icon.png" }
+    expires_on { Date.today + 30.days }
+    display { true }
+    active { true }
+    percent_off { 20 }
+    amount_off { 50 }
+
+    trait :couponless do
+      coupon_type { :couponless }
+      percent_off { Faker::Number.between(from: 1, to: 100) }
+    end
+    trait :percent_off do
+      coupon_type { :percent_off }
+      percent_off { Faker::Number.between(from: 1, to: 100) }
+    end
+
+    trait :amount_off do
+      coupon_type { :amount_off }
+      amount_off { Faker::Number.decimal(l_digits: 2) }
+    end
+  end
+
+
 end

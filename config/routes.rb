@@ -17,7 +17,8 @@ Rails.application.routes.draw do
   resources :logs, only: [:index, :show]
   resources :articles,
             :resources,
-            :news
+            :news,
+            :coupons
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
