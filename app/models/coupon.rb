@@ -1,5 +1,8 @@
 class Coupon < ApplicationRecord
-  enum coupon_type: { couponless: 0, percent_off: 1, amount_off: 2 }
+  enum coupon_type: { codeless: 0, percent_off: 1, amount_off: 2 }
+
+  has_and_belongs_to_many :event_types
+
   validates :code, length: { maximum: 20 }
 
   validates :percent_off, numericality: { greater_than: 0, less_than_or_equal_to: 100 }, if: -> { percent_off? }

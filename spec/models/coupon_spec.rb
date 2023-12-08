@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Coupon, type: :model do
   it 'is valid with valid attributes and no specific off amounts' do
-    coupon = FactoryBot.build(:coupon, :couponless)
+    coupon = FactoryBot.build(:coupon, :codeless)
     expect(coupon).to be_valid
   end
 
@@ -19,4 +19,12 @@ RSpec.describe Coupon, type: :model do
     expect(coupon.amount_off).to be_present
     expect(coupon).to be_valid
   end
+
+  it 'has a valid many-to-many relation with EventTypes' do
+    event_type = FactoryBot.create(:event_type)
+    coupon = FactoryBot.create(:coupon)
+    coupon.event_types << event_type
+    expect(coupon.event_types).to include(event_type)
+  end
+
 end

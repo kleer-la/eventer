@@ -169,4 +169,15 @@ describe EventType do
       expect(et.brochure).to eq 'beta'
     end
   end
+
+  context 'coupons' do  
+    it 'has a valid many-to-many relation with EventTypes' do
+      event_type = FactoryBot.create(:event_type)
+      coupon = FactoryBot.create(:coupon)  
+      coupon.event_types << event_type
+  
+      expect(coupon.event_types).to include(event_type)
+    end
+  end
+
 end

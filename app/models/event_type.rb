@@ -8,8 +8,12 @@ class EventType < ApplicationRecord
   has_many :participants, through: :events
   has_many :campaign_views
   has_many :clons, class_name: 'EventType', foreign_key: 'canonical_id'
+  has_and_belongs_to_many :coupons
+
   enum lang: %i[es en]
   enum platform: { keventer: 0, academia: 1 }
+
+  scope :included_in_catalog, -> { where(include_in_catalog: true, deleted: false) }
 
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
   validates :elevator_pitch, length: { maximum: 160,

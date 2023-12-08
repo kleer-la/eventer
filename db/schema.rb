@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_08_130523) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_08_165436) do
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
     t.text "body"
@@ -112,6 +112,14 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_130523) do
     t.decimal "amount_off", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "coupons_event_types", id: false, force: :cascade do |t|
+    t.integer "coupon_id", null: false
+    t.integer "event_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type_id", "coupon_id"], name: "index_coupons_event_types_on_event_type_id_and_coupon_id"
   end
 
   create_table "crm_push_transaction_items", force: :cascade do |t|
@@ -258,7 +266,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_130523) do
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
@@ -344,6 +352,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_130523) do
     t.boolean "selected", default: false, null: false
     t.string "profile_url"
     t.string "photo_url"
+    t.string "name"
     t.string "company_name"
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
@@ -461,10 +470,8 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_130523) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "articles", "categories"
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
-  add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "resources", "categories", column: "categories_id"
   add_foreign_key "resources", "trainers", column: "trainers_id"
   add_foreign_key "translations", "resources"

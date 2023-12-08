@@ -146,7 +146,7 @@ FactoryBot.define do
   end
 
   factory :coupon do
-    coupon_type { [:couponless, :percent_off, :amount_off].sample }
+    coupon_type { [:codeless, :percent_off, :amount_off].sample }
     code { Faker::Alphanumeric.alpha(number: 10).upcase }
     internal_name { "Discount Coupon" }
     icon { "sample_icon.png" }
@@ -156,8 +156,8 @@ FactoryBot.define do
     percent_off { 20 }
     amount_off { 50 }
 
-    trait :couponless do
-      coupon_type { :couponless }
+    trait :codeless do
+      coupon_type { :codeless }
       percent_off { Faker::Number.between(from: 1, to: 100) }
     end
     trait :percent_off do

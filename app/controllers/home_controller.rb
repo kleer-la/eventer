@@ -60,73 +60,57 @@ class HomeController < ApplicationController
     render json: { data: nil }, status: 200
   end
 
+  def event_to_h(ev)
+    {
+      event_id: ev&.id,
+      date: ev&.date,
+      finish_date: ev&.finish_date,
+      city: ev&.city,
+      specific_subtitle: ev&.specific_subtitle,
+      country_name: ev&.country&.name,
+      country_iso: ev&.country&.iso_code,
+      list_price: ev&.list_price,
+      event_duration: ev&.duration,
+      eb_price: ev&.eb_price,
+      eb_end_date: ev&.eb_end_date,
+      is_sold_out: ev&.is_sold_out,
+      start_time: ev&.start_time,
+      end_time: ev&.end_time,
+      mode: ev&.mode,
+      time_zone_name: ev&.time_zone_name
+    }
+  end
+
+  def event_type_to_h(et)
+    codeless_coupon = et.coupons.find_by(coupon_type: :codeless)
+    {
+      event_type_id: et.id,
+      name: et.name,
+      subtitle: et.subtitle,
+      duration: et.duration,
+      cover: et.cover,
+      categories: et.categories.pluck(:id, :name).map { |id, name| { id: id, name: name } },
+      lang: et.lang,
+      slug: et.slug,
+      csd_eligible: et.csd_eligible,
+      is_kleer_certification: et.is_kleer_certification,
+      external_site_url: et.external_site_url,
+      platform: et.platform,
+      percent_off: codeless_coupon ? codeless_coupon.percent_off : nil,
+      coupon_icon: codeless_coupon ? codeless_coupon.icon : nil
+    }
+  end
+
   def catalog
     open = Event.public_and_visible.where(draft: false, cancelled: false).order('date').reduce([]) do |list, ev|
       et = ev.event_type
-      list << {
-        event_id: ev.id,
-        date: ev.date,
-        finish_date: ev.finish_date,
-        city: ev.city,
-        specific_subtitle: ev.specific_subtitle,
-        country_name: ev.country.name,
-        country_iso: ev.country.iso_code,
-        list_price: ev.list_price, 
-        event_duration: ev.duration,
-        eb_price: ev.eb_price, 
-        eb_end_date: ev.eb_end_date, 
-        is_sold_out: ev.is_sold_out,
-        start_time: ev.start_time , 
-        end_time: ev.end_time,
-        mode: ev.mode, 
-        time_zone_name: ev.time_zone_name,
-        event_type_id: et.id,
-        name: et.name,
-        subtitle: et.subtitle,
-        duration: et.duration,
-        cover: et.cover,
-        categories: et.categories.pluck(:id, :name).map { |id, name| { id: id, name: name } },
-        lang: et.lang,
-        slug: et.slug,
-        csd_eligible: et.csd_eligible,
-        is_kleer_certification: et.is_kleer_certification,
-        external_site_url: et.external_site_url,
-        platform: et.platform
-      }
+      list << event_to_h(ev).merge(event_type_to_h(et))
     end
 
-    incompany = EventType.where(include_in_catalog: true, deleted: false).
-                select {|et| (open.find { |ev| ev[:event_type_id] == et.id}).nil?}.
-                reduce([]) do |list, et|
-      list << {
-        event_id: nil,
-        date: nil,
-        finish_date: nil,
-        city: nil,
-        specific_subtitle: nil,
-        country_name: nil,
-        country_iso: nil,
-        event_duration: nil,
-        eb_price: nil,
-        eb_end_date: nil,
-        is_sold_out: nil,
-        start_time: nil,
-        end_time: nil,
-        mode: nil,
-        time_zone_name: nil,
-        event_type_id: et.id,
-        name: et.name,
-        subtitle: et.subtitle,
-        duration: et.duration,
-        cover: et.cover,
-        categories: et.categories.pluck(:id, :name).map { |id, name| { id: id, name: name } },
-        lang: et.lang,
-        slug: et.slug,
-        csd_eligible: et.csd_eligible,
-        is_kleer_certification: et.is_kleer_certification,
-        external_site_url: et.external_site_url,
-        platform: et.platform
-        }
+    incompany = EventType.where(include_in_catalog: true, deleted: false)
+                         .select { |et| (open.find { |ev| ev[:event_type_id] == et.id }).nil? }
+                         .reduce([]) do |list, et|
+      list << event_to_h(nil).merge(event_type_to_h(et))
     end
 
     render json: open.to_a + incompany.to_a

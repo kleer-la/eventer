@@ -12,7 +12,7 @@ describe 'GET catalog', type: :request do
     get '/api/catalog', params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
-    
+
     json = JSON.parse(response.body)
     expect(json.size).to eq 1
   end
@@ -47,6 +47,16 @@ describe 'GET catalog', type: :request do
     expect(response).to have_http_status(:success)
     json = JSON.parse(response.body)
     expect(json.size).to eq 1
+  end
+  it 'event_type w/ codeless coupon   ' do
+    FactoryBot.create(:event_type, include_in_catalog: true, deleted: false)
+              .coupons << FactoryBot.create(:coupon, :codeless, percent_off: 20.0)
+
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json[0]['percent_off']).to eq '20.0'
   end
 end
 
