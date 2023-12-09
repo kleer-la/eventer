@@ -138,6 +138,17 @@ class Event < ApplicationRecord
     end
   end
 
+  #  {coupons: [{code:nil, percent_off: 20.0}]}
+  def coupons
+    self.event_type.coupons.map do |coupon|
+      {
+        code: coupon.code,
+        percent_off: coupon.percent_off,
+        icon: coupon.icon
+      }
+    end
+  end
+
   def human_long_date
     return "#{human_date} #{date.year}" if date.year == safe_end_date.year
 

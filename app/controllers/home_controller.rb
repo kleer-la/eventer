@@ -82,7 +82,7 @@ class HomeController < ApplicationController
   end
 
   def event_type_to_h(et)
-    codeless_coupon = et.coupons.find_by(coupon_type: :codeless)
+    codeless_coupon = et.coupons.find_by(coupon_type: :codeless) #TODO: biz logic to model
     {
       event_type_id: et.id,
       name: et.name,
@@ -121,8 +121,8 @@ class HomeController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render xml: @events.to_xml(include: event_data_to_include, methods: [:human_date]) }
-      format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date]) }
-    end
+      format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date, :coupons]) }
+    end 
   end
 
   def event_by_event_type
