@@ -52,7 +52,7 @@ class EventType < ApplicationRecord
     ac = active_coupons(date)
     return([list_price, '']) if ac == []
     coupon = ac.first
-    [ (list_price * (100.0 - coupon.percent_off) / 100.0).round(2),
+    [(list_price * (100.0 - coupon.percent_off) / 100.0).round(2),
       coupon.internal_name
     ]
   end
