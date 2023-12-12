@@ -1,5 +1,5 @@
 ActiveAdmin.register Setting do
-  menu label: 'Settings', priority: 1004
+  menu label: 'Settings', parent: 'Others', priority: 98
 
   actions :index, :show, :edit, :update, :new, :create, :destroy
 

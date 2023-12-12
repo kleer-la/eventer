@@ -70,7 +70,11 @@ class EventType < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    ["average_rating", "brochure", "cancellation_policy", "canonical_id", "cover", "created_at", 
-      "csd_eligible", "deleted", "description", "duration", "elevator_pitch", "external_id", "external_site_url", "extra_script", "faq", "goal", "id", "id_value", "include_in_catalog", "is_kleer_certification", "kleer_cert_seal_image", "lang", "learnings", "materials", "name", "net_promoter_score", "new_version", "noindex", "platform", "program", "promoter_count", "recipients", "side_image", "subtitle", "surveyed_count", "tag_name", "takeaways", "updated_at"]
-  end  
+    %w(average_rating brochure cancellation_policy canonical_id cover created_at
+      csd_eligible deleted description duration elevator_pitch external_id external_site_url
+      extra_script faq goal id id_value include_in_catalog is_kleer_certification kleer_cert_seal_image
+      lang learnings materials name net_promoter_score new_version noindex platform program
+      promoter_count recipients side_image subtitle surveyed_count tag_name takeaways updated_at
+    )
+  end
 end

@@ -41,7 +41,9 @@ ActiveAdmin.register Coupon do
       f.input :percent_off
       f.input :amount_off
 
-      f.input :event_types, as: :check_boxes, collection: EventType.included_in_catalog.map { |et| [et.name, et.id] }
+      f.input :event_types, as: :check_boxes, collection: EventType.included_in_catalog.order(:name).map { |et| 
+        ["#{et.unique_name}(#{et.platform})", et.id] 
+      }
     end
     f.actions
   end

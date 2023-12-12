@@ -1,5 +1,5 @@
 ActiveAdmin.register Log do
-  menu label: 'Logs', priority: 1005
+  menu label: 'Logs', parent: 'Others', priority: 99
 
   filter :area
   filter :level

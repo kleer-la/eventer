@@ -140,7 +140,7 @@ class Event < ApplicationRecord
 
   #  {coupons: [{code:nil, percent_off: 20.0}]}
   def coupons
-    self.event_type.active_coupons(Date.today).map do |coupon|
+    event_type.active_coupons(Date.today).map do |coupon|
       {
         code: coupon.code,
         percent_off: coupon.percent_off,
