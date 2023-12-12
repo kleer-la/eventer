@@ -173,10 +173,40 @@ describe EventType do
   context 'coupons' do  
     it 'has a valid many-to-many relation with EventTypes' do
       event_type = FactoryBot.create(:event_type)
-      coupon = FactoryBot.create(:coupon)  
+      coupon = FactoryBot.create(:coupon)
       coupon.event_types << event_type
-  
+
       expect(coupon.event_types).to include(event_type)
+    end
+    it 'apply discount' do
+      event_type = FactoryBot.create(:event_type)
+      coupon = FactoryBot.create(:coupon, :codeless, percent_off: 10.0)
+      coupon.event_types << event_type
+
+      price, msg = event_type.apply_coupons(123.0, 1, Date.today)
+      expect(price).to eq 110.7
+      expect(msg).not_to eq ''
+    end
+    it 'non active coupon doesnt count' do
+      event_type = FactoryBot.create(:event_type)
+      coupon = FactoryBot.create(:coupon, :codeless, active: false)
+      coupon.event_types << event_type
+
+      expect(event_type.active_coupons(Date.today)).to eq []
+    end
+    it 'expired coupon doesnt count' do
+      event_type = FactoryBot.create(:event_type)
+      coupon = FactoryBot.create(:coupon, :codeless, active: true, expires_on: Date.today - 1)
+      coupon.event_types << event_type
+
+      expect(event_type.active_coupons(Date.today)).to eq []
+    end
+    it 'no cupon, no discount' do
+      event_type = FactoryBot.create(:event_type)
+
+      price, msg = event_type.apply_coupons(123.0, 1, Date.today)
+      expect(price).to eq 123
+      expect(msg).to eq ''
     end
   end
 

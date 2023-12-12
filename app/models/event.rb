@@ -247,10 +247,11 @@ class Event < ApplicationRecord
   end
 
   def price(qty, date)
+    discounted_price, message = event_type.apply_coupons(list_price, qty, date)
     if eb_end_date.present? && date.to_date <= eb_end_date.to_date # to_date remove hours
-      earlybird_price(qty)
+      [earlybird_price(qty), discounted_price].min
     else
-      regular_price(qty)
+      [regular_price(qty), discounted_price].min
     end
   end
 

@@ -44,6 +44,19 @@ class EventType < ApplicationRecord
       order(selected: :desc, updated_at: :desc)
   end
 
+  def active_coupons(date)
+    coupons.where(active: true).where('expires_on > ?', date)
+  end
+
+  def apply_coupons(list_price, qty, date)
+    ac = active_coupons(date)
+    return([list_price, '']) if ac == []
+    coupon = ac.first
+    [ (list_price * (100.0 - coupon.percent_off) / 100.0).round(2),
+      coupon.internal_name
+    ]
+  end
+
   def slug
     "#{id}-#{name.parameterize}"
   end
