@@ -52,7 +52,7 @@ class Api::EventTypesController < ApplicationController
       methods: %i[slug canonical_slug], include: [:categories, 
         next_events: {only: [
           :id, :date, :place, :city, :country_id, :list_price, :eb_price, :eb_end_date, :registration_link, :mode,
-          :is_sold_out, :duration, :start_time, :end_time, :time_zone_name, :currency_iso_code, :address, :finish_date], methods: :trainers} ])
+          :is_sold_out, :duration, :start_time, :end_time, :time_zone_name, :currency_iso_code, :address, :finish_date], methods: %i[trainers coupons]} ])
     et = "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
       only: [:fname, :lname, :testimony, :profile_url, :photo_url]
     )}}"
