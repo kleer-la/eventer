@@ -49,6 +49,7 @@
       .control-group
         %small.muted
         = f.select :quantity, quantity_list, {}, {:class => "span6"}
+        %div#savings.icon-star.alert 
     .row-fluid
       .control-group
         = f.phone_field :phone, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")
@@ -84,4 +85,28 @@
         $('#referer-code-message').text('');
       }
     });
+  });
+
+:javascript
+  document.addEventListener('DOMContentLoaded', function() {
+    const selectElement = document.getElementById('participant_quantity');
+    updateSaving(selectElement);
+    selectElement.addEventListener('change', function() { 
+      updateSaving(this); 
+    });
+
+    function updateSaving(quantityElement) {
+        const savings = #{@savings}
+        const saving = savings[parseInt(quantityElement.value)-1];
+        const message = "#{t('formtastic.labels.participant.saving')}";
+        const messageElement = document.getElementById('savings')
+        if (saving == 0) {
+          messageElement.textContent = '';
+          messageElement.style.display = 'none';
+        }
+        else {
+          messageElement.innerHTML  = message.replace('${saving}', saving);
+          messageElement.style.display = 'block';
+        }
+    }
   });

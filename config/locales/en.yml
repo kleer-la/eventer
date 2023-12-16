@@ -130,6 +130,7 @@ en:
         confirm_with_mail: "Thanks! We have sent you an e-mail with the payment link. Your seat will be confirmed with the payment."
         confirm_without_mail: "Thanks! We will contact you shortly."
         auto_confirm: Thank you! You've been registered for the event. A few days before the start you will receive additional information.
+        saving: You are saving <b>$${saving}</b> off the full price.
       article:
         new_title: "New Article"
       news:

@@ -126,7 +126,8 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.sort_wo_republica
     @nakedform = !params[:nakedform].nil?
     I18n.locale = (:es if params[:lang].nil? || params[:lang].downcase == 'es') || :en
-    @quantities = quantities_list
+    @quantities  = quantities_list
+    @savings  = savings_list
     campaign_new
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
@@ -143,6 +144,12 @@ class ParticipantsController < ApplicationController
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
       ac << ["#{qty} #{seat_text.pop} x #{price} usd = #{price * qty} usd", qty]
+    end
+  end
+  def savings_list
+    (1..6).reduce([]) do |ac, qty|
+      price = @event.price(qty, DateTime.now)
+      ac << [ (@event.list_price - price) * qty]
     end
   end
 
