@@ -49,7 +49,7 @@
       .control-group
         %small.muted
         = f.select :quantity, quantity_list, {}, {:class => "span6"}
-        %div#savings.icon-star.alert 
+        %div#savings.icon-star{ style: "background-color: rgba(152, 251, 152, 0.7);border-radius: 3px; padding: 2px;" }
     .row-fluid
       .control-group
         = f.phone_field :phone, :class => "span12", :placeholder => I18n.t("formtastic.labels.participant.phone")
