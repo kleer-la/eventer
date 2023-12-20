@@ -1,5 +1,5 @@
 ActiveAdmin.register Role do
-  menu label: 'Roles', parent: 'Others', priority: 3
+  menu label: 'Roles', parent: 'Others', priority: 93
 
   actions :index, :show, :edit, :update, :new, :create
 

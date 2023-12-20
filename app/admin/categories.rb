@@ -1,5 +1,5 @@
 ActiveAdmin.register Category do
-  menu label: 'Categorías', parent: 'Others', priority: 1
+  menu label: 'Categorías', parent: 'Others', priority: 91
   
   actions :index, :show, :edit, :update, :new, :create, :destroy
 

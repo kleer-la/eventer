@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  menu label: 'Usuarios', parent: 'Others', priority: 2
+  menu label: 'Usuarios', parent: 'Others', priority: 90
 
   actions :index, :show, :edit, :update, :new, :create, :destroy
 

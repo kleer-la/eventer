@@ -1,4 +1,5 @@
 ActiveAdmin.register EventType do
+  menu priority: 3
   filter :kleer_cert_seal_image_present, as: :boolean #, label: 'Cert Image is Empty'
   filter :kleer_cert_seal_image_blank, as: :boolean #, label: 'Cert Image is Not Empty'
   filter :kleer_cert_seal_image

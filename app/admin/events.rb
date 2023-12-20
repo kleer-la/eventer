@@ -1,4 +1,6 @@
 ActiveAdmin.register Event do
+  menu priority: 2
+
   Event.attribute_names.each do |attribute|
     filter attribute.to_sym
   end
