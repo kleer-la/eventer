@@ -9,16 +9,21 @@ end
 ActiveAdmin.register Trainer do
   menu priority: 4
 
+  scope :all, default: false
+  scope :active, default: true
+
   permit_params :name, :bio, :bio_en, :gravatar_email, :landing, :twitter_username, :linkedin_url, :tag_name,
   :signature_image, :signature_credentials, :is_kleerer, :deleted, :country_id
 
   # config.clear_sidebar_sections!
   filter :name
+  filter :deleted
 
   index title: 'Entrenadores' do
     column :name do |trainer|
       link_to trainer.name, admin_trainer_path(trainer)
     end
+    column :deleted
 
     actions defaults: false do |trainer|
       link_to 'Edit', edit_admin_trainer_path(trainer)

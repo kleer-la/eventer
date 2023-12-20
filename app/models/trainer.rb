@@ -14,10 +14,11 @@ class Trainer < ApplicationRecord
   has_many :authorships
   has_many :resources, through: :authorships
   has_many :translations
-  has_many :translators, through: :translations
+  has_many :translators, through: :translations, source: :resource
 
 
   scope :kleerer, -> { where(is_kleerer: true) }
+  scope :active, -> { where(deleted: false) }
   scope :sorted, -> { where(deleted: false).order('name asc') }  # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 
   validates :name, presence: true
