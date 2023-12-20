@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
- def signature_list(store)
+def signature_list(store)
   list = store.list('signature').map {|obj| File.basename(obj.key)}
-  list[0] = ''   # remove first (folder) + add empty option
+  list[0] = '' # remove first (folder) + add empty option
+  list
 end
 
 ActiveAdmin.register Trainer do
@@ -14,10 +15,14 @@ ActiveAdmin.register Trainer do
   # config.clear_sidebar_sections!
   filter :name
 
-
   index title: 'Entrenadores' do
-    column :name
-    actions
+    column :name do |trainer|
+      link_to trainer.name, admin_trainer_path(trainer)
+    end
+
+    actions defaults: false do |trainer|
+      link_to 'Edit', edit_admin_trainer_path(trainer)
+    end
   end
 
   form do |f|
