@@ -423,18 +423,16 @@ module ParticipantsHelper
     end
   end
 
-  def self.render_certificate(pdf, certificate, _page_size, store)
-
-    if certificate.kleer_certification_for_this_participant? && !certificate.new_version
-      pdf_certificate = PdfCertificate.new(pdf, certificate, store)
+  def self.certificate_factory(pdf, certificate, store)
+    if certificate.kleer_certification_for_this_participant?
+      PdfKleerCertificateV2.new(pdf, certificate, store)
     else
-      if certificate.kleer_certification_for_this_participant?
-        pdf_certificate = PdfKleerCertificateV2.new(pdf, certificate, store)
-      else
-        pdf_certificate = PdfCertificateV2.new(pdf, certificate, store)
-      end
+      PdfCertificateV2.new(pdf, certificate, store)
     end
-    pdf_certificate.render
+  end
+
+  def self.render_certificate(pdf, certificate, _page_size, store)
+    self.certificate_factory(pdf, certificate, store).render
   end
 
   def self.generate_certificate(participant, page_size, store)
