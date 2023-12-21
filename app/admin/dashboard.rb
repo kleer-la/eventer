@@ -13,7 +13,11 @@ ActiveAdmin.register_page 'Dashboard' do
 
     columns do
       column do # left column
-        panel 'Alertas' do
+        panel 'Alertas Admin' do
+          event_project_code_alert
+          event_type_project_code_alert
+        end
+        panel 'Alertas Contenido' do
           cover_alert
           brochure_alert
           event_type_project_code_alert
@@ -76,6 +80,13 @@ def cover_alert
   )
 end
 
+def event_project_code_alert
+  event_type_alert(
+    'Cursos abiertos sin código projecto (Event )',
+    Event.public_and_visible.where(online_cohort_codename: [nil, ''])
+  )
+end
+
 def event_type_project_code_alert
   event_type_alert('Event Type sin código projecto', 
     EventType.where(include_in_catalog: true, tag_name: [nil, ''])
@@ -83,7 +94,7 @@ def event_type_project_code_alert
 end
 
 def event_type_alert(message, error_list)
-  return if (error_list.count() == 0)
+  return if error_list.count() == 0
 
   h4 "#{message} (#{error_list.count})"
   ul do
@@ -94,7 +105,7 @@ def event_type_alert(message, error_list)
 end
 
 def dweek(d)
-   (d.year * 100 + d.cweek) - (Date.today.year*100+Date.today.cweek)
+  (d.year * 100 + d.cweek) - (Date.today.year*100+Date.today.cweek)
 end
 
 def grouped_events
