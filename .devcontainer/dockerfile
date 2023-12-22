@@ -37,6 +37,11 @@ RUN apt-get install -yqq unzip
 # ARG INSTALL_NODE="true"
 # ARG NODE_VERSION="lts/*"
 # RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
+RUN apt-get install -y ca-certificates curl gnupg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+RUN apt-get update
+RUN apt-get install nodejs -y
 
 # Set display port as an environment variable
 ENV DISPLAY=:99

@@ -59,8 +59,16 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
+  # # Do not fallback to assets pipeline if a precompiled asset is missed.
+  # config.assets.compile = true
+
+  # # Asset digests allow you to set far-future Expires headers.
+  # config.assets.digest = true
+
+  # # Adds additional error checking when serving assets at runtime.
+  # config.assets.raise_runtime_errors = true
   # Suppress logger output for asset requests.
-  config.assets.quiet = true
+  config.assets.quiet = false
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
