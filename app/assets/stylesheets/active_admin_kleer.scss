@@ -1,0 +1,24 @@
+html .panel > h3 {
+  font-weight: 400 !important;
+}
+
+.period-group {
+  color: black;
+  padding-left: 5px;
+  background: darksalmon;
+  margin-bottom: unset;
+}
+
+.no-table-headings {
+  margin-top: 0px;
+}
+
+.no-table-headings thead {
+  display: none;
+}
+
+.cell-semaphore { padding-right: 0px; }
+
+.status-green   { border-right: 5px solid green; }
+.status-yellow  { border-right: 5px solid yellow; }
+.status-red     { border-right: 5px solid red; }

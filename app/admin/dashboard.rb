@@ -26,20 +26,22 @@ ActiveAdmin.register_page 'Dashboard' do
       column do # left column
         panel 'Próximos cursos' do
           grouped_events.each do |period, events|
-            h3 period
+            h4 period, class: 'period-group'
             table_for events, class: 'no-table-headings' do
-              column nil do |event|
-                "#{event.human_date}"
-              end
+              column :human_date
               column nil do |event|
                 human_hours = event.start_time.strftime( "%H:%Mhs." )
                 trainers = event.trainers.pluck(:name).join(',')
                 link_to "#{event.event_type.name} - #{event.date} | #{event.city} | #{human_hours} | #{event.place} | #{trainers}",
                         event_participants_path(event)
               end
-              column nil do |event|
-                if event.registration_link == ""
-                  "#{(event.completion*100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
+              column(nil, class: 'cell-semaphore') do |event|
+                if event.registration_link.blank?
+                  color = %w(red yellow green)[ (event.completion / 33).floor]
+                  class_name = "status-#{color}"
+                  div class: class_name do
+                    "#{(event.completion * 100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
+                  end
                 end
               end
             end

@@ -59,6 +59,7 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_admin_flat_skin (0.1.2)
     active_material (1.5.2)
     activeadmin (3.1.0)
       arbre (~> 1.2, >= 1.2.1)
@@ -1735,6 +1736,8 @@ GEM
       faraday (>= 1, < 3)
     faraday-net_http (3.0.2)
     ffi (1.16.3)
+    font-awesome-rails (4.7.0.8)
+      railties (>= 3.2, < 8.0)
     formtastic (5.0.0)
       actionpack (>= 6.0.0)
     formtastic-bootstrap (3.1.1)
@@ -2067,6 +2070,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_admin_flat_skin
   activeadmin
   activeadmin_addons
   activemodel-serializers-xml
@@ -2088,6 +2092,7 @@ DEPENDENCIES
   eventmachine (= 1.2.7)
   factory_bot_rails
   faker
+  font-awesome-rails
   formtastic
   formtastic-bootstrap
   friendly_id
