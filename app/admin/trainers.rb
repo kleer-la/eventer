@@ -83,7 +83,7 @@ ActiveAdmin.register Trainer do
         panel "Articles" do
           ul do
             trainer.articles.each do |ar|
-              li link_to(ar.name, edit_article_path(ar))
+              li link_to(ar.title, edit_article_path(ar))
             end
           end
         end if trainer.articles.count.positive?
