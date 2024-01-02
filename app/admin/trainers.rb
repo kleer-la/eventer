@@ -75,18 +75,39 @@ ActiveAdmin.register Trainer do
       column do
         panel "Event Types" do
           ul do
-            trainer.event_types.each do |et|
+            trainer.event_types.included_in_catalog.order(:name).each do |et|
               li link_to(et.name, edit_event_type_path(et))
             end
           end
-        end
+        end if trainer.event_types.included_in_catalog.count.positive?
         panel "Articles" do
           ul do
-            trainer.articles.each do |ar|
-              li link_to(ar.title, edit_article_path(ar))
+            trainer.articles.order(:title).each do |el|
+              li link_to(el.title, edit_article_path(el))
             end
           end
         end if trainer.articles.count.positive?
+        panel "Resources" do
+          # h3 'Author'
+          ul do
+            trainer.authorships.each do |el|
+              li link_to(el.resource.title_es, edit_resource_path(el))
+            end
+          end
+          # h3 'Translator'
+          ul do
+            trainer.translators.each do |el|
+              li link_to(el.resource.title_es, edit_resource_path(el))
+            end
+          end
+        end if trainer.authorships.count.positive?
+        panel "News" do
+          ul do
+            trainer.news.each do |el|
+              li link_to(el.title, edit_news_path(el))
+            end
+          end
+        end if trainer.news.count.positive?
       end
     end
   end

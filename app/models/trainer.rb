@@ -16,6 +16,7 @@ class Trainer < ApplicationRecord
   has_many :translations
   has_many :translators, through: :translations, source: :resource
 
+  has_and_belongs_to_many :news
 
   scope :kleerer, -> { where(is_kleerer: true) }
   scope :active, -> { where(deleted: false) }
