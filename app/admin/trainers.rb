@@ -56,4 +56,38 @@ ActiveAdmin.register Trainer do
     end
   end
 
+  show do
+    columns do
+      column do # left column
+        attributes_table do
+          row :image do |trainer|
+            image_tag trainer.gravatar_picture_url if trainer.gravatar_email.present?
+          end
+          row :name
+          row :bio
+          row :twitter_username
+          row :linkedin_url
+          row :landing
+          # :bio_en, :gravatar_email, :signature_image, :signature_credentials, :is_kleerer, :deleted, :country_id
+        end
+      end
+
+      column do
+        panel "Event Types" do
+          ul do
+            trainer.event_types.each do |et|
+              li link_to(et.name, edit_event_type_path(et))
+            end
+          end
+        end
+        panel "Articles" do
+          ul do
+            trainer.articles.each do |ar|
+              li link_to(ar.name, edit_article_path(ar))
+            end
+          end
+        end if trainer.articles.count.positive?
+      end
+    end
+  end
 end
