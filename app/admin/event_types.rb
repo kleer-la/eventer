@@ -11,6 +11,7 @@ ActiveAdmin.register EventType do
     filter attribute.to_sym
   end
 
+  config.sort_order = 'name_asc'
   index do
     column :name
     column :lang
