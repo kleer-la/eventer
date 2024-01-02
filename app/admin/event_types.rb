@@ -4,6 +4,9 @@ ActiveAdmin.register EventType do
   filter :kleer_cert_seal_image_blank, as: :boolean #, label: 'Cert Image is Not Empty'
   filter :kleer_cert_seal_image
 
+  scope :all, default: false
+  scope 'Catalog', :included_in_catalog, default: true
+
   EventType.attribute_names.each do |attribute|
     filter attribute.to_sym
   end
