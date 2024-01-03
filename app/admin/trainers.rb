@@ -9,6 +9,8 @@ end
 ActiveAdmin.register Trainer do
   menu priority: 4
 
+  actions :index, :show, :edit, :update, :new, :create #, :destroy
+
   scope :all, default: false
   scope :active, default: true
 
@@ -19,15 +21,17 @@ ActiveAdmin.register Trainer do
   filter :name
   filter :deleted
 
+  config.sort_order = 'name_asc'
   index title: 'Entrenadores' do
     column :name do |trainer|
       link_to trainer.name, admin_trainer_path(trainer)
     end
     column :deleted
 
-    actions defaults: false do |trainer|
-      link_to 'Edit', edit_admin_trainer_path(trainer)
-    end
+    actions
+    # actions defaults: false do |trainer|
+    #   link_to 'Edit', edit_admin_trainer_path(trainer)
+    # end
   end
 
   form do |f|

@@ -36,8 +36,6 @@
           %a{ :href => "/news" }
             %i.icon-bolt
             %span News
-            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
-              new
         %li{ :class => menu_item_class(@active_menu, "resources") }
           %a{ :href => "/resources" }
             %i.icon-book
@@ -54,4 +52,6 @@
         %li{ :class => menu_item_class(@active_menu, "admin") }
           %a{ :href => admin_root_path }
             %i.icon-cog
-            %span= t('menu.admin')
+            %span Nueva versión!
+            %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
+              new
