@@ -1840,10 +1840,10 @@ GEM
     newrelic_rpm (9.6.0)
       base64
     nio4r (2.7.0)
-    nokogiri (1.15.5)
+    nokogiri (1.16.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.15.5-x86_64-linux)
+    nokogiri (1.16.0-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     parallel (1.23.0)
@@ -2023,7 +2023,6 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (1.6.9)
       mini_portile2 (~> 2.8.0)
-    sqlite3 (1.6.9-x86_64-linux)
     stackprof (0.2.25)
     stringio (3.1.0)
     sys-uname (1.2.3)
@@ -2133,7 +2132,7 @@ DEPENDENCIES
   xero-ruby
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.3.0p0
 
 BUNDLED WITH
    2.4.15
