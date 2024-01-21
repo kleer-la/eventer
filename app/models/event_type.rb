@@ -45,7 +45,11 @@ class EventType < ApplicationRecord
   end
 
   def active_coupons(date)
-    coupons.where(active: true).where('expires_on > ?', date)
+    coupons.where(active: true).where(expires_on: date..)
+  end
+
+  def active_codeless_coupons()
+    active_coupons(Date.today).find_by(coupon_type: :codeless)
   end
 
   def apply_coupons(list_price, qty, date)

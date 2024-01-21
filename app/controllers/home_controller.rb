@@ -82,7 +82,7 @@ class HomeController < ApplicationController
   end
 
   def event_type_to_h(et)
-    codeless_coupon = et.coupons.find_by(coupon_type: :codeless) #TODO: biz logic to model
+    codeless_coupon = et.active_codeless_coupons
     {
       event_type_id: et.id,
       name: et.name,
