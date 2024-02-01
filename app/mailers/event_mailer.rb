@@ -37,19 +37,23 @@ class EventMailer < ApplicationMailer
 
   def welcome_new_event_participant(participant)
     @participant = participant
-    @lang =  participant.event.event_type.lang
+    @lang = participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
   
     unless participant.event.is_sold_out
       begin
         invoice_service = InvoiceService.new(participant)
         invoice = invoice_service.create_send_invoice()
-        @online_invoice_url = invoice_service&.get_online_invoice_url 
+        @online_invoice_url = invoice_service&.get_online_invoice_url
+        if @online_invoice_url
+          participant.online_invoice_url = @online_invoice_url
+          participant.save
+        end
       rescue StandardError => e
-        Log.log(:xero, :error,  
-          "create_send_invoice:#{participant.company_name} #{participant.fname} #{participant.lname}",
-          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-         )
+        Log.log(:xero, :error,
+                "create_send_invoice:#{participant.company_name} #{participant.fname} #{participant.lname}",
+                "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}"
+        )
         return
       end
     end
