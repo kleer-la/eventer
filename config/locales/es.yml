@@ -127,9 +127,9 @@ es:
         payment_type: "Forma de Pago"
         is_payed: "Pagado"
         accept_terms: "He leído y aceptado <a href='http://www.kleer.la/es/privacy'>la política de privacidad</a>."
-        confirm_with_mail: "¡Gracias!</b>Te hemos enviado un e-mail con la información para el pago.</b>Tu vacante se reservara al realizar el pago."
-        confirm_without_mail: "¡Gracias!</b>En breve un asesor se comunicará contigo con la información del evento."
-        auto_confirm: ¡Gracias!</b>Has sido registrado para el evento.</b>Unos días antes del inicio recibirás información adicional.
+        confirm_with_mail: "¡Gracias!<br>Te hemos enviado un e-mail con la información para el pago.<br>Tu vacante se reservara al realizar el pago."
+        confirm_without_mail: "¡Gracias!<br>En breve un asesor se comunicará contigo con la información del evento."
+        auto_confirm: ¡Gracias!<br>Has sido registrado para el evento.</b>Unos días antes del inicio recibirás información adicional.
         can_pay_now:
           text: |
             Hemos generado el comprobante para tu pago<br>
