@@ -126,8 +126,8 @@ class ParticipantsController < ApplicationController
     @influence_zones = InfluenceZone.sort_wo_republica
     @nakedform = !params[:nakedform].nil?
     I18n.locale = (:es if params[:lang].nil? || params[:lang].downcase == 'es') || :en
-    @quantities  = quantities_list
-    @savings  = savings_list
+    @quantities = quantities_list
+    @savings = savings_list
     campaign_new
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
@@ -146,6 +146,7 @@ class ParticipantsController < ApplicationController
       ac << ["#{qty} #{seat_text.pop} x #{price} usd = #{price * qty} usd", qty]
     end
   end
+
   def savings_list
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
@@ -156,10 +157,10 @@ class ParticipantsController < ApplicationController
   # GET /participants/new/confirm
   def confirm
     @event = Event.find(params[:event_id])
-    I18n.locale = @event.event_type.lang.to_sym
     @nakedform = !params[:nakedform].nil?
     @cancelled = !params[:cancelled].nil?
-    @free = !!ActiveModel::Type::Boolean.new.cast(params[:free])
+    @free = ActiveModel::Type::Boolean.new.cast(params[:free])
+    I18n.locale = @event.event_type.lang.to_sym
 
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
@@ -186,9 +187,8 @@ class ParticipantsController < ApplicationController
   end
 
   def create_mails
-    if @event.should_welcome_email
-      EventMailer.delay.welcome_new_event_participant(@participant)
-    end
+    # EventMailer.delay.welcome_new_event_participant(@participant) if @event.should_welcome_email
+    EventMailer.welcome_new_event_participant(@participant) if @event.should_welcome_email
 
     edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
     EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)
@@ -226,13 +226,13 @@ class ParticipantsController < ApplicationController
         create_mails
 
         unit_price = @event.price(@participant.quantity, @participant.created_at)
-        free = unit_price < 0.01
-    
-    
-        format.html do
-          redirect_to "/events/#{@event.id}/participant_confirmed?free=#{free}#{@nakedform ? '&nakedform=1' : ''}",
-                      notice: t('flash.participant.buy.success')
-        end
+        @free = unit_price < 0.01
+        # format.html do
+        #   redirect_to "/events/#{@event.id}/participant_confirmed?free=#{free}#{@nakedform ? '&nakedform=1' : ''}",
+        #               notice: t('flash.participant.buy.success')
+        # end
+        @nakedform= @cancelled = false
+        format.html { render :confirm, layout: 'empty_layout' }
         format.json { render json: @participant, status: :created, location: @participant }
       else
         format.html { render action: 'new', layout: 'empty_layout' }

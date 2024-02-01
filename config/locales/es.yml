@@ -130,6 +130,11 @@ es:
         confirm_with_mail: "¡Gracias! Te hemos enviado un e-mail con la información para el pago. Tu vacante se reservara al realizar el pago."
         confirm_without_mail: "¡Gracias! En breve un asesor se comunicará contigo con la información del evento."
         auto_confirm: ¡Gracias! Has sido registrado para el evento. Unos días antes del inicio recibirás información adicional.
+        can_pay_now:
+          text: |
+            Hemos generado el comprobante para tu pago<br>
+            Tu vacante se reservara al realizar el pago.
+          button: Pagar ahora
         saving: ¡Ahorras <b>$${saving}</b> sobre el precio de listas!.
       article:
         new_title: "Nuevo Artículo"
