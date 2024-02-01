@@ -55,3 +55,7 @@
             %span Nueva versión!
             %span.label.label-success{ style: "color:#ffffff;text-shadow:none;"}
               new
+        %li{ :class => menu_item_class(@active_menu, "images") }
+          %a{ :href => "/oauth_tokens" }
+            %i.icon-cog
+            %span= 'Tokens'
