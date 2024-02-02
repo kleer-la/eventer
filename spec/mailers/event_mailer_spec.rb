@@ -25,6 +25,7 @@ describe EventMailer do
         @participant.event.event_type.lang = :en
       end
       it 'English html' do
+        invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
         @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
         html = @email.html_part.body.to_s
         expect(html).to include 'Hello'
@@ -62,6 +63,7 @@ describe EventMailer do
     end
     it 'When NOT sold out can pay' do
       @participant.event.is_sold_out = false
+      invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
       email = EventMailer.welcome_new_event_participant(@participant).deliver_now
       expect(email.html_part.body.to_s).not_to include 'lista de espera'
       expect(email.html_part.body.to_s).to include 'Pagar'
@@ -98,6 +100,7 @@ describe EventMailer do
     context 'Update participant' do
       it 'set invoice number' do
         @participant.event.currency_iso_code = 'USD'
+        invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
         EventMailer.welcome_new_event_participant(@participant).deliver_now
         expect(@participant.xero_invoice_number).to eq 'INV-0100' # from NullInvoice
       end
@@ -110,6 +113,7 @@ describe EventMailer do
         ))
         expect {
           @participant.event.currency_iso_code = 'USD'
+          invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
         }.to change {Log.count}.by 1
       end
@@ -125,6 +129,7 @@ describe EventMailer do
         ))
         expect {
           @participant.event.currency_iso_code = 'USD'
+          invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
         }.to change {Log.count}.by 1
       end

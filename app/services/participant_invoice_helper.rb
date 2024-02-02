@@ -1,8 +1,8 @@
 
 class ParticipantInvoiceHelper
-  def initialize(participant, lang)
+  def initialize(participant, lang = nil)
     @participant = participant
-    @lang =  lang
+    @lang = lang
   end
 
   #TODO: test & change languaje
@@ -32,4 +32,27 @@ class ParticipantInvoiceHelper
     participant.save!
   end
 
+  def new_invoice
+    unit_price = @participant.event.price(@participant.quantity, @participant.created_at)
+    return nil if unit_price < 0.01
+
+    unless @participant.event.is_sold_out
+      begin
+        invoice_service = InvoiceService.new(@participant)
+        invoice = invoice_service.create_send_invoice()
+        online_invoice_url = invoice_service&.get_online_invoice_url
+        if online_invoice_url
+          @participant.online_invoice_url = online_invoice_url
+          @participant.save
+        end
+      rescue StandardError => e
+        Log.log(:xero, :error,
+                "create_send_invoice:#{@participant.company_name} #{@participant.fname} #{@participant.lname}",
+                "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}"
+        )
+        return nil
+      end
+    end
+    invoice
+  end
 end

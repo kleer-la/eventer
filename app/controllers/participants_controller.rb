@@ -187,8 +187,8 @@ class ParticipantsController < ApplicationController
   end
 
   def create_mails
-    EventMailer.delay.welcome_new_event_participant(@participant) if @event.should_welcome_email
-    # EventMailer.welcome_new_event_participant(@participant) if @event.should_welcome_email
+    invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
+    EventMailer.delay.welcome_new_event_participant(@participant) if @event.should_welcome_email && !invoice.nil?
 
     edit_registration_link = "http://#{request.host}/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
     EventMailer.delay.alert_event_monitor(@participant, edit_registration_link)

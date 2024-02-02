@@ -11,7 +11,7 @@ class EventMailer < ApplicationMailer
     @participant = participant
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
-    
+
     mail( to: participant.email,
           cc: ADMIN_MAIL + ',' + ALERT_MAIL, 
           subject: I18n.t('mail.paid.subject', locale: @lang, event:@participant.event.event_type.name)
@@ -25,7 +25,7 @@ class EventMailer < ApplicationMailer
     @participant = participant
     @lang =  participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
-    
+
     # to: @participant.email
     edit_registration_link = "http://eventos.kleer.la/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
 
@@ -39,26 +39,7 @@ class EventMailer < ApplicationMailer
     @participant = participant
     @lang = participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
-  
-    unless participant.event.is_sold_out
-      begin
-        invoice_service = InvoiceService.new(participant)
-        invoice = invoice_service.create_send_invoice()
-        @online_invoice_url = invoice_service&.get_online_invoice_url
-        if @online_invoice_url
-          participant.online_invoice_url = @online_invoice_url
-          participant.save
-        end
-      rescue StandardError => e
-        Log.log(:xero, :error,
-                "create_send_invoice:#{participant.company_name} #{participant.fname} #{participant.lname}",
-                "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}"
-        )
-        return
-      end
-    end
-    unit_price = participant.event.price(participant.quantity, participant.created_at)
-    return nil if unit_price < 0.01
+    @online_invoice_url = participant.online_invoice_url
 
     @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
     mail(to: @participant.email, cc: ADMIN_MAIL, subject: "Kleer | #{@participant.event.event_type.name}") do |format|

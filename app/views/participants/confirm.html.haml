@@ -6,13 +6,13 @@
         - unless @cancelled
           %p.lead
             - if @free
-              = I18n.t("formtastic.labels.participant.auto_confirm")
+              != I18n.t("formtastic.labels.participant.auto_confirm")
             - elsif @participant.online_invoice_url.present?
-              = I18n.t("formtastic.labels.participant.can_pay_now.text")
+              != I18n.t("formtastic.labels.participant.can_pay_now.text")
             - elsif @event.should_welcome_email
-              = I18n.t("formtastic.labels.participant.confirm_with_mail")
+              != I18n.t("formtastic.labels.participant.confirm_with_mail")
             - else
-              = I18n.t("formtastic.labels.participant.confirm_without_mail")
+              != I18n.t("formtastic.labels.participant.confirm_without_mail")
           - if @participant.online_invoice_url.present?
             = link_to(I18n.t("formtastic.labels.participant.can_pay_now.button"), @participant.online_invoice_url, class: 'btn btn-primary btn-large white') 
 - else
