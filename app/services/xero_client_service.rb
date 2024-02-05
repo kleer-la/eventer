@@ -170,10 +170,10 @@ module XeroClientService
     def email_invoice(invoice)
       begin
         @client.email_invoice(invoice.invoice_id)
-      rescue StandardError => e 
-       Log.log(:xero, :warn,
-         "invoice not sent :#{invoice.invoice_number}", 
-         e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
+      rescue StandardError => e
+        Log.log(:xero, :warn,
+                "invoice not sent :#{invoice.invoice_number}", 
+                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
         )
       end
     end

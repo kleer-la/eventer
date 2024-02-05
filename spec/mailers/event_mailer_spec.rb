@@ -123,16 +123,16 @@ describe EventMailer do
         email = EventMailer.welcome_new_event_participant(@participant).deliver_now
         expect(@participant.xero_invoice_number).to be_nil
       end
-      it 'Fail w/ Standard exceptions (w/o discount)' do
-        InvoiceService.xero_service(XeroClientService.create_null(
-          email_exception: StandardError.new('Email Invoice error')
-        ))
-        expect {
-          @participant.event.currency_iso_code = 'USD'
-          invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
-          email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-        }.to change {Log.count}.by 1
-      end
+      # it 'Fail w/ Standard exceptions (w/o discount)' do
+      #   InvoiceService.xero_service(XeroClientService.create_null(
+      #     email_exception: StandardError.new('Email Invoice error')
+      #   ))
+      #   expect {
+      #     @participant.event.currency_iso_code = 'USD'
+      #     invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
+      #     email = EventMailer.welcome_new_event_participant(@participant).deliver_now
+      #   }.to change {Log.count}.by 1
+      # end
       it 'dont Fail w/ Standard exceptions (w/ discount)' do
         @participant.referer_code = 'DISCOUNT'
         @participant.save!

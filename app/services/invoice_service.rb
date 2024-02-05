@@ -40,10 +40,10 @@ class InvoiceService
 
     return if @invoice.nil?
     @pih.update_participant(@invoice)
-    @@xero.email_invoice(@invoice) unless @participant.referer_code.present?
+    # @@xero.email_invoice(@invoice) unless @participant.referer_code.present?
     @invoice
   end
- 
+
   def get_online_invoice_url()
     @@xero.get_online_invoice_url(@invoice)
   end
@@ -52,7 +52,7 @@ class InvoiceService
     unit_price = participant.event.price(participant.quantity, participant.created_at)
     date = DateTime.now
     codename = participant.event.online_cohort_codename
-    
+
     return nil if unit_price < 0.01
 
     begin
