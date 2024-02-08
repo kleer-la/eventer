@@ -71,7 +71,7 @@ module ParticipantsHelper
       if seal.present? && (kleer_certification_for_this_participant? || !kleer_certification?)
         seal
       else
-        return nil
+        nil
       end
     end
 
@@ -432,7 +432,7 @@ module ParticipantsHelper
   end
 
   def self.render_certificate(pdf, certificate, _page_size, store)
-    self.certificate_factory(pdf, certificate, store).render
+    certificate_factory(pdf, certificate, store).render
   end
 
   def self.generate_certificate(participant, page_size, store)

@@ -19,7 +19,7 @@
 //   .status_tag { background: #6090DB; }
 // https://github.com/ayann/active_admin_flat_skin
 // $panelBorder: #babdc5;
-$skinActiveColor: #ff3c3c;
+// $skinActiveColor: #ff3c3c;
 // $bodyColor: rgba(236, 240, 241, 0.48);
 // $skinBlack: rgb(55, 71, 79);
 // $panelHeaderBck: $skinBlack;
@@ -29,7 +29,5 @@ $skinActiveColor: #ff3c3c;
 // $skinTextActiveColor: white;
 // $skinTextTable: #7f8c8d;
 // $skinHeaderBck: #1e2a33;
-@import "active_admin_flat_skin";
-@import "font-awesome";
 
 @import "active_admin_kleer";

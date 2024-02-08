@@ -107,5 +107,3 @@ gem 'sprockets-rails'
 
 gem 'activeadmin'
 gem 'activeadmin_addons'
-gem 'active_admin_flat_skin'
-gem 'font-awesome-rails'
