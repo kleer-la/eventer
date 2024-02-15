@@ -1,5 +1,6 @@
 class Coupon < ApplicationRecord
   enum coupon_type: { codeless: 0, percent_off: 1, amount_off: 2 }
+  before_validation :downcase_code
 
   has_and_belongs_to_many :event_types
 
@@ -20,5 +21,11 @@ class Coupon < ApplicationRecord
 
   def self.ransackable_attributes(auth_object = nil)
     ["active", "amount_off", "code", "coupon_type", "created_at", "display", "expires_on", "icon", "id", "id_value", "internal_name", "percent_off", "updated_at"]
+  end
+
+  private
+
+  def downcase_code
+    self.code = code.strip.upcase if code.present?
   end
 end
