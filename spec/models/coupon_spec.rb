@@ -27,7 +27,7 @@ RSpec.describe Coupon, type: :model do
     expect(coupon.event_types).to include(event_type)
   end
 
-  it 'has a valid many-to-many relation with EventTypes' do
+  it 'Normalize code' do
     coupon = FactoryBot.create(:coupon, code: ' abacaxi ')
     expect(coupon.code).to eq 'ABACAXI'
   end
