@@ -45,19 +45,21 @@ class EventType < ApplicationRecord
   end
 
   def active_coupons(date)
-    coupons.where(active: true).where(expires_on: date..)
+    coupons.where(active: true).where('expires_on >= ? OR expires_on IS NULL', date)
   end
 
-  def active_codeless_coupons()
+  def active_codeless_coupons
     active_coupons(Date.today).find_by(coupon_type: :codeless)
   end
 
-  def apply_coupons(list_price, qty, date)
+  def apply_coupons(list_price, qty, date, referer_code)
     ac = active_coupons(date)
+    ac = ac.where(code: referer_code.strip.upcase) if referer_code.present?
     return([list_price, '']) if ac == []
+
     coupon = ac.first
     [(list_price * (100.0 - coupon.percent_off) / 100.0).round(2),
-      coupon.internal_name
+     coupon.internal_name
     ]
   end
 

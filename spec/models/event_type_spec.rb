@@ -170,7 +170,7 @@ describe EventType do
     end
   end
 
-  context 'coupons' do  
+  context 'coupons' do
     it 'has a valid many-to-many relation with EventTypes' do
       event_type = FactoryBot.create(:event_type)
       coupon = FactoryBot.create(:coupon)
@@ -178,36 +178,75 @@ describe EventType do
 
       expect(coupon.event_types).to include(event_type)
     end
-    it 'apply discount' do
-      event_type = FactoryBot.create(:event_type)
-      coupon = FactoryBot.create(:coupon, :codeless, percent_off: 10.0)
-      coupon.event_types << event_type
-
-      price, msg = event_type.apply_coupons(123.0, 1, Date.today)
-      expect(price).to eq 110.7
-      expect(msg).not_to eq ''
-    end
-    it 'non active coupon doesnt count' do
-      event_type = FactoryBot.create(:event_type)
-      coupon = FactoryBot.create(:coupon, :codeless, active: false)
-      coupon.event_types << event_type
-
-      expect(event_type.active_coupons(Date.today)).to eq []
-    end
-    it 'expired coupon doesnt count' do
-      event_type = FactoryBot.create(:event_type)
-      coupon = FactoryBot.create(:coupon, :codeless, active: true, expires_on: Date.today - 1)
-      coupon.event_types << event_type
-
-      expect(event_type.active_coupons(Date.today)).to eq []
-    end
     it 'no cupon, no discount' do
       event_type = FactoryBot.create(:event_type)
 
-      price, msg = event_type.apply_coupons(123.0, 1, Date.today)
+      price, msg = event_type.apply_coupons(123.0, 1, Date.today, nil)
       expect(price).to eq 123
       expect(msg).to eq ''
     end
-  end
+    context 'codeless' do
+      it 'apply discount' do
+        event_type = FactoryBot.create(:event_type)
+        coupon = FactoryBot.create(:coupon, :codeless, percent_off: 10.0)
+        coupon.event_types << event_type
 
+        price, msg = event_type.apply_coupons(123.0, 1, Date.today, nil)
+        expect(price).to eq 110.7
+        expect(msg).not_to eq ''
+      end
+      it 'non active coupon doesnt count' do
+        event_type = FactoryBot.create(:event_type)
+        coupon = FactoryBot.create(:coupon, :codeless, active: false)
+        coupon.event_types << event_type
+
+        expect(event_type.active_coupons(Date.today)).to eq []
+      end
+      it 'expired coupon doesnt count' do
+        event_type = FactoryBot.create(:event_type)
+        coupon = FactoryBot.create(:coupon, :codeless, active: true, expires_on: Date.today - 1)
+        coupon.event_types << event_type
+
+        expect(event_type.active_coupons(Date.today)).to eq []
+      end
+    end
+    context 'percent_off' do
+      it 'apply discount' do
+        event_type = FactoryBot.create(:event_type)
+        coupon = FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
+        coupon.event_types << event_type
+
+        price, msg = event_type.apply_coupons(123.0, 1, Date.today, 'ABRADADABRA')
+        expect(price).to eq 110.7
+        expect(msg).not_to eq ''
+      end
+      it 'normalize code to apply discount' do
+        event_type = FactoryBot.create(:event_type)
+        coupon = FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
+        coupon.event_types << event_type
+
+        price, msg = event_type.apply_coupons(123.0, 1, Date.today, ' ABRADADABRa ')
+        expect(price).to eq 110.7
+        expect(msg).not_to eq ''
+      end
+      it 'dont apply discount bc wrong code' do
+        event_type = FactoryBot.create(:event_type)
+        coupon = FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
+        coupon.event_types << event_type
+
+        price, msg = event_type.apply_coupons(123.0, 1, Date.today, 'ABRAD')
+        expect(price).to eq 123.0
+        expect(msg).to eq ''
+      end
+      it 'when (codeless + percentage_off) apply percentage_of discount ' do
+        event_type = FactoryBot.create(:event_type)
+        FactoryBot.create(:coupon, :codeless, percent_off: 50.0, code: '').event_types << event_type
+        FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA').event_types << event_type
+
+        price, msg = event_type.apply_coupons(123.0, 1, Date.today, 'ABRADADABRA')
+        expect(price).to eq 110.7
+        expect(msg).not_to eq ''
+      end
+    end
+  end
 end

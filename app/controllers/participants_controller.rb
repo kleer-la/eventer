@@ -225,7 +225,7 @@ class ParticipantsController < ApplicationController
         end
         create_mails
 
-        unit_price = @event.price(@participant.quantity, @participant.created_at)
+        unit_price = @participant.applicable_unit_price
         @free = unit_price < 0.01
         # format.html do
         #   redirect_to "/events/#{@event.id}/participant_confirmed?free=#{free}#{@nakedform ? '&nakedform=1' : ''}",

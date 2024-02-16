@@ -112,7 +112,6 @@ class Participant < ApplicationRecord
     end
   end
 
-
   def initialize_defaults
     return unless new_record?
 
@@ -214,6 +213,10 @@ class Participant < ApplicationRecord
     EventMailer.send_certificate(self, certificate_url['A4'], certificate_url['LETTER']).deliver
   end
 
+  def applicable_unit_price
+    event.price(quantity, created_at, referer_code)
+  end
+
   def self.parse_line(participant_data_line)
     attributes = participant_data_line.split("\t")
     attributes = participant_data_line.split(',') if attributes.size == 1
@@ -248,11 +251,11 @@ class Participant < ApplicationRecord
   def self.search(searching, page, per_page)
     s = searching.downcase
     offset_value = per_page * (page - 1)
-  
+
     participants = Participant.where("lower(fname || ' ' || lname || verification_code) LIKE ?", "%#{s}%")
                               .offset(offset_value)
                               .limit(per_page)
-  
+
     participants
   end
 

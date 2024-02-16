@@ -40,7 +40,8 @@
     .row-fluid
       .control-group
         = f.text_field :address, required: true, :class => "span12", :placeholder => '* '+ I18n.t("formtastic.labels.participant.address")
-    - if @event.should_ask_for_referer_code
+    -# if @event.should_ask_for_referer_code
+    - unless @event.coupons.nil?
       .row-fluid
         .control-group
           = f.text_field :referer_code, :class => "span6", :placeholder => I18n.t("formtastic.labels.participant.referer_code")

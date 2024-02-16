@@ -90,7 +90,7 @@ class EventMailer < ApplicationMailer
   end
 
   def invoice_data(participant)
-    unit_price = participant.event.price(participant.quantity, participant.created_at)
+    unit_price = participant.applicable_unit_price
 
     online_payment = 'Online Payment' if participant.event.enable_online_payment
     codename = participant.event.online_cohort_codename

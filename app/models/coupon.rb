@@ -6,8 +6,8 @@ class Coupon < ApplicationRecord
 
   validates :code, length: { maximum: 20 }
 
-  validates :percent_off, numericality: { greater_than: 0, less_than_or_equal_to: 100 }, if: -> { percent_off? }
-  validates :amount_off, numericality: { greater_than: 0 }, if: -> { amount_off? }
+  validates :percent_off, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, if: -> { percent_off? }
+  validates :amount_off, numericality: { greater_than_or_equal_to: 0 }, if: -> { amount_off? }
 
   # Define a method to check if it is a percent_off coupon
   def percent_off?

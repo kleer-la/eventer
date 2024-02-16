@@ -246,8 +246,9 @@ class Event < ApplicationRecord
     part.errors.full_messages.join(', ')
   end
 
-  def price(qty, date)
-    discounted_price, message = event_type.apply_coupons(list_price, qty, date)
+  def price(qty, date, referer_code = '')
+    discounted_price, _message = event_type.apply_coupons(list_price, qty, date, referer_code)
+
     if eb_end_date.present? && date.to_date <= eb_end_date.to_date # to_date remove hours
       [earlybird_price(qty), discounted_price].min
     else

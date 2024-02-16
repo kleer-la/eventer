@@ -14,9 +14,8 @@ module XeroClientService
     end
 
     def get_tracking_category(...)
-      NullResponse.new(has_validation_errors: @has_validation_error)            
+      NullResponse.new(has_validation_errors: @has_validation_error)
     end
-
 
     def create_contacts(...)
       NullResponse.new(has_validation_errors: @has_validation_error)
@@ -26,7 +25,7 @@ module XeroClientService
       raise @invoice_exception if @invoice_exception
       NullInvoice.new()
     end
-    
+
     def email_invoice(invoice)
       raise @email_exception if @email_exception
     end
@@ -36,6 +35,9 @@ module XeroClientService
     end
     def get_invoice(_)
       NullInvoice.new
+    end
+    def accounting_api
+      NullAccountingApi.new
     end
   end
 
@@ -148,5 +150,7 @@ module XeroClientService
         @online_invoice_url = 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
       end
     end
+  end
+  class NullAccountingApi
   end
 end

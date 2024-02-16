@@ -49,7 +49,7 @@ class InvoiceService
   end
 
   def create_invoice(participant, contact)
-    unit_price = participant.event.price(participant.quantity, participant.created_at)
+    unit_price = participant.applicable_unit_price
     date = DateTime.now
     codename = participant.event.online_cohort_codename
 
