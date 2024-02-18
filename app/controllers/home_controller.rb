@@ -122,7 +122,7 @@ class HomeController < ApplicationController
       format.html
       format.xml { render xml: @events.to_xml(include: event_data_to_include, methods: [:human_date]) }
       format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date, :coupons]) }
-    end 
+    end
   end
 
   def event_by_event_type
