@@ -51,6 +51,10 @@ class EventType < ApplicationRecord
   def active_codeless_coupons
     active_coupons(Date.today).find_by(coupon_type: :codeless)
   end
+  
+  def active_code_coupons
+    active_coupons(Date.today).where(coupon_type: :percent_off..:amount_off)
+  end
 
   def apply_coupons(list_price, qty, date, referer_code)
     ac = active_coupons(date)

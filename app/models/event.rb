@@ -149,6 +149,10 @@ class Event < ApplicationRecord
     end
   end
 
+  def ask_for_coupons_code?
+    event_type.active_code_coupons.present?
+  end
+
   def human_long_date
     return "#{human_date} #{date.year}" if date.year == safe_end_date.year
 

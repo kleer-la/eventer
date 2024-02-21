@@ -234,7 +234,9 @@ describe Event do
     end
 
     it "should have a human time in Spanish that returns 'de 9:00 to 18:00hs'" do
-      expect(@event.human_time).to eq 'de 09:00 a 18:00 hs'
+      I18n.with_locale(:es) {
+        expect(@event.human_time).to eq 'de 09:00 a 18:00 hs'
+      }
     end
   end
 
@@ -333,6 +335,11 @@ describe Event do
   end
 
   context 'When event date is 15-Jan-2015' do
+    around(:each) do |example|
+      I18n.locale = :es # Set to your test locale
+      example.run
+      I18n.locale = I18n.default_locale # Reset to default locale
+    end
     before(:each) do
       @event.date = '15/01/2015'
     end
@@ -369,6 +376,11 @@ describe Event do
   end
 
   context 'When event date is 20-Apr-2015' do
+    around(:each) do |example|
+      I18n.locale = :es # Set to your test locale
+      example.run
+      I18n.locale = I18n.default_locale # Reset to default locale
+    end
     before(:each) do
       @event.date = '20/04/2015'
     end
@@ -390,6 +402,11 @@ describe Event do
   end
 
   context 'human_long_date' do
+    around(:each) do |example|
+      I18n.locale = :es # Set to your test locale
+      example.run
+      I18n.locale = I18n.default_locale # Reset to default locale
+    end
     before(:each) do
       @event.date = '30/12/2021'
     end
@@ -408,17 +425,17 @@ describe Event do
   end
 
   context 'When Locale is en' do
-    before(:each) do
-      I18n.locale = :en
-    end
-
     it "should have a human date in English that returns '20 Abr' if duration is 1" do
       @event.date = '20/04/2015'
       @event.duration = 1
-      expect(@event.human_date).to eq 'Apr 20'
+      I18n.with_locale(:en) {
+        expect(@event.human_date).to eq 'Apr 20'
+      }
     end
     it "should have a human time in English that returns 'from 9:00 to 18:00hs'" do
-      expect(@event.human_time).to eq 'from 09:00 to 18:00 hs'
+      I18n.with_locale(:en) {
+        expect(@event.human_time).to eq 'from 09:00 to 18:00 hs'
+      }
     end
   end
   context 'Trainers' do
@@ -605,6 +622,21 @@ describe Event do
           expect(@event.price(nro, DateTime.new)).to eq unit_price
         end
       end
+    end
+  end
+  describe '#ask_for_coupons_code?' do
+    let(:event) { FactoryBot.create(:event, list_price: 100) }
+    it { expect(event.ask_for_coupons_code?).to eq false}
+
+    it 'codeless coupon' do
+      FactoryBot.create(:coupon, coupon_type: :codeless, percent_off: 40.0)
+                .event_types << event.event_type
+      expect(event.ask_for_coupons_code?).to eq false
+    end
+    it 'percent_off coupon' do
+      FactoryBot.create(:coupon, coupon_type: :percent_off, percent_off: 40.0)
+                .event_types << event.event_type
+      expect(event.ask_for_coupons_code?).to eq true
     end
   end
 end
