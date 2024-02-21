@@ -55,6 +55,7 @@ class EventType < ApplicationRecord
   def apply_coupons(list_price, qty, date, referer_code)
     ac = active_coupons(date)
     ac = ac.where(code: referer_code.strip.upcase) if referer_code.present?
+    ac = ac.where(coupon_type: :codeless) unless referer_code.present?
     return([list_price, '']) if ac == []
 
     coupon = ac.first
