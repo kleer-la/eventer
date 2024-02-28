@@ -68,6 +68,7 @@ gem 'delayed_job_active_record'
 gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'formtastic'
 gem 'formtastic-bootstrap'
+gem 'importmap-rails'
 gem 'money'
 gem 'prawn'
 gem 'prawn_rails'

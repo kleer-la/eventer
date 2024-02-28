@@ -15,6 +15,8 @@
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html; charset=utf-8"}/
     = stylesheet_link_tag "application", :media => "all"
     = javascript_include_tag "application"
+    - #TODO: remove workaround when fully migrated to importmap
+    != javascript_importmap_tags.sub('"application"', '"im_application"')
     = csrf_meta_tags
     = favicon_link_tag 'favicon.ico'
 
