@@ -1,0 +1,2 @@
+module ServiceAreasHelper
+end

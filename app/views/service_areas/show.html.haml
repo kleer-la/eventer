@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @service_area.name
+%p
+  %b Abstract:
+  = @service_area.abstract
+
+= link_to 'Edit', edit_service_area_path(@service_area)
+\|
+= link_to 'Back', service_areas_path

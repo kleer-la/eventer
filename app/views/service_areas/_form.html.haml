@@ -1,0 +1,7 @@
+= semantic_form_for @service_area do |f|
+  = f.inputs do
+    = f.input :name
+    = f.rich_text_area  :abstract
+
+  = f.actions do
+    = f.action :submit, :as => :input

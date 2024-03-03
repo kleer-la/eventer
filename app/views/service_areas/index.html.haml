@@ -1,0 +1,23 @@
+%h1 Listing service_areas
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Abstract
+      %th
+      %th
+      %th
+
+  %tbody
+    - @service_areas.each do |service_area|
+      %tr
+        %td= service_area.name
+        %td= service_area.abstract
+        %td= link_to 'Show', service_area
+        %td= link_to 'Edit', edit_service_area_path(service_area)
+        %td= link_to 'Destroy', service_area, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Service area', new_service_area_path

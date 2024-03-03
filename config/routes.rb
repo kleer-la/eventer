@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :service_areas
   ActiveAdmin.routes(self)
 
   get 'images/filter/:bucket' => 'images#index'
