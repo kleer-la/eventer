@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_03_021249) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_03_204414) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -457,6 +457,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_03_021249) do
     t.text "abstract"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "visible"
+    t.integer "lang"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.string "name"
+    t.text "card_description"
+    t.string "subtitle"
+    t.integer "service_area_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_area_id"], name: "index_services_on_service_area_id"
   end
 
   create_table "settings", force: :cascade do |t|
@@ -523,6 +535,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_03_021249) do
   add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "resources", "categories", column: "categories_id"
   add_foreign_key "resources", "trainers", column: "trainers_id"
+  add_foreign_key "services", "service_areas"
   add_foreign_key "translations", "resources"
   add_foreign_key "translations", "trainers"
 end

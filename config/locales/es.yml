@@ -82,6 +82,11 @@ es:
           event_rating_should_be_between_1_and_5: "el rating del evento debe estar entre 1 y 5"
           trainer_rating_should_be_between_1_and_5: "el rating del entrenador debe estar entre 1 y 5"
           promoter_score_should_be_between_0_and_10: "el promoter score debe estar entre 0 y 10"
+        models:
+          service:
+            attributes:
+              service_area:
+                required: es necesario seleccionar un área de servicio
   formtastic:
     yes: "Si"
     no: "No"

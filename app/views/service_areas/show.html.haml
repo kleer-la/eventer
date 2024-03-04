@@ -6,7 +6,12 @@
 %p
   %b Abstract:
   = @service_area.abstract
-
+%p
+  %b Visible:
+  = @service_area.visible ? 'Yes' : 'No'
+%p
+  %b Language:
+  = @service_area.lang&.humanize
 = link_to 'Edit', edit_service_area_path(@service_area)
 \|
 = link_to 'Back', service_areas_path
