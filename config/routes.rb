@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     namespace :v3 do
       post 'participants/interest'
     end
+    resources :service_areas, only: %i[index show]
     get 'news'
     get 'event_types', to: 'event_types#index'
     get 'event_types/:id' => 'event_types#show'
