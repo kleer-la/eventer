@@ -4,6 +4,13 @@
     = f.input :visible, as: :boolean
     = f.input :lang, as: :select, collection: ServiceArea.langs.keys.map { |k| [k.humanize, k] }
     = f.rich_text_area  :abstract
-
-  = f.actions do
+    .field
+      = f.label :icon
+      = f.url_field :icon
+    .field
+      = f.label :primary_color
+      = f.color_field  :primary_color, style: 'block-size: 40px;'
+    .field
+      = f.label :secondary_color
+      = f.color_field  :secondary_color, style: 'block-size: 40px;'
     = f.action :submit, :as => :input
