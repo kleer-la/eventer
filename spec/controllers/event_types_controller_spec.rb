@@ -12,7 +12,7 @@ describe EventTypesController do
     it 'assigns all event_types as @event_types' do
       event_type = FactoryBot.create(:event_type)
       get :index
-      expect(assigns(:event_types)).to eq [event_type]
+      expect(assigns(:event_types)).to include event_type
     end
   end
 

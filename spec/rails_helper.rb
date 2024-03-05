@@ -72,9 +72,5 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Warden::Test::Helpers
 
-  # FactoryBot
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
-  end
+  config.use_transactional_fixtures = true
 end

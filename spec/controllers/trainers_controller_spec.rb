@@ -13,7 +13,7 @@ describe TrainersController do
   describe 'GET index' do
     it 'assigns all trainers as @trainers' do
       get :index
-      expect(assigns(:trainers)).to eq [@trainer]
+      expect(assigns(:trainers)).to include @trainer
     end
   end
 

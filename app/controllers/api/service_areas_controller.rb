@@ -10,7 +10,7 @@ module Api
         services: {
           only: [:name, :card_description]
         }
-      }, only: [:id, :name])
+      }, only: %i[id name abstract])
     end
 
     # GET /api/service_areas/:id
