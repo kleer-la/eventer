@@ -1,5 +1,9 @@
 class ServiceAreasController < InheritedResources::Base
 
+  def show
+    @service_area = ServiceArea.friendly.find(params[:id])
+  end
+  
   private
 
   def service_area_params

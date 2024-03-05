@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_03_204414) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_05_221824) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -459,6 +459,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_03_204414) do
     t.datetime "updated_at", null: false
     t.boolean "visible"
     t.integer "lang"
+    t.string "slug"
+    t.index ["slug"], name: "index_service_areas_on_slug", unique: true
   end
 
   create_table "services", force: :cascade do |t|
