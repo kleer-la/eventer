@@ -1,5 +1,20 @@
 @import "trix";
 
+/* Override ActiveAdmin's list-style for Trix editor content */
+form .trix-content ul,
+form .trix-content ol {
+  list-style: initial;
+}
+
+/* Ensure proper indentation for list items inside Trix content */
+form .trix-content ul {
+  list-style-type: disc;
+}
+
+form .trix-content ol {
+  list-style-type: decimal;
+}
+
 html .panel > h3 {
   font-weight: 400 !important;
 }
