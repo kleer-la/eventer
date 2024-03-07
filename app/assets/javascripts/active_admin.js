@@ -2,3 +2,4 @@
 //= require activeadmin_addons/all
 
 //= require active_admin_kleer
+//= require trix
