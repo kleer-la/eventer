@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register ServiceArea do
-  permit_params :name, :abstract, :icon, :primary_color, :secondary_color
+  permit_params :name, :icon, :primary_color, :secondary_color, :summary, :slogan, :subtitle, :description, :target, :value_proposition
+  filter :name
 
   controller do
     def find_resource
@@ -17,10 +18,15 @@ ActiveAdmin.register ServiceArea do
     f.semantic_errors # Shows errors on :base
     f.inputs 'ServiceArea Details' do
       f.input :name
-      f.input :abstract, as: :rich_text_area
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' } 
+      f.input :summary, as: :rich_text_area
+      f.input :slogan, as: :rich_text_area
+      f.input :subtitle, as: :rich_text_area
+      f.input :description, as: :rich_text_area
+      f.input :target, as: :rich_text_area
+      f.input :value_proposition, as: :rich_text_area
     end
 
     panel "Existing Services" do
@@ -28,24 +34,18 @@ ActiveAdmin.register ServiceArea do
         resource.services.each do |service|
           li do
             span link_to service.name, edit_admin_service_path(service)
-            span  service.subtitle
+            span service.subtitle
           end
         end
       end
     end
-  
+
     f.actions         # Adds the 'Submit' and 'Cancel' buttons
   end
 
   show do
     attributes_table do
       row :name
-  
-      row :abstract do |service_area|
-        # This will safely render the rich text content, including formatting and attachments.
-        service_area.abstract.to_s.html_safe if service_area.abstract.present?
-      end
-  
       row :icon do |service_area|
         # Assuming 'icon' stores a URL, you can use 'link_to' to make it clickable.
         link_to service_area.icon, service_area.icon, target: '_blank', rel: 'noopener' if service_area.icon.present?
@@ -61,6 +61,25 @@ ActiveAdmin.register ServiceArea do
         # Display the color with a visual indicator.
         div style: "width: 30px; height: 30px; background-color: #{service_area.secondary_color};" if service_area.secondary_color.present?
         text_node service_area.secondary_color
+      end
+      # This will safely render the rich text content, including formatting and attachments.
+      row :summary do |service_area| 
+        service_area.summary.to_s.html_safe if service_area.summary.present?
+      end
+      row :slogan do |service_area| 
+        service_area.slogan.to_s.html_safe if service_area.slogan.present?
+      end
+      row :subtitle do |service_area| 
+        service_area.subtitle.to_s.html_safe if service_area.subtitle.present?
+      end
+      row :description do |service_area| 
+        service_area.description.to_s.html_safe if service_area.description.present?
+      end
+      row :target do |service_area| 
+        service_area.target.to_s.html_safe if service_area.target.present?
+      end
+      row :value_proposition do |service_area| 
+        service_area.value_proposition.to_s.html_safe if service_area.value_proposition.present?
       end
     end
     panel "Services" do 

@@ -5,7 +5,13 @@ class ServiceArea < ApplicationRecord
   friendly_id :name, use: :slugged
 
   validates_presence_of :name
-  has_rich_text :abstract
+  has_rich_text :summary
+  has_rich_text :slogan
+  has_rich_text :subtitle
+  has_rich_text :description
+  has_rich_text :target
+  has_rich_text :value_proposition
+    
   enum lang: { sp: 0, en: 1 }
 
   has_many :services, dependent: :destroy

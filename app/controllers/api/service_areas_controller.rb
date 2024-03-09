@@ -12,7 +12,8 @@ module Api
           id: service_area.id,
           slug: service_area.slug,
           name: service_area.name,
-          abstract: service_area.abstract.body.to_s, # Get just the content of the abstract
+          icon: service_area.icon,
+          summmary: service_area.abstract.body.to_s, # Get just the content of the abstract
           primary_color: service_area.primary_color,
           secondary_color: service_area.secondary_color,
           services: service_area.services.map { |service|
