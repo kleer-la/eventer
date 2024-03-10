@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register ServiceArea do
-  permit_params :name, :icon, :primary_color, :secondary_color, :summary, :slogan, :subtitle, :description, :target, :value_proposition
+  permit_params :name, :icon, :primary_color, :secondary_color, :visible,
+                :summary, :slogan, :subtitle, :description, :target, :value_proposition
   filter :name
 
   controller do
@@ -18,6 +19,7 @@ ActiveAdmin.register ServiceArea do
     f.semantic_errors # Shows errors on :base
     f.inputs 'ServiceArea Details' do
       f.input :name
+      f.input :visible, as: :boolean
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' } 
@@ -46,17 +48,21 @@ ActiveAdmin.register ServiceArea do
   show do
     attributes_table do
       row :name
+      row :visible
       row :icon do |service_area|
-        # Assuming 'icon' stores a URL, you can use 'link_to' to make it clickable.
-        link_to service_area.icon, service_area.icon, target: '_blank', rel: 'noopener' if service_area.icon.present?
+        if service_area.icon.present?
+          image_tag service_area.icon, width: '50px', alt: 'Service Area Icon'
+        else
+          text_node 'No Icon defined'
+        end
       end
-  
+
       row :primary_color do |service_area|
         # Display the color with a visual indicator.
         div style: "width: 30px; height: 30px; background-color: #{service_area.primary_color};" if service_area.primary_color.present?
         text_node service_area.primary_color
       end
-  
+
       row :secondary_color do |service_area|
         # Display the color with a visual indicator.
         div style: "width: 30px; height: 30px; background-color: #{service_area.secondary_color};" if service_area.secondary_color.present?

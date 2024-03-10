@@ -4,14 +4,15 @@ class ServiceArea < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
-  validates_presence_of :name
   has_rich_text :summary
   has_rich_text :slogan
   has_rich_text :subtitle
   has_rich_text :description
   has_rich_text :target
   has_rich_text :value_proposition
-    
+
+  validates_presence_of %i[name summary icon slogan subtitle description side_image target primary_color secondary_color]
+
   enum lang: { sp: 0, en: 1 }
 
   has_many :services, dependent: :destroy
