@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register ServiceArea do
-  permit_params :name, :icon, :primary_color, :secondary_color, :visible,
-                :summary, :slogan, :subtitle, :description, :target, :value_proposition
+  permit_params :name, :icon, :primary_color, :secondary_color, :visible, :summary,
+                :side_image, :slogan, :subtitle, :description, :target, :value_proposition
   filter :name
 
   controller do
@@ -24,6 +24,7 @@ ActiveAdmin.register ServiceArea do
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' } 
       f.input :summary, as: :rich_text_area
+      f.input :side_image, as: :url
       f.input :slogan, as: :rich_text_area
       f.input :subtitle, as: :rich_text_area
       f.input :description, as: :rich_text_area
@@ -58,13 +59,11 @@ ActiveAdmin.register ServiceArea do
       end
 
       row :primary_color do |service_area|
-        # Display the color with a visual indicator.
         div style: "width: 30px; height: 30px; background-color: #{service_area.primary_color};" if service_area.primary_color.present?
         text_node service_area.primary_color
       end
 
       row :secondary_color do |service_area|
-        # Display the color with a visual indicator.
         div style: "width: 30px; height: 30px; background-color: #{service_area.secondary_color};" if service_area.secondary_color.present?
         text_node service_area.secondary_color
       end
@@ -72,6 +71,7 @@ ActiveAdmin.register ServiceArea do
       row :summary do |service_area| 
         service_area.summary.to_s.html_safe if service_area.summary.present?
       end
+      row :side_image
       row :slogan do |service_area| 
         service_area.slogan.to_s.html_safe if service_area.slogan.present?
       end
@@ -87,15 +87,19 @@ ActiveAdmin.register ServiceArea do
       row :value_proposition do |service_area| 
         service_area.value_proposition.to_s.html_safe if service_area.value_proposition.present?
       end
+      if service_area.side_image.present?
+        div 'Side Image '
+        div do
+          image_tag service_area.side_image
+        end
+      end
     end
-    panel "Services" do 
+    panel 'Services' do 
       table_for service_area.services do
         column :name do |service|
           link_to service.name, admin_service_path(service)
         end
         column :subtitle
-        column :card_description
-        # Add other service attributes here
       end
     end
   end

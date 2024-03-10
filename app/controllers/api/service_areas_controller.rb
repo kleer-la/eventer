@@ -46,7 +46,10 @@ module Api
         services: service_area.services.map { |service|
           {
             name: service.name,
-            subtitle: service.subtitle
+            subtitle: service.subtitle,
+            value_proposition: service.value_proposition.body.to_s,
+            outcomes: service.outcomes_list,
+            target: service.target.body.to_s,
           }
         }
       }

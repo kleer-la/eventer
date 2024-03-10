@@ -39,3 +39,24 @@ html .panel > h3 {
 .status-green   { border-right: 5px solid green; }
 .status-yellow  { border-right: 5px solid yellow; }
 .status-red     { border-right: 5px solid red; }
+
+/* Service model */
+.outcomes-list .custom-bullet {
+  display: inline-block;
+  margin-right: 8px;
+  color: white;
+  background-color: green;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px; /* Adjust if using a different icon/font size */
+}
+
+.outcomes-list .list-content {
+  display: inline;
+}
+
+.outcomes-list .custom-bullet::before {
+  content: "\2713"; /* Unicode checkmark */
+}

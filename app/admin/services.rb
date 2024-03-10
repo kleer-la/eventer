@@ -4,7 +4,7 @@ ActiveAdmin.register Service do
   #
   # Uncomment all parameters which should be permitted for assignment
   #
-  permit_params :name, :card_description, :subtitle, :service_area_id
+  permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
   #
   # or
   #
@@ -51,6 +51,22 @@ ActiveAdmin.register Service do
       row :value_proposition do |service| 
         service.value_proposition.to_s.html_safe if service.value_proposition.present?
       end
+
+      panel "Outcomes List" do
+        div class: "outcomes-list" do
+          ul style: "column-count: 2;" do
+            service.outcomes_list&.each do |item|
+              li(style: "list-style-type: none;") do
+                span class: "custom-bullet" do
+                  # Your custom bullet, e.g., a check mark icon
+                end
+                div raw(item), class: "list-content"
+              end
+            end
+          end
+        end
+      end
+
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Service < ApplicationRecord
   belongs_to :service_area
 
@@ -7,7 +9,16 @@ class Service < ApplicationRecord
   has_rich_text :target
   has_rich_text :faq
 
+  validates_presence_of %i[name subtitle value_proposition outcomes program target]
+
   def self.ransackable_attributes(_auth_object = nil)
-    %w[card_description created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
+    %w[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
+  end
+
+  def outcomes_list
+    return nil unless outcomes.present?
+
+    doc = Nokogiri::HTML(outcomes.body.to_html)
+    doc.css('ul li').map(&:inner_html)
   end
 end
