@@ -1,7 +1,7 @@
 ActiveAdmin.register Testimony do
   menu parent: 'Services Mgnt'
 
-  permit_params :first_name, :last_name, :profile_url, :photo_url, :service_id, :stared
+  permit_params :first_name, :last_name, :profile_url, :photo_url, :service_id, :stared, :testimony
 
   index do
     selectable_column
