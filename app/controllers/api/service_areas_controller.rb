@@ -21,6 +21,16 @@ module Api
               name: service.name,
               subtitle: service.subtitle
             }
+          },
+          testimonies: service_area.testimonies.where(stared: true).map { |testimony|
+            {
+              first_name: testimony.first_name,
+              last_name: testimony.last_name,
+              profile_url: testimony.profile_url,
+              photo_url: testimony.photo_url,
+              service: testimony.service.name,
+              testimony: testimony.testimony.body.to_s
+            }
           }
         }
       }
@@ -56,15 +66,6 @@ module Api
             brochure: service.brochure,
           }
         },
-        testimonies: service_area.testimonies.where(stared: true).map { |testimony|
-          {
-            first_name: testimony.first_name,
-            last_name: testimony.last_name,
-            profile_url: testimony.profile_url,
-            photo_url: testimony.photo_url,
-            testimony: testimony.testimony.body.to_s
-          }
-        }
       }
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'ServiceArea not found' }, status: :not_found
