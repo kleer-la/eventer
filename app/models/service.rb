@@ -21,4 +21,14 @@ class Service < ApplicationRecord
     doc = Nokogiri::HTML(outcomes.body.to_html)
     doc.css('ul li').map(&:inner_html)
   end
+  def program_list
+    return [] unless program.present?
+
+    doc = Nokogiri::HTML(program.body.to_html)
+    doc.css('ol > li').map do |li|
+      main_item = li.at_css('> text()').to_s.strip
+      collapsible_items = li.css('ul > li').map(&:text).map(&:strip)
+      [main_item, collapsible_items[0]]
+    end
+  end
 end

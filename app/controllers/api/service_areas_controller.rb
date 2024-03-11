@@ -49,6 +49,7 @@ module Api
             subtitle: service.subtitle,
             value_proposition: service.value_proposition.body.to_s,
             outcomes: service.outcomes_list,
+            program: service.program_list,
             target: service.target.body.to_s,
           }
         }

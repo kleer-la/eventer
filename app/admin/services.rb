@@ -35,8 +35,8 @@ ActiveAdmin.register Service do
       f.input :name
       f.input :subtitle, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
-      f.input :outcomes, as: :rich_text_area
-      f.input :program, as: :rich_text_area
+      f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
+      f.input :program, as: :rich_text_area, hint: 'Numered list with one bullet element'
       f.input :target, as: :rich_text_area
       f.input :faq, as: :rich_text_area
     end
@@ -67,6 +67,34 @@ ActiveAdmin.register Service do
         end
       end
 
+      panel "Program" do
+        service.program_list.each_with_index do |(main_item, collapsible_item), index|
+          div class: "program-row" do
+            span main_item, class: "main-item"
+            span "(expand)", class: "toggle-collapsible", style: "cursor: pointer;", "data-target": "collapsible-#{index}"
+            span collapsible_item, id: "collapsible-#{index}", class: "collapsible-content", style: "display: none;"
+          end
+        end
+        script do
+          raw <<-JS.strip_heredoc
+            document.addEventListener("DOMContentLoaded", function() {
+              document.querySelectorAll('.toggle-collapsible').forEach(function(toggle) {
+                toggle.addEventListener('click', function() {
+                  var targetId = this.getAttribute('data-target');
+                  var target = document.getElementById(targetId);
+                  if (target.style.display === "none") {
+                    target.style.display = "block";
+                    this.textContent = "(collapse)";
+                  } else {
+                    target.style.display = "none";
+                    this.textContent = "(expand)";
+                  }
+                });
+              });
+            });
+          JS
+        end
+      end
     end
   end
 end
