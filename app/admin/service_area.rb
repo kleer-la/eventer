@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register ServiceArea do
-  permit_params :name, :icon, :primary_color, :secondary_color, :visible, :summary,
+  permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition
   filter :name
 
@@ -19,6 +19,7 @@ ActiveAdmin.register ServiceArea do
     f.semantic_errors # Shows errors on :base
     f.inputs 'ServiceArea Details' do
       f.input :name
+      f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :visible, as: :boolean
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
@@ -49,6 +50,7 @@ ActiveAdmin.register ServiceArea do
   show do
     attributes_table do
       row :name
+      row :slug
       row :visible
       row :icon do |service_area|
         if service_area.icon.present?

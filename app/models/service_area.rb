@@ -20,6 +20,10 @@ class ServiceArea < ApplicationRecord
 
   has_many :services, dependent: :destroy
 
+  def should_generate_new_friendly_id?
+    slug.blank?
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[abstract created_at icon id id_value lang name primary_color secondary_color slug updated_at visible]
   end
