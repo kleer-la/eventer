@@ -2,6 +2,7 @@
 
 class Service < ApplicationRecord
   belongs_to :service_area
+  has_many :testimonies
 
   has_rich_text :value_proposition
   has_rich_text :outcomes
@@ -22,6 +23,7 @@ class Service < ApplicationRecord
     doc = Nokogiri::HTML(outcomes.body.to_html)
     doc.css('ul li').map(&:inner_html)
   end
+
   def program_list
     return [] unless program.present?
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register ServiceArea do
+  menu parent: 'Services Mgnt'
+
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition
   filter :name
@@ -102,6 +104,27 @@ ActiveAdmin.register ServiceArea do
           link_to service.name, admin_service_path(service)
         end
         column :subtitle
+      end
+    end
+    panel 'Testimonies' do
+      table_for service_area.testimonies do
+        column :first_name
+        column :last_name
+        column :profile_url do |testimony|
+          if testimony.profile_url.present?
+            link_to testimony.profile_url, testimony.profile_url, target: "_blank"
+          end
+        end
+        column :photo_url do |testimony|
+          image_tag testimony.photo_url if testimony.photo_url.present?
+        end
+        column :testimony do |testimony|
+          div testimony.testimony.body.to_s.html_safe
+        end
+        column :stared
+        column '' do |testimony|
+          link_to "Edit", edit_admin_testimony_path(testimony), class: "edit_link"
+      end
       end
     end
   end

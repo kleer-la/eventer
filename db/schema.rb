@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_11_150930) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_11_160534) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -486,6 +486,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_150930) do
     t.datetime "updated_at", precision: nil
   end
 
+  create_table "testimonies", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "profile_url"
+    t.string "photo_url"
+    t.integer "service_id"
+    t.boolean "stared"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_id"], name: "index_testimonies_on_service_id"
+  end
+
   create_table "trainers", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil
@@ -544,6 +556,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_150930) do
   add_foreign_key "resources", "categories", column: "categories_id"
   add_foreign_key "resources", "trainers", column: "trainers_id"
   add_foreign_key "services", "service_areas"
+  add_foreign_key "testimonies", "services"
   add_foreign_key "translations", "resources"
   add_foreign_key "translations", "trainers"
 end

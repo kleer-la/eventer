@@ -4,6 +4,9 @@ class ServiceArea < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
+  enum lang: { sp: 0, en: 1 }
+  has_many :services, dependent: :destroy
+
   has_rich_text :summary
   has_rich_text :slogan
   has_rich_text :subtitle
@@ -16,12 +19,14 @@ class ServiceArea < ApplicationRecord
     primary_color secondary_color side_image
   ]
 
-  enum lang: { sp: 0, en: 1 }
-
-  has_many :services, dependent: :destroy
 
   def should_generate_new_friendly_id?
     slug.blank?
+  end
+
+  def testimonies
+    Testimony.joins(:service)
+             .where(services: { service_area_id: id })
   end
 
   def self.ransackable_attributes(auth_object = nil)

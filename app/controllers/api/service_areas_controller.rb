@@ -52,8 +52,17 @@ module Api
             definitions: service.definitions.body.to_s,
             program: service.program_list,
             target: service.target.body.to_s,
-            brochure: service.pricing,
+            pricing: service.pricing,
             brochure: service.brochure,
+          }
+        },
+        testimonies: service_area.testimonies.where(stared: true).map { |testimony|
+          {
+            first_name: testimony.first_name,
+            last_name: testimony.last_name,
+            profile_url: testimony.profile_url,
+            photo_url: testimony.photo_url,
+            testimony: testimony.testimony.body.to_s
           }
         }
       }
