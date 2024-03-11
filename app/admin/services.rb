@@ -4,7 +4,8 @@ ActiveAdmin.register Service do
   #
   # Uncomment all parameters which should be permitted for assignment
   #
-  permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq brochure]
+  permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition
+                  outcomes program target faq definitions pricing brochure]
   #
   # or
   #
@@ -36,8 +37,10 @@ ActiveAdmin.register Service do
       f.input :subtitle, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
       f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
+      f.input :definitions, as: :rich_text_area
       f.input :program, as: :rich_text_area, hint: 'Numered list with one bullet element'
       f.input :target, as: :rich_text_area
+      f.input :pricing
       f.input :faq, as: :rich_text_area
       f.input :brochure
     end
@@ -49,11 +52,15 @@ ActiveAdmin.register Service do
       row :service_area if service.service_area # Optional: Show ServiceArea if relevant
       row :name
       row :subtitle
+      row :pricing
       row :value_proposition do |service| 
         service.value_proposition.to_s.html_safe if service.value_proposition.present?
       end
+      row :definitions do |service| 
+        service.definitions.to_s.html_safe if service.definitions.present?
+      end
 
-      panel "Outcomes List" do
+      panel 'Outcomes List' do
         div class: "outcomes-list" do
           ul style: "column-count: 2;" do
             service.outcomes_list&.each do |item|
@@ -68,7 +75,7 @@ ActiveAdmin.register Service do
         end
       end
 
-      panel "Program" do
+      panel 'Program' do
         service.program_list.each_with_index do |(main_item, collapsible_item), index|
           div class: "program-row" do
             span main_item, class: "main-item"
@@ -96,17 +103,25 @@ ActiveAdmin.register Service do
           JS
         end
       end
+
+      if service.pricing.present?
+        panel 'Pricing' do
+          div do
+            image_tag service.pricing
+          end
+        end
+      end
       row :brochure do |service|
-        link_to service.brochure, service.brochure, target: "_blank" if service.brochure.present?
+        link_to service.brochure, service.brochure, target: '_blank' if service.brochure.present?
       end
       panel 'Brochure preview' do
         if service.brochure.present?
-          iframe src: service.brochure, width: "100%", height: "500px", frameborder: "0"
+          iframe src: service.brochure, width: '100%', height: '500px', frameborder: '0'
           div do
-            link_to "Open PDF in new tab", service.brochure, target: "_blank", rel: "noopener noreferrer"
+            link_to 'Open PDF in new tab', service.brochure, target: '_blank', rel: 'noopener noreferrer'
           end
         else
-          "No PDF available"
+          'No PDF available'
         end
       end
     end

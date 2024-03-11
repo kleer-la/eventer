@@ -5,6 +5,7 @@ class Service < ApplicationRecord
 
   has_rich_text :value_proposition
   has_rich_text :outcomes
+  has_rich_text :definitions
   has_rich_text :program
   has_rich_text :target
   has_rich_text :faq

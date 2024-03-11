@@ -49,8 +49,10 @@ module Api
             subtitle: service.subtitle,
             value_proposition: service.value_proposition.body.to_s,
             outcomes: service.outcomes_list,
+            definitions: service.definitions.body.to_s,
             program: service.program_list,
             target: service.target.body.to_s,
+            brochure: service.pricing,
             brochure: service.brochure,
           }
         }
