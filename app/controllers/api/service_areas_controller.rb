@@ -51,7 +51,7 @@ module Api
             outcomes: service.outcomes_list,
             program: service.program_list,
             target: service.target.body.to_s,
-            brochure: service_area.brochure,
+            brochure: service.brochure,
           }
         }
       }
