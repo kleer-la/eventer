@@ -13,7 +13,7 @@ module Api
           slug: service_area.slug,
           name: service_area.name,
           icon: service_area.icon,
-          summmary: service_area.summary.body.to_s, # Get just the content of the rich text
+          summary: service_area.summary.body.to_s, # Get just the content of the rich text
           primary_color: service_area.primary_color,
           secondary_color: service_area.secondary_color,
           services: service_area.services.map { |service|
@@ -34,7 +34,7 @@ module Api
         slug: service_area.slug,
         name: service_area.name,
         icon: service_area.icon,
-        summary: service_area.summary.body.to_s, # Corrected spelling from 'summmary' to 'summary'
+        summary: service_area.summary.body.to_s,
         primary_color: service_area.primary_color,
         secondary_color: service_area.secondary_color,
         slogan: service_area.slogan.body.to_s,
