@@ -4,7 +4,7 @@ ActiveAdmin.register Service do
   #
   # Uncomment all parameters which should be permitted for assignment
   #
-  permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
+  permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq brochure]
   #
   # or
   #
@@ -39,6 +39,7 @@ ActiveAdmin.register Service do
       f.input :program, as: :rich_text_area, hint: 'Numered list with one bullet element'
       f.input :target, as: :rich_text_area
       f.input :faq, as: :rich_text_area
+      f.input :brochure
     end
     f.actions
   end
@@ -93,6 +94,19 @@ ActiveAdmin.register Service do
               });
             });
           JS
+        end
+      end
+      row :brochure do |service|
+        link_to service.brochure, service.brochure, target: "_blank" if service.brochure.present?
+      end
+      panel 'Brochure preview' do
+        if service.brochure.present?
+          iframe src: service.brochure, width: "100%", height: "500px", frameborder: "0"
+          div do
+            link_to "Open PDF in new tab", service.brochure, target: "_blank", rel: "noopener noreferrer"
+          end
+        else
+          "No PDF available"
         end
       end
     end
