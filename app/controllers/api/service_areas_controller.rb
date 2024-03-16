@@ -63,6 +63,7 @@ module Api
             program: service.program_list,
             target: service.target.body.to_s,
             pricing: service.pricing,
+            faq: service.faq_list,
             brochure: service.brochure,
           }
         },

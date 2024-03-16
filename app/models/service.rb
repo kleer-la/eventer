@@ -25,9 +25,19 @@ class Service < ApplicationRecord
   end
 
   def program_list
-    return [] unless program.present?
+    field_list(program)
+  end
+  
+  def faq_list
+    field_list(faq)
+  end
 
-    doc = Nokogiri::HTML(program.body.to_html)
+  private
+
+  def field_list(field)
+    return [] unless field.present?
+
+    doc = Nokogiri::HTML(field.body.to_html)
     doc.css('ol > li').map do |li|
       main_item = li.at_css('> text()').to_s.strip
       collapsible_items = li.css('ul > li').map(&:text).map(&:strip)

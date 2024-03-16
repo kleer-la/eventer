@@ -113,6 +113,17 @@ ActiveAdmin.register Service do
           end
         end
       end
+
+      panel 'FAQ' do
+        service.faq_list.each_with_index do |(main_item, collapsible_item), index|
+          div class: "program-row" do
+            span main_item, class: "main-item"
+            span "(expand)", class: "toggle-collapsible", style: "cursor: pointer;", "data-target": "collapsible-#{100+index}"
+            span collapsible_item, id: "collapsible-#{100+index}", class: "collapsible-content", style: "display: none;"
+          end
+        end
+      end
+
       row :brochure do |service|
         link_to service.brochure, service.brochure, target: '_blank' if service.brochure.present?
       end
