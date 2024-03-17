@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Service < ApplicationRecord
+  extend FriendlyId
+  friendly_id :name, use: :slugged
   belongs_to :service_area
   has_many :testimonies
 
@@ -17,6 +19,10 @@ class Service < ApplicationRecord
     %w[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
   end
 
+  def should_generate_new_friendly_id?
+    slug.blank?
+  end
+
   def outcomes_list
     return nil unless outcomes.present?
 
@@ -27,7 +33,7 @@ class Service < ApplicationRecord
   def program_list
     field_list(program)
   end
-  
+
   def faq_list
     field_list(faq)
   end

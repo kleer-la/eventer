@@ -19,7 +19,6 @@ class ServiceArea < ApplicationRecord
     primary_color secondary_color side_image
   ]
 
-
   def should_generate_new_friendly_id?
     slug.blank?
   end

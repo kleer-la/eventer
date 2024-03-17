@@ -8,7 +8,7 @@ ActiveAdmin.register Service do
   #
   permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition
                   outcomes program target faq definitions pricing brochure]
-  #
+
   # or
   #
   # permit_params do
@@ -16,6 +16,11 @@ ActiveAdmin.register Service do
   #   permitted << :other if params[:action] == 'create' && current_user.admin?
   #   permitted
   # end
+  controller do
+    def find_resource
+      scoped_collection.friendly.find(params[:id])
+    end
+  end
 
   index do
     selectable_column
@@ -36,6 +41,7 @@ ActiveAdmin.register Service do
     f.inputs do
       f.input :service_area, as: :select, collection: ServiceArea.all.map{ |sa| [sa.name, sa.id] }, selected: selected_service_area_id
       f.input :name
+      f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :subtitle, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
       f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
@@ -53,6 +59,7 @@ ActiveAdmin.register Service do
     attributes_table do
       row :service_area if service.service_area # Optional: Show ServiceArea if relevant
       row :name
+      row :slug
       row :subtitle
       row :pricing
       row :value_proposition do |service| 

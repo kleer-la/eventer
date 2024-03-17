@@ -1,6 +1,6 @@
 class ServiceAreasController < InheritedResources::Base
   before_action :set_service_area, only: [:show, :edit, :update, :destroy]
-  
+
   private
 
   def set_service_area

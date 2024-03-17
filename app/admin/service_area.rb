@@ -112,7 +112,7 @@ ActiveAdmin.register ServiceArea do
         column :last_name
         column :profile_url do |testimony|
           if testimony.profile_url.present?
-            link_to testimony.profile_url, testimony.profile_url, target: "_blank"
+            link_to testimony.profile_url, testimony.profile_url, target: '_blank'
           end
         end
         column :photo_url do |testimony|
@@ -123,8 +123,8 @@ ActiveAdmin.register ServiceArea do
         end
         column :stared
         column '' do |testimony|
-          link_to "Edit", edit_admin_testimony_path(testimony), class: "edit_link"
-      end
+          link_to 'Edit', edit_admin_testimony_path(testimony), class: 'edit_link'
+        end
       end
     end
   end
