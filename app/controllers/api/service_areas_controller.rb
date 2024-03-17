@@ -18,6 +18,7 @@ module Api
           secondary_color: service_area.secondary_color,
           services: service_area.services.map { |service|
             {
+              id: service.id,
               slug: service.slug,
               name: service.name,
               subtitle: service.subtitle
@@ -60,6 +61,7 @@ module Api
         value_proposition: service_area.value_proposition.body.to_s,
         services: service_area.services.map { |service|
           {
+            id: service.id,
             slug: service.slug,
             name: service.name,
             subtitle: service.subtitle,
