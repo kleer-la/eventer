@@ -4,7 +4,7 @@ module Api
   class ServiceAreasController < ApplicationController
     # GET /api/service_areas
     def index
-      @service_areas = ServiceArea.where(visible: true).includes(:services)
+      @service_areas = ServiceArea.where(visible: true).order(:ordering).includes(:services)
 
       # needs the map bc the rich text.body.to_s
       render json: @service_areas.map { |service_area|

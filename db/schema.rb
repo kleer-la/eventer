@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_16_234539) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_26_184957) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -464,6 +464,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_16_234539) do
     t.string "primary_color"
     t.string "secondary_color"
     t.string "side_image"
+    t.integer "ordering"
     t.index ["slug"], name: "index_service_areas_on_slug", unique: true
   end
 

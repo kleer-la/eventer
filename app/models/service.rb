@@ -19,6 +19,10 @@ class Service < ApplicationRecord
     %w[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
   end
 
+  def self.ransackable_associations(_auth_object = nil)
+    %w[rich_text_definitions rich_text_faq rich_text_outcomes rich_text_program rich_text_target rich_text_value_proposition service_area testimonies]
+  end
+  
   def should_generate_new_friendly_id?
     slug.blank?
   end

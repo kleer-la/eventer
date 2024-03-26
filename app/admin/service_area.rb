@@ -4,7 +4,7 @@ ActiveAdmin.register ServiceArea do
   menu parent: 'Services Mgnt'
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary,
-                :side_image, :slogan, :subtitle, :description, :target, :value_proposition
+                :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering
   filter :name
 
   controller do
@@ -33,6 +33,7 @@ ActiveAdmin.register ServiceArea do
       f.input :description, as: :rich_text_area
       f.input :target, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
+      f.input :ordering
     end
 
     panel "Existing Services" do
@@ -91,6 +92,7 @@ ActiveAdmin.register ServiceArea do
       row :value_proposition do |service_area| 
         service_area.value_proposition.to_s.html_safe if service_area.value_proposition.present?
       end
+      row :ordering 
       if service_area.side_image.present?
         div 'Side Image '
         div do
