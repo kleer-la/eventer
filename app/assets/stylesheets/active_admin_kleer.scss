@@ -60,3 +60,14 @@ html .panel > h3 {
 .outcomes-list .custom-bullet::before {
   content: "\2713"; /* Unicode checkmark */
 }
+
+// For service.program & service.faq
+.inline-hints + ol ul,
+.inline-hints + ol {
+    list-style-type: disc; /* For UL */
+    padding-left: 20px; /* To ensure indentation */
+}
+
+.inline-hints + ol {
+    list-style-type: decimal; /* For OL */
+}

@@ -35,6 +35,7 @@ ActiveAdmin.register Service do
   filter :subtitle
   filter :service_area if defined?(ServiceArea) # Optional: Filter by ServiceArea if relevant
 
+  hint_colapsable = 'Copy this in a empty line to add an item:<ol><li>item title<ul><li>item content</li></ul></li></ol>'.html_safe
   form do |f|
     selected_service_area_id = params[:service_area_id] || f.object.service_area_id
 
@@ -46,10 +47,10 @@ ActiveAdmin.register Service do
       f.input :value_proposition, as: :rich_text_area
       f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
       f.input :definitions, as: :rich_text_area
-      f.input :program, as: :rich_text_area, hint: 'Numered list with one bullet element'
+      f.input :program, as: :rich_text_area, hint: hint_colapsable
       f.input :target, as: :rich_text_area
       f.input :pricing
-      f.input :faq, as: :rich_text_area
+      f.input :faq, as: :rich_text_area, hint: hint_colapsable
       f.input :brochure
     end
     f.actions
