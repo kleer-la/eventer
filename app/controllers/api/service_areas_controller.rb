@@ -14,6 +14,7 @@ module Api
           name: service_area.name,
           icon: service_area.icon,
           summary: service_area.summary.body.to_s, # Get just the content of the rich text
+          cta_message: service_area.cta_message.body.to_s,
           primary_color: service_area.primary_color,
           secondary_color: service_area.secondary_color,
           services: service_area.services.map { |service|
@@ -51,6 +52,7 @@ module Api
         name: service_area.name,
         icon: service_area.icon,
         summary: service_area.summary.body.to_s,
+        cta_message: service_area.cta_message.body.to_s,
         primary_color: service_area.primary_color,
         secondary_color: service_area.secondary_color,
         slogan: service_area.slogan.body.to_s,

@@ -3,7 +3,7 @@
 ActiveAdmin.register ServiceArea do
   menu parent: 'Services Mgnt'
 
-  permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary,
+  permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary, :cta_message,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering
   filter :name
 
@@ -25,8 +25,9 @@ ActiveAdmin.register ServiceArea do
       f.input :visible, as: :boolean
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
-      f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' } 
+      f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :summary, as: :rich_text_area
+      f.input :cta_message, as: :rich_text_area, hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
       f.input :side_image, as: :url
       f.input :slogan, as: :rich_text_area
       f.input :subtitle, as: :rich_text_area
@@ -51,6 +52,12 @@ ActiveAdmin.register ServiceArea do
   end
 
   show do
+    def rich_row(field)
+      row field do |service_area|
+        service_area.send(field).to_s.html_safe if service_area.send(field).present?
+      end
+    end
+
     attributes_table do
       row :name
       row :slug
@@ -73,25 +80,14 @@ ActiveAdmin.register ServiceArea do
         text_node service_area.secondary_color
       end
       # This will safely render the rich text content, including formatting and attachments.
-      row :summary do |service_area| 
-        service_area.summary.to_s.html_safe if service_area.summary.present?
-      end
+      rich_row :summary
+      rich_row :cta_message
       row :side_image
-      row :slogan do |service_area| 
-        service_area.slogan.to_s.html_safe if service_area.slogan.present?
-      end
-      row :subtitle do |service_area| 
-        service_area.subtitle.to_s.html_safe if service_area.subtitle.present?
-      end
-      row :description do |service_area| 
-        service_area.description.to_s.html_safe if service_area.description.present?
-      end
-      row :target do |service_area| 
-        service_area.target.to_s.html_safe if service_area.target.present?
-      end
-      row :value_proposition do |service_area| 
-        service_area.value_proposition.to_s.html_safe if service_area.value_proposition.present?
-      end
+      rich_row :slogan
+      rich_row :subtitle
+      rich_row :description
+      rich_row :target
+      rich_row :value_proposition
       row :ordering 
       if service_area.side_image.present?
         div 'Side Image '
