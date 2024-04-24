@@ -89,7 +89,7 @@ ActiveAdmin.register Service do
         service.program_list.each_with_index do |(main_item, collapsible_item), index|
           div class: "program-row" do
             span main_item, class: "main-item"
-            span "(expand)", class: "toggle-collapsible", style: "cursor: pointer;", "data-target": "collapsible-#{index}"
+            span '(+)', class: "toggle-collapsible", style: "cursor: pointer;", "data-target": "collapsible-#{index}"
             span collapsible_item, id: "collapsible-#{index}", class: "collapsible-content", style: "display: none;"
           end
         end
@@ -102,10 +102,10 @@ ActiveAdmin.register Service do
                   var target = document.getElementById(targetId);
                   if (target.style.display === "none") {
                     target.style.display = "block";
-                    this.textContent = "(collapse)";
+                    this.textContent = "(-)";
                   } else {
                     target.style.display = "none";
-                    this.textContent = "(expand)";
+                    this.textContent = "(+)";
                   }
                 });
               });
