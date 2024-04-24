@@ -105,8 +105,8 @@ def event_type_next_date_alert
     end
   end
 
+  h4 'Tipos Eventos con más de 180 días sin abiertos' unless alerts.empty?
   alerts.sort_by { |alert| -alert[0] }.each do |days_since_last_event, event_type|
-    h4 'Tipos Eventos con más de 180 días sin abiertos'
     ul ("#{link_to(event_type.name, admin_event_type_path(event_type))} " +
         "- Dias desde último abierto: #{days_since_last_event}").html_safe
   end
