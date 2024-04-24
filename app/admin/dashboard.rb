@@ -65,7 +65,7 @@ end
 
 def brochure_alert
   event_type_alert('Event Type sin brochure', 
-    EventType.where(include_in_catalog: true, deleted: false, brochure: [nil, ''])
+    EventType.where(include_in_catalog: true, deleted: false, brochure: [nil, ''], platform: :keventer)
   )
 end
 
@@ -77,14 +77,15 @@ end
 
 def event_project_code_alert
   event_type_alert(
-    'Cursos abiertos sin código projecto (Event )',
+    'Cursos abiertos sin código proyecto (Event )',
     Event.public_and_visible.where(online_cohort_codename: [nil, ''])
   )
 end
 
 def event_type_project_code_alert
-  event_type_alert('Event Type sin código projecto', 
-    EventType.where(include_in_catalog: true, tag_name: [nil, ''])
+  event_type_alert(
+    'Event Type sin código projecto',
+    EventType.where(include_in_catalog: true, tag_name: [nil, ''], platform: :keventer)
   )
 end
 
