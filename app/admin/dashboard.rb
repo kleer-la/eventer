@@ -15,6 +15,9 @@ ActiveAdmin.register_page 'Dashboard' do
           brochure_alert
           event_type_project_code_alert
         end
+        panel 'Alertas Actividad' do
+          event_type_next_date_alert
+        end
       end
       column do # left column
         panel 'Próximos cursos' do
@@ -87,6 +90,26 @@ def event_type_project_code_alert
     'Event Type sin código projecto',
     EventType.where(include_in_catalog: true, tag_name: [nil, ''], platform: :keventer)
   )
+end
+
+MAX_DAYS_WO_PUBLIC_EVENTS = 180
+def event_type_next_date_alert
+  alerts = []
+
+  EventType.where(include_in_catalog: true, platform: :keventer).each do |event_type|
+    last_event = event_type.events.public_events.maximum(:date)
+    days_since_last_event = last_event ? (Date.today - last_event.to_date).to_i : nil
+
+    if days_since_last_event && days_since_last_event > MAX_DAYS_WO_PUBLIC_EVENTS
+      alerts << [days_since_last_event, event_type ]
+    end
+  end
+
+  alerts.sort_by { |alert| -alert[0] }.each do |days_since_last_event, event_type|
+    h4 'Tipos Eventos con más de 180 días sin abiertos'
+    ul ("#{link_to(event_type.name, admin_event_type_path(event_type))} " +
+        "- Dias desde último abierto: #{days_since_last_event}").html_safe
+  end
 end
 
 def event_type_alert(message, error_list)
