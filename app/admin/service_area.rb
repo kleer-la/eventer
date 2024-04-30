@@ -4,7 +4,8 @@ ActiveAdmin.register ServiceArea do
   menu parent: 'Services Mgnt'
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary, :cta_message,
-                :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering
+                :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
+                :target_title
   filter :name
 
   controller do
@@ -32,6 +33,7 @@ ActiveAdmin.register ServiceArea do
       f.input :slogan, as: :rich_text_area
       f.input :subtitle, as: :rich_text_area
       f.input :description, as: :rich_text_area
+      f.input :target_title
       f.input :target, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
       f.input :ordering
@@ -86,6 +88,7 @@ ActiveAdmin.register ServiceArea do
       rich_row :slogan
       rich_row :subtitle
       rich_row :description
+      row :target_title
       rich_row :target
       rich_row :value_proposition
       row :ordering 

@@ -16,7 +16,7 @@ class ServiceArea < ApplicationRecord
   has_rich_text :cta_message
 
   validates_presence_of %i[
-    name summary icon slogan subtitle description side_image target
+    name summary icon slogan subtitle description side_image 
     primary_color secondary_color side_image cta_message
   ]
 

@@ -44,7 +44,7 @@ module Api
       service_area = find_area_or_service(params[:id])
       unless service_area.present?
         return render json: { error: 'ServiceArea not found' }, status: :not_found
-      end 
+      end
 
       render json: {
         id: service_area.id,
@@ -59,7 +59,8 @@ module Api
         subtitle: service_area.subtitle.body.to_s,
         description: service_area.description.body.to_s,
         side_image: service_area.side_image,
-        target: service_area.target.body.to_s,
+        target: service_area.target_title,
+        target_title: service_area.target.body.to_s,
         value_proposition: service_area.value_proposition.body.to_s,
         services: service_area.services.map { |service|
           {
