@@ -11,6 +11,9 @@ class ServiceAreasController < InheritedResources::Base
   end
 
   def service_area_params
-    params.require(:service_area).permit(:name, :abstract, :lang, :icon, :primary_color, :secondary_color, :visible, :target_title)
+    params.require(:service_area).permit(
+      :name, :abstract, :lang, :icon, :primary_color, :secondary_color, :visible, 
+      :target_title, :seo_title, :seo_description
+    )
   end
 end

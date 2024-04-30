@@ -5,7 +5,7 @@ ActiveAdmin.register ServiceArea do
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary, :cta_message,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
-                :target_title
+                :target_title, :seo_title, :seo_description
   filter :name
 
   controller do
@@ -37,6 +37,8 @@ ActiveAdmin.register ServiceArea do
       f.input :target, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
       f.input :ordering
+      f.input :seo_title
+      f.input :seo_description
     end
 
     panel "Existing Services" do
@@ -91,7 +93,9 @@ ActiveAdmin.register ServiceArea do
       row :target_title
       rich_row :target
       rich_row :value_proposition
-      row :ordering 
+      row :ordering
+      row :seo_title
+      row :seo_description
       if service_area.side_image.present?
         div 'Side Image '
         div do

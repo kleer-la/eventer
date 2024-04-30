@@ -62,6 +62,8 @@ module Api
         target: service_area.target_title,
         target_title: service_area.target.body.to_s,
         value_proposition: service_area.value_proposition.body.to_s,
+        seo_title: service_area.seo_title,
+        seo_description: service_area.seo_description,
         services: service_area.services.map { |service|
           {
             id: service.id,

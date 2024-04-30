@@ -13,5 +13,7 @@ FactoryBot.define do
     target          { 'target' }
     primary_color   { '#FF0080' }
     secondary_color { '#FF8080' }
+    seo_title       { 'seo title' }
+    seo_description { 'seo description' }
   end
 end
