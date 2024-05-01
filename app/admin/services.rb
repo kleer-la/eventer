@@ -6,7 +6,7 @@ ActiveAdmin.register Service do
   #
   # Uncomment all parameters which should be permitted for assignment
   #
-  permit_params %i[created_at id name service_area_id subtitle updated_at value_proposition
+  permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
                   outcomes program target faq definitions pricing brochure]
 
   # or

@@ -16,7 +16,7 @@ class Service < ApplicationRecord
   validates_presence_of %i[name subtitle value_proposition outcomes program target]
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[created_at id name service_area_id subtitle updated_at value_proposition outcomes program target faq]
+    %w[created_at id name slug service_area_id subtitle updated_at value_proposition outcomes program target faq]
   end
 
   def self.ransackable_associations(_auth_object = nil)
