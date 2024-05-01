@@ -8,6 +8,7 @@ FactoryBot.define do
     outcomes          { '<ul><li>one</li></ul>' }
     program           { '<ol><ul><li>one</li></ul></ol>' }
     target            { 'Default target' }
+    side_image        { 'https://exampe.com/side.png' }
     service_area
   end
 end

@@ -17,7 +17,7 @@ class ServiceArea < ApplicationRecord
 
   validates_presence_of %i[
     name summary icon slogan subtitle description side_image
-    primary_color secondary_color side_image cta_message
+    primary_color secondary_color cta_message
     seo_title seo_description
   ]
 

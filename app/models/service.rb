@@ -13,7 +13,7 @@ class Service < ApplicationRecord
   has_rich_text :target
   has_rich_text :faq
 
-  validates_presence_of %i[name subtitle value_proposition outcomes program target]
+  validates_presence_of %i[name subtitle value_proposition outcomes program target side_image]
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at id name slug service_area_id subtitle updated_at value_proposition outcomes program target faq]

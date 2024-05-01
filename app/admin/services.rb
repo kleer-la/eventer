@@ -7,7 +7,7 @@ ActiveAdmin.register Service do
   # Uncomment all parameters which should be permitted for assignment
   #
   permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
-                  outcomes program target faq definitions pricing brochure]
+                  outcomes program target faq definitions pricing brochure side_image]
 
   # or
   #
@@ -49,6 +49,7 @@ ActiveAdmin.register Service do
       f.input :definitions, as: :rich_text_area
       f.input :program, as: :rich_text_area, hint: hint_colapsable
       f.input :target, as: :rich_text_area
+      f.input :side_image, as: :url
       f.input :pricing
       f.input :faq, as: :rich_text_area, hint: hint_colapsable
       f.input :brochure
@@ -62,12 +63,19 @@ ActiveAdmin.register Service do
       row :name
       row :slug
       row :subtitle
+      row :side_image
       row :pricing
       row :value_proposition do |service| 
         service.value_proposition.to_s.html_safe if service.value_proposition.present?
       end
       row :definitions do |service| 
         service.definitions.to_s.html_safe if service.definitions.present?
+      end
+      if service.side_image.present?
+        div 'Side Image '
+        div do
+          image_tag service.side_image
+        end
       end
 
       panel 'Outcomes List' do
