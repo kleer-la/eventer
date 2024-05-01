@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+MAX_DAYS_WO_PUBLIC_EVENTS = 180
+
 ActiveAdmin.register_page 'Dashboard' do
   menu priority: 1, label: 'Dashboard'
 
@@ -92,7 +94,6 @@ def event_type_project_code_alert
   )
 end
 
-MAX_DAYS_WO_PUBLIC_EVENTS = 180
 def event_type_next_date_alert
   alerts = []
 
