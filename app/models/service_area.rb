@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ServiceArea < ApplicationRecord
+  before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: :slugged
 
@@ -36,5 +37,11 @@ class ServiceArea < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     %w[services]
+  end
+
+  private
+
+  def strip_slug
+    slug.strip! if slug.present?
   end
 end

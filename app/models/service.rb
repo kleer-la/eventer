@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Service < ApplicationRecord
+  before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: :slugged
   belongs_to :service_area
@@ -53,5 +54,9 @@ class Service < ApplicationRecord
       collapsible_items = li.css('ul > li').map(&:text).map(&:strip)
       [main_item, collapsible_items[0]]
     end
+  end
+
+  def strip_slug
+    slug.strip! if slug.present?
   end
 end

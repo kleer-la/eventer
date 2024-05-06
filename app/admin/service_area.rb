@@ -10,7 +10,7 @@ ActiveAdmin.register ServiceArea do
 
   controller do
     def find_resource
-      scoped_collection.friendly.find(params[:id])
+      scoped_collection.friendly.find(params[:id].strip)
     end
   end
 
