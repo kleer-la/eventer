@@ -17,7 +17,7 @@ module Api
           cta_message: service_area.cta_message.body.to_s,
           primary_color: service_area.primary_color,
           secondary_color: service_area.secondary_color,
-          services: service_area.services.map { |service|
+          services: service_area.services.order(:ordering).map { |service|
             {
               id: service.id,
               slug: service.slug,
@@ -64,7 +64,7 @@ module Api
         value_proposition: service_area.value_proposition.body.to_s,
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
-        services: service_area.services.map { |service|
+        services: service_area.services.order(:ordering).map { |service|
           {
             id: service.id,
             slug: service.slug,

@@ -7,7 +7,7 @@ ActiveAdmin.register Service do
   # Uncomment all parameters which should be permitted for assignment
   #
   permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
-                  outcomes program target faq definitions pricing brochure side_image]
+                  outcomes program target faq definitions pricing brochure side_image ordering]
 
   # or
   #
@@ -27,6 +27,7 @@ ActiveAdmin.register Service do
     id_column
     column :name
     column :subtitle
+    column :ordering
     column :service_area if defined?(ServiceArea) # Optional: Display associated ServiceArea if relevant
     actions
   end
@@ -43,6 +44,7 @@ ActiveAdmin.register Service do
       f.input :service_area, as: :select, collection: ServiceArea.all.map{ |sa| [sa.name, sa.id] }, selected: selected_service_area_id
       f.input :name
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
+      f.input :ordering
       f.input :subtitle, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
       f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
@@ -62,6 +64,7 @@ ActiveAdmin.register Service do
       row :service_area if service.service_area # Optional: Show ServiceArea if relevant
       row :name
       row :slug
+      row :ordering
       row :subtitle
       row :side_image
       row :pricing

@@ -18,6 +18,17 @@ ActiveAdmin.register ServiceArea do
     link_to 'New Service', new_admin_service_path(service_area_id: resource.id)
   end
 
+  index do
+    selectable_column
+    id_column
+    column :name
+    column :subtitle
+    column :slug
+    column :ordering
+    column :visible
+    actions
+  end
+
   form do |f|
     f.semantic_errors # Shows errors on :base
     f.inputs 'ServiceArea Details' do
@@ -104,11 +115,12 @@ ActiveAdmin.register ServiceArea do
       end
     end
     panel 'Services' do 
-      table_for service_area.services do
+      table_for service_area.services.order(:ordering) do
         column :name do |service|
           link_to service.name, admin_service_path(service)
         end
         column :subtitle
+        column :ordering
       end
     end
     panel 'Testimonies' do
