@@ -73,7 +73,7 @@ module Api
             subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
             value_proposition: service.value_proposition.body.to_s,
             outcomes: service.outcomes_list,
-            definitions: service.definitions.body.to_s,
+            definitions: content_or_nil(service.definitions),
             program: service.program_list,
             target: service.target.body.to_s,
             pricing: service.pricing,
@@ -86,6 +86,10 @@ module Api
     end
 
     private
+
+    def content_or_nil(active_text)
+      active_text.blank? ? nil : active_text.body.to_s
+    end
 
     def find_area_or_service(slug)
       begin
