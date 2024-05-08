@@ -3,7 +3,7 @@
 class Service < ApplicationRecord
   before_save :strip_slug
   extend FriendlyId
-  friendly_id :name, use: :slugged
+  friendly_id :name, use: [:slugged, :history]
   belongs_to :service_area
   has_many :testimonies
 

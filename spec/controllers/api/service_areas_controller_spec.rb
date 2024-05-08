@@ -26,15 +26,64 @@ describe Api::ServiceAreasController do
       json_response = JSON.parse(response.body)
       expect(json_response['slug']).to eq(service_area.slug)
     end
-  end
-  # describe "GET 'Articles' (/api/articles.<format>)" do
-  #   it 'Articles list w/o body' do
-  #     ar = FactoryBot.create(:article)
+    describe 'Redirect' do
+      before do
+        @service_area = FactoryBot.create(:service_area)
+        @service = FactoryBot.create(:service, service_area: @service_area)
+      end
 
-  #     get :index, params: {  format: 'json' }
-  #     expect(response).to have_http_status(:ok)
-  #     json_response = JSON.parse(response.body)
-  #     expect(json_response).not_to include('body')
-  #   end
-  # end
+      it 'No slug changed (by ServiceArea)' do
+        get :show, params: { id: @service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['slug_old']).to be nil
+        expect(json_response['services'][0]['slug_old']).to be nil
+      end
+      it 'No slug changed (by Service)' do
+        get :show, params: { id: @service.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['slug_old']).to be nil
+        expect(json_response['services'][0]['slug_old']).to be nil
+      end
+      it 'ServiceArea slug changed (by ServiceArea)' do
+        old_slug = @service_area.slug
+        @service_area.slug = 'new-slug'
+        @service_area.save
+
+        get :show, params: { id: old_slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['slug_old']).to eq old_slug
+        expect(json_response['services'][0]['slug_old']).to be nil
+      end
+      it 'ServiceArea slug changed (by Service)' do
+        old_slug = @service_area.slug
+        @service_area.slug = 'new-slug'
+        @service_area.save
+
+        get :show, params: { id: @service.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['slug_old']).to eq nil
+        expect(json_response['services'][0]['slug_old']).to be nil
+      end
+      it 'Service slug changed (by ServiceArea)' do
+        old_slug = @service.slug
+        @service.slug = 'new-slug'
+        @service.save
+
+        get :show, params: { id: @service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['slug_old']).to eq nil
+        expect(json_response['services'][0]['slug_old']).to be nil
+      end
+      it 'Service slug changed (by Service)' do
+        old_slug = @service.slug
+        @service.slug = 'new-slug'
+        @service.save
+
+        get :show, params: { id: old_slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['slug_old']).to eq nil
+        expect(json_response['services'][0]['slug_old']).to eq old_slug
+      end
+    end
+  end
 end

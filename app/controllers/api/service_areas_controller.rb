@@ -41,14 +41,14 @@ module Api
 
     # GET /api/service_areas/:id
     def show
-      service_area = find_area_or_service(params[:id])
-      unless service_area.present?
-        return render json: { error: 'ServiceArea not found' }, status: :not_found
-      end
+      req_slug = params[:id]
+      service_area, service_area_chg, service_chg = find_area_or_service(req_slug)
+      return render(json: { error: 'ServiceArea not found' }, status: :not_found) unless service_area.present?
 
       render json: {
         id: service_area.id,
         slug: service_area.slug,
+        slug_old: service_area_chg,
         name: service_area.name,
         icon: service_area.icon,
         summary: service_area.summary.body.to_s,
@@ -68,6 +68,7 @@ module Api
           {
             id: service.id,
             slug: service.slug,
+            slug_old: service_chg.nil? || service.slug != service_chg ? nil : req_slug ,
             name: service.name,
             subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
             value_proposition: service.value_proposition.body.to_s,
@@ -87,13 +88,16 @@ module Api
     private
 
     def find_area_or_service(slug)
-      ServiceArea.friendly.find(slug)
-    rescue ActiveRecord::RecordNotFound
       begin
-        service = Service.friendly.find(slug)
-        service.service_area if service.present?
+        service_area = ServiceArea.friendly.find(slug)
+        [service_area, service_area.slug != slug ? slug : nil, nil]
       rescue ActiveRecord::RecordNotFound
-        nil # If neither ServiceArea nor Service is found, return nil
+        begin
+          service = Service.friendly.find(slug)
+          [service.service_area, nil, service.slug != slug ? service.slug : nil]
+        rescue ActiveRecord::RecordNotFound
+          [nil, nil, nil] # If neither ServiceArea nor Service is found
+        end
       end
     end
   end
