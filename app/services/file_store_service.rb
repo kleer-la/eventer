@@ -4,17 +4,19 @@ require 'aws-sdk-s3'
 require 'ostruct'
 
 class FileStoreService
+  @current = nil
+
   def self.create_null(exists: {})
-    @@current = FileStoreService.new NullFileStore.new(exists: exists)
+    @current = FileStoreService.new NullFileStore.new(exists: exists)
   end
 
   def self.create_s3
-    @@current = FileStoreService.new S3FileStore.new
+    @current = FileStoreService.new S3FileStore.new
   end
 
   def self.current
-    self.create_s3 unless defined? @@current
-    @@current
+    create_s3 if @current.nil?
+    @current
   end
 
   def self.image_location(image_type)
