@@ -7,9 +7,17 @@ describe Category do
     @category = FactoryBot.build(:category)
   end
 
-  it 'HABTM event_types' do
-    expect((Category.has_and_belongs_to_many :event_types).name).to eq :event_types
+  it 'can have many event types' do
+    category = Category.create(name: 'Music')
+    event_type1 = EventType.create(name: 'Concert')
+    event_type2 = EventType.create(name: 'Festival')
+
+    category.event_types << event_type1
+    category.event_types << event_type2
+
+    expect(category.event_types).to include(event_type1, event_type2)
   end
+
 
   it 'should be valid' do
     expect(@category.valid?).to be true

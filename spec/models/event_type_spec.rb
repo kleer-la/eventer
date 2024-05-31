@@ -10,9 +10,19 @@ describe EventType do
   it 'HABTM trainers' do
     expect(@event_type.trainers[0].name).to eq 'Juan Alberto'
   end
-  it 'HABTM categories' do
+  it 'can belong to no categories' do
     expect(@event_type.categories).to eq []
   end
+  it 'can belong to many categories' do
+    event_type = EventType.create(name: 'Concert')
+    category1 = Category.create(name: 'Music')
+    category2 = Category.create(name: 'Live Events')
+
+    event_type.categories << category1
+    event_type.categories << category2
+
+    expect(event_type.categories).to include(category1, category2)
+  end  
 
   it 'should be valid' do
     expect(@event_type.valid?).to be true
@@ -169,7 +179,6 @@ describe EventType do
       expect(et.brochure).to eq 'beta'
     end
   end
-
   context 'coupons' do
     it 'has a valid many-to-many relation with EventTypes' do
       event_type = FactoryBot.create(:event_type)
