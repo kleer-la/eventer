@@ -78,9 +78,6 @@ gem 'valid_email'
 # from git to solve ActionView::Base.new parameters 
 gem 'best_in_place', git: 'https://github.com/bernat/best_in_place'   # for editing participants
 
-# Amazon AWS API Client
-gem 'aws-sdk', '~> 3'
-
 # App Monitoring Heroku Plug-In
 gem 'newrelic_rpm'
 
@@ -107,3 +104,5 @@ gem 'sprockets-rails'
 
 gem 'activeadmin'
 gem 'activeadmin_addons'
+
+gem 'aws-sdk-s3', '~> 1.0'

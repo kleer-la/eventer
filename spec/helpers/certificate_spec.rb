@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'aws-sdk'
+require 'aws-sdk-s3'
 
 class PrawnMock
   attr_reader :history
