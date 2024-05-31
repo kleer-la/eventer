@@ -59,6 +59,8 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
+  config.logger = Logger.new('log/development.log', 10, 50.megabytes)
+
   # # Do not fallback to assets pipeline if a precompiled asset is missed.
   # config.assets.compile = true
 

@@ -6,6 +6,7 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   config.log_level = :debug
+  config.logger = Logger.new('log/development.log', 5, 80.megabytes)
   # Settings specified here will take precedence over those in config/application.rb.
 
   # While tests run files are not watched, reloading is not necessary.

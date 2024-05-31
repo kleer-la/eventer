@@ -22,7 +22,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'simplecov'
   gem 'simplecov-lcov', '~> 0.8.0'
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1'
 end
 
 group :test do
