@@ -6,14 +6,13 @@ ruby '~> 3.3'
 gem 'rails', '~> 7.1'
 
 group :development do
+  gem 'brakeman'
+  gem 'debug', '>= 1.0.0'
+  gem 'derailed_benchmarks'
   gem 'listen'
   gem 'rubocop'
-  gem 'brakeman'
-  gem 'derailed_benchmarks'
-  gem 'stackprof'
   gem 'solargraph'
-  # Ruby/debug
-  gem 'debug', '>= 1.0.0'
+  gem 'stackprof'
 end
 
 group :development, :test do
@@ -21,9 +20,9 @@ group :development, :test do
   gem 'pdf-inspector', require: 'pdf/inspector'
   gem 'rspec-mocks'
   gem 'rspec-rails'
-  gem 'sqlite3'
   gem 'simplecov'
   gem 'simplecov-lcov', '~> 0.8.0'
+  gem 'sqlite3'
 end
 
 group :test do
