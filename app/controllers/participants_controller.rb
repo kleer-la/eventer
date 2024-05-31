@@ -302,11 +302,9 @@ class ParticipantsController < ApplicationController
 
     error_msg = certificate_validate
     (return certificate_error(error_msg)) if error_msg.present?
-
-    @certificate_store = FileStoreService.create_s3
+    @certificate_store = FileStoreService.current
     render_certificate
   end
-
 
   def batch_load
     success_loads, errored_loads, errored_lines = Participant.batch_load(

@@ -231,6 +231,7 @@ describe ParticipantsController do
     end
     describe 'certificate' do
       before(:each) do
+        FileStoreService.create_null
         @participant.attend!
         @participant.save!
       end

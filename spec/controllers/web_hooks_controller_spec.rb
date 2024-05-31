@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe WebHooksController do # slow: true
+describe WebHooksController, slow: true do 
   describe "GET 'index' (/api/events.<format>)" do
     it 'returns http success' do
       get :index
