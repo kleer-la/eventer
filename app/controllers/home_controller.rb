@@ -178,15 +178,6 @@ class HomeController < ApplicationController
     end
   end
 
-  #TODO remove
-  def show_event_type_trainers
-    @event_type = EventType.find(params[:id])
-
-    respond_to do |format|
-      format.xml { render xml: @event_type.trainers }
-    end
-  end
-
   # json used in v2022 landing
   def event_type_to_json(event_type)
     et = event_type.to_json(
