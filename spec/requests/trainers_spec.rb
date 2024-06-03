@@ -2,21 +2,21 @@
 
 require 'rails_helper'
 
-describe 'API Trainers GET /trainers' do
-  context 'trainer list in XML' do
+describe 'API Trainers GET /kleerers' do
+  context 'trainer list in JSON' do
     before(:example) do
       FactoryBot.create(:trainer, is_kleerer: true)
-      event_url = '/api/kleerers.xml'
+      event_url = '/api/kleerers.json'
       get event_url
-      @parsed = Nokogiri::XML(response.body)
     end
-    it 'XML?' do
+
+    it 'JSON?' do
       expect(response.status).to eq 200
-      expect(response.body).to start_with('<?xml')
+      expect(response.content_type).to eq 'application/json; charset=utf-8'
     end
 
     it 'one trainer' do
-      expect(@parsed.xpath('//trainers/trainer').count).to eq 1
+      expect(JSON.parse(response.body).count).to eq 1
     end
   end
 end

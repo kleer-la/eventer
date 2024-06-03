@@ -157,7 +157,6 @@ class HomeController < ApplicationController
     @trainers = Trainer.order('country_id', 'name')
     respond_to do |format|
       format.html
-      format.xml { render xml: @trainers.to_xml(include: :country) }
       format.json { render json: @trainers }
     end
   end
@@ -165,7 +164,6 @@ class HomeController < ApplicationController
   def kleerers
     @trainers = Trainer.kleerer.order('country_id', 'name')
     respond_to do |format|
-      format.xml { render xml: @trainers.to_xml(include: :country) }
       format.json { render json: @trainers }
     end
   end

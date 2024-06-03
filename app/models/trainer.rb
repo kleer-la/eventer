@@ -30,10 +30,6 @@ class Trainer < ApplicationRecord
     "http://www.gravatar.com/avatar/#{hash}"
   end
 
-  def to_xml(options)
-    super(options.merge(methods: :gravatar_picture_url))
-  end
-
   def self.ransackable_attributes(auth_object = nil)
     ["average_rating", "bio", "bio_en", "country_id", "created_at", "deleted", "gravatar_email", "id", "id_value", "is_kleerer", "landing", "linkedin_url", "name", "net_promoter_score", "promoter_count", "signature_credentials", "signature_image", "surveyed_count", "tag_name", "twitter_username", "updated_at"]
   end  
