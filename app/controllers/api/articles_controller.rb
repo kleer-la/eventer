@@ -16,7 +16,7 @@ class Api::ArticlesController < ApplicationController
 
   # GET /articles/1
   def show
-    @article = Article.find(params[:id])
+    @article = Article.friendly.find(params[:id].downcase)
     respond_to do |format|
       format.json { render json: @article, 
         methods: [:category_name],
