@@ -21,18 +21,30 @@ Rails.application.routes.draw do
             :resources,
             :news,
             :coupons
+
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
     end
     resources :service_areas, only: %i[index show]
+    resources :articles, only: %i[index show]
     get 'news'
     get 'event_types', to: 'event_types#index'
     get 'event_types/:id' => 'event_types#show'
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
-    get 'articles', to: 'articles#index'
-    get 'articles/:id', to: 'articles#show'
   end
+  get 'api/events' => 'home#index'
+  get 'api/trainers' => 'home#trainers'
+  get 'api/kleerers' => 'home#kleerers'
+  get 'api/community_events' => 'home#index_community' #TODO: should deprecate (used in website?)
+  get 'api/events/:id' => 'home#show' #TODO: should deprecate (used in website?)
+  get 'api/events/event_types/:id' => 'home#event_by_event_type' #TODO: should deprecate (used in website?)
+  get 'api/categories' => 'home#categories'
+  get 'api/catalog' => 'home#catalog'
+  post 'api/contact_us' => 'home#contact_us'
+
+  get 'api/2/participants/synch' => 'api#participants_synch'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -54,7 +66,7 @@ Rails.application.routes.draw do
   resources :event_types do
     get 'certificate_preview', on: :member
     get 'participants', on: :member
-  end  
+  end
   get 'event_types/:id/testimonies', to: 'event_types#testimonies'
   get 'event_types/filter/:lang/active/:active/dur/:duration/ic/:indexcanonical' => 'event_types#index'
   get 'event_types/:id/events' => 'event_types#events'
@@ -91,21 +103,6 @@ Rails.application.routes.draw do
   get 'dashboard/:country_iso' => 'dashboard#index'
   get 'dashboard/pricing/:country_iso' => 'dashboard#pricing'
 
-  get 'api/events' => 'home#index'
-  get 'api/trainers' => 'home#trainers'
-  get 'api/kleerers' => 'home#kleerers'
-  get 'api/community_events' => 'home#index_community'
-  get 'api/events/:id' => 'home#show'
-  get 'api/events/event_types/:id' => 'home#event_by_event_type'
-  # get 'api/event_types' => 'home#event_type_index'
-  # get 'api/event_types/:id' => 'home#event_type_show'
-  # get 'api/event_types/:id/testimonies' => 'home#show_event_type_testimonies'
-  get 'api/categories' => 'home#categories'
-  get 'api/catalog' => 'home#catalog'
-  post 'api/contact_us' => 'home#contact_us'
-  
-  get 'api/2/participants/synch' => 'api#participants_synch'
-  
   get 'events/update_trainer_select/:id' => 'ajax#events_update_trainer_select'
   get 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
   get 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'
