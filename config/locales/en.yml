@@ -196,7 +196,7 @@ en:
         currency_iso_code: "Moneda"
         custom_prices_email_text: "Precios para e-mail de registro"
         monitor_email: "Notificación de nuevos registros a"
-        specific_conditions: "Condiciones Especeificas del evento"
+        specific_conditions: "Condiciones Especificas del evento"
         should_welcome_email: "Enviar e-mail de bienvenida a nuevos registrados?"
         show_pricing: "Exponer precios"
         should_ask_for_referer_code: "Solicitar código de descuento a nuevos registrados?"
