@@ -53,7 +53,7 @@ class Api::EventTypesController < ApplicationController
         next_events: {
           only: %i[
             id date place city country_id list_price eb_price eb_end_date registration_link mode
-            specific_conditions
+            specific_conditions banner_text banner_type
             is_sold_out duration start_time end_time time_zone_name currency_iso_code address finish_date
           ],
           methods: %i[trainers coupons]
