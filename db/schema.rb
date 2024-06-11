@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_07_105433) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_11_224233) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -285,7 +285,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_105433) do
     t.integer "trainer3_id"
     t.boolean "mailchimp_workflow"
     t.string "mailchimp_workflow_call"
-    t.string "banner_text"
+    t.text "banner_text"
     t.string "banner_type"
     t.date "registration_ends"
     t.text "cancellation_policy"
