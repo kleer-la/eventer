@@ -261,11 +261,11 @@ es:
         custom_prices_email_text: "Dejar en blanco para que el e-mail de bienvenida contenga información de precio de lista, early bird y descuentos para 2 y 3+ personas (si corresponde)"
         monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco notificar a entrenamos@kleer.la."
         specific_subtitle: "Un texto que aparecerá en la agenda y como un subtítulo adiconal, particular al evento."
-        specific_conditions: "Condiciones específicas de este evento. Como por ejemplo: promociones, horarios especiales, ejecución desagregada, etc. En blanco, si no tiene."
+        specific_conditions: "Se muestra como popup sobre la fecha en agenda. Sugerencia: días y horarios especiales. En blanco, si no tiene."
         extra_script: "script de Pixel de Facebook"
         mailchimp_workflow_call: "Este valor se obtiene al crear un nuevo Workflow para el registro en Mailchimp"
         mailchimp_workflow_for_warmup_call: "Este valor se obtiene al crear un nuevo Workflow para el warmup en Mailchimp"
-        banner_text: "Leyenda que quisieras que aparezca resaltada antes de la descripción del evento."
+        banner_text: "Texto que se muestra en la landing del curso bajo la imagen de la derecha. Ejemplo: días y horarios, paricularidades de eventos preseciales."
         cancellation_policy: "Si el tipo de evento tiene una política de cancelación definida, puedes cargarla aquí haciendo click en el botón siguiente. De lo contrario, puedes usar la que necesites."
       participant:
         phone_old: "Una persona de Kleer se contactará a este teléfono para continuar con tu inscripción."
