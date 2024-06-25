@@ -59,6 +59,7 @@
             .row-fluid
               = f.input :authors, as: :check_boxes, collection: Trainer.sorted, input_html: { multiple: true,  required: false}, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
               = f.input :translators, as: :check_boxes, collection: Trainer.sorted, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
+              = f.input :illustrators, as: :check_boxes, collection: Trainer.sorted, wrapper_html: { class: 'box-content', style: "column-count: 2;column-gap: 2rem;list-style: none;"}
             .row-fuid
               .span12
                 %hr.hr-normal

@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     end
     resources :service_areas, only: %i[index show]
     resources :articles, only: %i[index show]
+    resources :resources, only: %i[index]
     get 'news'
     get 'event_types', to: 'event_types#index'
     get 'event_types/:id' => 'event_types#show'

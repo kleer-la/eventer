@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_11_224233) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_25_223352) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -310,6 +310,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_224233) do
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
+  create_table "illustrations", force: :cascade do |t|
+    t.integer "resource_id", null: false
+    t.integer "trainer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id"], name: "index_illustrations_on_resource_id"
+    t.index ["trainer_id"], name: "index_illustrations_on_trainer_id"
+  end
+
   create_table "influence_zones", force: :cascade do |t|
     t.string "zone_name"
     t.string "tag_name"
@@ -561,6 +570,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_224233) do
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
   add_foreign_key "event_types", "event_types", column: "canonical_id"
+  add_foreign_key "illustrations", "resources"
+  add_foreign_key "illustrations", "trainers"
   add_foreign_key "resources", "categories", column: "categories_id"
   add_foreign_key "resources", "trainers", column: "trainers_id"
   add_foreign_key "services", "service_areas"

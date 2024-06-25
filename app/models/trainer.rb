@@ -15,6 +15,8 @@ class Trainer < ApplicationRecord
   has_many :resources, through: :authorships
   has_many :translations
   has_many :translators, through: :translations, source: :resource
+  has_many :illustrations
+  has_many :illustrators, through: :illustrations, source: :resource
 
   has_and_belongs_to_many :news
 
