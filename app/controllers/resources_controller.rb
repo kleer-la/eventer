@@ -6,17 +6,6 @@ class ResourcesController < ApplicationController
   # GET /resources
   def index
     @resources = Resource.order(created_at: :desc)
-    respond_to do |format|
-      format.html
-      format.json do #TODO deprecated
-        render json: @resources.order(created_at: :desc),
-               methods: %i[category_name],
-               include: { 
-                  authors: { only: [:name, :landing]},
-                  translators: { only: [:name, :landing] },
-                 }
-      end
-    end
   end
 
   # # GET /resources/1

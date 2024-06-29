@@ -9,31 +9,6 @@ RSpec.describe '/resources', type: :request do
       get resources_url
       expect(response).to be_successful
     end
-    # it 'articles has trainer json ' do
-    #   article = FactoryBot.create(:article)
-    #   trainer = FactoryBot.create(:trainer, name: 'Luke')
-    #   article.trainers << trainer
-    #   get articles_url, params: { format: 'json' }
-
-    #   article_json = @response.parsed_body
-    #   expect(article_json[0]['trainers'].count).to be 1
-    #   expect(article_json[0]['trainers'][0]['name']).to eq 'Luke'
-    # end
-  #   it 'articles has category json ' do
-  #     article = FactoryBot.create(:article, category: FactoryBot.create(:category, name: 'Republic'))
-  #     get articles_url, params: { format: 'json' }
-
-  #     article_json = @response.parsed_body
-  #     expect(article_json[0]['category_id']).to be article.category.id
-  #     expect(article_json[0]['category_name']).to eq 'Republic'
-  #   end
-    it 'has title_es json ' do
-      FactoryBot.create(:resource, title_es: 'some text')
-      get resources_url, params: { format: 'json' }
-
-      json = @response.parsed_body
-      expect(json[0]['title_es']).to eq 'some text'
-    end
   end
 
   # describe 'GET /show' do
