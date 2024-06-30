@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_25_223352) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_30_204235) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -189,6 +189,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_25_223352) do
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "episodes", force: :cascade do |t|
+    t.integer "podcast_id"
+    t.integer "season"
+    t.integer "episode"
+    t.string "title"
+    t.string "youtube_url"
+    t.string "spotify_url"
+    t.string "thumbnail_url"
+    t.date "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["podcast_id"], name: "index_episodes_on_podcast_id"
   end
 
   create_table "event_types", force: :cascade do |t|
@@ -404,6 +418,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_25_223352) do
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
 
+  create_table "podcasts", force: :cascade do |t|
+    t.string "title"
+    t.string "youtube_url"
+    t.string "spotify_url"
+    t.string "thumbnail_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "ratings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "global_nps"
@@ -569,6 +592,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_25_223352) do
   add_foreign_key "articles", "categories"
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
+  add_foreign_key "episodes", "podcasts"
   add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"

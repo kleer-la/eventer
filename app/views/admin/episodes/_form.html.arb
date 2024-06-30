@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+active_admin_form_for Episode.new(podcast: podcast), url: admin_episodes_path do |f|
+  f.inputs do
+    f.input :podcast_id, as: :hidden, input_html: { value: podcast.id }
+    f.input :season
+    f.input :episode
+    f.input :title
+    f.input :description, as: :rich_text_area
+    f.input :youtube_url
+    f.input :spotify_url
+    f.input :thumbnail_url
+    f.input :published_at, as: :datepicker
+  end
+  f.actions
+end

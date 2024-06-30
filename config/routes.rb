@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
+      resources :podcasts, only: [:index]
     end
     resources :service_areas, only: %i[index show]
     resources :articles, only: %i[index show]
