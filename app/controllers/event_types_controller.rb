@@ -53,7 +53,6 @@ class EventTypesController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @event_types }
-      format.xml { render xml: @event_types.to_xml({ include: :categories }) }
     end
   end
 
@@ -65,7 +64,6 @@ class EventTypesController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @event_type }
-      format.xml { render xml: @event_type.to_xml(methods: [:canonical_slug]) }
     end
   end
 
@@ -225,14 +223,14 @@ class EventTypesController < ApplicationController
         if @certificate_values[:certificate_kleer_cert] == '1'
           @event.event_type.is_kleer_certification = true
           @participant.certify!
-         end
+        end
         @event.city = @certificate_values[:certificate_city]
         @participant.fname = @certificate_values[:certificate_name]
         begin
-          I18n.with_locale(@participant.event.event_type.lang) {
+          I18n.with_locale(@participant.event.event_type.lang) do
             @certificate = ParticipantsHelper::Certificate.new(@participant)
             render
-          }
+          end
         rescue Aws::Errors::MissingCredentialsError
           flash.now[:error] = 'Missing AWS credentials - call support'
           return redirect_to event_types_url

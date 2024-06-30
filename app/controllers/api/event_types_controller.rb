@@ -7,7 +7,6 @@ class Api::EventTypesController < ApplicationController
     end.sort_by(&:date)
     respond_to do |format|
       format.html
-      format.xml { render xml: @events.to_xml(include: event_data_to_include, methods: [:human_date]) }
       format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date]) }
     end
   end
@@ -19,7 +18,6 @@ class Api::EventTypesController < ApplicationController
 
     respond_to do |format|
       format.json { render json: event_type_to_json(@event_type) }
-      format.xml { render xml: @event_type.to_xml(methods: %i[slug canonical_slug], include: :categories) }
     end
   end
 
@@ -30,7 +28,6 @@ class Api::EventTypesController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @event_types }
-      format.xml { render xml: @event_types.to_xml({ include: :categories }) }
     end
   end
 
@@ -75,5 +72,4 @@ class Api::EventTypesController < ApplicationController
       categories: {}
     }
   end
-
 end
