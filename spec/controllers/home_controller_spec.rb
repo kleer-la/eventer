@@ -4,41 +4,35 @@ require 'rails_helper'
 
 describe HomeController do
   describe "GET 'index' (/api/events.<format>)" do  
-    pending "add some examples for json to (or delete) #{__FILE__}"
-    # it 'returns http success' do
-    #   get :index, params: { format: 'xml' }
-    #   expect(response).to be_successful
-    # end
-    # it 'returns events' do
-    #   event = FactoryBot.create(:event)
-    #   get :index, params: { format: 'xml' }
-    #   expect(assigns(:events)).to eq [event]
-    # end
-    # it 'returns non draft events' do
-    #   FactoryBot.create(:event, place: 'here')
-    #   FactoryBot.create(:event, place: 'there', draft: true)
-    #   get :index, params: { format: 'xml' }
-    #   expect(assigns(:events).map(&:place)).to eq ['here']
-    # end
+    it 'returns http success' do
+      get :index, params: { format: 'json' }
+      expect(response).to be_successful
+    end
+    it 'returns events' do
+      FactoryBot.create(:event, currency_iso_code: 'USD')
+      get :index, params: { format: 'json' }
+      json_response = JSON.parse(response.body)
+      expect(json_response.count).to eq 1
+      expect(json_response[0]['currency_iso_code']).to eq 'USD'
+    end
+    it 'dont returns draft events' do
+      FactoryBot.create(:event, place: 'here')
+      FactoryBot.create(:event, place: 'there', draft: true)
+      get :index, params: { format: 'json' }
+      json_response = JSON.parse(response.body)
+      expect(json_response.count).to eq 1
+      expect(json_response[0]['place']).to eq 'here'
+    end
   end
 
+  #TODO is it used?
   describe "GET 'show' (/api/events.<format>)" do
-    pending "add some examples for json to (or delete) #{__FILE__}"
-    # it 'fetch a course' do
-    #   event = FactoryBot.create(:event)
-    #   get :show, params: { id: event.to_param, format: 'xml' }
-    #   expect(assigns(:event)).to eq event
-    # end
-    # it 'illegal course not found' do
-    #   expect do
-    #     get :show, params: { id: 1 }
-    #   end.to raise_error(ActiveRecord::RecordNotFound)
-    # end
-    # it 'draft course found' do
-    #   event = FactoryBot.create(:event, draft: false)
-    #   get :show, params: { id: event.to_param, format: 'xml' }
-    #   expect(assigns(:event)).to eq event
-    # end
+    it 'fetch a course' do
+      event = FactoryBot.create(:event, place: 'here')
+      get :show, params: { id: event.to_param, format: 'json' }
+      json_response = JSON.parse(response.body)
+      expect(json_response['place']).to eq 'here'
+    end
   end
 
   describe 'contact us' do
@@ -47,7 +41,8 @@ describe HomeController do
         expect(HomeController.valid_name?(name)).to be true
       end
     end
-    [ ['', 'empty'],
+    [
+      ['', 'empty'],
       ['skyreveryLiz', 'uppercase not first char'],
       ['FjqDTZHrLzJWQ ', 'internal uppercase'],
       ["HeyaMr...: ) the passive income it's 999eu a day C'mon -", 'too long'],
@@ -61,7 +56,8 @@ describe HomeController do
         expect(HomeController.valid_message?(message)).to be true
       end
     end
-    [ ['', '', 'empty'],
+    [
+      ['', '', 'empty'],
       ['go to http://phising.com', 'http://', 'url w/ http'],
     ].each do |(msg, filter, reason)|
       it "message <#{msg}> is invalid. Reason: #{reason} " do
@@ -69,13 +65,15 @@ describe HomeController do
       end
     end
 
-    [ ['Papa', 'e@ma.il', '/', '', 'hi there'],
+    [
+      ['Papa', 'e@ma.il', '/', '', 'hi there'],
     ].each do |(name, email, context, subject, message)|
       it "Contact is valid (#{name},#{email},#{context},#{subject},#{message},)" do
         expect(HomeController.valid_contact_us(name, email, context, subject, message, nil, '')).to be nil
       end
     end
-    [ ['aPPa', '', '', '', '', '', 'bad name'],
+    [
+      ['aPPa', '', '', '', '', '', 'bad name'],
       ['Papa', '', '', '', '', '', 'bad message'],
       ['Papa', '', '', '', 'hi there', '', 'empty email'],
       ['Papa', 'e@ma.il', '', '', 'hi there', '', 'empty context'], 

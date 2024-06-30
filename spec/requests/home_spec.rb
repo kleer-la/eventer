@@ -59,8 +59,6 @@ describe 'GET catalog', type: :request do
     expect(json[0]['percent_off']).to eq '20.0'
   end
 end
-
-
 describe 'GET api/event_type/1.json', type: :request do
   it 'no event one event_type' do
     event = FactoryBot.create(:event)
