@@ -80,9 +80,6 @@ gem 'best_in_place', git: 'https://github.com/bernat/best_in_place'   # for edit
 # App Monitoring Heroku Plug-In
 gem 'newrelic_rpm'
 
-# Gemas necesarias para integracion con mailchimp workflow
-
-# reCaptcha
 gem 'recaptcha', require: 'recaptcha/rails' # , :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb
