@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  respond_to :html, :json, :xml
+  respond_to :html, :json
 
   # active admin authentication
   def authenticate_admin_user!
