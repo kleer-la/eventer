@@ -280,7 +280,6 @@ describe EventType do
         event_type.noindex = noindex
         expect(event_type.behavior).to eq(expected_behavior)
       end
-    end    
+    end
   end
-  
 end

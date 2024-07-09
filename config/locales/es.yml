@@ -236,7 +236,7 @@ es:
         tag_name: "Tag Name for bag(u)el"
         csd_eligible: "Es Scrum Alliance (CSx)"
         cancellation_policy: "Política de Cancelación"
-        external_site_url: "Link externo al home del curso (en lugar del web site)"
+        external_site_url: "Link oal home del curso (Kleer website o externo)"
         is_kleer_certification: "Es certificación kleer"
         kleer_cert_seal_image: "Nombre de Imagen del Seal"
         canonical: "Tipo de evento canonico"
