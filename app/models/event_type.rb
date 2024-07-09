@@ -80,6 +80,21 @@ class EventType < ApplicationRecord
     end
   end
 
+  def behavior
+    return 'redirect to url' if external_site_url.present?
+
+    if deleted
+      return 'redirect to canonical' unless canonical.nil?
+
+      return '404'
+    end
+    b = 'normal'
+    b += ' & canonical' unless canonical.nil?
+    b += ' & noindex' if noindex
+
+    b
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w(average_rating brochure cancellation_policy canonical_id cover created_at
       csd_eligible deleted description duration elevator_pitch external_id external_site_url

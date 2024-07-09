@@ -23,7 +23,7 @@
                 %th= t('formtastic.labels.event_type.subtitle')
                 %th Lang
                 %th Borrado
-                %th SEO tags
+                %th Comportamiento
                 %th
             %tbody
               - @event_types.each do |event_type|
@@ -35,11 +35,12 @@
                   %td= event_type.lang + " #{event_type.duration}hs"
                   %td= show_active[event_type.deleted]
                   %td
-                    = indexed[event_type.noindex]
-                    - if event_type.canonical.present? 
-                      %a{ href: "/event_types/#{event_type.canonical.id}/edit"}= 'canonical'
+                    - if event_type.behavior.include? 'canonical'
+                      %a{ href: "/event_types/#{event_type.canonical.id}/edit"}= event_type.behavior
+                    - elsif event_type.behavior == 'redirect to url'
+                      %a{ href: "#{event_type.external_site_url}"}= event_type.behavior
                     - else
-                      autorref
+                      = event_type.behavior
                   %td
                     .text-right
                       %a.btn.btn-warning.btn-mini{ href: certificate_preview_event_type_path(event_type), title: 'Certificate Preview'}

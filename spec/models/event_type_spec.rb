@@ -258,4 +258,29 @@ describe EventType do
       end
     end
   end
+  context '.behavior' do
+    let(:event_type) { EventType.new }
+    [
+      # deleted | external_url | canonical_id | noindex | expected_behavior
+      [true,     nil,           nil,        false,  '404'],
+      [true,     'http://ext',  nil,        false, 'redirect to url'],
+      [true,     nil,           1,          false, 'redirect to canonical'],
+      [true,     'http://ext',  1,          false, 'redirect to url'],
+      [false,    nil,           nil,        false, 'normal'],
+      [false,    'http://ext',  nil,        false, 'redirect to url'],
+      [false,    nil,           1,          false, 'normal & canonical'],
+      [false,    'http://ext',  1,          false, 'redirect to url'],
+      [false,    nil,           nil,        true, 'normal & noindex'],
+      [false,    nil,           1,          true, 'normal & canonical & noindex'],
+    ].each do |deleted, external_url, canonical, noindex, expected_behavior|
+      it "returns '#{expected_behavior}' when deleted: #{deleted}, external_url: #{external_url}, canonical: #{canonical}, noindex: #{noindex}" do
+        event_type.deleted = deleted
+        event_type.external_site_url = external_url
+        event_type.canonical_id = canonical
+        event_type.noindex = noindex
+        expect(event_type.behavior).to eq(expected_behavior)
+      end
+    end    
+  end
+  
 end

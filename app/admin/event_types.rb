@@ -16,8 +16,15 @@ ActiveAdmin.register EventType do
     column :name
     column :lang
     column :duration
-    column :deleted
-    column :noindex
+    column :behavior do |event_type|
+      if event_type.behavior.include?('canonical')
+        link_to event_type.behavior, edit_admin_event_type_path(event_type.canonical)
+      elsif event_type.behavior == 'redirect to url'
+        link_to event_type.behavior, event_type.external_site_url, target: '_blank'
+      else
+        event_type.behavior
+      end
+    end
     actions defaults: false do |event_type|
       link_to 'Edit', edit_event_type_path(event_type)
     end
