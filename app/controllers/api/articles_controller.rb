@@ -18,9 +18,10 @@ class Api::ArticlesController < ApplicationController
   def show
     @article = Article.friendly.find(params[:id].downcase)
     respond_to do |format|
-      format.json { render json: @article, 
-        methods: [:category_name],
-        include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
+      format.json { 
+        render json: @article, 
+               methods: %i[category_name recommended],
+               include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
     end
   end
 end

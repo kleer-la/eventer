@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_30_204235) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_09_221708) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -438,6 +438,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_30_204235) do
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
     t.index ["user_id"], name: "index_ratings_on_user_id"
+  end
+
+  create_table "recommended_contents", force: :cascade do |t|
+    t.string "source_type", null: false
+    t.integer "source_id", null: false
+    t.string "target_type", null: false
+    t.integer "target_id", null: false
+    t.integer "relevance_order", default: 50, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_type", "source_id"], name: "index_recommended_contents_on_source"
+    t.index ["target_type", "target_id"], name: "index_recommended_contents_on_target"
   end
 
   create_table "resources", force: :cascade do |t|

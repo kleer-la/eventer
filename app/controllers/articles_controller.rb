@@ -8,7 +8,7 @@ class ArticlesController < ApplicationController
     @articles = Article.order(selected: :desc, created_at: :desc)
     respond_to do |format|
       format.html
-      format.json do
+      format.json do # TODO: remove
         render json: @articles.order(created_at: :desc),
                methods: %i[abstract category_name],
                include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
@@ -18,12 +18,6 @@ class ArticlesController < ApplicationController
 
   # GET /articles/1
   def show
-    respond_to do |format|
-      format.html
-      format.json { render json: @article, 
-        methods: [:category_name],
-        include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
-    end
   end
 
   # GET /articles/new

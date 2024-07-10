@@ -7,6 +7,9 @@ class Article < ApplicationRecord
   enum lang: %i[es en]
   belongs_to :category, optional: true
 
+  has_many :recommended_contents, as: :source
+  has_many :recommended_items, -> { distinct }, through: :recommended_contents, source: :target
+
   validates :title, presence: true
   validates :body, presence: true
   # validates :published, presence: true
@@ -16,7 +19,7 @@ class Article < ApplicationRecord
     !slug.present?
   end
 
-  #TODO deprecated!
+  # TODO: deprecated!
   def abstract
     max_abstract_length = 500
     double_n = body.index("\r\n\r\n")
@@ -30,5 +33,12 @@ class Article < ApplicationRecord
 
   def category_name
     category&.name
+  end
+
+  def recommended
+    recommended_contents.includes(:target).order(:relevance_order).map do |content|
+      item = content.target
+      item.as_json(only: [:id, :title, :description]).merge('type' => item.class.name.underscore)
+    end
   end
 end

@@ -119,14 +119,6 @@ FactoryBot.define do
     value { 'Hello' }
   end
 
-  factory :article do
-    id { '10' }
-    title { 'Mi historia' }
-    description { 'Mi descripción' }
-    body { 'Mi contenido' }
-    slug { 'mi-historia' }
-  end
-
   factory :resource do
     id { '2' }
     format { :card }
@@ -170,6 +162,4 @@ FactoryBot.define do
       amount_off { Faker::Number.decimal(l_digits: 2) }
     end
   end
-
-
 end
