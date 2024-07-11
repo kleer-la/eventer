@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EventType < ApplicationRecord
+  include Recommendable
+
   belongs_to :canonical, class_name: 'EventType', optional: true
   has_and_belongs_to_many :trainers
   has_and_belongs_to_many :categories
@@ -93,6 +95,10 @@ class EventType < ApplicationRecord
     b += ' & noindex' if noindex
 
     b
+  end
+
+  def as_recommendation
+    super.merge('title' => name)
   end
 
   def self.ransackable_attributes(auth_object = nil)

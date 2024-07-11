@@ -62,4 +62,29 @@ RSpec.describe Article, type: :model do
       expect(@article.abstract.length).to eq 500
     end
   end
+
+  describe '#recommended' do
+    let(:article) { FactoryBot.create(:article) }
+    let(:recommended_article) { FactoryBot.create(:article) }
+    let(:recommended_event_type) { FactoryBot.create(:event_type) }
+
+    before do
+      FactoryBot.create(:recommended_content, source: article, target: recommended_article, relevance_order: 2)
+      FactoryBot.create(:recommended_content, source: article, target: recommended_event_type, relevance_order: 1)
+    end
+
+    it 'returns recommended items in the correct order with proper formatting' do
+      recommended = article.recommended
+
+      expect(recommended.size).to eq(2)
+      expect(recommended.first['type']).to eq('event_type')
+      expect(recommended.last['type']).to eq('article')
+
+      expect(recommended.first['id']).to eq(recommended_event_type.id)
+      expect(recommended.first['title']).to eq(recommended_event_type.name)
+
+      expect(recommended.last['id']).to eq(recommended_article.id)
+      expect(recommended.last['title']).to eq(recommended_article.title)
+    end
+  end
 end
