@@ -282,4 +282,25 @@ describe EventType do
       end
     end
   end
+
+  describe '#recommended' do
+    let(:event_type) { FactoryBot.create(:event_type) }
+    let(:recommended_event_type) { FactoryBot.create(:event_type) }
+
+    before do
+      FactoryBot.create(:recommended_content, source: event_type, target: recommended_event_type, relevance_order: 1)
+    end
+
+    it 'returns recommended item with proper formatting' do
+      recommended = event_type.recommended
+
+      expect(recommended.size).to eq(1)
+      expect(recommended.first['type']).to eq('event_type')
+
+      expect(recommended.first['id']).to eq(recommended_event_type.id)
+      expect(recommended.first['title']).to eq(recommended_event_type.name)
+      expect(recommended.first['slug']).to eq(recommended_event_type.slug)
+      expect(recommended.first['cover']).to eq(recommended_event_type.cover)
+    end
+  end
 end

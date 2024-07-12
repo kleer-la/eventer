@@ -49,6 +49,7 @@ class Service < ApplicationRecord
     super
       .merge('title' => name)
       .merge('description' => subtitle)
+      .merge('cover' => side_image)
   end
 
   private

@@ -85,6 +85,8 @@ RSpec.describe Article, type: :model do
 
       expect(recommended.last['id']).to eq(recommended_article.id)
       expect(recommended.last['title']).to eq(recommended_article.title)
+      expect(recommended.last['slug']).to eq(recommended_article.slug)
+      expect(recommended.last['cover']).to eq(recommended_article.cover)
     end
   end
 end
