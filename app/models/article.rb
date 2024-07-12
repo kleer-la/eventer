@@ -32,4 +32,14 @@ class Article < ApplicationRecord
   def category_name
     category&.name
   end
+
+  accepts_nested_attributes_for :recommended_contents, allow_destroy: true
+
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[body category_id cover created_at description id lang published selected slug tabtitle title updated_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[category recommended_contents recommended_items slugs trainers]
+  end
 end

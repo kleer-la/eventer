@@ -73,4 +73,5 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
 
   config.use_transactional_fixtures = true
+  config.include FactoryBot::Syntax::Methods
 end

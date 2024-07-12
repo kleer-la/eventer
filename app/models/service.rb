@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Service < ApplicationRecord
+  include Recommendable
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: [:slugged, :history]
@@ -21,9 +22,10 @@ class Service < ApplicationRecord
   end
 
   def self.ransackable_associations(_auth_object = nil)
-    %w[rich_text_definitions rich_text_faq rich_text_outcomes rich_text_program rich_text_target rich_text_value_proposition service_area testimonies]
+    %w[rich_text_definitions rich_text_faq rich_text_outcomes rich_text_program rich_text_target 
+       rich_text_value_proposition service_area testimonies]
   end
-  
+
   def should_generate_new_friendly_id?
     slug.blank?
   end
@@ -41,6 +43,10 @@ class Service < ApplicationRecord
 
   def faq_list
     field_list(faq)
+  end
+
+  def as_recommendation
+    super.merge('title' => name)
   end
 
   private
