@@ -15,7 +15,7 @@ RSpec.describe Service, type: :model do
 
   describe '#recommended' do
     let(:service) { FactoryBot.create(:service) }
-    let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended') }
+    let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended', subtitle: 'For sure') }
 
     before do
       FactoryBot.create(:recommended_content, source: service, target: recommended_service, relevance_order: 2)
@@ -29,6 +29,7 @@ RSpec.describe Service, type: :model do
 
       expect(recommended.first['id']).to eq(recommended_service.id)
       expect(recommended.first['title']).to eq(recommended_service.name)
+      expect(recommended.first['description']).to eq(recommended_service.subtitle)
     end
   end
 end

@@ -46,7 +46,9 @@ class Service < ApplicationRecord
   end
 
   def as_recommendation
-    super.merge('title' => name)
+    super
+      .merge('title' => name)
+      .merge('description' => subtitle)
   end
 
   private
