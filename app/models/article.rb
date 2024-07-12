@@ -33,6 +33,12 @@ class Article < ApplicationRecord
     category&.name
   end
 
+  def as_recommendation
+    super
+      .merge('subtitle' => tabtitle)
+      .merge('slug' => slug)
+  end
+
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)

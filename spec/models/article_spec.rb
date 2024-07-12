@@ -65,7 +65,7 @@ RSpec.describe Article, type: :model do
 
   describe '#recommended' do
     let(:article) { FactoryBot.create(:article) }
-    let(:recommended_article) { FactoryBot.create(:article) }
+    let(:recommended_article) { FactoryBot.create(:article, tabtitle: 'One tabtitle') }
     let(:recommended_event_type) { FactoryBot.create(:event_type) }
 
     before do
@@ -87,6 +87,7 @@ RSpec.describe Article, type: :model do
       expect(recommended.last['title']).to eq(recommended_article.title)
       expect(recommended.last['slug']).to eq(recommended_article.slug)
       expect(recommended.last['cover']).to eq(recommended_article.cover)
+      expect(recommended.last['subtitle']).to eq(recommended_article.tabtitle)
     end
   end
 end

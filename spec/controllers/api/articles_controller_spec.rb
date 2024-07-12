@@ -12,7 +12,7 @@ describe Api::ArticlesController do
 
     it 'fetches an article with recommended content' do
       article = FactoryBot.create(:article)
-      recommended_article = FactoryBot.create(:article)
+      recommended_article = FactoryBot.create(:article, tabtitle: 'Sandokan')
 
       # Create a related content
       RecommendedContent.create(source: article, target: recommended_article, relevance_order: 50)
@@ -31,7 +31,7 @@ describe Api::ArticlesController do
       recommended_item = json_response['recommended'].first
       expect(recommended_item['id']).to eq(recommended_article.id)
       expect(recommended_item['title']).to eq(recommended_article.title)
-      expect(recommended_item['description']).to eq(recommended_article.description)
+      expect(recommended_item['subtitle']).to eq(recommended_article.tabtitle)
       expect(recommended_item['cover']).to eq(recommended_article.cover)
       expect(recommended_item['type']).to eq('article')
     end

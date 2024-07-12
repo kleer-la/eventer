@@ -301,6 +301,7 @@ describe EventType do
       expect(recommended.first['title']).to eq(recommended_event_type.name)
       expect(recommended.first['slug']).to eq(recommended_event_type.slug)
       expect(recommended.first['cover']).to eq(recommended_event_type.cover)
+      expect(recommended.first['subtitle']).to eq(recommended_event_type.subtitle)
     end
   end
 end

@@ -7,7 +7,7 @@ module Recommendable
   end
 
   def as_recommendation
-    as_json(only: %i[id title description slug cover])
+    as_json(only: %i[id title subtitle slug cover])
       .merge('type' => self.class.name.underscore)
   end
 
