@@ -35,7 +35,7 @@ class Article < ApplicationRecord
 
   def as_recommendation
     super
-      .merge('subtitle' => tabtitle)
+      .merge('subtitle' => description)
       .merge('slug' => slug)
   end
 
