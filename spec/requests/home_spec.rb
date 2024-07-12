@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe 'GET catalog', type: :request do
   before(:all) do
-    Event.all.each {|e| e.destroy}
+    Event.all.each { |e| e.destroy }
   end
 
   it 'no event one event_type' do
@@ -28,7 +28,7 @@ describe 'GET catalog', type: :request do
   it 'one event + other event_type in catalog' do
     event = FactoryBot.create(:event)
     event_type = FactoryBot.create(:event_type, include_in_catalog: true)
- 
+
     get '/api/catalog', params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
@@ -39,7 +39,7 @@ describe 'GET catalog', type: :request do
   it 'one event & w/ event_type in catalog' do
     event = FactoryBot.create(:event)
     event.event_type.include_in_catalog = true
- 
+
     event.event_type.save!
 
     get '/api/catalog', params: { format: 'json' }
@@ -65,9 +65,9 @@ describe 'GET api/event_type/1.json', type: :request do
     get "/api/event_types/#{event.event_type.id}.json", params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
-  
+
     json = JSON.parse(response.body)
-    expect(json.size).to be > 1 
+    expect(json.size).to be > 1
   end
 end
 describe 'GET api/event_type/1/testimonies', type: :request do
@@ -77,7 +77,7 @@ describe 'GET api/event_type/1/testimonies', type: :request do
     get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
-  
+
     json = JSON.parse(response.body)
     expect(json.size).to eq 1
   end
@@ -87,7 +87,7 @@ describe 'GET api/event_type/1/testimonies', type: :request do
     get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
-  
+
     json = JSON.parse(response.body)
     expect(json.size).to eq 0
   end

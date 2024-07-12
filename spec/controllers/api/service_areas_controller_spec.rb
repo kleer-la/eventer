@@ -19,7 +19,7 @@ describe Api::ServiceAreasController do
     end
     it 'fetches a ServiceArea by included Service slug' do
       service_area = FactoryBot.create(:service_area)
-      service = FactoryBot.create(:service, service_area: service_area)
+      service = FactoryBot.create(:service, service_area:)
 
       get :show, params: { id: service.slug, format: 'json' }
       expect(response).to have_http_status(:success)

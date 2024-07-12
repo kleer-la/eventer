@@ -18,7 +18,6 @@ describe Category do
     expect(category.event_types).to include(event_type1, event_type2)
   end
 
-
   it 'should be valid' do
     expect(@category.valid?).to be true
   end

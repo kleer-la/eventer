@@ -69,12 +69,11 @@ RSpec.describe '/resources', type: :request do
         expect(Resource.last.cover_es).to eq 'my-resource.png'
       end
       it 'has extra _es fields ' do
-        post resources_url, params: { resource: FactoryBot.attributes_for(:resource, 
-          share_link_es: 'link',
-          share_text_es: 'text',
-          tags_es: 'tags',
-          comments_es: 'comments'
-          ) }
+        post resources_url, params: { resource: FactoryBot.attributes_for(:resource,
+                                                                          share_link_es: 'link',
+                                                                          share_text_es: 'text',
+                                                                          tags_es: 'tags',
+                                                                          comments_es: 'comments') }
         expect(Resource.last.share_link_es).to eq 'link'
         expect(Resource.last.share_text_es).to eq 'text'
         expect(Resource.last.tags_es).to eq 'tags'
@@ -82,12 +81,11 @@ RSpec.describe '/resources', type: :request do
       end
 
       it 'has basic _en fields ' do
-        post resources_url, params: { resource: FactoryBot.attributes_for(:resource, 
-          share_link_es: 'link',
-          share_text_es: 'text',
-          tags_es: 'tags',
-          comments_es: 'comments'
-          ) }
+        post resources_url, params: { resource: FactoryBot.attributes_for(:resource,
+                                                                          share_link_es: 'link',
+                                                                          share_text_es: 'text',
+                                                                          tags_es: 'tags',
+                                                                          comments_es: 'comments') }
         expect(Resource.last.share_link_es).to eq 'link'
         expect(Resource.last.share_text_es).to eq 'text'
         expect(Resource.last.tags_es).to eq 'tags'
@@ -95,23 +93,21 @@ RSpec.describe '/resources', type: :request do
       end
       it 'has extra _es fields ' do
         post resources_url, params: { resource: FactoryBot.attributes_for(:resource,
-          title_en: 'title',
-          description_en: 'description',
-          landing_en: 'landing',
-          cover_en: 'cover'
-          ) }
+                                                                          title_en: 'title',
+                                                                          description_en: 'description',
+                                                                          landing_en: 'landing',
+                                                                          cover_en: 'cover') }
         expect(Resource.last.title_en).to eq 'title'
         expect(Resource.last.description_en).to eq 'description'
         expect(Resource.last.landing_en).to eq 'landing'
         expect(Resource.last.cover_en).to eq 'cover'
       end
       it 'has extra _en fields ' do
-        post resources_url, params: { resource: FactoryBot.attributes_for(:resource, 
-          share_link_en: 'link',
-          share_text_en: 'text',
-          tags_en: 'tags',
-          comments_en: 'comments'
-          ) }
+        post resources_url, params: { resource: FactoryBot.attributes_for(:resource,
+                                                                          share_link_en: 'link',
+                                                                          share_text_en: 'text',
+                                                                          tags_en: 'tags',
+                                                                          comments_en: 'comments') }
         expect(Resource.last.share_link_en).to eq 'link'
         expect(Resource.last.share_text_en).to eq 'text'
         expect(Resource.last.tags_en).to eq 'tags'
@@ -142,26 +138,26 @@ RSpec.describe '/resources', type: :request do
         expect(resource.title_es).to eq 'new title'
       end
 
-  #     it 'redirects to the article' do
-  #       article = FactoryBot.create(:article)
-  #       patch article_url(article), params: { article: FactoryBot.attributes_for(:article, title: 'new title') }
-  #       article.reload
-  #       expect(response).to redirect_to(edit_article_path(article))
-  #     end
-  #     it 'lang-> en' do
-  #       article = FactoryBot.create(:article)
-  #       patch article_url(article), params: { article: FactoryBot.attributes_for(:article, lang: 'en') }
-  #       article.reload
-  #       expect(article.lang).to eq('en')
-  #     end
-  #   end
+      #     it 'redirects to the article' do
+      #       article = FactoryBot.create(:article)
+      #       patch article_url(article), params: { article: FactoryBot.attributes_for(:article, title: 'new title') }
+      #       article.reload
+      #       expect(response).to redirect_to(edit_article_path(article))
+      #     end
+      #     it 'lang-> en' do
+      #       article = FactoryBot.create(:article)
+      #       patch article_url(article), params: { article: FactoryBot.attributes_for(:article, lang: 'en') }
+      #       article.reload
+      #       expect(article.lang).to eq('en')
+      #     end
+      #   end
 
-  #   context 'with invalid parameters' do
-  #     it "renders a successful response (i.e. to display the 'edit' template)" do
-  #       article = FactoryBot.create(:article)
-  #       patch article_url(article), params: { article: FactoryBot.attributes_for(:article, title: '') }
-  #       expect(response).to be_successful
-  #     end
+      #   context 'with invalid parameters' do
+      #     it "renders a successful response (i.e. to display the 'edit' template)" do
+      #       article = FactoryBot.create(:article)
+      #       patch article_url(article), params: { article: FactoryBot.attributes_for(:article, title: '') }
+      #       expect(response).to be_successful
+      #     end
     end
   end
 

@@ -47,5 +47,4 @@ describe InvoiceService do
       expect(due_date.to_date.to_s).to eq '2022-01-18'
     end
   end
-
 end

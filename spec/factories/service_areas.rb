@@ -5,11 +5,11 @@ FactoryBot.define do
     name            { 'Default Service Area Name' }
     summary         { 'summary' }
     cta_message     { 'cta_message' }
-    icon            {'https://exampe.com/icon.png' }
+    icon            { 'https://exampe.com/icon.png' }
     slogan          { 'slogan' }
     subtitle        { 'subtitle' }
     description     { 'description' }
-    side_image      {'https://exampe.com/side.png' }
+    side_image      { 'https://exampe.com/side.png' }
     target          { 'target' }
     primary_color   { '#FF0080' }
     secondary_color { '#FF8080' }

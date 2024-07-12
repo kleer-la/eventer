@@ -12,7 +12,7 @@ describe ParticipantInvoiceHelper do
     expect(pih.item_description).to include 'por una vacante'
   end
   it 'item_description three seats es' do
-    @participant.quantity =3
+    @participant.quantity = 3
     pih = ParticipantInvoiceHelper.new(@participant, :es)
     expect(pih.item_description).to include 'por 3 vacantes'
   end

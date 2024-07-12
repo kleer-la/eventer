@@ -9,12 +9,12 @@ describe 'events/index' do
 
     assign(:events, [
              FactoryBot.create(:event,
-                               event_type: event_type,
+                               event_type:,
                                place: 'EvPlace1',
                                date: '2025-01-01',
                                city: 'Ev City1'),
              FactoryBot.create(:event,
-                               event_type: event_type,
+                               event_type:,
                                place: 'EvPlace2',
                                date: '2025-01-02',
                                city: 'Ev City2')

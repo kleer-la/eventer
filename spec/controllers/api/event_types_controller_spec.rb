@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 describe Api::EventTypesController do
-
   describe "GET 'event_types' (/api/event_types/#.<format>)" do
     it 'fetch a event_type' do
       et = FactoryBot.create(:event_type)
@@ -29,5 +28,4 @@ describe Api::EventTypesController do
       expect(json_response).to include('external_site_url')
     end
   end
-
 end

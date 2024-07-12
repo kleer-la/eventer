@@ -15,7 +15,7 @@ RSpec.describe 'generate one certificate' do
     assign(:participant, participant)
     assign(:certificate_store, FileStoreService.create_null)
 
-    pdf_io = StringIO.new( render template: 'participants/certificate', format: :pdf)
+    pdf_io = StringIO.new(render(template: 'participants/certificate', format: :pdf))
     texts = PDF::Inspector::Text.analyze(pdf_io).strings
 
     expect(texts.join(' ')).to include 'Juan Carlos Perez Luasó'
@@ -30,7 +30,7 @@ RSpec.describe 'generate one certificate' do
       assign(:verification_code, participant.verification_code)
       assign(:certificate, ParticipantsHelper::Certificate.new(participant))
       assign(:participant, participant)
-      certificate_store = FileStoreService.create_null exists: { "certificate-images/#{ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2}" => false}
+      certificate_store = FileStoreService.create_null exists: { "certificate-images/#{ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE_V2}" => false }
       assign(:certificate_store, certificate_store)
 
       expect do

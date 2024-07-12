@@ -86,9 +86,9 @@ describe Event do
     end
 
     it 'registration_ends should be before event date' do
-      expect { 
-        FactoryBot.create(:event, date: Date.today, registration_ends: Date.today+1)
-      }.to raise_error(ActiveRecord::RecordInvalid) { |error| expect(error.to_s).to include 'Registration ends' }
+      expect do
+        FactoryBot.create(:event, date: Date.today, registration_ends: Date.today + 1)
+      end.to raise_error(ActiveRecord::RecordInvalid) { |error| expect(error.to_s).to include 'Registration ends' }
     end
 
     it 'should have a capacity greater than 0' do
@@ -234,9 +234,9 @@ describe Event do
     end
 
     it "should have a human time in Spanish that returns 'de 9:00 to 18:00hs'" do
-      I18n.with_locale(:es) {
+      I18n.with_locale(:es) do
         expect(@event.human_time).to eq 'de 09:00 a 18:00 hs'
-      }
+      end
     end
   end
 
@@ -245,26 +245,25 @@ describe Event do
       @event.date = '15/01/2015'
     end
     it "should have a human time in English that returns 'from 9:00 to 18:00hs'" do
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         expect(@event.human_time).to eq 'from 09:00 to 18:00 hs'
-      }
+      end
     end
 
-    it "should have a human date in English if duration is 1" do
+    it 'should have a human date in English if duration is 1' do
       @event.duration = 1
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         expect(@event.human_date).to eq 'Jan 15'
-      }
+      end
     end
 
     it "should have a human date in English that returns '15 Ene' if finish date is '15 Ene'" do
       @event.finish_date = '01/02/2015'
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         expect(@event.human_date).to eq 'Jan 15-Feb 01'
-      }
+      end
     end
-
-   end
+  end
 
   context 'A private event' do
     before(:each) do
@@ -428,14 +427,14 @@ describe Event do
     it "should have a human date in English that returns '20 Abr' if duration is 1" do
       @event.date = '20/04/2015'
       @event.duration = 1
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         expect(@event.human_date).to eq 'Apr 20'
-      }
+      end
     end
     it "should have a human time in English that returns 'from 9:00 to 18:00hs'" do
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         expect(@event.human_time).to eq 'from 09:00 to 18:00 hs'
-      }
+      end
     end
   end
   context 'Trainers' do
@@ -494,32 +493,32 @@ describe Event do
 
   context 'registration_ended?' do
     it 'Not started' do
-      event = FactoryBot.create(:event, date: Date.today+10)
+      event = FactoryBot.create(:event, date: Date.today + 10)
       expect(event.registration_ended?).to be false
     end
     it 'Started today' do
       today = Date.today
       event = FactoryBot.create(:event, date: today)
-      expect(event.registration_ended? today).to be true
+      expect(event.registration_ended?(today)).to be true
     end
     it 'Started yestertoday' do
       today = Date.today
-      event = FactoryBot.create(:event, date: today-1)
-      expect(event.registration_ended? today).to be true
+      event = FactoryBot.create(:event, date: today - 1)
+      expect(event.registration_ended?(today)).to be true
     end
     it 'registration not ended' do
-      event = FactoryBot.create(:event, date: Date.today+10, registration_ends: Date.today+8)
+      event = FactoryBot.create(:event, date: Date.today + 10, registration_ends: Date.today + 8)
       expect(event.registration_ended?).to be false
     end
     it 'registration ended today' do
       today = Date.today
-      event = FactoryBot.create(:event, date: today+1, registration_ends:today)
-      expect(event.registration_ended? today).to be true
+      event = FactoryBot.create(:event, date: today + 1, registration_ends: today)
+      expect(event.registration_ended?(today)).to be true
     end
     it 'registration ended yestertoday' do
       today = Date.today
-      event = FactoryBot.create(:event, date: today, registration_ends:today-1)
-      expect(event.registration_ended? today).to be true
+      event = FactoryBot.create(:event, date: today, registration_ends: today - 1)
+      expect(event.registration_ended?(today)).to be true
     end
   end
 
@@ -626,7 +625,7 @@ describe Event do
   end
   describe '#ask_for_coupons_code?' do
     let(:event) { FactoryBot.create(:event, list_price: 100) }
-    it { expect(event.ask_for_coupons_code?).to eq false}
+    it { expect(event.ask_for_coupons_code?).to eq false }
 
     it 'codeless coupon' do
       FactoryBot.create(:coupon, coupon_type: :codeless, percent_off: 40.0)

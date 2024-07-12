@@ -72,7 +72,7 @@ describe ParticipantsController do
         end
 
         it 'redirects to the created participant (EN)' do
-          @participant.event.event_type.lang= 'en'
+          @participant.event.event_type.lang = 'en'
           @participant.event.event_type.save!
           post :create, params: { participant: @participant_attr, event_id: @participant.event.id }
           expect(response).to render_template('confirm')

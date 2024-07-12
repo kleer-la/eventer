@@ -66,9 +66,9 @@ describe EventsController do
           country = FactoryBot.create(:country)
           trainer = FactoryBot.create(:trainer)
           event = FactoryBot.build(:event,
-                                   event_type: event_type,
-                                   country: country,
-                                   trainer: trainer)
+                                   event_type:,
+                                   country:,
+                                   trainer:)
           @event_attr = event.attributes.reject do |k, _v|
             %w[id created_at updated_at average_rating net_promoter_score].include? k
           end

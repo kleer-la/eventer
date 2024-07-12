@@ -46,11 +46,11 @@ describe Participant do
       expect(part.lname).to eq 'pepe'
     end
     it 'calc company name if missing' do
-      part =  FactoryBot.create(:participant, fname: 'pepe', lname: 'smith')
+      part = FactoryBot.create(:participant, fname: 'pepe', lname: 'smith')
       expect(part.company_name).to eq 'pepe smith'
     end
     it 'DONT calc company name if present' do
-      part =  FactoryBot.create(:participant, company_name: 'ACME')
+      part = FactoryBot.create(:participant, company_name: 'ACME')
       expect(part.company_name).to eq 'ACME'
     end
   end
@@ -373,8 +373,8 @@ describe Participant do
   context 'payments' do
     before(:each) do
       @participant = FactoryBot.create(:participant,
-                                      fname: 'Pedro',
-                                      invoice_id: 'xanadu')
+                                       fname: 'Pedro',
+                                       invoice_id: 'xanadu')
     end
     it 'exists w/invoice_id' do
       found = Participant.search_by_invoice 'xanadu'

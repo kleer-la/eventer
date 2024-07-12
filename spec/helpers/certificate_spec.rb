@@ -30,20 +30,19 @@ describe Certificate do
   context 'English course' do
     before(:each) do
       # @et.lang = :en
-      
     end
     it 'event human readable date across year`s eve' do
       @e.date = Date.new(2021, 12, 31)
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         cert = Certificate.new(@participant)
         expect(cert.date).to eq 'Dec 31 2021-Jan 01 2022'
-      }
+      end
     end
     it 'DoD' do
-      I18n.with_locale(:en) {
+      I18n.with_locale(:en) do
         cert = Certificate.new(@participant)
         expect(cert.description).to include 'learning and skill acquisition'
-      }
+      end
     end
   end
 

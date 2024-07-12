@@ -122,12 +122,12 @@ FactoryBot.define do
   factory :resource do
     id { '2' }
     format { :card }
-    slug { "resource-#{SecureRandom.hex(4)}" } 
+    slug { "resource-#{SecureRandom.hex(4)}" }
     # sequence(:slug) { |n| "resource-#{n}" }
     # slug { 'my-resource' }
     title_es { 'Mi recurso' }
     description_es { 'My resource' }
-    cover_es {'my-resource.png'}
+    cover_es { 'my-resource.png' }
     landing_es { '/blog/my-resource' }
   end
 
@@ -138,10 +138,10 @@ FactoryBot.define do
   end
 
   factory :coupon do
-    coupon_type { [:codeless, :percent_off, :amount_off].sample }
+    coupon_type { %i[codeless percent_off amount_off].sample }
     code { Faker::Alphanumeric.alpha(number: 10).upcase }
-    internal_name { "Discount Coupon" }
-    icon { "sample_icon.png" }
+    internal_name { 'Discount Coupon' }
+    icon { 'sample_icon.png' }
     expires_on { Date.today + 30.days }
     display { true }
     active { true }

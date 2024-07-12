@@ -14,8 +14,8 @@ describe 'event_types/edit' do
                                            description: 'ET Descripcion',
                                            recipients: 'ET Recipients',
                                            program: 'ET Program'))
-    @bkgd_imgs = 
-    @image_list = ['']
+    @bkgd_imgs =
+      @image_list = ['']
   end
 
   it 'renders the edit event type form' do

@@ -13,5 +13,4 @@ RSpec.describe '/api/resources', type: :request do
       expect(json[0]['title_es']).to eq 'some text'
     end
   end
-
 end

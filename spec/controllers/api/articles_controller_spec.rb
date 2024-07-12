@@ -12,7 +12,7 @@ describe Api::ArticlesController do
 
     it 'fetches an article with recommended content' do
       article = FactoryBot.create(:article)
-      recommended_article = FactoryBot.create(:article, tabtitle: 'Sandokan')
+      recommended_article = FactoryBot.create(:article)
 
       # Create a related content
       RecommendedContent.create(source: article, target: recommended_article, relevance_order: 50)
@@ -31,7 +31,7 @@ describe Api::ArticlesController do
       recommended_item = json_response['recommended'].first
       expect(recommended_item['id']).to eq(recommended_article.id)
       expect(recommended_item['title']).to eq(recommended_article.title)
-      expect(recommended_item['subtitle']).to eq(recommended_article.tabtitle)
+      expect(recommended_item['subtitle']).to eq(recommended_article.description)
       expect(recommended_item['cover']).to eq(recommended_article.cover)
       expect(recommended_item['type']).to eq('article')
     end
@@ -40,7 +40,7 @@ describe Api::ArticlesController do
     it 'Articles list w/o body' do
       ar = FactoryBot.create(:article)
 
-      get :index, params: {  format: 'json' }
+      get :index, params: { format: 'json' }
       expect(response).to have_http_status(:ok)
       json_response = JSON.parse(response.body)
       expect(json_response).not_to include('body')

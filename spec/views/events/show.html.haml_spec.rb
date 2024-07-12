@@ -10,7 +10,7 @@ describe 'events/show' do
                                    recipients: 'ET Recipients',
                                    program: 'ET Program')
     @event = assign(:event, FactoryBot.create(:event,
-                                              event_type: event_type,
+                                              event_type:,
                                               place: 'EvPlace',
                                               date: '2025-01-01',
                                               capacity: 12_358,

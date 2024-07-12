@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe 'API Events GET /events' do
-  #TODO duplicated with test on home
+  # TODO: duplicated with test on home
   context 'event list in JSON' do
     before(:example) do
       FactoryBot.create(:event)

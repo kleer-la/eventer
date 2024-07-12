@@ -43,7 +43,7 @@ describe EventMailer do
         expect(text).not_to include 'translation'
       end
     end
-  
+
     it 'should queue and verify a simple email' do
       @email = EventMailer.welcome_new_event_participant(@participant).deliver_now
       # File.open("x.html", 'w') { |file| file.write(@email) }
@@ -109,13 +109,13 @@ describe EventMailer do
       it 'Fail w/ Standard exceptions ' do
         # EventMailer.xero_service(XeroClientService.create_null(
         InvoiceService.xero_service(XeroClientService.create_null(
-          invoice_exception: StandardError.new('Invoice error')
-        ))
-        expect {
+                                      invoice_exception: StandardError.new('Invoice error')
+                                    ))
+        expect do
           @participant.event.currency_iso_code = 'USD'
           invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-        }.to change {Log.count}.by 1
+        end.to change { Log.count }.by 1
       end
       it 'when event is sold out registration doesnt create an invoice' do
         @participant.event.is_sold_out = true
@@ -138,11 +138,11 @@ describe EventMailer do
         @participant.save!
         # EventMailer.xero_service(XeroClientService.create_null(
         InvoiceService.xero_service(XeroClientService.create_null(
-          email_exception: StandardError.new('Email Invoice error')
-        ))
-        expect {
+                                      email_exception: StandardError.new('Email Invoice error')
+                                    ))
+        expect do
           email = EventMailer.welcome_new_event_participant(@participant).deliver_now
-        }.to change {Log.count}.by 0
+        end.to change { Log.count }.by 0
       end
     end
   end
