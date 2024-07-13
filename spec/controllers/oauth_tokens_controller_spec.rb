@@ -7,6 +7,26 @@ describe OauthTokensController do
   context 'the user is a admin' do
     login_admin
 
+    let(:original_env) { {} }
+    let(:test_env) do
+      {
+        'XERO_CLIENT_ID' => 'some',
+        'XERO_CLIENT_SECRET' => 'secret',
+        'XERO_REDIRECT_URI' => 'data',
+        'XERO_SCOPES' => 'definded'
+      }
+    end
+
+    before do
+      # Save original ENV values
+      test_env.keys.each { |key| original_env[key] = ENV[key]}
+    end
+
+    after do
+      # Restore original ENV values
+      original_env.each {|key, value| ENV[key] = value}
+    end
+
     describe 'GET index' do
       it 'assigns all tokens as @oauth_tokens' do
         oauth_token = FactoryBot.create(:oauth_token)
@@ -17,10 +37,7 @@ describe OauthTokensController do
 
     describe 'new token workflow' do
       it 'redirects to the Xero endpoint' do
-        ENV['XERO_CLIENT_ID'] = 'some'
-        ENV['XERO_CLIENT_SECRET'] = 'secret'
-        ENV['XERO_REDIRECT_URI'] = 'data'
-        ENV['XERO_SCOPES'] = 'definded'
+        test_env.each {|key, value| ENV[key] = value}     # Set test ENV values
         expected_redirect = 'https://login.xero.com/identity/connect/authorize?response_type=code' \
                             "&client_id=#{ENV['XERO_CLIENT_ID']}" \
                             "&redirect_uri=#{CGI.escape(ENV['XERO_REDIRECT_URI'])}" \
