@@ -13,7 +13,9 @@ module XeroClientService
     return @xero_client if @xero_client
 
     xero_client_id = ENV.fetch('XERO_CLIENT_ID') { raise 'You must specify the XERO_CLIENT_ID env variable' }
-    xero_client_secret = ENV.fetch('XERO_CLIENT_SECRET') { raise 'You must specify the XERO_CLIENT_SECRET env variable' }
+    xero_client_secret = ENV.fetch('XERO_CLIENT_SECRET') do
+      raise 'You must specify the XERO_CLIENT_SECRET env variable'
+    end
     xero_redirect_uri = ENV.fetch('XERO_REDIRECT_URI') { raise 'You must specify the XERO_REDIRECT_URI env variable' }
     xero_scopes = ENV.fetch('XERO_SCOPES') { raise 'You must specify the XERO_SCOPES env variable' }
     creds = {
