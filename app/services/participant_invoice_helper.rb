@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ParticipantInvoiceHelper
   def initialize(participant, lang = nil)
     @participant = participant

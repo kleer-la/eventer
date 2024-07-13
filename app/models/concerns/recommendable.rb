@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Recommendable
   extend ActiveSupport::Concern
 

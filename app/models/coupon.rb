@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Coupon < ApplicationRecord
   enum coupon_type: { codeless: 0, percent_off: 1, amount_off: 2 }
   before_validation :downcase_code

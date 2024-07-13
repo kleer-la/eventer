@@ -3,9 +3,7 @@
 class OauthTokensController < ApplicationController
   def index
     @oauth_tokens = OauthToken.all
-    respond_to do |format|
-      format.html
-    end
+    respond_to(&:html)
   end
 
   def new

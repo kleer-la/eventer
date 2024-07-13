@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InvoiceService
   def initialize(participant)
     self.class.xero
@@ -65,7 +67,7 @@ class InvoiceService
     rescue StandardError => e
       Log.log(:xero, :error,
               "contact:#{contact.contacts[0].contact_id}",
-              e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+              "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}")
       invoice = nil
     end
     invoice

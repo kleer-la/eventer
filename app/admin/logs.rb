@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Log do
   menu label: 'Logs', parent: 'Others', priority: 99
 

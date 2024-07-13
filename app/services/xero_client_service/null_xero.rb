@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module XeroClientService
   class NullXero
     attr_reader :tenant_id

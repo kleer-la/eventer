@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Log < ApplicationRecord
   enum area: %i[xero mail aws app]
   enum level: %i[info warn error]

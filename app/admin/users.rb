@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register User do
   menu label: 'Usuarios', parent: 'Others', priority: 90
 
@@ -12,18 +14,18 @@ ActiveAdmin.register User do
     id_column
     column 'Email', :email
     column 'Roles' do |o|
-      o.roles.map { |r| r.name }.join(', ')
+      o.roles.map(&:name).join(', ')
     end
     actions defaults: true do |user|
-      item 'Cambiar clave', edit_admin_user_path(user) + '?change_password=1', method: :get
+      item 'Cambiar clave', "#{edit_admin_user_path(user)}?change_password=1", method: :get
     end
   end
 
   show do |user|
     panel 'Información de usuario' do
       attributes_table_for user do
-        row('Email') { |user| user.email }
-        row('Roles') { |user| user.roles.map { |role| role.name }.join(', ') }
+        row('Email', &:email)
+        row('Roles') { |user| user.roles.map(&:name).join(', ') }
       end
     end
   end

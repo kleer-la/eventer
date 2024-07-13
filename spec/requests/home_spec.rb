@@ -4,11 +4,11 @@ require 'rails_helper'
 
 describe 'GET catalog', type: :request do
   before(:all) do
-    Event.all.each { |e| e.destroy }
+    Event.all.each(&:destroy)
   end
 
   it 'no event one event_type' do
-    event_type = FactoryBot.create(:event_type, include_in_catalog: true)
+    FactoryBot.create(:event_type, include_in_catalog: true)
     get '/api/catalog', params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
@@ -17,7 +17,7 @@ describe 'GET catalog', type: :request do
     expect(json.size).to eq 1
   end
   it 'one event one event_type in catalog' do
-    event = FactoryBot.create(:event)
+    FactoryBot.create(:event)
 
     get '/api/catalog', params: { format: 'json' }
 
@@ -26,8 +26,8 @@ describe 'GET catalog', type: :request do
     expect(json.size).to eq 1
   end
   it 'one event + other event_type in catalog' do
-    event = FactoryBot.create(:event)
-    event_type = FactoryBot.create(:event_type, include_in_catalog: true)
+    FactoryBot.create(:event)
+    FactoryBot.create(:event_type, include_in_catalog: true)
 
     get '/api/catalog', params: { format: 'json' }
 

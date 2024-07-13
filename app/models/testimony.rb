@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Testimony < ApplicationRecord
   belongs_to :service
   has_rich_text :testimony

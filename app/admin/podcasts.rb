@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Podcast do
   menu parent: 'Podcast Mgnt'
 

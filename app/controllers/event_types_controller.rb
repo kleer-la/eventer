@@ -176,7 +176,7 @@ class EventTypesController < ApplicationController
   end
 
   def image_list(store)
-    list = store.list('image').map { |obj| obj.key }
+    list = store.list('image').map(&:key)
     list.unshift '' # add empty option
   end
 
@@ -210,7 +210,7 @@ class EventTypesController < ApplicationController
       end
       format.pdf do
         @event.trainer = Trainer.find(@certificate_values[:certificate_trainer1].to_i)
-        if @certificate_values[:certificate_trainer2].to_i > 0
+        if @certificate_values[:certificate_trainer2].to_i.positive?
           @event.trainer2 = Trainer.find(@certificate_values[:certificate_trainer2].to_i)
         end
         @event.country = Country.find(@certificate_values[:certificate_country].to_i)

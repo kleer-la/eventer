@@ -5,8 +5,8 @@ class HomeController < ApplicationController
     return false if name.to_s == ''
 
     name = name.strip
-    return false if !!/^[a-z]+[A-Z]/.match(name)
-    return false if !!/[a-z]+[A-Z]+[a-z]/.match(name)
+    return false unless /^[a-z]+[A-Z]/.match(name).nil?
+    return false unless /[a-z]+[A-Z]+[a-z]/.match(name).nil?
     return false if name.length > 50
 
     true
@@ -100,8 +100,8 @@ class HomeController < ApplicationController
       is_kleer_certification: et.is_kleer_certification,
       external_site_url: et.external_site_url,
       platform: et.platform,
-      percent_off: codeless_coupon ? codeless_coupon.percent_off : nil,
-      coupon_icon: codeless_coupon ? codeless_coupon.icon : nil
+      percent_off: codeless_coupon&.percent_off,
+      coupon_icon: codeless_coupon&.icon
     }
   end
 
@@ -187,7 +187,7 @@ class HomeController < ApplicationController
                                                     is_sold_out duration start_time end_time time_zone_name currency_iso_code address finish_date
                                                   ], methods: :trainers } }]
     )
-    et = "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
+    "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
       only: %i[fname lname testimony profile_url photo_url]
     )}}"
   end

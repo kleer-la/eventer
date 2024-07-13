@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateJoinTableForCouponsEventTypes < ActiveRecord::Migration[7.1]
   def change
     create_join_table :coupons, :event_types do |t|

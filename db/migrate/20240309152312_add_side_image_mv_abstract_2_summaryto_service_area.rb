@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddSideImageMvAbstract2SummarytoServiceArea < ActiveRecord::Migration[7.1]
   def up
     # Add the side_image column to service_areas table

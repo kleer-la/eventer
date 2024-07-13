@@ -38,7 +38,7 @@ class FileStoreService
       'certificate' => 'certificate-images/',
       'signature' => 'certificate-signatures/'
     }[image_type]
-    file_name = image_name&.gsub(' ', '+')&.gsub("#{folder}", '')
+    file_name = image_name&.gsub(' ', '+')&.gsub(folder.to_s, '')
     "https://s3.amazonaws.com/#{bucket}/#{folder}#{file_name}"
   end
 
@@ -76,7 +76,7 @@ class FileStoreService
     unless @store.objects("#{folder}/#{key}").exists?
       Log.log(:aws, :error,
               'get file - Image not found',
-              "filename:#{filename} suffix:#{suffix} folder: #{folder}" + ' - \n' + caller.grep_v(%r{/gems/}).join('\n'))
+              "filename:#{filename} suffix:#{suffix} folder: #{folder} - \\n#{caller.grep_v(%r{/gems/}).join('\n')}")
       raise ArgumentError, "#{folder}/#{key} image not found"
     end
 
@@ -161,6 +161,6 @@ class S3FileStore
   end
 
   def list_objects(bucket:)
-    resp = @client.list_objects(bucket:)
+    @client.list_objects(bucket:)
   end
 end

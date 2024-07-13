@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Category do
   menu label: 'Categorías', parent: 'Others', priority: 91
 
@@ -23,23 +25,23 @@ ActiveAdmin.register Category do
   show do |category|
     panel 'Información de la configuración' do
       attributes_table_for category do
-        row('Código') { |o| o.codename }
-        row('Visible') { |o| o.visible }
-        row('Orden') { |o| o.order }
+        row('Código', &:codename)
+        row('Visible', &:visible)
+        row('Orden', &:order)
       end
     end
     panel 'Español' do
       attributes_table_for category do
-        row('Nombre') { |o| o.name }
-        row('Subtítulo') { |o| o.tagline }
-        markdown_row('Descripción') { |o| o.description }
+        row('Nombre', &:name)
+        row('Subtítulo', &:tagline)
+        markdown_row('Descripción', &:description)
       end
     end
     panel 'Inglés' do
       attributes_table_for category do
-        row('Nombre') { |o| o.name_en }
-        row('Subtítulo') { |o| o.tagline_en }
-        markdown_row('Descripción') { |o| o.description_en }
+        row('Nombre', &:name_en)
+        row('Subtítulo', &:tagline_en)
+        markdown_row('Descripción', &:description_en)
       end
     end
   end

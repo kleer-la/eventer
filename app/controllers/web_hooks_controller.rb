@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WebHooksController < ActionController::API
   require 'base64'
   require 'openssl'
@@ -19,13 +21,13 @@ class WebHooksController < ActionController::API
     signature = request.env['HTTP_X_XERO_SIGNATURE']
 
     if validate(payload, signature)
-      Log.log(:xero, :info, 'Procesando webhook', payload.to_s) if Setting.get(:LOG_LEVEL).to_i > 0
+      Log.log(:xero, :info, 'Procesando webhook', payload.to_s) if Setting.get(:LOG_LEVEL).to_i.positive?
 
       XeroWebHookJob.perform_later(JSON.parse(payload))
       head :ok
     else
-      Log.log(:xero, :info, 'unauthorized hook', payload.to_s + ' signature' + signature.to_s)
-      puts 'unauthorized hook' + payload.to_s
+      Log.log(:xero, :info, 'unauthorized hook', "#{payload} signature#{signature}")
+      puts "unauthorized hook#{payload}"
       head :unauthorized
     end
   end
@@ -40,7 +42,7 @@ class WebHooksController < ActionController::API
     end
 
     calculated_signature = Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha256'), key, payload)).strip
-    if Setting.get(:LOG_LEVEL).to_i > 0
+    if Setting.get(:LOG_LEVEL).to_i.positive?
       Log.log(:xero, :info, 'validate',
               "signature:#{signature} calculated_signature:#{calculated_signature}")
     end

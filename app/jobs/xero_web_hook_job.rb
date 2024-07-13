@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class XeroWebHookJob < ActiveJob::Base
   queue_as :default
 
@@ -29,7 +31,7 @@ class XeroWebHookJob < ActiveJob::Base
       next if event['tenantId'] != @xero_client.tenant_id
 
       if invoice_update?(event)
-        Log.log(:xero, :info, 'webhook invoice', event.to_s) if Setting.get(:LOG_LEVEL).to_i > 0
+        Log.log(:xero, :info, 'webhook invoice', event.to_s) if Setting.get(:LOG_LEVEL).to_i.positive?
         ParticipantsController.update_payment_status(event['resourceId'], @xero_client)
       elsif Setting.get(:LOG_LEVEL).to_i > 1
         Log.log(:xero, :info, 'Saliendo por tipo de evento no procesado',

@@ -38,7 +38,7 @@ describe Api::ArticlesController do
   end
   describe "GET 'Articles' (/api/articles.<format>)" do
     it 'Articles list w/o body' do
-      ar = FactoryBot.create(:article)
+      FactoryBot.create(:article)
 
       get :index, params: { format: 'json' }
       expect(response).to have_http_status(:ok)

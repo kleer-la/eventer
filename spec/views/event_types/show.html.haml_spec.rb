@@ -27,7 +27,7 @@ describe 'event_types/show' do
     expect(rendered).to match(/this is da canonical/)
   end
   it 'has clons' do
-    other_et = FactoryBot.create(:event_type, name: 'yes, master!', canonical: @event_type)
+    FactoryBot.create(:event_type, name: 'yes, master!', canonical: @event_type)
     @event_type.reload # needed to populate clons
 
     render

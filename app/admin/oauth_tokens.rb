@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register OauthToken do
   menu label: 'Tokens (Oauth)', parent: 'Others', priority: 100
 

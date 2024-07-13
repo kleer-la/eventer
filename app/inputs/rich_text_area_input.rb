@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RichTextAreaInput < Formtastic::Inputs::TextInput
   def to_html
     input_wrapping do

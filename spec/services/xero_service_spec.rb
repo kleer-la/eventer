@@ -25,7 +25,7 @@ describe XeroClientService do
     )
 
     expect do
-      response = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30', 'CODE', :es)
+      xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30', 'CODE', :es)
     end.to change { Log.count }.by 1
   end
   it 'Send Invoice with API error' do
@@ -36,7 +36,7 @@ describe XeroClientService do
     )
     invoice = xero.create_invoices('Contact id', 'Description', 1, 1.23, '2022-07-20', '2022-07-30', 'CODE', :es)
     expect do
-      response = xero.email_invoice(invoice)
+      xero.email_invoice(invoice)
     end.to change { Log.count }.by 1
   end
   it 'get online link' do

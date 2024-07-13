@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ServiceAreasController < InheritedResources::Base
   before_action :set_service_area, only: %i[show edit update destroy]
 

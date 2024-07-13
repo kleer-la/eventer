@@ -5,12 +5,17 @@ require 'xero-ruby'
 # https://github.com/XeroAPI/xero-ruby/blob/master/lib/xero-ruby/api/accounting_api.rb
 
 module XeroClientService
-  def self.build_client
-    raise 'You must specify the XERO_CLIENT_ID env variable' unless xero_client_id = ENV['XERO_CLIENT_ID']
-    raise 'You must specify the XERO_CLIENT_SECRET env variable' unless xero_client_secret = ENV['XERO_CLIENT_SECRET']
-    raise 'You must specify the XERO_REDIRECT_URI env variable' unless xero_redirect_uri = ENV['XERO_REDIRECT_URI']
-    raise 'You must specify the XERO_SCOPES env variable' unless xero_scopes = ENV['XERO_SCOPES']
+  class << self
+    attr_accessor :xero_client
+  end
 
+  def self.build_client
+    return @xero_client if @xero_client
+
+    xero_client_id = ENV.fetch('XERO_CLIENT_ID') { raise 'You must specify the XERO_CLIENT_ID env variable' }
+    xero_client_secret = ENV.fetch('XERO_CLIENT_SECRET') { raise 'You must specify the XERO_CLIENT_SECRET env variable' }
+    xero_redirect_uri = ENV.fetch('XERO_REDIRECT_URI') { raise 'You must specify the XERO_REDIRECT_URI env variable' }
+    xero_scopes = ENV.fetch('XERO_SCOPES') { raise 'You must specify the XERO_SCOPES env variable' }
     creds = {
       client_id: xero_client_id,
       client_secret: xero_client_secret,
@@ -21,7 +26,7 @@ module XeroClientService
       # timeout: 30,
       # debugging: Rails.env.development?
     }
-    xero_client ||= XeroRuby::ApiClient.new(credentials: creds, config:)
+    @xero_client = XeroRuby::ApiClient.new(credentials: creds, config:)
   end
 
   def self.initialized_client
@@ -98,7 +103,7 @@ module XeroClientService
       rescue XeroRuby::ApiError => e
         Log.log(:xero, :warn,
                 "Exception when calling create_contacts:#{contacts}",
-                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+                "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}")
 
         @client.get_contacts({ search_term: name })
       end
@@ -107,7 +112,7 @@ module XeroClientService
     BRANDING_THEME = {
       es: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
       en: '0420bcfb-62ef-428a-a178-b02ff936ed3d'
-    }
+    }.freeze
 
     SERVICE_ACCOUNT = '4300'
     def create_invoices(contact_id, description, quantity, unit, date, due_date, codename, lang)
@@ -151,14 +156,14 @@ module XeroClientService
       rescue XeroRuby::ApiError => e
         Log.log(:xero, :error,
                 "contact:#{contact_id}",
-                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+                "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}")
         nil
       end
     end
 
     def invoice_paid?(invoice_id)
       invoice = get_invoice(invoice_id)
-      invoice.amount_paid > 0
+      invoice.amount_paid.positive?
     end
 
     def invoice_void?(invoice_id)
@@ -171,7 +176,7 @@ module XeroClientService
     rescue StandardError => e
       Log.log(:xero, :warn,
               "invoice not sent :#{invoice.invoice_number}",
-              e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+              "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}")
     end
 
     # <XeroRuby::Accounting::Invoice:0x00007f48103bce50
@@ -220,7 +225,7 @@ module XeroClientService
     rescue XeroRuby::ApiError => e
       Log.log(:xero, :warn,
               "category cant be read:#{option_name}",
-              e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+              "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}")
     end
 
     def create(option_name)
@@ -233,7 +238,7 @@ module XeroClientService
       rescue XeroRuby::ApiError => e
         Log.log(:xero, :warn,
                 "category option not created:#{option_name}",
-                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+                "#{e.message} - #{e.backtrace.grep_v(%r{/gems/}).join('\n')}")
       end
     end
   end
@@ -292,7 +297,7 @@ module XeroClientService
     #   ]
     # }
     def get_online_invoice(invoice_id)
-      data = @xero_client.accounting_api.get_online_invoice(@tenant_id, invoice_id)
+      @xero_client.accounting_api.get_online_invoice(@tenant_id, invoice_id)
     end
   end
 end

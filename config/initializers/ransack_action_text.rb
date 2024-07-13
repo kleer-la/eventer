@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.config.to_prepare do
   ActionText::RichText.class_eval do
     def self.ransackable_attributes(_auth_object = nil)

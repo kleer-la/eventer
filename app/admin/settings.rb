@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Setting do
   menu label: 'Settings', parent: 'Others', priority: 98
 
@@ -19,8 +21,8 @@ ActiveAdmin.register Setting do
   show do |setting|
     panel 'Información de la configuración' do
       attributes_table_for setting do
-        row('Clave') { |o| o.key }
-        row('Valor') { |o| o.value }
+        row('Clave', &:key)
+        row('Valor', &:value)
       end
     end
   end

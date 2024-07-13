@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RecommendedContent < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :target, polymorphic: true

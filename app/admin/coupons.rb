@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Coupon do
   menu priority: 5
 

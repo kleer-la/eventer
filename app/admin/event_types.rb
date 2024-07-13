@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register EventType do
   menu priority: 3
   filter :kleer_cert_seal_image_present, as: :boolean # , label: 'Cert Image is Empty'

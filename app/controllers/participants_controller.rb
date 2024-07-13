@@ -54,16 +54,14 @@ class ParticipantsController < ApplicationController
 
     qty.times { original.dup.save! }
 
-    redirect_to polymorphic_path([original.event]) + '/participants'
+    redirect_to "#{polymorphic_path([original.event])}/participants"
   end
 
   def survey
     @event = Event.find(params[:event_id])
     @participants = @event.participants.to_certify.sort_by { |e| [e.fname, e.lname] }
 
-    respond_to do |format|
-      format.html # survey.html.erb
-    end
+    respond_to(&:html)
   end
 
   def print
@@ -329,9 +327,7 @@ class ParticipantsController < ApplicationController
       flash.now[:notice] =
         "Encontré más de #{MAX_SEARCH_RESULT_SIZE} resultados, mostrando solo los primeros"
     end
-    respond_to do |format|
-      format.html # search.html.erb
-    end
+    respond_to(&:html)
   end
 
   # GET /participants/followup

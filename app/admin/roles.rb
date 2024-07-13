@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Role do
   menu label: 'Roles', parent: 'Others', priority: 93
 
@@ -17,7 +19,7 @@ ActiveAdmin.register Role do
   show do |role|
     panel 'Información del rol' do
       attributes_table_for role do
-        row('Nombre') { |o| o.name }
+        row('Nombre', &:name)
       end
     end
   end

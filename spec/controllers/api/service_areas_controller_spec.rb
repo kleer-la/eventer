@@ -55,7 +55,6 @@ describe Api::ServiceAreasController do
         expect(json_response['services'][0]['slug_old']).to be nil
       end
       it 'ServiceArea slug changed (by Service)' do
-        old_slug = @service_area.slug
         @service_area.slug = 'new-slug'
         @service_area.save
 
@@ -65,7 +64,6 @@ describe Api::ServiceAreasController do
         expect(json_response['services'][0]['slug_old']).to be nil
       end
       it 'Service slug changed (by ServiceArea)' do
-        old_slug = @service.slug
         @service.slug = 'new-slug'
         @service.save
 

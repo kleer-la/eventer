@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddVisibleAndLangToServiceAreas < ActiveRecord::Migration[7.1]
   def change
     add_column :service_areas, :visible, :boolean

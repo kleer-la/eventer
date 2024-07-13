@@ -65,7 +65,7 @@ ActiveAdmin.register_page 'Dashboard' do
     #     end
     #   end
     # end
-  end # content
+  end
 end
 
 def brochure_alert
@@ -112,7 +112,7 @@ def event_type_next_date_alert
 end
 
 def event_type_alert(message, error_list)
-  return if error_list.count == 0
+  return if error_list.count.zero?
 
   h4 "#{message} (#{error_list.count})"
   ul do
