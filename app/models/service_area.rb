@@ -3,7 +3,7 @@
 class ServiceArea < ApplicationRecord
   before_save :strip_slug
   extend FriendlyId
-  friendly_id :name, use: [:slugged, :history]
+  friendly_id :name, use: %i[slugged history]
 
   enum lang: { sp: 0, en: 1 }
   has_many :services, dependent: :destroy

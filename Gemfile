@@ -37,7 +37,7 @@ group :test, :production do
   gem 'pg', '~> 1.00'
 end
 group :assets do
-  gem 'coffee-rails'  #, '~> 5.0'
+  gem 'coffee-rails' # , '~> 5.0'
   gem 'sassc-rails'
   gem 'uglifier', '>= 1.3.0'
 end
@@ -67,15 +67,15 @@ gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'formtastic'
 gem 'formtastic-bootstrap'
 gem 'importmap-rails'
+gem 'matrix', '~> 0.4' # needed to solve an error when migrating to ruby 3.1 (prawn related)
 gem 'money'
 gem 'prawn'
 gem 'prawn_rails'
-gem "matrix", "~> 0.4" # needed to solve an error when migrating to ruby 3.1 (prawn related)
 gem 'redcarpet'
 gem 'valid_email'
 
-# from git to solve ActionView::Base.new parameters 
-gem 'best_in_place', git: 'https://github.com/bernat/best_in_place'   # for editing participants
+# from git to solve ActionView::Base.new parameters
+gem 'best_in_place', git: 'https://github.com/bernat/best_in_place' # for editing participants
 
 # App Monitoring Heroku Plug-In
 gem 'newrelic_rpm'
@@ -94,8 +94,8 @@ gem 'friendly_id' # slug for blog Articles
 
 # Xero API
 gem 'jwt'
-gem 'xero-ruby'
 gem 'sprockets-rails'
+gem 'xero-ruby'
 
 gem 'activeadmin'
 gem 'activeadmin_addons'

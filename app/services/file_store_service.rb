@@ -7,7 +7,7 @@ class FileStoreService
   @current = nil
 
   def self.create_null(exists: {})
-    @current = FileStoreService.new NullFileStore.new(exists: exists)
+    @current = FileStoreService.new NullFileStore.new(exists:)
   end
 
   def self.create_s3
@@ -27,20 +27,18 @@ class FileStoreService
       'certificate' => 'certificate-images/',
       'signature' => 'certificate-signatures/'
     }[image_type]
-    [bucket, folder]    
+    [bucket, folder]
   end
 
   def self.image_url(image_name, image_type)
-    if image_type == 'image'
-      return "https://kleer-images.s3.sa-east-1.amazonaws.com/#{image_name&.gsub(' ','+')}"
-    end
+    return "https://kleer-images.s3.sa-east-1.amazonaws.com/#{image_name&.gsub(' ', '+')}" if image_type == 'image'
 
     bucket = 'Keventer'
     folder = {
       'certificate' => 'certificate-images/',
       'signature' => 'certificate-signatures/'
     }[image_type]
-    file_name = image_name&.gsub(' ','+').gsub("#{folder}", '')
+    file_name = image_name&.gsub(' ', '+')&.gsub("#{folder}", '')
     "https://s3.amazonaws.com/#{bucket}/#{folder}#{file_name}"
   end
 
@@ -48,7 +46,7 @@ class FileStoreService
     @store = store
   end
 
-  def upload(tempfile, file_name, image_bucket= 'image')
+  def upload(tempfile, file_name, image_bucket = 'image')
     bucket, folder = self.class.image_location(image_bucket)
 
     file_path = folder.to_s + file_name
@@ -75,13 +73,11 @@ class FileStoreService
     suffix = "-#{suffix}" if suffix.present?
     key = File.basename(filename, '.*') + suffix.to_s + File.extname(filename)
 
-    
     unless @store.objects("#{folder}/#{key}").exists?
-      Log.log(:aws, :error,  
-        "get file - Image not found", 
-        "filename:#{filename} suffix:#{suffix} folder: #{folder}"+ ' - \n' + caller.grep_v(%r{/gems/}).join('\n')
-      )
-      raise ArgumentError, "#{folder}/#{key} image not found" 
+      Log.log(:aws, :error,
+              'get file - Image not found',
+              "filename:#{filename} suffix:#{suffix} folder: #{folder}" + ' - \n' + caller.grep_v(%r{/gems/}).join('\n'))
+      raise ArgumentError, "#{folder}/#{key} image not found"
     end
 
     tmp_filename = tmp_path filename
@@ -97,8 +93,8 @@ class FileStoreService
 
   def list(image_type = 'image')
     bucket, folder = self.class.image_location(image_type)
-    result = @store.list_objects(bucket: bucket).contents
-    result = result.select { |img| img.key.to_s.start_with? folder} unless folder.nil?
+    result = @store.list_objects(bucket:).contents
+    result = result.select { |img| img.key.to_s.start_with? folder } unless folder.nil?
     result
   end
 end
@@ -108,15 +104,15 @@ class NullFileStore
     @exists = exists
   end
 
-  def objects(key, bucket_name= nil)
+  def objects(key, _bucket_name = nil)
     NullStoreObject.new(key, exists: @exists)
   end
+
   def list_objects(bucket:)
     list = OpenStruct.new
     list.contents = [NullStoreObject.new('some file.png', exists: @exists)]
     list
   end
-
 end
 
 class NullStoreObject
@@ -127,7 +123,7 @@ class NullStoreObject
     @key = key
     @exists = exists
     @last_modified = Date.yesterday
-    @size = 12345
+    @size = 12_345
   end
 
   def download_file(file)
@@ -159,13 +155,12 @@ class S3FileStore
     @bucket = @resource.bucket('Keventer')
   end
 
-  def objects(key, bucket_name= nil)
+  def objects(key, bucket_name = nil)
     bucket = @resource.bucket(bucket_name) if bucket_name.present?
     (bucket || @bucket).object(key)
   end
 
   def list_objects(bucket:)
-    resp = @client.list_objects(bucket: bucket)
+    resp = @client.list_objects(bucket:)
   end
-
 end

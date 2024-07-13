@@ -68,11 +68,9 @@ module ParticipantsHelper
 
     def use_this_seal
       seal = @participant.event.event_type.kleer_cert_seal_image
-      if seal.present? && (kleer_certification_for_this_participant? || !kleer_certification?)
-        seal
-      else
-        nil
-      end
+      return unless seal.present? && (kleer_certification_for_this_participant? || !kleer_certification?)
+
+      seal
     end
 
     def seal
@@ -118,6 +116,7 @@ module ParticipantsHelper
         "#{@participant.event.city}, #{@participant.event.country.name}"
       end
     end
+
     def place_v2
       if @participant.event.online?
         "#{I18n.t('certificate.how')}: <b>Online</b>"
@@ -232,7 +231,7 @@ module ParticipantsHelper
       height = { 'A4' => 598,
                  'LETTER' => 613 }[ @doc.page.size]
       bk_image = @store.read(img_file, @doc.page.size)
-      image bk_image, at: offset, height: height
+      image bk_image, at: offset, height:
     end
 
     def event_name
@@ -270,7 +269,7 @@ module ParticipantsHelper
     end
 
     def verification_code
-      fill_color '000000' #@kcolor
+      fill_color '000000' # @kcolor
       text_box I18n.t('certificate.code', code: @data.verification_code),
                at: [0, @verification_code_y], align: :left,
                size: 10
@@ -296,7 +295,7 @@ module ParticipantsHelper
       image signature_file, at: [trainer_x, 60 + 100], height: 130 if signature_file.present?
     end
 
-    def body(&block)
+    def body
       bounding_box [300, @top_right[1]], width: @top_right[0], height: 500 do
         yield if block_given?
       end
@@ -316,6 +315,7 @@ module ParticipantsHelper
       fill_image(@data.foreground_file) if @data.foreground_file.present?
     end
   end
+
   # =---------------------------------------------------------------------
   #  New version
   class PdfCertificateV2 < PdfCertificate
@@ -327,6 +327,7 @@ module ParticipantsHelper
       @certificate_description_y = @participant_y - 60
       @info_y = 252
     end
+
     def event_name
       fill_color '000000'
       font 'Raleway', style: :bold
@@ -358,18 +359,18 @@ module ParticipantsHelper
                overflow: :shrink_to_fit
     end
 
-    def rounded_rectangle_text(x, y, padding, size, text)
+    def rounded_rectangle_text(_x, y, padding, _size, text)
       # fill_color '90' * 3
 
       # text_width = width_of(text, size: size)
       # fill_rounded_rectangle([x, y+padding], text_width, size + 14, padding)
 
       text_box "<color rgb='FFFFFF'>#{text}<br>",
-        at: [padding, y], align: :left,
-        size: 13,
-        inline_format: true
+               at: [padding, y], align: :left,
+               size: 13,
+               inline_format: true
     end
-  
+
     def certificate_info
       font 'Raleway', style: :regular
       margin = 5
@@ -387,13 +388,15 @@ module ParticipantsHelper
       offset = [-36, 576]
       height = 613
       bk_image = @store.read(img_file, nil)
-      image bk_image, at: offset, height: height
+      image bk_image, at: offset, height:
     end
-    def body(&block)
+
+    def body
       bounding_box [45, @top_right[1]], width: @top_right[0], height: 500 do
         yield if block_given?
       end
     end
+
     def trainer(t_ord)
       trainer_width = 132 * 1.3
       trainer_height = 69 * 1.3
@@ -410,9 +413,13 @@ module ParticipantsHelper
                size: 11,
                inline_format: true
       signature_file = @store.read(@data.trainer_signature(t_ord), nil, 'certificate-signatures')
-      image signature_file, at: [trainer_x, trainer_y + trainer_height -10], height: trainer_height if signature_file.present?
+      return unless signature_file.present?
+
+      image signature_file, at: [trainer_x, trainer_y + trainer_height - 10],
+                            height: trainer_height
     end
   end
+
   class PdfKleerCertificateV2 < PdfCertificateV2
     def initialize(doc, data, store = nil)
       super(doc, data, store)
@@ -442,7 +449,7 @@ module ParticipantsHelper
       certificate = Certificate.new(participant)
 
       Prawn::Document.generate(certificate_filename,
-                              page_layout: :landscape, page_size: page_size) do |pdf|
+                               page_layout: :landscape, page_size:) do |pdf|
         render_certificate(pdf, certificate, page_size, store)
       end
     end
@@ -465,24 +472,24 @@ module ParticipantsHelper
       access_key_id: access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
       secret_access_key: secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY']
     )
-    Aws::S3::Resource.new(client: client)
+    Aws::S3::Resource.new(client:)
   end
 
   def quantity_list
     seat_text = []
-    5.times {seat_text.push I18n.t('formtastic.button.participant.seats') }
+    5.times { seat_text.push I18n.t('formtastic.button.participant.seats') }
     seat_text.push I18n.t('formtastic.button.participant.seat')
 
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
       formatted_price = number_to_currency(@event.price(qty, DateTime.now),
-        precision: 0, delimiter: '.', unit: '')
+                                           precision: 0, delimiter: '.', unit: '')
       formatted_total = number_to_currency(price * qty,
-        precision: 0, delimiter: '.', unit: '')
+                                           precision: 0, delimiter: '.', unit: '')
 
-      ac << ["#{qty} #{seat_text.pop} x #{formatted_price} #{@event.currency_iso_code} = #{formatted_total} #{@event.currency_iso_code}", qty]
+      ac << [
+        "#{qty} #{seat_text.pop} x #{formatted_price} #{@event.currency_iso_code} = #{formatted_total} #{@event.currency_iso_code}", qty
+      ]
     end
   end
-
-
 end

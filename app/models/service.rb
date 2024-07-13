@@ -4,7 +4,7 @@ class Service < ApplicationRecord
   include Recommendable
   before_save :strip_slug
   extend FriendlyId
-  friendly_id :name, use: [:slugged, :history]
+  friendly_id :name, use: %i[slugged history]
   belongs_to :service_area
   has_many :testimonies
 
@@ -22,7 +22,7 @@ class Service < ApplicationRecord
   end
 
   def self.ransackable_associations(_auth_object = nil)
-    %w[rich_text_definitions rich_text_faq rich_text_outcomes rich_text_program rich_text_target 
+    %w[rich_text_definitions rich_text_faq rich_text_outcomes rich_text_program rich_text_target
        rich_text_value_proposition service_area testimonies]
   end
 

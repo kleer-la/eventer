@@ -2,16 +2,15 @@ module XeroClientService
   class NullXero
     attr_reader :tenant_id
 
-    def initialize(has_validation_error: false, invoice_exception: nil, 
-      email_exception: nil, tenant_id: nil)
+    def initialize(has_validation_error: false, invoice_exception: nil,
+                   email_exception: nil, tenant_id: nil)
       @has_validation_error = has_validation_error
       @invoice_exception = invoice_exception
       @email_exception = email_exception
       @tenant_id = tenant_id
     end
 
-    def create_tracking_options(...)
-    end
+    def create_tracking_options(...); end
 
     def get_tracking_category(...)
       NullResponse.new(has_validation_errors: @has_validation_error)
@@ -23,19 +22,22 @@ module XeroClientService
 
     def create_invoices(...)
       raise @invoice_exception if @invoice_exception
-      NullInvoice.new()
+
+      NullInvoice.new
     end
 
-    def email_invoice(invoice)
+    def email_invoice(_invoice)
       raise @email_exception if @email_exception
     end
 
     def get_online_invoice(_)
       NullOnlineInvoices.new
     end
+
     def get_invoice(_)
       NullInvoice.new
     end
+
     def accounting_api
       NullAccountingApi.new
     end
@@ -65,9 +67,10 @@ module XeroClientService
     def contacts
       [NullContact.new]
     end
+
     def tracking_categories
       [NullTrackingCategory.new]
-    end    
+    end
   end
 
   class NullContact
@@ -82,39 +85,40 @@ module XeroClientService
     def options
       [NullTrackingCategoryOption.new]
     end
-# {
-#   "Id": "209b745b-da27-4f23-8f5d-a4ae952bb7a6",
-#   "Status": "OK",
-#   "ProviderName": "API Explorer",
-#   "DateTimeUTC": "\/Date(1666454143574)\/",
-#   "TrackingCategories": [
-#     {
-#       "Name": "Cód. Proyecto",
-#       "Status": "ACTIVE",
-#       "TrackingCategoryID": "63a79b77-227b-4144-9be8-06e7a839d946",
-#       "Options": [
-#         {
-#           "TrackingOptionID": "99b4b914-5aa2-4610-bd48-e5494734251f",
-#           "Name": "_CLEARING_CO",
-#           "Status": "ACTIVE",
-#           "HasValidationErrors": false,
-#           "IsDeleted": false,
-#           "IsArchived": false,
-#           "IsActive": true
-#         },
-#         {
-#           "TrackingOptionID": "91a499c4-4c22-4976-b1ad-c0fddaa94404",
-#           "Name": "_CLEARING_UY",
-#           "Status": "ACTIVE",
-#           "HasValidationErrors": false,
-#           "IsDeleted": false,
-#           "IsArchived": false,
-#           "IsActive": true
-#         },
-#       }
-#   ]
-# }    
+    # {
+    #   "Id": "209b745b-da27-4f23-8f5d-a4ae952bb7a6",
+    #   "Status": "OK",
+    #   "ProviderName": "API Explorer",
+    #   "DateTimeUTC": "\/Date(1666454143574)\/",
+    #   "TrackingCategories": [
+    #     {
+    #       "Name": "Cód. Proyecto",
+    #       "Status": "ACTIVE",
+    #       "TrackingCategoryID": "63a79b77-227b-4144-9be8-06e7a839d946",
+    #       "Options": [
+    #         {
+    #           "TrackingOptionID": "99b4b914-5aa2-4610-bd48-e5494734251f",
+    #           "Name": "_CLEARING_CO",
+    #           "Status": "ACTIVE",
+    #           "HasValidationErrors": false,
+    #           "IsDeleted": false,
+    #           "IsArchived": false,
+    #           "IsActive": true
+    #         },
+    #         {
+    #           "TrackingOptionID": "91a499c4-4c22-4976-b1ad-c0fddaa94404",
+    #           "Name": "_CLEARING_UY",
+    #           "Status": "ACTIVE",
+    #           "HasValidationErrors": false,
+    #           "IsDeleted": false,
+    #           "IsArchived": false,
+    #           "IsActive": true
+    #         },
+    #       }
+    #   ]
+    # }
   end
+
   class NullTrackingCategoryOption
     attr_reader :name
 
@@ -129,9 +133,10 @@ module XeroClientService
     #     "IsArchived": false,
     #     "IsActive": true
   end
- 
+
   class NullInvoice
     attr_reader :invoice_number, :invoice_id, :amount_paid
+
     def initialize
       @invoice_number = 'INV-0100'
       @invoice_id = 'a12346' * 6 # 36 char
@@ -139,18 +144,22 @@ module XeroClientService
     end
   end
 
-  class NullOnlineInvoices 
+  class NullOnlineInvoices
     attr_reader :online_invoices
+
     def initialize
       @online_invoices = [NullOnlineInvoice.new]
     end
+
     class NullOnlineInvoice
       attr_reader :online_invoice_url
+
       def initialize
         @online_invoice_url = 'https://in.xero.com/ZBu1Js9EHEdeR2A0LAeaL6NqYIytXgjOzRIBOoW9'
       end
     end
   end
+
   class NullAccountingApi
   end
 end

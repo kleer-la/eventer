@@ -8,9 +8,9 @@ module Api
         json: Resource.order(created_at: :desc),
         methods: %i[category_name],
         include: {
-          authors: { only: %i[name landing]},
+          authors: { only: %i[name landing] },
           translators: { only: %i[name landing] },
-          illustrators: { only: %i[name landing] },
+          illustrators: { only: %i[name landing] }
         }
       )
     end

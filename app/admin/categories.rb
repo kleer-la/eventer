@@ -1,12 +1,13 @@
 ActiveAdmin.register Category do
   menu label: 'Categorías', parent: 'Others', priority: 91
-  
+
   actions :index, :show, :edit, :update, :new, :create, :destroy
 
   permit_params :name, :name_en, :codename, :description, :description_en, :tagline, :tagline_en, :visible, :order
 
   filter :codename_cont, label: 'Código'
-  filter :name_or_name_en_or_tagline_or_tagline_en_or_description_or_description_en_cont, label: 'Cualquier el texto (ambos idiomas)'
+  filter :name_or_name_en_or_tagline_or_tagline_en_or_description_or_description_en_cont,
+         label: 'Cualquier el texto (ambos idiomas)'
   filter :visible, label: 'Visible'
 
   index do
@@ -54,14 +55,14 @@ ActiveAdmin.register Category do
       f.input :name, label: 'Nombre'
       f.input :tagline, label: 'Subtítulo'
       f.input :description, label: 'Descripción',
-              :hint => "Este texto soporta #{link_to('Markdown', 'https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet', target: '_blank')} y HTML.".html_safe
+                            hint: "Este texto soporta #{link_to('Markdown', 'https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet', target: '_blank')} y HTML.".html_safe
     end
     f.inputs 'Inglés' do
       f.input :name_en, label: 'Nombre'
       f.input :tagline_en, label: 'Subtítulo'
       f.input :description_en, label: 'Descripción',
-              :hint => "Este texto soporta #{link_to('Markdown', 'https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet', target: '_blank')} y HTML.".html_safe
+                               hint: "Este texto soporta #{link_to('Markdown', 'https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet', target: '_blank')} y HTML.".html_safe
     end
-  f.actions
+    f.actions
   end
 end

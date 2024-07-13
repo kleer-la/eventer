@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-active_admin_form_for Episode.new(podcast: podcast), url: admin_episodes_path do |f|
+active_admin_form_for Episode.new(podcast:), url: admin_episodes_path do |f|
   f.inputs do
     f.input :podcast_id, as: :hidden, input_html: { value: podcast.id }
     f.input :season

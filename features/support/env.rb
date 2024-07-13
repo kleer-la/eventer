@@ -31,7 +31,7 @@ Capybara.register_driver :selenium do |app|
     # --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --disable-web-security
     # --disable-popup-blocking --window-size=1920,1080]
   )
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
 end
 
 # require 'webdrivers'

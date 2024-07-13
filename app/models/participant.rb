@@ -161,6 +161,7 @@ class Participant < ApplicationRecord
   def cancelled?
     status == STATUS[:cancelled]
   end
+
   def cancelled!
     self.status = STATUS[:cancelled]
   end
@@ -170,13 +171,15 @@ class Participant < ApplicationRecord
   end
 
   def paid!
-    return if self.paid?
-    self.status = STATUS[:confirmed] 
+    return if paid?
+
+    self.status = STATUS[:confirmed]
     self.is_payed = true
   end
+
   def paid?
-    # TODO is_payed seems to be redundant, could be removed?
-    (self.status == STATUS[:confirmed]) && self.is_payed
+    # TODO: is_payed seems to be redundant, could be removed?
+    (status == STATUS[:confirmed]) && is_payed
   end
 
   def influence_zone_tag
@@ -231,9 +234,9 @@ class Participant < ApplicationRecord
       fname: attributes[1],
       lname: attributes[0],
       email: attributes[2],
-      phone: (attributes[3] || 'N/A'),
+      phone: attributes[3] || 'N/A',
       id_number: 'Batch load', address: 'Batch load', notes: 'Batch load',
-      event_id: event.id, influence_zone_id: influence_zone.id, status: status
+      event_id: event.id, influence_zone_id: influence_zone.id, status:
     ).save
   end
 
@@ -252,15 +255,13 @@ class Participant < ApplicationRecord
     s = searching.downcase
     offset_value = per_page * (page - 1)
 
-    participants = Participant.where("lower(fname || ' ' || lname || verification_code) LIKE ?", "%#{s}%")
-                              .offset(offset_value)
-                              .limit(per_page)
-
-    participants
+    Participant.where("lower(fname || ' ' || lname || verification_code) LIKE ?", "%#{s}%")
+               .offset(offset_value)
+               .limit(per_page)
   end
 
   def self.search_by_invoice(invoice_id)
-    Participant.where(invoice_id: invoice_id)[0]
+    Participant.where(invoice_id:)[0]
   end
 
   def accept_terms

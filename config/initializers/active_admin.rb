@@ -4,12 +4,12 @@ ActiveAdmin.setup do |config|
   # Set the title that is displayed on the main layout
   # for each of the active admin pages.
   #
-  config.site_title = "Keventer"
+  config.site_title = 'Keventer'
 
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
   #
-  config.site_title_link = "/"
+  config.site_title_link = '/'
 
   # Set an optional image to be displayed for the header
   # instead of a string (overrides :site_title)
@@ -138,7 +138,7 @@ ActiveAdmin.setup do |config|
   #
   # You can completely disable comments:
   config.comments = false
-  
+
   # You can change the name under which comments are registered:
   # config.comments_registration_name = 'AdminComment'
   #
@@ -148,7 +148,7 @@ ActiveAdmin.setup do |config|
   #
   # You can disable the menu item for the comments index page:
   # config.comments_menu = false
-  
+
   # You can customize the comment menu:
   # config.comments_menu = { parent: 'Admin', priority: 1 }
 
@@ -170,7 +170,7 @@ ActiveAdmin.setup do |config|
   # You can exclude possibly sensitive model attributes from being displayed,
   # added to forms, or exported by default by ActiveAdmin
   #
-  config.filter_attributes = [:encrypted_password, :password, :password_confirmation]
+  config.filter_attributes = %i[encrypted_password password password_confirmation]
 
   # == Localize Date/Time Format
   #
@@ -222,7 +222,7 @@ ActiveAdmin.setup do |config|
   #
   # To load a stylesheet:
   config.register_stylesheet 'active_admin.css'
-  
+
   # You can provide an options hash for more control, which is passed along to stylesheet_link_tag():
   #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
   #
@@ -285,7 +285,7 @@ ActiveAdmin.setup do |config|
   # You can control the default per page count for all resources here.
   #
   config.default_per_page = [25, 50, 100, 200]
-  
+
   # You can control the max per page count too.
   #
   # config.max_per_page = 10_000

@@ -7,7 +7,7 @@ ActiveAdmin.register Service do
   # Uncomment all parameters which should be permitted for assignment
   #
   permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
-                  outcomes program target faq definitions pricing brochure side_image ordering]
+                   outcomes program target faq definitions pricing brochure side_image ordering]
 
   # or
   #
@@ -41,7 +41,9 @@ ActiveAdmin.register Service do
     selected_service_area_id = params[:service_area_id] || f.object.service_area_id
 
     f.inputs do
-      f.input :service_area, as: :select, collection: ServiceArea.all.map{ |sa| [sa.name, sa.id] }, selected: selected_service_area_id
+      f.input :service_area, as: :select, collection: ServiceArea.all.map { |sa|
+                                                        [sa.name, sa.id]
+                                                      }, selected: selected_service_area_id
       f.input :name
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :ordering
@@ -68,10 +70,10 @@ ActiveAdmin.register Service do
       row :subtitle
       row :side_image
       row :pricing
-      row :value_proposition do |service| 
+      row :value_proposition do |service|
         service.value_proposition.to_s.html_safe if service.value_proposition.present?
       end
-      row :definitions do |service| 
+      row :definitions do |service|
         service.definitions.to_s.html_safe if service.definitions.present?
       end
       if service.side_image.present?
@@ -82,14 +84,14 @@ ActiveAdmin.register Service do
       end
 
       panel 'Outcomes List' do
-        div class: "outcomes-list" do
-          ul style: "column-count: 2;" do
+        div class: 'outcomes-list' do
+          ul style: 'column-count: 2;' do
             service.outcomes_list&.each do |item|
-              li(style: "list-style-type: none;") do
-                span class: "custom-bullet" do
+              li(style: 'list-style-type: none;') do
+                span class: 'custom-bullet' do
                   # Your custom bullet, e.g., a check mark icon
                 end
-                div raw(item), class: "list-content"
+                div raw(item), class: 'list-content'
               end
             end
           end
@@ -98,10 +100,10 @@ ActiveAdmin.register Service do
 
       panel 'Program' do
         service.program_list.each_with_index do |(main_item, collapsible_item), index|
-          div class: "program-row" do
-            span main_item, class: "main-item"
-            span '(+)', class: "toggle-collapsible", style: "cursor: pointer;", "data-target": "collapsible-#{index}"
-            span collapsible_item, id: "collapsible-#{index}", class: "collapsible-content", style: "display: none;"
+          div class: 'program-row' do
+            span main_item, class: 'main-item'
+            span '(+)', class: 'toggle-collapsible', style: 'cursor: pointer;', "data-target": "collapsible-#{index}"
+            span collapsible_item, id: "collapsible-#{index}", class: 'collapsible-content', style: 'display: none;'
           end
         end
         script do
@@ -135,10 +137,12 @@ ActiveAdmin.register Service do
 
       panel 'FAQ' do
         service.faq_list.each_with_index do |(main_item, collapsible_item), index|
-          div class: "program-row" do
-            span main_item, class: "main-item"
-            span "(expand)", class: "toggle-collapsible", style: "cursor: pointer;", "data-target": "collapsible-#{100+index}"
-            span collapsible_item, id: "collapsible-#{100+index}", class: "collapsible-content", style: "display: none;"
+          div class: 'program-row' do
+            span main_item, class: 'main-item'
+            span '(expand)', class: 'toggle-collapsible', style: 'cursor: pointer;',
+                             "data-target": "collapsible-#{100 + index}"
+            span collapsible_item, id: "collapsible-#{100 + index}", class: 'collapsible-content',
+                                   style: 'display: none;'
           end
         end
       end

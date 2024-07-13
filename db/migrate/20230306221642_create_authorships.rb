@@ -6,6 +6,6 @@ class CreateAuthorships < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
-    add_index :authorships, [:resource_id, :trainer_id], unique: true
+    add_index :authorships, %i[resource_id trainer_id], unique: true
   end
 end

@@ -7,10 +7,10 @@ ActiveAdmin.register Event do
 
   index do
     column :date
-    column "Tipo evento", :event_type do |event|
+    column 'Tipo evento', :event_type do |event|
       event.event_type&.name
     end
-    column "Detalles", :event_type do |event|
+    column 'Detalles', :event_type do |event|
       "#{event.country.iso_code.downcase} #{event.city}"
     end
     column :draft

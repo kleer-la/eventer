@@ -6,6 +6,6 @@ class CreateTranslations < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
-    add_index :translations, [:resource_id, :trainer_id], unique: true
+    add_index :translations, %i[resource_id trainer_id], unique: true
   end
 end

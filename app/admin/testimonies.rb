@@ -21,9 +21,7 @@ ActiveAdmin.register Testimony do
       row :last_name
       row :profile_url
       row :photo_url do |testimony|
-        if testimony.photo_url.present?
-          image_tag testimony.photo_url
-        end
+        image_tag testimony.photo_url if testimony.photo_url.present?
       end
       row :service
       row :stared

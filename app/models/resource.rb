@@ -5,8 +5,8 @@ class Resource < ApplicationRecord
   friendly_id :title_es, use: :slugged
   belongs_to :category, optional: true
 
-  enum format: { card: 0, book: 1, infographic: 2, canvas: 3, 
-                guide: 4,  game: 5}
+  enum format: { card: 0, book: 1, infographic: 2, canvas: 3,
+                 guide: 4, game: 5 }
 
   has_many  :authorships, -> { order(updated_at: :desc) }
   has_many  :authors, through: :authorships, source: :trainer

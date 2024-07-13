@@ -39,7 +39,10 @@ class Event < ApplicationRecord
     record.errors.add(attr, :eb_end_date_should_be_earlier_than_event_date) unless value.nil? || value < record.date
   end
   validates_each :registration_ends do |record, attr, value|
-    record.errors.add(attr, :registration_ends_should_be_earlier_than_event_date) unless value.nil? || value <= record.date
+    unless value.nil? || value <= record.date
+      record.errors.add(attr,
+                        :registration_ends_should_be_earlier_than_event_date)
+    end
   end
 
   validates_each :eb_price do |record, attr, value|
@@ -177,8 +180,8 @@ class Event < ApplicationRecord
   end
 
   def registration_ended?(current_date = Date.today)
-    [self.date, self.registration_ends].compact.min.to_date <= current_date.to_date
-  end 
+    [date, registration_ends].compact.min.to_date <= current_date.to_date
+  end
 
   def finished?
     timezone = TimeZone.new(time_zone_name) unless time_zone_name.nil?
@@ -241,9 +244,9 @@ class Event < ApplicationRecord
     return "No se encontró el país #{country_iso}. " + INTERESTED_ERROR if iz.nil?
 
     part = participants.create(status: Participant::STATUS[:new],
-                               fname: fname, lname: lname, email: email,
+                               fname:, lname:, email:,
                                phone: 'na', id_number: 'na', address: 'na', influence_zone: iz,
-                               notes: notes)
+                               notes:)
 
     part.save if part.valid?
     part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
@@ -308,8 +311,9 @@ class Event < ApplicationRecord
     extra_script.to_s.html_safe
   end
 
-  def self.ransackable_attributes(auth_object = nil)
-    ["address", "average_rating", "banner_text", "banner_type", "business_eb_price", "business_price", "cancellation_policy", "cancelled", "capacity", "city", "country_id", "couples_eb_price", "created_at", "currency_iso_code", "custom_prices_email_text", "date", "draft", "duration", "eb_end_date", "eb_price", "embedded_player", "enable_online_payment", "end_time", "enterprise_11plus_price", "enterprise_6plus_price", "event_type_id", "extra_script", "finish_date", "id", "id_value", "is_sold_out", "list_price", "mailchimp_workflow", "mailchimp_workflow_call", "mailchimp_workflow_for_warmup", "mailchimp_workflow_for_warmup_call", "mode", "monitor_email", "net_promoter_score", "notify_webinar_start", "online_cohort_codename", "online_course_codename", "place", "registration_ends", "registration_link", "sepyme_enabled", "should_ask_for_referer_code", "should_welcome_email", "show_pricing", "specific_conditions", "specific_subtitle", "start_time", "time_zone_name", "trainer2_id", "trainer3_id", "trainer_id", "twitter_embedded_search", "updated_at", "visibility_type", "webinar_started"]
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[address average_rating banner_text banner_type business_eb_price business_price
+       cancellation_policy cancelled capacity city country_id couples_eb_price created_at currency_iso_code custom_prices_email_text date draft duration eb_end_date eb_price embedded_player enable_online_payment end_time enterprise_11plus_price enterprise_6plus_price event_type_id extra_script finish_date id id_value is_sold_out list_price mailchimp_workflow mailchimp_workflow_call mailchimp_workflow_for_warmup mailchimp_workflow_for_warmup_call mode monitor_email net_promoter_score notify_webinar_start online_cohort_codename online_course_codename place registration_ends registration_link sepyme_enabled should_ask_for_referer_code should_welcome_email show_pricing specific_conditions specific_subtitle start_time time_zone_name trainer2_id trainer3_id trainer_id twitter_embedded_search updated_at visibility_type webinar_started]
   end
 
   private

@@ -1,7 +1,7 @@
 ActiveAdmin.register Episode do
   menu parent: 'Podcast Mgnt'
 
-  permit_params :podcast_id, :season, :episode, :title, :description, :youtube_url, :spotify_url, 
+  permit_params :podcast_id, :season, :episode, :title, :description, :youtube_url, :spotify_url,
                 :thumbnail_url, :published_at
 
   index do
@@ -55,7 +55,7 @@ ActiveAdmin.register Episode do
 
   controller do
     def create
-      create! do |success, failure|
+      create! do |success, _failure|
         success.html { redirect_to admin_podcast_path(resource.podcast) }
       end
     end

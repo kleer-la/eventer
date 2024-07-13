@@ -43,20 +43,21 @@ class Api::EventTypesController < ApplicationController
   # json used in v2022 landing
   def event_type_to_json(event_type)
     et = event_type.to_json(
-      only: [:id, :name, :description, :recipients, :program, :created_at, :updated_at, :goal, 
-      :duration, :faq, :elevator_pitch, :learnings, :takeaways, :subtitle, :csd_eligible, :is_kleer_certification, 
-      :external_site_url, :deleted, :noindex, :lang, :cover, :side_image, :brochure, :new_version, :extra_script], 
-      methods: %i[slug canonical_slug], include: [:categories, 
-        next_events: {
-          only: %i[
-            id date place city country_id list_price eb_price eb_end_date registration_link mode
-            specific_conditions banner_text banner_type
-            is_sold_out duration start_time end_time time_zone_name currency_iso_code address finish_date
-          ],
-          methods: %i[trainers coupons]
-        } ])
+      only: %i[id name description recipients program created_at updated_at goal
+               duration faq elevator_pitch learnings takeaways subtitle csd_eligible is_kleer_certification
+               external_site_url deleted noindex lang cover side_image brochure new_version extra_script],
+      methods: %i[slug canonical_slug], include: [:categories,
+                                                  { next_events: {
+                                                    only: %i[
+                                                      id date place city country_id list_price eb_price eb_end_date registration_link mode
+                                                      specific_conditions banner_text banner_type
+                                                      is_sold_out duration start_time end_time time_zone_name currency_iso_code address finish_date
+                                                    ],
+                                                    methods: %i[trainers coupons]
+                                                  } }]
+    )
     et = "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
-      only: [:fname, :lname, :testimony, :profile_url, :photo_url]
+      only: %i[fname lname testimony profile_url photo_url]
     )}}"
   end
 

@@ -9,9 +9,11 @@ class OauthToken < ApplicationRecord
     token_expiry = Time.at(decoded_access_token['exp'])
     token_expiry < Time.current + 5.minutes
   end
-  def self.ransackable_attributes(auth_object = nil)
-    ["created_at", "id", "id_value", "issuer", "tenant_id", "token_set", "updated_at"]
+
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[created_at id id_value issuer tenant_id token_set updated_at]
   end
+
   private
 
   def decoded_access_token

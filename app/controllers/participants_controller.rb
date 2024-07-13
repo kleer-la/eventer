@@ -12,7 +12,7 @@ class ParticipantsController < ApplicationController
   def self.update_payment_status(invoice_id, xero_service = nil)
     return unless invoice_id.present?
 
-    xero =  XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero)
+    xero = XeroClientService::XeroApi.new(xero_service || XeroClientService.create_xero)
     participant = Participant.search_by_invoice invoice_id
     return if participant.nil? || participant.paid?
 
@@ -100,7 +100,7 @@ class ParticipantsController < ApplicationController
     campaign = Campaign.where(codename: utm_campaign).first_or_create
 
     begin
-      CampaignView.create(campaign: campaign, campaign_source: source, event: @event, event_type: @event.event_type,
+      CampaignView.create(campaign:, campaign_source: source, event: @event, event_type: @event.event_type,
                           element_viewed: 'registration_form')
     rescue StandardError
       puts 'Sometimes a DB locked error: we can skip this record'
@@ -114,12 +114,12 @@ class ParticipantsController < ApplicationController
 
     if @event.cancelled || @event.draft
       redirect_to "/events/#{@event.id}/participant_confirmed?cancelled=1#{@nakedform ? '&nakedform=1' : ''}",
-      notice: 'No es posible registrarse a ese evento. Puedes buscar los eventos disponibles en la <a href="https://kleer.la/es/agenda">agenda</a>'
+                  notice: 'No es posible registrarse a ese evento. Puedes buscar los eventos disponibles en la <a href="https://kleer.la/es/agenda">agenda</a>'
       return
     end
-    if !ENV['RECAPTCHA_SITE_KEY'].present?
+    unless ENV['RECAPTCHA_SITE_KEY'].present?
       redirect_to "/events/#{@event.id}/participant_confirmed?cancelled=1#{@nakedform ? '&nakedform=1' : ''}",
-      notice: 'An unexpected problem just happen! Our bad!. Please contact info@kleer.la saying that "Enviroment not properly set."'
+                  notice: 'An unexpected problem just happen! Our bad!. Please contact info@kleer.la saying that "Enviroment not properly set."'
       return
     end
     @participant = Participant.new
@@ -138,7 +138,7 @@ class ParticipantsController < ApplicationController
   # [["1 personas x 100usd = 100usd", 1], ["2 personas x 100usd = 200usd", 2]]
   def quantities_list
     seat_text = []
-    5.times {seat_text.push I18n.t('formtastic.button.participant.seats') }
+    5.times { seat_text.push I18n.t('formtastic.button.participant.seats') }
     seat_text.push I18n.t('formtastic.button.participant.seat')
 
     (1..6).reduce([]) do |ac, qty|
@@ -150,7 +150,7 @@ class ParticipantsController < ApplicationController
   def savings_list
     (1..6).reduce([]) do |ac, qty|
       price = @event.price(qty, DateTime.now)
-      ac << [ (@event.list_price - price) * qty]
+      ac << [(@event.list_price - price) * qty]
     end
   end
 
@@ -231,7 +231,7 @@ class ParticipantsController < ApplicationController
         #   redirect_to "/events/#{@event.id}/participant_confirmed?free=#{free}#{@nakedform ? '&nakedform=1' : ''}",
         #               notice: t('flash.participant.buy.success')
         # end
-        @nakedform= @cancelled = false
+        @nakedform = @cancelled = false
         format.html { render :confirm, layout: 'empty_layout' }
         format.json { render json: @participant, status: :created, location: @participant }
       else
@@ -286,10 +286,10 @@ class ParticipantsController < ApplicationController
   end
 
   def render_certificate
-    I18n.with_locale(@participant.event.event_type.lang) {
+    I18n.with_locale(@participant.event.event_type.lang) do
       @certificate = ParticipantsHelper::Certificate.new(@participant)
       render
-    }
+    end
   rescue ArgumentError, ActionView::Template::Error => e
     certificate_error "#{e.message} (#{e.backtrace[0]})"
   end
@@ -314,8 +314,8 @@ class ParticipantsController < ApplicationController
       params[:status]
     )
 
-    flash[:alert] = t('flash.event.batch_load.error', errored_loads: errored_loads, errored_lines: errored_lines)
-    flash[:notice] = t('flash.event.batch_load.success', success_loads: success_loads)
+    flash[:alert] = t('flash.event.batch_load.error', errored_loads:, errored_lines:)
+    flash[:notice] = t('flash.event.batch_load.success', success_loads:)
 
     redirect_to event_participants_path
   end
@@ -325,7 +325,10 @@ class ParticipantsController < ApplicationController
     searching = params[:name]
     @participants = Participant.search searching, 1, MAX_SEARCH_RESULT_SIZE
     flash.now[:notice] = "No encontré '#{searching}'" if @participants.count.zero?
-    flash.now[:notice] = "Encontré más de #{MAX_SEARCH_RESULT_SIZE} resultados, mostrando solo los primeros" if @participants.count == MAX_SEARCH_RESULT_SIZE
+    if @participants.count == MAX_SEARCH_RESULT_SIZE
+      flash.now[:notice] =
+        "Encontré más de #{MAX_SEARCH_RESULT_SIZE} resultados, mostrando solo los primeros"
+    end
     respond_to do |format|
       format.html # search.html.erb
     end

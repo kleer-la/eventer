@@ -12,11 +12,11 @@ Rails.application.routes.draw do
   get 'images/show'
   get 'images/edit'
   put 'images/update'
-  
+
   get '/webhooks' => 'web_hooks#index'
   post '/webhooks' => 'web_hooks#post'
 
-  resources :logs, only: [:index, :show]
+  resources :logs, only: %i[index show]
   resources :articles,
             :resources,
             :news,
@@ -38,9 +38,9 @@ Rails.application.routes.draw do
   get 'api/events' => 'home#index'
   get 'api/trainers' => 'home#trainers'
   get 'api/kleerers' => 'home#kleerers'
-  get 'api/community_events' => 'home#index_community' #TODO: should deprecate (used in website?)
-  get 'api/events/:id' => 'home#show' #TODO: should deprecate (used in website?)
-  get 'api/events/event_types/:id' => 'home#event_by_event_type' #TODO: should deprecate (used in website?)
+  get 'api/community_events' => 'home#index_community' # TODO: should deprecate (used in website?)
+  get 'api/events/:id' => 'home#show' # TODO: should deprecate (used in website?)
+  get 'api/events/event_types/:id' => 'home#event_by_event_type' # TODO: should deprecate (used in website?)
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
   post 'api/contact_us' => 'home#contact_us'
@@ -72,7 +72,7 @@ Rails.application.routes.draw do
   get 'event_types/:id/testimonies', to: 'event_types#testimonies'
   get 'event_types/filter/:lang/active/:active/dur/:duration/ic/:indexcanonical' => 'event_types#index'
   get 'event_types/:id/events' => 'event_types#events'
-  
+
   resources :trainers
 
   get 'events/filter/:country_iso' => 'events#index'
@@ -109,7 +109,7 @@ Rails.application.routes.draw do
   get 'events/update_trainer2_select/:id' => 'ajax#events_update_trainer2_select'
   get 'events/update_trainer3_select/:id' => 'ajax#events_update_trainer3_select'
   get 'events/load_cancellation_policy/:id' => 'ajax#load_cancellation_policy'
-  
+
   get 'participants/search' => 'participants#search'
   get 'participants/followup' => 'participants#followup'
 

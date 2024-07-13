@@ -12,19 +12,20 @@ class ImagesController < ApplicationController
       flash.now[:error] = 'AWS credentials are missing. Please check your configuration.'
       @images = []
     end
-  end 
+  end
 
   def new
     @image_bucket = session[:image_bucket]
 
-    @image= OpenStruct.new
+    @image = OpenStruct.new
     @image.key = nil
   end
 
   def create
     return "Falta información #{params[:image]} #{params[:path]}" if !params[:image].present? || !params[:path].present?
+
     session[:image_bucket] = @image_bucket = params[:image_bucket]
-    
+
     @file = params[:image]
     @img_name = params[:path]
 
@@ -37,13 +38,11 @@ class ImagesController < ApplicationController
 
   def show
     @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
-    
+
     @public_url = FileStoreService.image_url(params[:i], @image_bucket)
   end
 
-  def edit
-  end
+  def edit; end
 
-  def update
-  end
+  def update; end
 end

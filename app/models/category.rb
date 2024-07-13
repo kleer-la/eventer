@@ -6,12 +6,14 @@ class Category < ApplicationRecord
   validates :name, :description, :codename, :tagline, presence: true
 
   scope :visible_ones, -> { where(visible: true) }
-  scope :sorted, -> { order('name DESC') }  # Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
+  scope :sorted, -> { order('name DESC') } # Category.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 
-  def self.ransackable_attributes(auth_object = nil)
-    ["codename", "created_at", "description", "description_en", "id", "id_value", "name", "name_en", "order", "tagline", "tagline_en", "updated_at", "visible"]
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[codename created_at description description_en id id_value name name_en order
+       tagline tagline_en updated_at visible]
   end
-  def self.ransackable_associations(auth_object = nil)
-    ["event_types"]
+
+  def self.ransackable_associations(_auth_object = nil)
+    ['event_types']
   end
 end

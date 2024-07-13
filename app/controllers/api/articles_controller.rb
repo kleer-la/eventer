@@ -7,9 +7,10 @@ class Api::ArticlesController < ApplicationController
     respond_to do |format|
       format.json do
         render json: @articles.order(created_at: :desc),
-          except: [:body],
-          methods: %i[abstract category_name],
-          include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
+               except: [:body],
+               methods: %i[abstract category_name],
+               include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
+                                               linkedin_url] } }
       end
     end
   end
@@ -18,10 +19,12 @@ class Api::ArticlesController < ApplicationController
   def show
     @article = Article.friendly.find(params[:id].downcase)
     respond_to do |format|
-      format.json { 
-        render json: @article, 
+      format.json do
+        render json: @article,
                methods: %i[category_name recommended],
-               include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
+               include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
+                                               linkedin_url] } }
+      end
     end
   end
 end

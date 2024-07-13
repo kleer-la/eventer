@@ -12,7 +12,7 @@ class ResourcesController < ApplicationController
   # def show
   #   respond_to do |format|
   #     format.html
-  #     format.json { render json: @resources, 
+  #     format.json { render json: @resources,
   #       methods: [:category_name],
   #       include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
   #   end
@@ -66,7 +66,6 @@ class ResourcesController < ApplicationController
           .permit(:format, :slug, :category_id, :downloadable,
                   :title_es, :description_es, :cover_es, :landing_es, :share_link_es, :share_text_es, :tags_es, :comments_es, :getit_es, :buyit_es,
                   :title_en, :description_en, :cover_en, :landing_en, :share_link_en, :share_text_en, :tags_en, :comments_en, :getit_en, :buyit_en,
-                  author_ids: [], translator_ids: [], illustrator_ids: []
-                )
+                  author_ids: [], translator_ids: [], illustrator_ids: [])
   end
 end

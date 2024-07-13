@@ -3,7 +3,9 @@ module Recommendable
 
   included do
     has_many :recommended_contents, as: :source
-    has_many :recommended_items, -> { distinct }, through: :recommended_contents, source: :target, source_type: 'Article'
+    has_many :recommended_items, lambda {
+                                   distinct
+                                 }, through: :recommended_contents, source: :target, source_type: 'Article'
   end
 
   def as_recommendation

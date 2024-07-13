@@ -2,11 +2,11 @@
 
 ActiveAdmin.register Article do
   permit_params :lang, :published, :selected, :category, :title, :tabtitle, :description, :slug, :cover, :body,
-                trainer_ids: [], recommended_contents_attributes: [:id, :target_type, :target_id, :relevance_order, :_destroy]
+                trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   FriendlyId::Slug.class_eval do
-    def self.ransackable_attributes(auth_object = nil)
-      ["created_at", "id", "id_value", "scope", "slug", "sluggable_id", "sluggable_type"]
+    def self.ransackable_attributes(_auth_object = nil)
+      %w[created_at id id_value scope slug sluggable_id sluggable_type]
     end
   end
 
@@ -83,12 +83,12 @@ ActiveAdmin.register Article do
     end
     f.inputs 'Recommended Contents' do
       f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
-        rc.input :target_type, as: :select, collection: ['Article', 'EventType', 'Service']
+        rc.input :target_type, as: :select, collection: %w[Article EventType Service]
         # rc.input :target_id, label: 'Target'
         # rc.input :target_id, as: :select, input_html: { class: 'select2 target-select' }, label: 'Target'
-        rc.input :target_id, label: 'Target', as: :select, 
-                 collection: Article.all.pluck(:title, :id),
-                 input_html: { class: 'chosen-select' }
+        rc.input :target_id, label: 'Target', as: :select,
+                             collection: Article.all.pluck(:title, :id),
+                             input_html: { class: 'chosen-select' }
         rc.input :relevance_order
       end
     end

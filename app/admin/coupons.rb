@@ -1,7 +1,7 @@
 ActiveAdmin.register Coupon do
   menu priority: 5
 
-  permit_params :coupon_type, :code, :internal_name, :icon, :expires_on, :display, :active, 
+  permit_params :coupon_type, :code, :internal_name, :icon, :expires_on, :display, :active,
                 :percent_off, :amount_off, event_type_ids: []
 
   index do
@@ -41,8 +41,8 @@ ActiveAdmin.register Coupon do
       f.input :percent_off
       f.input :amount_off
 
-      f.input :event_types, as: :check_boxes, collection: EventType.included_in_catalog.order(:name).map { |et| 
-        ["#{et.unique_name}(#{et.platform})", et.id] 
+      f.input :event_types, as: :check_boxes, collection: EventType.included_in_catalog.order(:name).map { |et|
+        ["#{et.unique_name}(#{et.platform})", et.id]
       }
     end
     f.actions
@@ -61,7 +61,7 @@ ActiveAdmin.register Coupon do
       row :active
       row :percent_off
       row :amount_off
-      panel "Associated Event Types" do
+      panel 'Associated Event Types' do
         coupon.event_types.each do |event_type|
           div event_type.name # Replace :name with the attribute you want to display
         end

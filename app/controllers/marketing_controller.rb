@@ -15,7 +15,7 @@ class MarketingController < ApplicationController
       source = CampaignSource.where(codename: utm_source).first_or_create
       campaign = Campaign.where(codename: utm_campaign).first_or_create
 
-      CampaignView.create(campaign: campaign, campaign_source: source, event: @event, event_type: @event.event_type,
+      CampaignView.create(campaign:, campaign_source: source, event: @event, event_type: @event.event_type,
                           element_viewed: 'landing')
     end
 
@@ -51,7 +51,7 @@ class MarketingController < ApplicationController
       @camapign_ids = CampaignView.where('created_at >= ?', @since).where('created_at < ?', @until).map(&:campaign_id)
       @camapigns = Campaign.real.where('id in (?)', @camapign_ids).order('updated_at DESC')
     end
-    this_year =  DateTime.now.year
+    this_year = DateTime.now.year
     @eventos = helpers.training(Date.parse("#{this_year}-1-1")..Date.parse("#{this_year}-12-31"))
     # @eventos = helpers.training(@since..@until)
   end

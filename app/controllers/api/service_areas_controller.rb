@@ -17,15 +17,15 @@ module Api
           cta_message: service_area.cta_message.body.to_s,
           primary_color: service_area.primary_color,
           secondary_color: service_area.secondary_color,
-          services: service_area.services.order(:ordering).map { |service|
+          services: service_area.services.order(:ordering).map do |service|
             {
               id: service.id,
               slug: service.slug,
               name: service.name,
               subtitle: service.subtitle
             }
-          },
-          testimonies: service_area.testimonies.where(stared: true).map { |testimony|
+          end,
+          testimonies: service_area.testimonies.where(stared: true).map do |testimony|
             {
               first_name: testimony.first_name,
               last_name: testimony.last_name,
@@ -34,7 +34,7 @@ module Api
               service: testimony.service.name,
               testimony: testimony.testimony.body.to_s
             }
-          }
+          end
         }
       }
     end
@@ -64,11 +64,11 @@ module Api
         value_proposition: service_area.value_proposition.body.to_s,
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
-        services: service_area.services.order(:ordering).map { |service|
+        services: service_area.services.order(:ordering).map do |service|
           {
             id: service.id,
             slug: service.slug,
-            slug_old: service_chg.nil? || service.slug != service_chg ? nil : req_slug ,
+            slug_old: service_chg.nil? || service.slug != service_chg ? nil : req_slug,
             name: service.name,
             subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
             value_proposition: service.value_proposition.body.to_s,
@@ -79,9 +79,9 @@ module Api
             pricing: service.pricing,
             faq: service.faq_list,
             brochure: service.brochure,
-            side_image: service.side_image,
+            side_image: service.side_image
           }
-        },
+        end
       }
     end
 
@@ -92,16 +92,14 @@ module Api
     end
 
     def find_area_or_service(slug)
+      service_area = ServiceArea.friendly.find(slug)
+      [service_area, service_area.slug != slug ? slug : nil, nil]
+    rescue ActiveRecord::RecordNotFound
       begin
-        service_area = ServiceArea.friendly.find(slug)
-        [service_area, service_area.slug != slug ? slug : nil, nil]
+        service = Service.friendly.find(slug)
+        [service.service_area, nil, service.slug != slug ? service.slug : nil]
       rescue ActiveRecord::RecordNotFound
-        begin
-          service = Service.friendly.find(slug)
-          [service.service_area, nil, service.slug != slug ? service.slug : nil]
-        rescue ActiveRecord::RecordNotFound
-          [nil, nil, nil] # If neither ServiceArea nor Service is found
-        end
+        [nil, nil, nil] # If neither ServiceArea nor Service is found
       end
     end
   end

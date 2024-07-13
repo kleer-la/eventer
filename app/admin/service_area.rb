@@ -39,7 +39,8 @@ ActiveAdmin.register ServiceArea do
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :summary, as: :rich_text_area
-      f.input :cta_message, as: :rich_text_area, hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
+      f.input :cta_message, as: :rich_text_area,
+                            hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
       f.input :side_image, as: :url
       f.input :slogan, as: :rich_text_area
       f.input :subtitle, as: :rich_text_area
@@ -52,7 +53,7 @@ ActiveAdmin.register ServiceArea do
       f.input :seo_description
     end
 
-    panel "Existing Services" do
+    panel 'Existing Services' do
       ul do
         resource.services.each do |service|
           li do
@@ -86,12 +87,16 @@ ActiveAdmin.register ServiceArea do
       end
 
       row :primary_color do |service_area|
-        div style: "width: 30px; height: 30px; background-color: #{service_area.primary_color};" if service_area.primary_color.present?
+        if service_area.primary_color.present?
+          div style: "width: 30px; height: 30px; background-color: #{service_area.primary_color};"
+        end
         text_node service_area.primary_color
       end
 
       row :secondary_color do |service_area|
-        div style: "width: 30px; height: 30px; background-color: #{service_area.secondary_color};" if service_area.secondary_color.present?
+        if service_area.secondary_color.present?
+          div style: "width: 30px; height: 30px; background-color: #{service_area.secondary_color};"
+        end
         text_node service_area.secondary_color
       end
       # This will safely render the rich text content, including formatting and attachments.
@@ -114,7 +119,7 @@ ActiveAdmin.register ServiceArea do
         end
       end
     end
-    panel 'Services' do 
+    panel 'Services' do
       table_for service_area.services.order(:ordering) do
         column :name do |service|
           link_to service.name, admin_service_path(service)
@@ -128,9 +133,7 @@ ActiveAdmin.register ServiceArea do
         column :first_name
         column :last_name
         column :profile_url do |testimony|
-          if testimony.profile_url.present?
-            link_to testimony.profile_url, testimony.profile_url, target: '_blank'
-          end
+          link_to testimony.profile_url, testimony.profile_url, target: '_blank' if testimony.profile_url.present?
         end
         column :photo_url do |testimony|
           image_tag testimony.photo_url if testimony.photo_url.present?

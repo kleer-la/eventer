@@ -9,7 +9,8 @@ class NewsController < ApplicationController
       format.json do
         render json: @news.order(event_date: :desc),
                methods: %i[abstract category_name],
-               include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
+               include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
+                                               linkedin_url] } }
       end
     end
   end
@@ -18,9 +19,12 @@ class NewsController < ApplicationController
   def show
     respond_to do |format|
       format.html
-      format.json { render json: @news, 
-        methods: [:category_name],
-        include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } } }
+      format.json do
+        render json: @news,
+               methods: [:category_name],
+               include: { trainers: { only: %i[name bio bio_en gravatar_email
+                                               twitter_username linkedin_url] } }
+      end
     end
   end
 

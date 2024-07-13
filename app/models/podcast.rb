@@ -19,5 +19,5 @@ class Podcast < ApplicationRecord
 
   def description_body
     description.body.to_s
-  end  
+  end
 end

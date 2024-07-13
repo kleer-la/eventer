@@ -21,7 +21,7 @@ module XeroClientService
       # timeout: 30,
       # debugging: Rails.env.development?
     }
-    xero_client ||= XeroRuby::ApiClient.new(credentials: creds, config: config)
+    xero_client ||= XeroRuby::ApiClient.new(credentials: creds, config:)
   end
 
   def self.initialized_client
@@ -84,22 +84,21 @@ module XeroClientService
       #   }
 
       contacts = { contacts: [{
-        name: name,
+        name:,
         first_name: fname,
         last_name: lname,
         email_address: email,
-        addresses: addresses,
-        phones: phones,
-        payment_terms: payment_terms
+        addresses:,
+        phones:,
+        payment_terms:
       }] }
 
       begin
-        @client.create_contacts(contacts, summarize_errors: summarize_errors)
+        @client.create_contacts(contacts, summarize_errors:)
       rescue XeroRuby::ApiError => e
         Log.log(:xero, :warn,
-          "Exception when calling create_contacts:#{contacts}", 
-          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-         )
+                "Exception when calling create_contacts:#{contacts}",
+                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
 
         @client.get_contacts({ search_term: name })
       end
@@ -107,20 +106,20 @@ module XeroClientService
 
     BRANDING_THEME = {
       es: 'fc426c1a-bbd1-4725-a973-3ead6fde8a60',
-      en: '0420bcfb-62ef-428a-a178-b02ff936ed3d'  }
+      en: '0420bcfb-62ef-428a-a178-b02ff936ed3d'
+    }
 
     SERVICE_ACCOUNT = '4300'
     def create_invoices(contact_id, description, quantity, unit, date, due_date, codename, lang)
       TrackingCategories.new(@client).validate_or_create(codename)
 
       invoice_data = { invoices: [{ type: XeroRuby::Accounting::Invoice::ACCREC,
-                                    contact: { contact_id: contact_id },
-                                    line_items: [{ description: description, quantity: quantity, unit_amount: unit,
+                                    contact: { contact_id: },
+                                    line_items: [{ description:, quantity:, unit_amount: unit,
                                                    account_code: SERVICE_ACCOUNT, tax_type: XeroRuby::Accounting::TaxType::NONE,
                                                    tracking: [{ name: 'Cód. Proyecto', option: codename },
-                                                              { name: 'Business', option: 'Training abierto' }
-                                                  ] }],
-                                    date: date, due_date: due_date, reference: codename,
+                                                              { name: 'Business', option: 'Training abierto' }] }],
+                                    date:, due_date:, reference: codename,
                                     branding_theme_id: BRANDING_THEME[lang.to_sym],
                                     status: XeroRuby::Accounting::Invoice::AUTHORISED }] } # DRAFT / AUTHORISED
       begin
@@ -151,53 +150,51 @@ module XeroClientService
         #
       rescue XeroRuby::ApiError => e
         Log.log(:xero, :error,
-          "contact:#{contact_id}", 
-          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-         )
-         nil
+                "contact:#{contact_id}",
+                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
+        nil
       end
     end
-  
+
     def invoice_paid?(invoice_id)
       invoice = get_invoice(invoice_id)
       invoice.amount_paid > 0
     end
+
     def invoice_void?(invoice_id)
       invoice = get_invoice(invoice_id)
-      invoice.status == "VOIDED"
+      invoice.status == 'VOIDED'
     end
 
     def email_invoice(invoice)
-      begin
-        @client.email_invoice(invoice.invoice_id)
-      rescue StandardError => e
-        Log.log(:xero, :warn,
-                "invoice not sent :#{invoice.invoice_number}", 
-                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-        )
-      end
+      @client.email_invoice(invoice.invoice_id)
+    rescue StandardError => e
+      Log.log(:xero, :warn,
+              "invoice not sent :#{invoice.invoice_number}",
+              e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
     end
-    
-  #<XeroRuby::Accounting::Invoice:0x00007f48103bce50 
-  # @has_attachments=false, @has_errors=false, @type="ACCREC", 
-  # @contact=#<XeroRuby::Accounting::Contact:0x00007f48103bc9f0 @has_attachments=false, @has_validation_errors=false, @contact_id="d924654e-b0c8-4dc4-b107-1bc496eeb0f0", @contact_status="ACTIVE", @name="José Pablo Escalona Sigall", @first_name="José Pablo", @last_name="Escalona Sigall", @email_address="jose.escalona@segurossura.cl", @contact_persons=[], @bank_account_details="", @addresses=[#<XeroRuby::Accounting::Address:0x000056258ee0bfa0 @address_type="STREET", @address_line1="Avenida Providencia 1760, Providencia, Chile", @city="", @region="", @postal_code="", @country="">,
-  #<XeroRuby::Accounting::Address:0x000056258ee0aee8 @address_type="POBOX", @city="", @region="", @postal_code="", @country="">], 
-  #  @phones=[#<XeroRuby::Accounting::Phone:0x000056258ee0a128 @phone_type="DEFAULT", @phone_number="", @phone_area_code="", @phone_country_code="">, 
-              #<XeroRuby::Accounting::Phone:0x000056258ee097f0 @phone_type="DDI", @phone_number="", @phone_area_code="", @phone_country_code="">, 
-              #<XeroRuby::Accounting::Phone:0x000056258ee091d8 @phone_type="FAX", @phone_number="", @phone_area_code="", @phone_country_code="">, 
-              #<XeroRuby::Accounting::Phone:0x000056258ee08800 @phone_type="MOBILE", @phone_number="", @phone_area_code="", @phone_country_code="">], 
-    # @is_supplier=false, @is_customer=true, @sales_tracking_categories=[], @purchases_tracking_categories=[], @payment_terms=#<XeroRuby::Accounting::PaymentTerm:0x00007f48103d7a70 @sales=#<XeroRuby::Accounting::Bill:0x00007f48103d7890 @day=7, @type="DAYSAFTERBILLDATE">>, 
-    # @updated_date_utc=Tue, 06 Dec 2022 12:04:31 +0000, @contact_groups=[]>, 
-    # @line_items=[#<XeroRuby::Accounting::LineItem:0x00007f48103d6490 @line_item_id="38d9caa9-b6b9-4fb8-acbe-d1f7b19675f1", @description="Certified Scrum Master (CSM) -  OnLine  - 16-17 Ene - por una vacante de José Pablo  Escalona Sigall", @quantity=0.1e1, @unit_amount=0.76e3, @account_code="4300", @tax_type="NONE", @tax_amount=0.0, @line_amount=0.76e3, @tracking=[#<XeroRuby::Accounting::LineItemTracking:0x00007f48103d5ae0 @tracking_category_id="63a79b77-227b-4144-9be8-06e7a839d946", @tracking_option_id="10b15085-b05a-45dc-9d53-d53ac82db0f3", @name="Cód. Proyecto", @option="CSMOL230116">]>], @date=Tue, 06 Dec 2022, @due_date=Tue, 13 Dec 2022, @line_amount_types="Exclusive", @invoice_number="INV-0736", @reference="CSMOL230116", @branding_theme_id="fc426c1a-bbd1-4725-a973-3ead6fde8a60", @currency_code="USD", @currency_rate=0.1e1, @status="PAID", @sent_to_contact=true, @sub_total=0.76e3, @total_tax=0.0, @total=0.76e3, @invoice_id="6f352e28-585f-4ccd-a952-560a8f0e5af0", @is_discounted=false, @payments=[#<XeroRuby::Accounting::Payment:0x000056258edee680 @has_account=false, @has_validation_errors=false, @date=Tue, 06 Dec 2022, 
-    # @currency_rate=0.1e1, @amount=0.76e3, @reference="ch_3MC7zDEk2xEcmum71RUKjHGV", @payment_id="962ca9e8-0eb1-4639-ab9f-9ea9338c0cc1">], 
-    # @prepayments=[], @overpayments=[], 
+
+    # <XeroRuby::Accounting::Invoice:0x00007f48103bce50
+    # @has_attachments=false, @has_errors=false, @type="ACCREC",
+    # @contact=#<XeroRuby::Accounting::Contact:0x00007f48103bc9f0 @has_attachments=false, @has_validation_errors=false, @contact_id="d924654e-b0c8-4dc4-b107-1bc496eeb0f0", @contact_status="ACTIVE", @name="José Pablo Escalona Sigall", @first_name="José Pablo", @last_name="Escalona Sigall", @email_address="jose.escalona@segurossura.cl", @contact_persons=[], @bank_account_details="", @addresses=[#<XeroRuby::Accounting::Address:0x000056258ee0bfa0 @address_type="STREET", @address_line1="Avenida Providencia 1760, Providencia, Chile", @city="", @region="", @postal_code="", @country="">,
+    # <XeroRuby::Accounting::Address:0x000056258ee0aee8 @address_type="POBOX", @city="", @region="", @postal_code="", @country="">],
+    #  @phones=[#<XeroRuby::Accounting::Phone:0x000056258ee0a128 @phone_type="DEFAULT", @phone_number="", @phone_area_code="", @phone_country_code="">,
+    # <XeroRuby::Accounting::Phone:0x000056258ee097f0 @phone_type="DDI", @phone_number="", @phone_area_code="", @phone_country_code="">,
+    # <XeroRuby::Accounting::Phone:0x000056258ee091d8 @phone_type="FAX", @phone_number="", @phone_area_code="", @phone_country_code="">,
+    # <XeroRuby::Accounting::Phone:0x000056258ee08800 @phone_type="MOBILE", @phone_number="", @phone_area_code="", @phone_country_code="">],
+    # @is_supplier=false, @is_customer=true, @sales_tracking_categories=[], @purchases_tracking_categories=[], @payment_terms=#<XeroRuby::Accounting::PaymentTerm:0x00007f48103d7a70 @sales=#<XeroRuby::Accounting::Bill:0x00007f48103d7890 @day=7, @type="DAYSAFTERBILLDATE">>,
+    # @updated_date_utc=Tue, 06 Dec 2022 12:04:31 +0000, @contact_groups=[]>,
+    # @line_items=[#<XeroRuby::Accounting::LineItem:0x00007f48103d6490 @line_item_id="38d9caa9-b6b9-4fb8-acbe-d1f7b19675f1", @description="Certified Scrum Master (CSM) -  OnLine  - 16-17 Ene - por una vacante de José Pablo  Escalona Sigall", @quantity=0.1e1, @unit_amount=0.76e3, @account_code="4300", @tax_type="NONE", @tax_amount=0.0, @line_amount=0.76e3, @tracking=[#<XeroRuby::Accounting::LineItemTracking:0x00007f48103d5ae0 @tracking_category_id="63a79b77-227b-4144-9be8-06e7a839d946", @tracking_option_id="10b15085-b05a-45dc-9d53-d53ac82db0f3", @name="Cód. Proyecto", @option="CSMOL230116">]>], @date=Tue, 06 Dec 2022, @due_date=Tue, 13 Dec 2022, @line_amount_types="Exclusive", @invoice_number="INV-0736", @reference="CSMOL230116", @branding_theme_id="fc426c1a-bbd1-4725-a973-3ead6fde8a60", @currency_code="USD", @currency_rate=0.1e1, @status="PAID", @sent_to_contact=true, @sub_total=0.76e3, @total_tax=0.0, @total=0.76e3, @invoice_id="6f352e28-585f-4ccd-a952-560a8f0e5af0", @is_discounted=false, @payments=[#<XeroRuby::Accounting::Payment:0x000056258edee680 @has_account=false, @has_validation_errors=false, @date=Tue, 06 Dec 2022,
+    # @currency_rate=0.1e1, @amount=0.76e3, @reference="ch_3MC7zDEk2xEcmum71RUKjHGV", @payment_id="962ca9e8-0eb1-4639-ab9f-9ea9338c0cc1">],
+    # @prepayments=[], @overpayments=[],
     # @amount_due=0.0, @amount_paid=0.76e3, @fully_paid_on_date=Tue, 06 Dec 2022, @updated_date_utc=Tue, 06 Dec 2022 20:43:37 +0000, @attachments=[]>
     def get_invoice(invoice_id)
       @client.get_invoice(invoice_id)
     end
- 
+
     def get_online_invoice_url(invoice)
       return nil if invoice.nil?
+
       data = @client.get_online_invoice(invoice.invoice_id)
       data.online_invoices[0].online_invoice_url
     end
@@ -209,37 +206,34 @@ module XeroClientService
       @tracking_tategory_name = 'Cód. Proyecto'
       @tracking_category_id = '63a79b77-227b-4144-9be8-06e7a839d946'
     end
-    def validate_or_create(option_name) 
-      	unless valid? option_name
-          create option_name
-        end
+
+    def validate_or_create(option_name)
+      return if valid? option_name
+
+      create option_name
     end
+
     def valid?(option_name)
-      begin
-        response = @client.get_tracking_category(@tracking_category_id)
-        
-        !!response.tracking_categories[0].options.find {|e| e.name == option_name}
-      rescue XeroRuby::ApiError => e
-        Log.log(:xero, :warn,
-          "category cant be read:#{option_name}", 
-          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-        )        
-      end
+      response = @client.get_tracking_category(@tracking_category_id)
+
+      !!response.tracking_categories[0].options.find { |e| e.name == option_name }
+    rescue XeroRuby::ApiError => e
+      Log.log(:xero, :warn,
+              "category cant be read:#{option_name}",
+              e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
     end
 
     def create(option_name)
-      trackingOption = { 
+      trackingOption = {
         name: option_name
-      }  
-    
+      }
+
       begin
-        response = @client.create_tracking_options(@tracking_category_id, trackingOption)
-        return response
+        @client.create_tracking_options(@tracking_category_id, trackingOption)
       rescue XeroRuby::ApiError => e
         Log.log(:xero, :warn,
-          "category option not created:#{option_name}", 
-          e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-        )
+                "category option not created:#{option_name}",
+                e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
       end
     end
   end
@@ -268,6 +262,7 @@ module XeroClientService
     def create_tracking_options(...)
       @xero_client.accounting_api.create_tracking_options(@tenant_id, ...)
     end
+
     def get_tracking_category(...)
       @xero_client.accounting_api.get_tracking_category(@tenant_id, ...)
     end
@@ -287,6 +282,7 @@ module XeroClientService
     def email_invoice(invoice_id, request_empty = [], opts = {})
       @xero_client.accounting_api.email_invoice(@tenant_id, invoice_id, request_empty, opts)
     end
+
     # GET https://api.xero.com/api.xro/2.0/Invoices/9b9ba9e5-e907-4b4e-8210-54d82b0aa479/OnlineInvoice
     # {
     #   "OnlineInvoices": [

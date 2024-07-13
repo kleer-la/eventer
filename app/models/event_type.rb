@@ -19,7 +19,7 @@ class EventType < ApplicationRecord
 
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
   validates :elevator_pitch, length: { maximum: 160,
-                                       too_long: '%{count} characters is the maximum allowed' }
+                                       too_long: '%<count>s characters is the maximum allowed' }
 
   def short_name
     if name.length >= 30
@@ -28,6 +28,7 @@ class EventType < ApplicationRecord
       name
     end
   end
+
   def unique_name
     "#{name} (#{tag_name}#{lang}) ##{id}"
   end
@@ -42,8 +43,8 @@ class EventType < ApplicationRecord
     #   part += e.participants.order(selected: :desc, updated_at: :desc).reject { |p| p.testimony.nil? }
     # end
     # part
-    Participant.joins(:event).where(events: {event_type_id: id}).where.not(testimony: '').
-      order(selected: :desc, updated_at: :desc)
+    Participant.joins(:event).where(events: { event_type_id: id }).where.not(testimony: '')
+               .order(selected: :desc, updated_at: :desc)
   end
 
   def active_coupons(date)
@@ -53,12 +54,12 @@ class EventType < ApplicationRecord
   def active_codeless_coupons
     active_coupons(Date.today).find_by(coupon_type: :codeless)
   end
-  
+
   def active_code_coupons
     active_coupons(Date.today).where(coupon_type: :percent_off..:amount_off)
   end
 
-  def apply_coupons(list_price, qty, date, referer_code)
+  def apply_coupons(list_price, _qty, date, referer_code)
     ac = active_coupons(date)
     ac = ac.where(code: referer_code.strip.upcase) if referer_code.present?
     ac = ac.where(coupon_type: :codeless) unless referer_code.present?
@@ -66,8 +67,7 @@ class EventType < ApplicationRecord
 
     coupon = ac.first
     [(list_price * (100.0 - coupon.percent_off) / 100.0).round(2),
-     coupon.internal_name
-    ]
+     coupon.internal_name]
   end
 
   def slug
@@ -103,7 +103,7 @@ class EventType < ApplicationRecord
       .merge('slug' => slug)
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[average_rating brochure cancellation_policy canonical_id cover created_at
        csd_eligible deleted description duration elevator_pitch external_id external_site_url
        extra_script faq goal id id_value include_in_catalog is_kleer_certification kleer_cert_seal_image

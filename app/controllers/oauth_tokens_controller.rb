@@ -11,7 +11,7 @@ class OauthTokensController < ApplicationController
   def new
     xero_client = XeroClientService.build_client
 
-    redirect_to xero_client.authorization_url, allow_other_host: true 
+    redirect_to xero_client.authorization_url, allow_other_host: true
   end
 
   def callback

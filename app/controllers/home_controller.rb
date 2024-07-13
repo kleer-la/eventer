@@ -1,34 +1,38 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
-
   def self.valid_name?(name)
     return false if name.to_s == ''
+
     name = name.strip
     return false if !!/^[a-z]+[A-Z]/.match(name)
     return false if !!/[a-z]+[A-Z]+[a-z]/.match(name)
     return false if name.length > 50
+
     true
   end
+
   def self.valid_message?(msg, filter = 'http://')
     return false if msg.to_s == ''
-    return false if filter.split(',').map {|f| msg.include? f}.reduce(false){|r, elem| r || elem}
+    return false if filter.split(',').map { |f| msg.include? f }.reduce(false) { |r, elem| r || elem }
+
     true
   end
+
   def self.valid_email?(email)
-    !!(email =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i)
+    !!(email =~ /\A[\w+\-.]+@[a-z\d-]+(\.[a-z]+)*\.[a-z]+\z/i)
   end
 
   def self.valid_contact_us(name, email, context, subject, message, secret, filter)
     local_secret = ENV['CONTACT_US_SECRET'].to_s
 
-    ('bad secret'     if local_secret != '' && local_secret != secret ) ||
-    ('bad name'       unless self.valid_name?(name)) ||
-    ('bad message'    unless self.valid_message?(message, filter)) ||
-    ('empty email'    unless email.present?) ||
-    ('invalid email'    unless self.valid_email?(email)) ||
-    ('empty context'  unless context.present?) ||
-    ('subject honeypot' if subject.present?)
+    ('bad secret' if local_secret != '' && local_secret != secret) ||
+      ('bad name'       unless valid_name?(name)) ||
+      ('bad message'    unless valid_message?(message, filter)) ||
+      ('empty email'    unless email.present?) ||
+      ('invalid email' unless valid_email?(email)) ||
+      ('empty context' unless context.present?) ||
+      ('subject honeypot' if subject.present?)
   end
 
   def contact_us
@@ -40,13 +44,13 @@ class HomeController < ApplicationController
     message = params[:message]
 
     error = self.class.valid_contact_us(
-      name, email, context, subject, message, 
-      params[:secret], Setting.get('CONTACT_US_MESSAGE_FILTER'))
+      name, email, context, subject, message,
+      params[:secret], Setting.get('CONTACT_US_MESSAGE_FILTER')
+    )
     if error.present?
-      Log.log(:mail, :info,  
-        "Contact Us - #{error}", 
-        "name:#{name} #{email} #{context}, message: #{message} // subject: #{subject}"
-       )
+      Log.log(:mail, :info,
+              "Contact Us - #{error}",
+              "name:#{name} #{email} #{context}, message: #{message} // subject: #{subject}")
     else
       ApplicationMailer.delay.contact_us(
         name,
@@ -89,7 +93,7 @@ class HomeController < ApplicationController
       subtitle: et.subtitle,
       duration: et.duration,
       cover: et.cover,
-      categories: et.categories.pluck(:id, :name).map { |id, name| { id: id, name: name } },
+      categories: et.categories.pluck(:id, :name).map { |id, name| { id:, name: } },
       lang: et.lang,
       slug: et.slug,
       csd_eligible: et.csd_eligible,
@@ -120,7 +124,7 @@ class HomeController < ApplicationController
     @events = Event.public_courses
     respond_to do |format|
       format.html
-      format.json { render json: @events.to_json(include: event_data_to_include, methods: [:human_date, :coupons]) }
+      format.json { render json: @events.to_json(include: event_data_to_include, methods: %i[human_date coupons]) }
     end
   end
 
@@ -174,15 +178,17 @@ class HomeController < ApplicationController
   # json used in v2022 landing
   def event_type_to_json(event_type)
     et = event_type.to_json(
-      only: [:id, :name, :description, :recipients, :program, :created_at, :updated_at, :goal, 
-      :duration, :faq, :elevator_pitch, :learnings, :takeaways, :subtitle, :csd_eligible, :is_kleer_certification, 
-      :external_site_url, :deleted, :noindex, :lang, :cover, :side_image, :brochure, :new_version], 
-      methods: %i[slug canonical_slug], include: [:categories, 
-        next_events: {only: [
-          :id, :date, :place, :city, :country_id, :list_price, :eb_price, :eb_end_date, :registration_link, 
-          :is_sold_out, :duration, :start_time, :end_time, :time_zone_name, :currency_iso_code, :address, :finish_date], methods: :trainers} ])
+      only: %i[id name description recipients program created_at updated_at goal
+               duration faq elevator_pitch learnings takeaways subtitle csd_eligible is_kleer_certification
+               external_site_url deleted noindex lang cover side_image brochure new_version],
+      methods: %i[slug canonical_slug], include: [:categories,
+                                                  { next_events: { only: %i[
+                                                    id date place city country_id list_price eb_price eb_end_date registration_link
+                                                    is_sold_out duration start_time end_time time_zone_name currency_iso_code address finish_date
+                                                  ], methods: :trainers } }]
+    )
     et = "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
-      only: [:fname, :lname, :testimony, :profile_url, :photo_url]
+      only: %i[fname lname testimony profile_url photo_url]
     )}}"
   end
 

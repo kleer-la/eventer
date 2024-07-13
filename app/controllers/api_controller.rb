@@ -6,7 +6,8 @@ class ApiController < ApplicationController
     respond_to do |format|
       format.json do
         render json: news,
-               include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
+               include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
+                                               linkedin_url] } }
       end
     end
   end
@@ -47,7 +48,7 @@ class ApiController < ApplicationController
           iz = InfluenceZone.where('zone_name = ? AND tag_name = ?', 'Capital Federal',
                                    'ZI-AMS-AR-BUE (Buenos Aires)').first
           @participant = @event.participants.create(email: participant_email, fname: participant_fname,
-                                                    lname: participant_lname, influence_zone: iz, phone: 'N/A', notes: notes, campaign: campaign, campaign_source: source)
+                                                    lname: participant_lname, influence_zone: iz, phone: 'N/A', notes:, campaign:, campaign_source: source)
         else
           @participant.campaign = campaign
           @participant.campaign_source = source

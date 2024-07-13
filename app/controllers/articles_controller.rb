@@ -11,14 +11,14 @@ class ArticlesController < ApplicationController
       format.json do # TODO: remove
         render json: @articles.order(created_at: :desc),
                methods: %i[abstract category_name],
-               include: { trainers: { only: [:name, :bio, :bio_en, :gravatar_email, :twitter_username, :linkedin_url] } }
+               include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
+                                               linkedin_url] } }
       end
     end
   end
 
   # GET /articles/1
-  def show
-  end
+  def show; end
 
   # GET /articles/new
   def new

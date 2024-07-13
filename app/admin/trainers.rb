@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def signature_list(store)
-  list = store.list('signature').map {|obj| File.basename(obj.key)}
+  list = store.list('signature').map { |obj| File.basename(obj.key) }
   list[0] = '' # remove first (folder) + add empty option
   list
 end
@@ -9,13 +9,13 @@ end
 ActiveAdmin.register Trainer do
   menu priority: 4
 
-  actions :index, :show, :edit, :update, :new, :create #, :destroy
+  actions :index, :show, :edit, :update, :new, :create # , :destroy
 
   scope :all, default: false
   scope :active, default: true
 
   permit_params :name, :bio, :bio_en, :gravatar_email, :landing, :twitter_username, :linkedin_url, :tag_name,
-  :signature_image, :signature_credentials, :is_kleerer, :deleted, :country_id
+                :signature_image, :signature_credentials, :is_kleerer, :deleted, :country_id
 
   # config.clear_sidebar_sections!
   filter :name
@@ -40,7 +40,7 @@ ActiveAdmin.register Trainer do
     # f.semantic_errors *f.object.errors.keys
     f.inputs 'Trainer Details' do
       hint_text = 'Supports <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a> and HTML.'.html_safe
-      f.input :name, label: "Name (*)"
+      f.input :name, label: 'Name (*)'
       f.input :bio, as: :text, input_html: { rows: 8 }, hint: hint_text
       f.input :bio_en, as: :text, input_html: { rows: 8 }, hint: hint_text
       f.input :gravatar_email
@@ -51,12 +51,14 @@ ActiveAdmin.register Trainer do
       f.input :signature_image, as: :select, collection: signatures
       f.input :signature_credentials
       f.input :is_kleerer, as: :boolean
-      f.input :country_id, as: :select, collection: Country.all.sort_by(&:name).map { |c| [c.name, c.id] }, include_blank: 'Select One...'
+      f.input :country_id, as: :select, collection: Country.all.sort_by(&:name).map { |c|
+                                                      [c.name, c.id]
+                                                    }, include_blank: 'Select One...'
       f.input :deleted, as: :boolean
     end
     f.actions do
-      f.action :submit, as: :button, label: 'Save', button_html: { class: "btn btn-primary btn-large" }
-      f.cancel_link(collection_path, class: "btn btn-large")
+      f.action :submit, as: :button, label: 'Save', button_html: { class: 'btn btn-primary btn-large' }
+      f.cancel_link(collection_path, class: 'btn btn-large')
     end
   end
 
@@ -77,41 +79,49 @@ ActiveAdmin.register Trainer do
       end
 
       column do
-        panel "Event Types" do
-          ul do
-            trainer.event_types.included_in_catalog.order(:name).each do |et|
-              li link_to(et.name, edit_event_type_path(et))
+        if trainer.event_types.included_in_catalog.count.positive?
+          panel 'Event Types' do
+            ul do
+              trainer.event_types.included_in_catalog.order(:name).each do |et|
+                li link_to(et.name, edit_event_type_path(et))
+              end
             end
           end
-        end if trainer.event_types.included_in_catalog.count.positive?
-        panel "Articles" do
-          ul do
-            trainer.articles.order(:title).each do |el|
-              li link_to(el.title, edit_article_path(el))
+        end
+        if trainer.articles.count.positive?
+          panel 'Articles' do
+            ul do
+              trainer.articles.order(:title).each do |el|
+                li link_to(el.title, edit_article_path(el))
+              end
             end
           end
-        end if trainer.articles.count.positive?
-        panel "Resources" do
-          # h3 'Author'
-          ul do
-            trainer.authorships.each do |el|
-              li link_to(el.resource.title_es, edit_resource_path(el))
+        end
+        if trainer.authorships.count.positive?
+          panel 'Resources' do
+            # h3 'Author'
+            ul do
+              trainer.authorships.each do |el|
+                li link_to(el.resource.title_es, edit_resource_path(el))
+              end
+            end
+            # h3 'Translator'
+            ul do
+              trainer.translators.each do |el|
+                li link_to(el.resource.title_es, edit_resource_path(el))
+              end
             end
           end
-          # h3 'Translator'
-          ul do
-            trainer.translators.each do |el|
-              li link_to(el.resource.title_es, edit_resource_path(el))
+        end
+        if trainer.news.count.positive?
+          panel 'News' do
+            ul do
+              trainer.news.each do |el|
+                li link_to(el.title, edit_news_path(el))
+              end
             end
           end
-        end if trainer.authorships.count.positive?
-        panel "News" do
-          ul do
-            trainer.news.each do |el|
-              li link_to(el.title, edit_news_path(el))
-            end
-          end
-        end if trainer.news.count.positive?
+        end
       end
     end
   end

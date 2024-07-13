@@ -2,9 +2,9 @@ class InvoiceService
   def initialize(participant)
     self.class.xero
     @participant = participant
-    @lang =  participant.event.event_type.lang
+    @lang = participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
-    end
+  end
 
   def self.xero_service(xero_service)
     @@xero_service = xero_service
@@ -26,7 +26,7 @@ class InvoiceService
     ].reject(&:nil?).min
   end
 
-  def create_send_invoice()
+  def create_send_invoice
     return nil if @participant.event.currency_iso_code != 'USD'
 
     contact = @@xero.create_contact(
@@ -39,12 +39,13 @@ class InvoiceService
     @invoice = create_invoice(@participant, contact)
 
     return if @invoice.nil?
+
     @pih.update_participant(@invoice)
     # @@xero.email_invoice(@invoice) unless @participant.referer_code.present?
     @invoice
   end
 
-  def get_online_invoice_url()
+  def get_online_invoice_url
     @@xero.get_online_invoice_url(@invoice)
   end
 
@@ -62,10 +63,9 @@ class InvoiceService
         date.to_s, InvoiceService.due_date(participant.event).to_s, codename, @lang
       )
     rescue StandardError => e
-      Log.log(:xero, :error,  
-        "contact:#{contact.contacts[0].contact_id}", 
-        e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n')
-       )
+      Log.log(:xero, :error,
+              "contact:#{contact.contacts[0].contact_id}",
+              e.message + ' - ' + e.backtrace.grep_v(%r{/gems/}).join('\n'))
       invoice = nil
     end
     invoice

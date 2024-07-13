@@ -5,19 +5,19 @@ def lang_select(data, filter)
 end
 
 def active_select(data, filter)
-  !filter.present? || filter == 'all' || (data == ActiveModel::Type::Boolean.new.cast(filter) )
+  !filter.present? || filter == 'all' || (data == ActiveModel::Type::Boolean.new.cast(filter))
 end
 
 def duration_select(data, filter)
-  data ||=0
-  !filter.present? || filter == 'all' || (data <= 1 && filter == '1' ) || (data > 1 && filter != '1' )
+  data ||= 0
+  !filter.present? || filter == 'all' || (data <= 1 && filter == '1') || (data > 1 && filter != '1')
 end
 
 def index_canonical_select(canonical, noindex, filter)
-  filter_idx= filter.first(2) == 'ni' unless filter.nil?
-  filter_can= filter.last(2) != 'nc' unless filter.nil?
+  filter_idx = filter.first(2) == 'ni' unless filter.nil?
+  filter_can = filter.last(2) != 'nc' unless filter.nil?
 
-  !filter.present? || filter == 'all' || (!(canonical ^ filter_can) && !(noindex ^ filter_idx))  
+  !filter.present? || filter == 'all' || (!(canonical ^ filter_can) && !(noindex ^ filter_idx))
 end
 
 class EventTypesController < ApplicationController
@@ -44,10 +44,10 @@ class EventTypesController < ApplicationController
     session[:indexcanonical_filter] = @indexcanonical
 
     @event_types = EventType.all.order('name').select do |et|
-      lang_select(et.lang, @lang) && 
-      active_select(!et.deleted, @active) && 
-      duration_select(et.duration, @duration) &&
-      index_canonical_select(et.canonical.present?, et.noindex, @indexcanonical)
+      lang_select(et.lang, @lang) &&
+        active_select(!et.deleted, @active) &&
+        duration_select(et.duration, @duration) &&
+        index_canonical_select(et.canonical.present?, et.noindex, @indexcanonical)
     end
 
     respond_to do |format|
@@ -74,8 +74,8 @@ class EventTypesController < ApplicationController
     @event_types = EventType.where(deleted: false).where.not(duration: 0..1).order(:name)
 
     store = FileStoreService.current
-    @bkgd_imgs = self.background_list(store)
-    @image_list = self.image_list(store)
+    @bkgd_imgs = background_list(store)
+    @image_list = image_list(store)
   end
 
   # GET /event_types/new
@@ -115,7 +115,7 @@ class EventTypesController < ApplicationController
 
   def create_error(format, errors, action)
     flash.now[:error] = t('flash.failure')
-    format.html { render action: action }
+    format.html { render action: }
     format.json { render json: errors, status: :unprocessable_entity }
   end
 
@@ -156,7 +156,7 @@ class EventTypesController < ApplicationController
 
   def events
     @event_type = EventType.find(params[:id])
-    @events =  @event_type.events.order(date: :desc)
+    @events = @event_type.events.order(date: :desc)
   end
 
   def load_preview_default(param_values)
@@ -170,55 +170,61 @@ class EventTypesController < ApplicationController
   end
 
   def background_list(store)
-    list = store.list('certificate').map {|obj| File.basename(obj.key)}
-    list[0] = ''   # remove first (folder) + add empty option
-    list.reject {|key| key.include?('-A4.')}
+    list = store.list('certificate').map { |obj| File.basename(obj.key) }
+    list[0] = '' # remove first (folder) + add empty option
+    list.reject { |key| key.include?('-A4.') }
   end
+
   def image_list(store)
-    list = store.list('image').map {|obj| obj.key}
-    list.unshift ''   # add empty option
+    list = store.list('image').map { |obj| obj.key }
+    list.unshift '' # add empty option
   end
-  def participants 
+
+  def participants
     @event_type = EventType.find(params[:id])
     @participants = @event_type.events.includes(:participants).flat_map(&:participants)
     respond_to do |format|
-      format.html { render}
+      format.html { render }
       format.csv { send_data Participant.to_csv(@participants), filename: 'participants.csv' }
     end
   end
-  
+
   def certificate_preview
     @event = Event.new
     @event.event_type = EventType.find(params[:id])
     @participant = Participant.new
     @participant.event = @event
     @certificate_values = load_preview_default(params.permit!.to_h[:event_type] || {})
-    
+
     @page_size = 'LETTER'
 
     @certificate_store = FileStoreService.create_s3
 
-    @images = self.background_list(@certificate_store)
+    @images = background_list(@certificate_store)
 
     respond_to do |format|
-      format.html {
-        @trainers = Trainer.where.not(signature_image: [nil, ""])    
-        
+      format.html do
+        @trainers = Trainer.where.not(signature_image: [nil, ''])
+
         render :certificate_preview
-      }
-      format.pdf {
+      end
+      format.pdf do
         @event.trainer = Trainer.find(@certificate_values[:certificate_trainer1].to_i)
-        @event.trainer2 = Trainer.find(@certificate_values[:certificate_trainer2].to_i) if @certificate_values[:certificate_trainer2].to_i > 0
-        @event.country = Country.find( @certificate_values[:certificate_country].to_i)
+        if @certificate_values[:certificate_trainer2].to_i > 0
+          @event.trainer2 = Trainer.find(@certificate_values[:certificate_trainer2].to_i)
+        end
+        @event.country = Country.find(@certificate_values[:certificate_country].to_i)
         @event.date = Date.strptime @certificate_values[:certificate_date]
         @event.finish_date = Date.strptime @certificate_values[:certificate_finish_date]
         @event.mode = Country.find(@certificate_values[:certificate_country].to_i).iso_code == 'OL' ? 'ol' : 'cl'
         @event.event_type.new_version = (@certificate_values[:certificate_new_version] == '1')
-        if @event.event_type.new_version
-          @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url]
-        else
-          @event.event_type.kleer_cert_seal_image = @certificate_values[:certificate_background_image_url].sub(/-(A4|LETTER)/, '')
-        end
+        @event.event_type.kleer_cert_seal_image = if @event.event_type.new_version
+                                                    @certificate_values[:certificate_background_image_url]
+                                                  else
+                                                    @certificate_values[:certificate_background_image_url].sub(
+                                                      /-(A4|LETTER)/, ''
+                                                    )
+                                                  end
         @participant.attend!
         if @certificate_values[:certificate_kleer_cert] == '1'
           @event.event_type.is_kleer_certification = true
@@ -235,7 +241,7 @@ class EventTypesController < ApplicationController
           flash.now[:error] = 'Missing AWS credentials - call support'
           return redirect_to event_types_url
         end
-      }
+      end
     end
   end
 

@@ -9,13 +9,12 @@ class EventMailer < ApplicationMailer
 
   def participant_paid(participant)
     @participant = participant
-    @lang =  participant.event.event_type.lang
+    @lang = participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
 
-    mail( to: participant.email,
-          cc: ADMIN_MAIL + ',' + ALERT_MAIL, 
-          subject: I18n.t('mail.paid.subject', locale: @lang, event:@participant.event.event_type.name)
-    ) do |format|
+    mail(to: participant.email,
+         cc: ADMIN_MAIL + ',' + ALERT_MAIL,
+         subject: I18n.t('mail.paid.subject', locale: @lang, event: @participant.event.event_type.name)) do |format|
       format.text
       format.html { render layout: false }
     end
@@ -23,16 +22,15 @@ class EventMailer < ApplicationMailer
 
   def participant_voided(participant)
     @participant = participant
-    @lang =  participant.event.event_type.lang
+    @lang = participant.event.event_type.lang
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
 
     # to: @participant.email
     edit_registration_link = "http://eventos.kleer.la/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
 
-    mail(to: ADMIN_MAIL, cc: ALERT_MAIL, 
-      subject: "[Keventer] Invoice voided #{@participant.event.event_type.name}: #{participant.company_name}",
-      body: "Invoice: #{participant.company_name}\n#{participant.fname} #{participant.lname} <#{participant.email}>\n\nLink para editar: #{edit_registration_link}"
-    )
+    mail(to: ADMIN_MAIL, cc: ALERT_MAIL,
+         subject: "[Keventer] Invoice voided #{@participant.event.event_type.name}: #{participant.company_name}",
+         body: "Invoice: #{participant.company_name}\n#{participant.fname} #{participant.lname} <#{participant.email}>\n\nLink para editar: #{edit_registration_link}")
   end
 
   def welcome_new_event_participant(participant)
@@ -48,7 +46,7 @@ class EventMailer < ApplicationMailer
     end
   end
 
-  def send_certificate(participant, certificate_url_a4, certificate_url_letter)
+  def send_certificate(participant, _certificate_url_a4, certificate_url_letter)
     @participant = participant
     # @certificate_link_a4 = certificate_url_a4
     @certificate_link_letter = certificate_url_letter
@@ -64,7 +62,7 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant, :es)
     event = participant.event
     event_info = event_data(event.event_type.name, event.country.name, event.human_date)
-    extra_message = "Lista de espera, no se creó invoice" if event.is_sold_out
+    extra_message = 'Lista de espera, no se creó invoice' if event.is_sold_out
 
     body = contact_data(participant) +
            invoice_data(participant) +
@@ -72,7 +70,7 @@ class EventMailer < ApplicationMailer
 
     mail(to: event.monitor_email.presence || ALERT_MAIL,
          subject: "[Keventer] Nuevo registro a #{event_info}: #{participant.company_name}",
-         body: body)
+         body:)
   end
 
   def event_data(event_name, country, date)
@@ -104,5 +102,4 @@ class EventMailer < ApplicationMailer
       #{online_payment}\n
       ---- Notas del participante:\n#{participant.notes}\n---- Fin Notas\n"
   end
-
 end

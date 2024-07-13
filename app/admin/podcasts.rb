@@ -2,7 +2,7 @@ ActiveAdmin.register Podcast do
   menu parent: 'Podcast Mgnt'
 
   permit_params :title, :description, :youtube_url, :spotify_url, :thumbnail_url,
-                episodes_attributes: [:id, :season, :episode, :title, :description, :youtube_url, :spotify_url, :thumbnail_url, :published_at, :_destroy]
+                episodes_attributes: %i[id season episode title description youtube_url spotify_url thumbnail_url published_at _destroy]
 
   index do
     selectable_column
@@ -66,8 +66,8 @@ ActiveAdmin.register Podcast do
         end
       end
     end
-    panel "Add New Episode" do
-      render partial: 'admin/episodes/form', locals: { podcast: podcast }
+    panel 'Add New Episode' do
+      render partial: 'admin/episodes/form', locals: { podcast: }
     end
   end
 end

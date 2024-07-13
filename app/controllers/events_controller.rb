@@ -18,7 +18,10 @@ class EventsController < ApplicationController
     @events = Event.visible.order('date')
 
     respond_to do |format|
-      format.html { @events.select {|ev| country_filter.select?(ev.country_id)} ; render }
+      format.html do
+        @events.select { |ev| country_filter.select?(ev.country_id) }
+        render
+      end
       format.json { render json: @events.where(draft: false) }
     end
   end
@@ -53,12 +56,12 @@ class EventsController < ApplicationController
       format.json { render json: @event }
     end
   end
-  
+
   def copy
     @event = Event.find(params[:id]).dup
-    @event.date =  nil
-    @event.finish_date =  nil
-    @event.registration_ends =  nil
+    @event.date = nil
+    @event.finish_date = nil
+    @event.registration_ends = nil
     @event.online_cohort_codename = nil
     pre_edit
 
@@ -93,7 +96,7 @@ class EventsController < ApplicationController
 
   def create_error(format, errors, action)
     flash.now[:error] = t('flash.failure')
-    format.html { render action: action }
+    format.html { render action: }
     format.json { render json: errors, status: :unprocessable_entity }
   end
 
