@@ -101,6 +101,7 @@ class EventType < ApplicationRecord
     super
       .merge('title' => name)
       .merge('slug' => slug)
+      .merge('external_url' => external_site_url)
   end
 
   def self.ransackable_attributes(_auth_object = nil)

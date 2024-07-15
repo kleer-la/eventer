@@ -95,9 +95,9 @@ ActiveAdmin.register Article do
     f.actions
 
     targets = {
-      'Article' => Article.all.pluck(:title, :id),
-      'EventType' => EventType.all.pluck(:name, :id),
-      'Service' => Service.all.pluck(:name, :id)
+      'Article' => Article.all.order(:title).pluck(:title, :id),
+      'EventType' => EventType.all.order(:name).pluck(:name, :id),
+      'Service' => Service.all.order(:name).pluck(:name, :id)
     }
     script do
       raw <<-JS

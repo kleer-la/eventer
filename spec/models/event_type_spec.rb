@@ -284,11 +284,11 @@ describe EventType do
   end
 
   describe '#recommended' do
-    let(:event_type) { FactoryBot.create(:event_type) }
-    let(:recommended_event_type) { FactoryBot.create(:event_type) }
+    let(:event_type) { create(:event_type) }
+    let(:recommended_event_type) { create(:event_type, external_site_url: 'https://academia.kleer.la') }
 
     before do
-      FactoryBot.create(:recommended_content, source: event_type, target: recommended_event_type, relevance_order: 1)
+      create(:recommended_content, source: event_type, target: recommended_event_type, relevance_order: 1)
     end
 
     it 'returns recommended item with proper formatting' do
@@ -302,6 +302,7 @@ describe EventType do
       expect(recommended.first['slug']).to eq(recommended_event_type.slug)
       expect(recommended.first['cover']).to eq(recommended_event_type.cover)
       expect(recommended.first['subtitle']).to eq(recommended_event_type.subtitle)
+      expect(recommended.first['external_url']).to eq(recommended_event_type.external_site_url)
     end
   end
 end
