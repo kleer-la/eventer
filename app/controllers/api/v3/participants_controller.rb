@@ -18,6 +18,7 @@
 module Api
   module V3
     class ParticipantsController < Api::V3::BaseController
+      # TODO: remove - not used
       def interest
         params.permit!
         event_id = params[:event_id].to_i

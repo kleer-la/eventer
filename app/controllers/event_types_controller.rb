@@ -149,6 +149,7 @@ class EventTypesController < ApplicationController
     # end
   end
 
+  # TODO: remove - not used
   def testimonies
     @event_type = EventType.find(params[:id])
     @participants = @event_type.testimonies.sort_by(&:created_at).reverse
