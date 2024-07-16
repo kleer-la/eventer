@@ -83,13 +83,18 @@ ActiveAdmin.register Article do
     end
     f.inputs 'Recommended Contents' do
       f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
-        rc.input :target_type, as: :select, collection: %w[Article EventType Service]
-        # rc.input :target_id, label: 'Target'
-        # rc.input :target_id, as: :select, input_html: { class: 'select2 target-select' }, label: 'Target'
+        rc.input :target_type, as: :select,
+                               collection: %w[Article EventType Service],
+                               input_html: { class: 'target-type-select' }
         rc.input :target_id, label: 'Target', as: :select,
-                             collection: Article.all.pluck(:title, :id),
-                             input_html: { class: 'chosen-select' }
+                             collection: [],
+                             input_html: { class: 'target-id-select' }
         rc.input :relevance_order
+        rc.input :current_target_info, as: :hidden,
+                                       input_html: {
+                                         class: 'current-target-info',
+                                         value: { type: rc.object.target_type, id: rc.object.target_id }.to_json
+                                       }
       end
     end
     f.actions
@@ -100,32 +105,54 @@ ActiveAdmin.register Article do
       'Service' => Service.all.order(:name).pluck(:name, :id)
     }
     script do
-      raw <<-JS
+      raw <<~JS
+        $(document).ready(function() {
           window.targetOptions = #{targets.to_json};
 
-          console.log('hi');
-          $(document).on('change', "select[id^='article_recommended_contents_attributes_'][id$='_target_type']", function() {
-            console.log('yeah!');
-            var $this = $(this);
-            var targetSelect = $this.closest('.has_many_fields').find("select[id$='_target_id']");
-            var selectedType = $this.val();
+          function updateTargetSelect($targetTypeSelect) {
+            var $container = $targetTypeSelect.closest('.has_many_fields');
+            var $targetIdSelect = $container.find(".target-id-select");
+            var $currentTargetInfo = $container.find(".current-target-info");
+            var selectedType = $targetTypeSelect.val();
 
-            targetSelect.empty();
+            var currentTargetInfo;
+            try {
+              currentTargetInfo = JSON.parse($currentTargetInfo.val() || '{}');
+            } catch (e) {
+              console.error("Error parsing current target info:", e);
+              currentTargetInfo = {};
+            }
+            var currentTargetType = currentTargetInfo.type;
+            var currentTargetId = currentTargetInfo.id;
+
+            $targetIdSelect.empty();
             if (window.targetOptions[selectedType]) {
               $.each(window.targetOptions[selectedType], function(index, item) {
-                targetSelect.append($('<option></option>').attr('value', item[1]).text(item[0]));
+                var option = $('<option></option>').attr('value', item[1]).text(item[0]);
+                if (selectedType === currentTargetType && item[1] == currentTargetId) {
+                  option.prop('selected', true);
+                }
+                $targetIdSelect.append(option);
               });
             }
-            targetSelect.trigger('change'); // This triggers Select2 to update
+            $targetIdSelect.trigger('change');
+          }
+
+          $(document).on('change', ".target-type-select", function() {
+            updateTargetSelect($(this));
           });
 
-          // Trigger the change event on page load for existing fields
-          $("select[id^='article_recommended_contents_attributes_'][id$='_target_type']").trigger('change');
+          // Initialize existing fields
+          $(".target-type-select").each(function() {
+            updateTargetSelect($(this));
+          });
 
           // Handle dynamically added fields
           $(document).on('has_many_add:after', function() {
-            $("select[id^='article_recommended_contents_attributes_'][id$='_target_type']").last().trigger('change');
+            var $newTargetTypeSelect = $(".target-type-select").last();
+            updateTargetSelect($newTargetTypeSelect);
           });
+        });
       JS
     end
   end
