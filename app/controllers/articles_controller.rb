@@ -6,15 +6,6 @@ class ArticlesController < ApplicationController
   # GET /articles
   def index
     @articles = Article.order(selected: :desc, created_at: :desc)
-    respond_to do |format|
-      format.html
-      format.json do # TODO: remove
-        render json: @articles.order(created_at: :desc),
-               methods: %i[abstract category_name],
-               include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
-                                               linkedin_url] } }
-      end
-    end
   end
 
   # GET /articles/1
