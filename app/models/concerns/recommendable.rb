@@ -17,7 +17,7 @@ module Recommendable
 
   def recommended
     recommended_contents.includes(:target).order(:relevance_order).map do |content|
-      content.target.as_recommendation
+      content.target.as_recommendation.merge('relevance_order' => content.relevance_order)
     end
   end
 end

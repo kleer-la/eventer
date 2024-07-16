@@ -54,13 +54,16 @@ ActiveAdmin.register Article do
 
     panel 'Recommended Content' do
       table_for resource.recommended do
+        column :relevance_order do |recommendation|
+          recommendation['relevance_order']
+        end
         column :title do |recommendation|
           recommendation['title']
         end
         column :type do |recommendation|
           recommendation['type']
         end
-        column :description do |recommendation|
+        column :subtitle do |recommendation|
           recommendation['subtitle']
         end
       end
@@ -101,7 +104,7 @@ ActiveAdmin.register Article do
 
     targets = {
       'Article' => Article.all.order(:title).pluck(:title, :id),
-      'EventType' => EventType.all.order(:name).pluck(:name, :id),
+      'EventType' => EventType.included_in_catalog.order(:name).pluck(:name, :id),
       'Service' => Service.all.order(:name).pluck(:name, :id)
     }
     script do

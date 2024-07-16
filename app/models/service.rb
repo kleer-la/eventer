@@ -48,7 +48,7 @@ class Service < ApplicationRecord
   def as_recommendation
     super
       .merge('title' => name)
-      .merge('description' => subtitle)
+      .merge('subtitle' => subtitle.gsub('<h1>', '').gsub('</h1>', ''))
       .merge('cover' => side_image)
   end
 
