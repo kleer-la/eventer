@@ -104,7 +104,7 @@ ActiveAdmin.register Article do
 
     targets = {
       'Article' => Article.all.order(:title).pluck(:title, :id),
-      'EventType' => EventType.included_in_catalog.order(:name).pluck(:name, :id),
+      'EventType' => EventType.included_in_catalog.order(:name).map { |et| [et.unique_name, et.id] },
       'Service' => Service.all.order(:name).pluck(:name, :id)
     }
     script do
