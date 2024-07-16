@@ -61,7 +61,7 @@ ActiveAdmin.register Article do
           recommendation['type']
         end
         column :description do |recommendation|
-          recommendation['description']
+          recommendation['subtitle']
         end
       end
     end
