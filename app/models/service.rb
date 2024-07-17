@@ -45,6 +45,10 @@ class Service < ApplicationRecord
     field_list(faq)
   end
 
+  def title
+    name
+  end
+
   def as_recommendation
     super
       .merge('title' => name)

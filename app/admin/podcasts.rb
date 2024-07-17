@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register Podcast do
-  menu parent: 'Podcast Mgnt'
+  menu parent: 'We Publish'
 
   permit_params :title, :description, :youtube_url, :spotify_url, :thumbnail_url,
                 episodes_attributes: %i[id season episode title description youtube_url spotify_url thumbnail_url published_at _destroy]

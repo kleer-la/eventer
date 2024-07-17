@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register Coupon do
-  menu priority: 5
+  menu parent: 'Courses Mgnt'
 
   permit_params :coupon_type, :code, :internal_name, :icon, :expires_on, :display, :active,
                 :percent_off, :amount_off, event_type_ids: []

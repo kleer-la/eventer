@@ -97,9 +97,13 @@ class EventType < ApplicationRecord
     b
   end
 
+  def title
+    name
+  end
+
   def as_recommendation
     super
-      .merge('title' => name)
+      .merge('title' => name) # is a method, not an attribute
       .merge('slug' => slug)
       .merge('external_url' => external_site_url)
   end

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe EventType do
   before(:each) do
-    @event_type = FactoryBot.create(:event_type)
+    @event_type = create(:event_type)
   end
 
   it 'HABTM trainers' do
@@ -99,52 +99,52 @@ describe EventType do
       expect(@event_type.testimonies.count).to eq 0
     end
     it 'no participant no testimony' do
-      FactoryBot.create(:event, event_type: @event_type)
+      create(:event, event_type: @event_type)
       expect(@event_type.testimonies.count).to eq 0
     end
     it 'no participant no testimony' do
-      FactoryBot.create(:event, event_type: @event_type)
+      create(:event, event_type: @event_type)
       expect(@event_type.testimonies.count).to eq 0
     end
     it 'participant wo/ testimony' do
-      ev = FactoryBot.create(:event, event_type: @event_type)
-      FactoryBot.create(:participant, event: ev)
+      ev = create(:event, event_type: @event_type)
+      create(:participant, event: ev)
       expect(@event_type.testimonies.count).to eq 0
     end
     it 'participant w/ testimony' do
-      ev = FactoryBot.create(:event, event_type: @event_type)
-      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
+      ev = create(:event, event_type: @event_type)
+      create(:participant, event: ev, testimony: 'Hello, Joe')
       expect(@event_type.testimonies.count).to eq 1
     end
     it 'participant w/2 testimones one selected' do
-      ev = FactoryBot.create(:event, event_type: @event_type)
-      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
-      FactoryBot.create(:participant, event: ev, testimony: 'Yeah', selected: true)
-      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
+      ev = create(:event, event_type: @event_type)
+      create(:participant, event: ev, testimony: 'Hello, Joe')
+      create(:participant, event: ev, testimony: 'Yeah', selected: true)
+      create(:participant, event: ev, testimony: 'Hello, Joe')
       testimonies = @event_type.testimonies
       expect(testimonies.count).to eq 3
       expect(testimonies[0].testimony).to eq 'Yeah'
     end
     it "shouldn't include participant other event type" do
-      et = FactoryBot.create(:event_type)
-      ev = FactoryBot.create(:event, event_type: et)
-      FactoryBot.create(:participant, event: ev, testimony: 'Hello, Joe')
+      et = create(:event_type)
+      ev = create(:event, event_type: et)
+      create(:participant, event: ev, testimony: 'Hello, Joe')
       expect(@event_type.testimonies.count).to eq 0
     end
   end
   context 'Slug & Canonical' do
     it 'allow stand alone event types' do
-      et = FactoryBot.create(:event_type, id: 45, name: 'Joy Division (JD)')
-      expect(et.slug).to eq '45-joy-division-jd'
+      et = create(:event_type, name: 'Joy Division (JD)')
+      expect(et.slug).to eq "#{et.id}-joy-division-jd"
     end
     it 'allow stand alone event types' do
-      et = FactoryBot.create(:event_type)
+      et = create(:event_type)
       expect(et.canonical).to be_nil
       expect(et.clons).to eq []
     end
     it 'one canonical / one clon' do
-      et1 = FactoryBot.create(:event_type, name: 'Original')
-      et2 = FactoryBot.create(:event_type, name: 'Academia', canonical: et1)
+      et1 = create(:event_type, name: 'Original')
+      et2 = create(:event_type, name: 'Academia', canonical: et1)
       expect(et1.canonical).to be_nil
       expect(et1.clons.count).to eq 1
       expect(et1.clons[0].id).to eq et2.id
@@ -153,27 +153,27 @@ describe EventType do
       expect(et2.clons).to eq []
     end
     it 'stand alone event types canonical_slug are themself' do
-      et = FactoryBot.create(:event_type, id: 504, name: 'Un Curso')
+      et = create(:event_type, id: 504, name: 'Un Curso')
       expect(et.slug).to eq '504-un-curso'
       expect(et.canonical_slug).to eq '504-un-curso'
     end
     it 'stand alone event types canonical_slug are themself' do
-      et1 = FactoryBot.create(:event_type, name: 'Original')
-      et2 = FactoryBot.create(:event_type, name: 'Academia', canonical: et1)
+      et1 = create(:event_type, name: 'Original')
+      et2 = create(:event_type, name: 'Academia', canonical: et1)
       expect(et2.slug).to eq "#{et2.id}-academia"
       expect(et2.canonical_slug).to eq "#{et1.id}-original"
     end
   end
   context 'Deleted & noindex' do
     it 'New event type is no deleted and indexed' do
-      et = FactoryBot.create(:event_type)
+      et = create(:event_type)
       expect(et.deleted).to be false
       expect(et.noindex).to be false
     end
   end
   context 'v2022 website fields' do
     it 'New event type has new fields: side_image, brochure, new_version' do
-      et = FactoryBot.create(:event_type, side_image: 'alpha', brochure: 'beta')
+      et = create(:event_type, side_image: 'alpha', brochure: 'beta')
       expect(et.new_version).to be false
       expect(et.side_image).to eq 'alpha'
       expect(et.brochure).to eq 'beta'
@@ -181,14 +181,14 @@ describe EventType do
   end
   context 'coupons' do
     it 'has a valid many-to-many relation with EventTypes' do
-      event_type = FactoryBot.create(:event_type)
-      coupon = FactoryBot.create(:coupon)
+      event_type = create(:event_type)
+      coupon = create(:coupon)
       coupon.event_types << event_type
 
       expect(coupon.event_types).to include(event_type)
     end
     it 'no cupon, no discount' do
-      event_type = FactoryBot.create(:event_type)
+      event_type = create(:event_type)
 
       price, msg = event_type.apply_coupons(123.0, 1, Date.today, nil)
       expect(price).to eq 123
@@ -196,8 +196,8 @@ describe EventType do
     end
     context 'codeless' do
       it 'apply discount' do
-        event_type = FactoryBot.create(:event_type)
-        coupon = FactoryBot.create(:coupon, :codeless, percent_off: 10.0)
+        event_type = create(:event_type)
+        coupon = create(:coupon, :codeless, percent_off: 10.0)
         coupon.event_types << event_type
 
         price, msg = event_type.apply_coupons(123.0, 1, Date.today, nil)
@@ -205,15 +205,15 @@ describe EventType do
         expect(msg).not_to eq ''
       end
       it 'non active coupon doesnt count' do
-        event_type = FactoryBot.create(:event_type)
-        coupon = FactoryBot.create(:coupon, :codeless, active: false)
+        event_type = create(:event_type)
+        coupon = create(:coupon, :codeless, active: false)
         coupon.event_types << event_type
 
         expect(event_type.active_coupons(Date.today)).to eq []
       end
       it 'expired coupon doesnt count' do
-        event_type = FactoryBot.create(:event_type)
-        coupon = FactoryBot.create(:coupon, :codeless, active: true, expires_on: Date.today - 1)
+        event_type = create(:event_type)
+        coupon = create(:coupon, :codeless, active: true, expires_on: Date.today - 1)
         coupon.event_types << event_type
 
         expect(event_type.active_coupons(Date.today)).to eq []
@@ -221,8 +221,8 @@ describe EventType do
     end
     context 'percent_off' do
       it 'apply discount' do
-        event_type = FactoryBot.create(:event_type)
-        coupon = FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
+        event_type = create(:event_type)
+        coupon = create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
         coupon.event_types << event_type
 
         price, msg = event_type.apply_coupons(123.0, 1, Date.today, 'ABRADADABRA')
@@ -230,8 +230,8 @@ describe EventType do
         expect(msg).not_to eq ''
       end
       it 'normalize code to apply discount' do
-        event_type = FactoryBot.create(:event_type)
-        coupon = FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
+        event_type = create(:event_type)
+        coupon = create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
         coupon.event_types << event_type
 
         price, msg = event_type.apply_coupons(123.0, 1, Date.today, ' ABRADADABRa ')
@@ -239,8 +239,8 @@ describe EventType do
         expect(msg).not_to eq ''
       end
       it 'dont apply discount bc wrong code' do
-        event_type = FactoryBot.create(:event_type)
-        coupon = FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
+        event_type = create(:event_type)
+        coupon = create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
         coupon.event_types << event_type
 
         price, msg = event_type.apply_coupons(123.0, 1, Date.today, 'ABRAD')
@@ -248,9 +248,9 @@ describe EventType do
         expect(msg).to eq ''
       end
       it 'when (codeless + percentage_off) apply percentage_of discount ' do
-        event_type = FactoryBot.create(:event_type)
-        FactoryBot.create(:coupon, :codeless, percent_off: 50.0, code: '').event_types << event_type
-        FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA').event_types << event_type
+        event_type = create(:event_type)
+        create(:coupon, :codeless, percent_off: 50.0, code: '').event_types << event_type
+        create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA').event_types << event_type
 
         price, msg = event_type.apply_coupons(123.0, 1, Date.today, 'ABRADADABRA')
         expect(price).to eq 110.7

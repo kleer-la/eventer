@@ -10,4 +10,8 @@ class RecommendedContent < ApplicationRecord
     %w[created_at id id_value relevance_order source_id source_type target_id target_type
        updated_at]
   end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[source target]
+  end
 end

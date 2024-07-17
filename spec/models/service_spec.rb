@@ -31,7 +31,7 @@ RSpec.describe Service, type: :model do
 
       expect(recommended.first['id']).to eq(recommended_service.id)
       expect(recommended.first['title']).to eq(recommended_service.name)
-      expect(recommended.first['description']).to eq(recommended_service.subtitle)
+      expect(recommended.first['subtitle']).to eq(recommended_service.subtitle)
       expect(recommended.first['cover']).to eq(recommended_service.side_image)
     end
   end

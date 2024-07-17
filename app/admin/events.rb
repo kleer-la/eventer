@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register Event do
-  menu priority: 2
+  menu parent: 'Courses Mgnt'
 
   Event.attribute_names.each do |attribute|
     filter attribute.to_sym

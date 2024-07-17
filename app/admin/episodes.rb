@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register Episode do
-  menu parent: 'Podcast Mgnt'
+  menu parent: 'We Publish'
 
   permit_params :podcast_id, :season, :episode, :title, :description, :youtube_url, :spotify_url,
                 :thumbnail_url, :published_at

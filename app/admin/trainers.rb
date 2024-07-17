@@ -7,7 +7,7 @@ def signature_list(store)
 end
 
 ActiveAdmin.register Trainer do
-  menu priority: 4
+  menu parent: 'Others'
 
   actions :index, :show, :edit, :update, :new, :create # , :destroy
 
