@@ -64,7 +64,8 @@ Rails.application.configure do
   config.logger = Logger.new('log/development.log', 10, 50.megabytes)
 
   # # Do not fallback to assets pipeline if a precompiled asset is missed.
-  # config.assets.compile = true
+  config.assets.compile = true
+  config.assets.debug = true
 
   # # Asset digests allow you to set far-future Expires headers.
   # config.assets.digest = true
