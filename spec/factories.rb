@@ -119,18 +119,6 @@ FactoryBot.define do
     value { 'Hello' }
   end
 
-  factory :resource do
-    id { '2' }
-    format { :card }
-    slug { "resource-#{SecureRandom.hex(4)}" }
-    # sequence(:slug) { |n| "resource-#{n}" }
-    # slug { 'my-resource' }
-    title_es { 'Mi recurso' }
-    description_es { 'My resource' }
-    cover_es { 'my-resource.png' }
-    landing_es { '/blog/my-resource' }
-  end
-
   factory :oauth_token do
     issuer { 'Xero' }
     token_set { 'Lots of encripted data' }

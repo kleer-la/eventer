@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Resource < ApplicationRecord
+  include Recommendable
   extend FriendlyId
   friendly_id :title_es, use: :slugged
   belongs_to :category, optional: true
@@ -25,5 +26,12 @@ class Resource < ApplicationRecord
 
   def category_name
     category&.name
+  end
+
+  def as_recommendation
+    super
+      .merge('title' => title_es)
+      .merge('subtitle' => description_es)
+      .merge('cover' => cover_es)
   end
 end
