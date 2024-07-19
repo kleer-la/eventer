@@ -85,6 +85,7 @@ gem 'recaptcha', require: 'recaptcha/rails' # , :github => "ambethia/recaptcha"
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate'
 
+gem 'rack-ssl-enforcer'
 gem 'puma'
 gem 'rails-controller-testing' # assigns (rails 5)
 
