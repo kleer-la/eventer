@@ -108,6 +108,8 @@ class EventType < ApplicationRecord
       .merge('external_url' => external_site_url)
   end
 
+  accepts_nested_attributes_for :recommended_contents, allow_destroy: true
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[average_rating brochure cancellation_policy canonical_id cover created_at
        csd_eligible deleted description duration elevator_pitch external_id external_site_url

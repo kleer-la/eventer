@@ -27,5 +27,30 @@ describe Api::EventTypesController do
       json_response = JSON.parse(response.body)
       expect(json_response).to include('external_site_url')
     end
+    it 'fetches an event_type with recommended content' do
+      event_type = create(:event_type)
+      recommended_event_type = create(:event_type)
+
+      # Create a related content
+      RecommendedContent.create(source: event_type, target: recommended_event_type, relevance_order: 50)
+
+      get :show, params: { id: event_type.id, format: 'json' }
+
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+
+      expect(json_response['id']).to eq(event_type.id)
+      expect(json_response['name']).to eq(event_type.name)
+
+      expect(json_response['recommended']).to be_an(Array)
+      expect(json_response['recommended'].length).to eq(1)
+
+      recommended_item = json_response['recommended'].first
+      expect(recommended_item['id']).to eq(recommended_event_type.id)
+      expect(recommended_item['title']).to eq(recommended_event_type.name)
+      # expect(recommended_item['subtitle']).to eq(recommended_article.description)
+      expect(recommended_item['cover']).to eq(recommended_event_type.cover)
+      expect(recommended_item['type']).to eq('event_type')
+    end
   end
 end

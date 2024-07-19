@@ -5,14 +5,14 @@ require 'rails_helper'
 describe Api::ArticlesController do
   describe "GET 'Articles/#' (/api/articles/#.<format>)" do
     it 'fetch a article' do
-      ar = FactoryBot.create(:article)
+      ar = create(:article)
       get :show, params: { id: ar.id, format: 'json' }
       expect(assigns(:article)).to eq ar
     end
 
     it 'fetches an article with recommended content' do
-      article = FactoryBot.create(:article)
-      recommended_article = FactoryBot.create(:article)
+      article = create(:article)
+      recommended_article = create(:article)
 
       # Create a related content
       RecommendedContent.create(source: article, target: recommended_article, relevance_order: 50)
@@ -38,7 +38,7 @@ describe Api::ArticlesController do
   end
   describe "GET 'Articles' (/api/articles.<format>)" do
     it 'Articles list w/o body' do
-      FactoryBot.create(:article)
+      create(:article)
 
       get :index, params: { format: 'json' }
       expect(response).to have_http_status(:ok)
@@ -49,7 +49,7 @@ describe Api::ArticlesController do
 
   describe "GET 'show' (/article/1.<format>)" do
     it 'fetch a article json w/UPCASE' do
-      article = FactoryBot.create(:article)
+      article = create(:article)
       article.slug.upcase!
       get :show, params: { id: article.to_param, format: 'json' }
       expect(assigns(:article)).to eq article
