@@ -1,0 +1,22 @@
+panel 'Image Details' do
+  attributes_table_for image_key do
+    row 'Image' do
+      image_tag image_url, style: 'max-width: 500px; max-height: 500px;'
+    end
+    row 'Bucket' do
+      image_bucket
+    end
+    row 'Key' do
+      image_key
+    end
+    row 'URL' do
+      link_to image_url, image_url, target: '_blank'
+    end
+  end
+end
+
+div class: 'actions' do
+  span class: 'action_item' do
+    link_to 'Back to Images', admin_images_path(bucket: image_bucket), class: 'button'
+  end
+end
