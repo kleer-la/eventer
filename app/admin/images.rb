@@ -66,14 +66,24 @@ ActiveAdmin.register_page 'Images' do
     panel "Upload #{image_bucket}" do
       active_admin_form_for :image, url: admin_images_upload_path, html: { multipart: true } do |f|
         f.inputs do
-          f.input :file, as: :file
-          f.input :path, input_html: { placeholder: 'Image path' }
-          f.input :image_bucket, input_html: { value: @image_bucket, placeholder: 'Image bucket' }
+          f.input :file, as: :file, input_html: { id: 'image_file' }
+          f.input :path, input_html: { placeholder: 'Image path', id: 'image_path' }
+          f.input :image_bucket, input_html: { value: image_bucket }, as: :hidden
         end
         f.actions do
           f.action :submit, label: 'Upload Image'
         end
       end
+    end
+    script do
+      raw <<~JS
+        $(document).ready(function() {
+          $('#image_file').change(function() {
+            var fileName = $(this).val().split('\\\\').pop();
+            $('#image_path').val(fileName);
+          });
+        });
+      JS
     end
 
     if params[:filter].present?
