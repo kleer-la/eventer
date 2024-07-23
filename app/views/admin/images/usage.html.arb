@@ -1,0 +1,22 @@
+panel "Usage of Image: #{@image_key}" do
+  img src: image_url, style: 'max-width: 200px; max-height: 200px;'
+
+  usage.each do |model, instances|
+    h3 model.to_s.titleize
+    table_for instances do
+      column :id do |instance|
+        link_to instance[:id], send("admin_#{model}_path", instance[:id])
+      end
+      column :field
+      column :type
+    end
+  end
+
+  para 'This image is not used in any known location.' if usage.empty?
+end
+
+div class: 'actions' do
+  span class: 'action_item' do
+    link_to 'Back to Images', admin_images_path(bucket: image_bucket), class: 'button'
+  end
+end

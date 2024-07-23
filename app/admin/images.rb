@@ -96,35 +96,40 @@ ActiveAdmin.register_page 'Images' do
       end
     end
     panel image_bucket do
-      if images.present?
-        grouped_images = images.group_by { |image| File.basename(image.key, '.*') }
-        table_for grouped_images.keys.sort do |base_key|
-          column 'Name' do |base_key|
-            base_key
-          end
+      grouped_images = images.group_by { |image| File.basename(image.key, '.*') }
+      table_for grouped_images.keys.sort do |base_key|
+        column 'Name' do |base_key|
+          base_key
+        end
 
-          column 'Extensions' do |base_key|
-            grouped_images[base_key].map do |image|
-              extension = File.extname(image.key).delete('.')
-              link_to extension, admin_images_show_path(bucket: image_bucket, key: image.key), class: 'button'
-            end.join(' ').html_safe
-          end
+        column 'Extensions' do |base_key|
+          grouped_images[base_key].map do |image|
+            extension = File.extname(image.key).delete('.')
+            link_to extension, admin_images_show_path(bucket: image_bucket, key: image.key), class: 'button'
+          end.join(' ').html_safe
+        end
 
-          column 'Modified' do |base_key|
-            grouped_images[base_key].map do |image|
-              "#{File.extname(image.key).delete('.')}: #{image.last_modified.strftime('%Y-%m-%d %H:%M:%S')}"
-            end.join('<br>').html_safe
-          end
+        column 'Modified' do |base_key|
+          grouped_images[base_key].map do |image|
+            "#{File.extname(image.key).delete('.')}: #{image.last_modified.strftime('%Y-%m-%d %H:%M:%S')}"
+          end.join('<br>').html_safe
+        end
 
-          column 'Size' do |base_key|
-            grouped_images[base_key].map do |image|
-              "#{File.extname(image.key).delete('.')}: #{number_to_human_size(image.size)}"
-            end.join('<br>').html_safe
+        column 'Size' do |base_key|
+          grouped_images[base_key].map do |image|
+            "#{File.extname(image.key).delete('.')}: #{number_to_human_size(image.size)}"
+          end.join('<br>').html_safe
+        end
+        column 'Actions' do |base_key|
+          dropdown_menu 'Actions' do
+            grouped_images[base_key].each do |image|
+              item "Usage #{File.extname(image.key)}",
+                   admin_images_usage_path(bucket: image_bucket, key: image.key)
+            end
           end
         end
-      else
-        para 'No images found.'
       end
+      para 'No images found.' unless images.present?
     end
   end
 
@@ -160,8 +165,17 @@ ActiveAdmin.register_page 'Images' do
     @image_url = FileStoreService.image_url(@image_key, @image_bucket)
 
     render 'show', layout: 'active_admin'
-    # ,
-    #                locals: { image_bucket: @image_bucket, image_bucket: @image_bucket, image_url: @image_url }
+  end
+
+  page_action :usage, method: :get do
+    @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
+    @image_key = params[:key]
+
+    @image_url = FileStoreService.image_url(@image_key, @image_bucket)
+    p @image_url
+    @usage = ImageUsageService.find_usage(@image_url)
+
+    render 'usage'
   end
 end
 
