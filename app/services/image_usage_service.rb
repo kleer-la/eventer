@@ -28,10 +28,10 @@ class ImageUsageService
     text_fields = %i[description program]
     text_fields.each do |field|
       EventType.where("#{field} LIKE ?", "%#{image_url}%").each do |event_type|
-        usage << { id: event_type.id, field:, type: 'embedded' }
+        usage << { id: event_type.id, slug: event_type.slug, field:, type: 'embedded' }
       end
     end
-    p usage
+
     usage
   end
 end

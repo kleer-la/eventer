@@ -4,8 +4,8 @@ panel "Usage of Image: #{@image_key}" do
   usage.each do |model, instances|
     h3 model.to_s.titleize
     table_for instances do
-      column :id do |instance|
-        link_to instance[:id], send("admin_#{model}_path", instance[:id])
+      column :slug do |instance|
+        link_to instance[:slug], send("admin_#{model}_path", instance[:id])
       end
       column :field
       column :type

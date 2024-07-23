@@ -172,26 +172,9 @@ ActiveAdmin.register_page 'Images' do
     @image_key = params[:key]
 
     @image_url = FileStoreService.image_url(@image_key, @image_bucket)
-    p @image_url
+
     @usage = ImageUsageService.find_usage(@image_url)
 
     render 'usage'
   end
 end
-
-# controller do
-#   def index
-#     @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
-#     session[:image_bucket] = @image_bucket
-
-#     begin
-#       store = FileStoreService.current
-#       @images = store.list(@image_bucket)
-#     rescue Aws::Errors::MissingCredentialsError
-#       flash.now[:error] = 'AWS credentials are missing. Please check your configuration.'
-#       @images = []
-#     end
-#     # render partial: 'admin/images/index', locals: { images: @images, image_bucket: @image_bucket }
-#     # render :index, locals: { images: @images, image_bucket: @image_bucket }
-#   end
-# end
