@@ -2,8 +2,10 @@ class ImageUsageService
   SEARCHABLE_MODELS = [
     [EventType, %i[brochure cover kleer_cert_seal_image side_image], %i[description program recipients faq]],
     [Article, %i[cover], %i[body description]],
-    [Resource, %i[cover_es cover_en], []],
+    [Resource, %i[cover_es cover_en], %i[getit_es getit_en]],
     [News, %i[url], %i[description]],
+    [Participant, %i[photo_url], []],
+    [Testimony, %i[photo_url], []],
     [Podcast, %i[thumbnail_url], []],
     [Episode, %i[thumbnail_url], []]
     # Add more models here in the same format: [ModelClass, [url_fields], [text_fields]]

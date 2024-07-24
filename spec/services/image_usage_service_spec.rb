@@ -11,7 +11,7 @@ RSpec.describe ImageUsageService do
         result = ImageUsageService.find_usage(image_url)
 
         expect(result[:event_type]).to include(
-          { id: event_type.id, field: :brochure, type: 'direct' }
+          hash_including(id: event_type.id, field: :brochure, type: 'direct')
         )
       end
 
@@ -21,7 +21,7 @@ RSpec.describe ImageUsageService do
         result = ImageUsageService.find_usage(image_url)
 
         expect(result[:event_type]).to include(
-          { id: event_type.id, field: :description, type: 'embedded' }
+          hash_including(id: event_type.id, field: :description, type: 'embedded')
         )
       end
 
@@ -32,8 +32,46 @@ RSpec.describe ImageUsageService do
         result = ImageUsageService.find_usage(image_url)
 
         expect(result[:event_type]).to include(
-          { id: event_type1.id, field: :cover, type: 'direct' },
-          { id: event_type2.id, field: :program, type: 'embedded' }
+          hash_including(id: event_type1.id, field: :cover, type: 'direct'),
+          hash_including(id: event_type2.id, field: :program, type: 'embedded')
+        )
+      end
+    end
+
+    context 'when image is used in Article' do
+      it 'finds direct usage in URL fields' do
+        article = create(:article, cover: image_url)
+
+        result = ImageUsageService.find_usage(image_url)
+
+        expect(result[:article]).to include(
+          hash_including(id: article.id, field: :cover, type: 'direct')
+        )
+      end
+
+      it 'finds embedded usage in text fields' do
+        article = create(:article, body: "Article body with #{image_url} embedded")
+
+        result = ImageUsageService.find_usage(image_url)
+
+        expect(result[:article]).to include(
+          hash_including(id: article.id, field: :body, type: 'embedded')
+        )
+      end
+    end
+
+    context 'when image is used in multiple models' do
+      it 'finds usage across different models' do
+        event_type = create(:event_type, cover: image_url)
+        article = create(:article, description: "Description with #{image_url}")
+
+        result = ImageUsageService.find_usage(image_url)
+
+        expect(result[:event_type]).to include(
+          hash_including(id: event_type.id, field: :cover, type: 'direct')
+        )
+        expect(result[:article]).to include(
+          hash_including(id: article.id, field: :description, type: 'embedded')
         )
       end
     end
@@ -43,34 +81,6 @@ RSpec.describe ImageUsageService do
         result = ImageUsageService.find_usage(image_url)
         expect(result).to be_empty
       end
-    end
-  end
-
-  describe '.search_event_type' do
-    it 'searches in all specified URL fields' do
-      event_type1 = create(:event_type, brochure: image_url)
-      event_type2 = create(:event_type, cover: image_url)
-      event_type3 = create(:event_type, kleer_cert_seal_image: image_url)
-
-      result = ImageUsageService.send(:search_event_type, image_url)
-
-      expect(result).to include(
-        { id: event_type1.id, field: :brochure, type: 'direct' },
-        { id: event_type2.id, field: :cover, type: 'direct' },
-        { id: event_type3.id, field: :kleer_cert_seal_image, type: 'direct' }
-      )
-    end
-
-    it 'searches in all specified text fields' do
-      event_type1 = create(:event_type, description: "Description with #{image_url}")
-      event_type3 = create(:event_type, program: "Program with #{image_url}")
-
-      result = ImageUsageService.send(:search_event_type, image_url)
-
-      expect(result).to include(
-        { id: event_type1.id, field: :description, type: 'embedded' },
-        { id: event_type3.id, field: :program, type: 'embedded' }
-      )
     end
   end
 end
