@@ -1,37 +1,51 @@
 class ImageUsageService
+  SEARCHABLE_MODELS = [
+    [EventType, %i[brochure cover kleer_cert_seal_image side_image], %i[description program recipients faq]],
+    [Article, %i[cover], %i[body description]],
+    [Resource, %i[cover_es cover_en], []],
+    [News, %i[url], %i[description]],
+    [Podcast, %i[thumbnail_url], []],
+    [Episode, %i[thumbnail_url], []]
+    # Add more models here in the same format: [ModelClass, [url_fields], [text_fields]]
+  ]
+
   def self.find_usage(image_url)
     usage = {}
 
-    # Search in EventType
-    event_type_usage = search_event_type(image_url)
-    usage[:event_type] = event_type_usage if event_type_usage.any?
-
-    # Add more models here as needed
+    SEARCHABLE_MODELS.each do |model_class, url_fields, text_fields|
+      model_usage = search_model(image_url, model_class, url_fields, text_fields)
+      usage[model_class.name.underscore.to_sym] = model_usage if model_usage.any?
+    end
 
     usage
   end
 
-  private
-
-  def self.search_event_type(image_url)
+  def self.search_model(image_url, model_class, url_fields, text_fields)
     usage = []
 
     # Search in URL fields
-    url_fields = %i[brochure cover kleer_cert_seal_image]
     url_fields.each do |field|
-      EventType.where(field => image_url).each do |event_type|
-        usage << { id: event_type.id, field:, type: 'direct' }
+      model_class.where(field => image_url).each do |record|
+        usage << create_usage_hash(record, field, 'direct')
       end
     end
 
     # Search in text fields
-    text_fields = %i[description program]
     text_fields.each do |field|
-      EventType.where("#{field} LIKE ?", "%#{image_url}%").each do |event_type|
-        usage << { id: event_type.id, slug: event_type.slug, field:, type: 'embedded' }
+      model_class.where("#{field} LIKE ?", "%#{image_url}%").each do |record|
+        usage << create_usage_hash(record, field, 'embedded')
       end
     end
 
     usage
+  end
+
+  def self.create_usage_hash(record, field, type)
+    {
+      id: record.id,
+      slug: record.respond_to?(:slug) ? record.slug : nil,
+      field:,
+      type:
+    }.compact
   end
 end
