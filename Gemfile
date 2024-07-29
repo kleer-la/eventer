@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '~> 3.3'
+ruby '~> 3.3.4'
 gem 'rails', '~> 7.1'
 
 group :development do
