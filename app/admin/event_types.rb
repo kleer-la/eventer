@@ -128,6 +128,7 @@ ActiveAdmin.register EventType do
   end
 
   form do |f|
+    bkgd_imgs = FileStoreService.current.background_list
     f.inputs 'Event Type Details' do
       f.input :name # , label: I18n.t('formtastic.labels.event_type.name')
       f.input :duration # , label: I18n.t('formtastic.labels.event_type.duration')
@@ -142,7 +143,7 @@ ActiveAdmin.register EventType do
       f.input :csd_eligible
       f.input :cover
       f.input :side_image
-      f.input :kleer_cert_seal_image, as: :select, collection: @bkgd_imgs
+      f.input :kleer_cert_seal_image, as: :select, collection: bkgd_imgs
       f.input :subtitle
       f.input :elevator_pitch, as: :text, input_html: { rows: 4, maxlength: 160 },
                                hint: 'No more than 160 characters. Plain text, no HTML or Markdown.'

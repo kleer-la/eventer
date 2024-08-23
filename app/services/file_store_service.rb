@@ -97,6 +97,17 @@ class FileStoreService
     result = result.select { |img| img.key.to_s.start_with? folder } unless folder.nil?
     result
   end
+
+  def background_list
+    bg_list = list('certificate').map { |obj| File.basename(obj.key) }
+    bg_list[0] = '' # remove first (folder) + add empty option
+    bg_list.reject { |key| key.include?('-A4.') }
+  end
+
+  def image_list
+    img_list = list('image').map(&:key)
+    img_list.unshift '' # add empty option
+  end
 end
 
 class NullFileStore

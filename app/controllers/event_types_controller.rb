@@ -74,8 +74,8 @@ class EventTypesController < ApplicationController
     @event_types = EventType.where(deleted: false).where.not(duration: 0..1).order(:name)
 
     store = FileStoreService.current
-    @bkgd_imgs = background_list(store)
-    @image_list = image_list(store)
+    @bkgd_imgs = store.background_list
+    @image_list = store.image_list
   end
 
   # GET /event_types/new
@@ -170,17 +170,6 @@ class EventTypesController < ApplicationController
     param_values
   end
 
-  def background_list(store)
-    list = store.list('certificate').map { |obj| File.basename(obj.key) }
-    list[0] = '' # remove first (folder) + add empty option
-    list.reject { |key| key.include?('-A4.') }
-  end
-
-  def image_list(store)
-    list = store.list('image').map(&:key)
-    list.unshift '' # add empty option
-  end
-
   def participants
     @event_type = EventType.find(params[:id])
     @participants = @event_type.events.includes(:participants).flat_map(&:participants)
@@ -201,7 +190,7 @@ class EventTypesController < ApplicationController
 
     @certificate_store = FileStoreService.create_s3
 
-    @images = background_list(@certificate_store)
+    @images = @certificate_store.background_list
 
     respond_to do |format|
       format.html do
