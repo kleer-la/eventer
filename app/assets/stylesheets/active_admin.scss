@@ -32,3 +32,10 @@
 
 @import "active_admin_kleer";
 @import 'articles';
+
+.select2-selection__clear {
+  color: #f00;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-right: 5px;
+}
