@@ -20,6 +20,7 @@ class EventType < ApplicationRecord
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
   validates :elevator_pitch, length: { maximum: 160,
                                        too_long: '%<count>s characters is the maximum allowed' }
+  validate :certification_requires_seal
 
   def short_name
     if name.length >= 30
@@ -117,4 +118,12 @@ class EventType < ApplicationRecord
        lang learnings materials name net_promoter_score new_version noindex platform program
        promoter_count recipients side_image subtitle surveyed_count tag_name takeaways updated_at]
   end
+
+  private
+
+  def certification_requires_seal
+    if is_kleer_certification && kleer_cert_seal_image.blank?
+      errors.add(:kleer_cert_seal_image, "must be present if this is a Kleer certification")
+    end
+  end  
 end

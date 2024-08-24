@@ -24,52 +24,6 @@ describe EventType do
     expect(event_type.categories).to include(category1, category2)
   end
 
-  it 'should be valid' do
-    expect(@event_type.valid?).to be true
-  end
-
-  it 'should require its name' do
-    @event_type.name = ''
-
-    expect(@event_type.valid?).to be false
-  end
-
-  it 'should require its description' do
-    @event_type.description = ''
-
-    expect(@event_type.valid?).to be false
-  end
-
-  it 'should require an elevator pitch' do
-    @event_type.elevator_pitch = ''
-
-    expect(@event_type.valid?).to be false
-  end
-
-  it 'elevator pitch invalid if +160 chars' do
-    @event_type.elevator_pitch = 'x' * 161
-
-    expect(@event_type.valid?).to be false
-  end
-
-  it 'should require its recipients' do
-    @event_type.recipients = ''
-
-    expect(@event_type.valid?).to be false
-  end
-
-  it 'should require its program' do
-    @event_type.program = ''
-
-    expect(@event_type.valid?).to be false
-  end
-
-  it 'should require its duration' do
-    @event_type.duration = ''
-
-    expect(@event_type.valid?).to be true
-  end
-
   it 'should have a shot_name version returning 30 characters if name is longer' do
     @event_type.name = 'qoweiuq owei owqieu qoiweuqo iweu qwoeu qouwie qowieuq woiequ woei uqowie'
     expect(@event_type.short_name).to eq 'qoweiuq owei owqieu qoiweuqo i...'
@@ -80,18 +34,71 @@ describe EventType do
     expect(@event_type.short_name).to eq 'hola che!'
   end
 
-  it 'should have a crm tag' do
-    @event_type.tag_name = 'TR-CP (Carlos Peix)'
-    expect(@event_type.valid?).to be true
-  end
+  context 'valid' do
+    it 'should be valid' do
+      expect(@event_type.valid?).to be true
+    end
 
-  it 'could not have a cover' do
-    @event_type.cover = nil
-    expect(@event_type.valid?).to be true
-  end
-  it 'could have a cover' do
-    @event_type.cover = 'rambandanga'
-    expect(@event_type.valid?).to be true
+    it 'should require its name' do
+      @event_type.name = ''
+
+      expect(@event_type.valid?).to be false
+    end
+
+    it 'should require its description' do
+      @event_type.description = ''
+
+      expect(@event_type.valid?).to be false
+    end
+
+    it 'should require an elevator pitch' do
+      @event_type.elevator_pitch = ''
+
+      expect(@event_type.valid?).to be false
+    end
+
+    it 'elevator pitch invalid if +160 chars' do
+      @event_type.elevator_pitch = 'x' * 161
+
+      expect(@event_type.valid?).to be false
+    end
+
+    it 'should require its recipients' do
+      @event_type.recipients = ''
+
+      expect(@event_type.valid?).to be false
+    end
+
+    it 'should require its program' do
+      @event_type.program = ''
+
+      expect(@event_type.valid?).to be false
+    end
+
+    it 'should require its duration' do
+      @event_type.duration = ''
+
+      expect(@event_type.valid?).to be true
+    end
+
+    it 'should have a crm tag' do
+      @event_type.tag_name = 'TR-CP (Carlos Peix)'
+      expect(@event_type.valid?).to be true
+    end
+
+    it 'could not have a cover' do
+      @event_type.cover = nil
+      expect(@event_type.valid?).to be true
+    end
+    it 'if certified then should hava seal' do
+      @event_type.is_kleer_certification = true
+      @event_type.kleer_cert_seal_image = nil
+      expect(@event_type.valid?).to be false
+    end
+    it 'should have a crm tag' do
+      @event_type.tag_name = 'TR-CP (Carlos Peix)'
+      expect(@event_type.valid?).to be true
+    end
   end
 
   context 'Testimonies' do
