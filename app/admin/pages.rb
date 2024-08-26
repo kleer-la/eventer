@@ -3,7 +3,8 @@
 ActiveAdmin.register Page do
   menu priority: 2 # Adjust as needed
 
-  permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :content
+  permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :content,
+                recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   filter :name
   filter :lang, as: :select, collection: Page.langs
@@ -38,6 +39,36 @@ ActiveAdmin.register Page do
     # end
   end
 
+  show do
+    attributes_table do
+      row :id
+      row :name
+      row :slug
+      row :lang
+      row :seo_title
+      row :seo_description
+      row :canonical
+      row :created_at
+      row :updated_at
+    end
+    panel 'Recommended Content' do
+      table_for resource.recommended do
+        column :relevance_order do |recommendation|
+          recommendation['relevance_order']
+        end
+        column :title do |recommendation|
+          recommendation['title']
+        end
+        column :type do |recommendation|
+          recommendation['type']
+        end
+        column :subtitle do |recommendation|
+          recommendation['subtitle']
+        end
+      end
+    end
+  end
+
   form do |f|
     f.semantic_errors # Shows errors on :base
     f.inputs 'Page Details' do
@@ -51,26 +82,27 @@ ActiveAdmin.register Page do
       f.input :seo_description
       f.input :canonical, hint: 'Leave empty to auto-generate'
     end
-    f.actions
-  end
 
-  show do
-    attributes_table do
-      row :id
-      row :name
-      row :slug
-      row :lang
-      row :seo_title
-      row :seo_description
-      row :canonical
-      row :created_at
-      row :updated_at
+    f.inputs 'Recommended Contents' do
+      f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
+        rc.input :target_type, as: :select,
+                               collection: %w[Article EventType Service Resource],
+                               input_html: { class: 'target-type-select' }
+        rc.input :target_id, label: 'Target', as: :select,
+                             collection: [],
+                             input_html: { class: 'target-id-select' }
+        rc.input :relevance_order
+        rc.input :current_target_info, as: :hidden,
+                                       input_html: {
+                                         class: 'current-target-info',
+                                         value: { type: rc.object.target_type, id: rc.object.target_id }.to_json
+                                       }
+      end
+    end
+
+    f.actions
+    script do
+      raw RecommendableHelper.recommended_content_js(Page)
     end
   end
-
-  # sidebar 'Page Details', only: %i[show edit] do
-  #   ul do
-  #     li link_to 'View on site', "/#{page.lang}/#{page.slug || ''}"
-  #   end
-  # end
 end

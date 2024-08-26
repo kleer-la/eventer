@@ -20,4 +20,15 @@ module Recommendable
       content.target.as_recommendation.merge('relevance_order' => content.relevance_order)
     end
   end
+
+  class_methods do
+    def recommended_content_targets
+      {
+        'Article' => Article.all.order(:title).pluck(:title, :id),
+        'EventType' => EventType.included_in_catalog.order(:name).map { |et| [et.unique_name, et.id] },
+        'Service' => Service.all.order(:name).pluck(:name, :id),
+        'Resource' => Resource.all.order(:title_es).pluck(:title_es, :id)
+      }
+    end
+  end
 end

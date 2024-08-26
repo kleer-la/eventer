@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 class Page < ApplicationRecord
+  include Recommendable
   extend FriendlyId
   friendly_id :name, use: %i[slugged history scoped], scope: :lang
 
@@ -38,6 +41,8 @@ class Page < ApplicationRecord
       canonical: canonical || default_canonical
     }
   end
+
+  accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[name seo_title seo_description lang slug canonical visible created_at updated_at]
