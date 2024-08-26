@@ -14,7 +14,7 @@ class Page < ApplicationRecord
   scope :en, -> { where(lang: :en) }
   scope :sp, -> { where(lang: :sp) }
 
-  before_validation :set_default_slug
+  before_validation :normalize_slug
   before_save :strip_slug
 
   def should_generate_new_friendly_id?
@@ -55,14 +55,17 @@ class Page < ApplicationRecord
   private
 
   def strip_slug
-    slug.strip! if slug.present?
+    slug&.strip!
   end
 
   def default_canonical
     home_page? ? '' : slug
   end
 
-  def set_default_slug
-    self.slug ||= nil if name.downcase.strip == 'home' || name.downcase.strip == 'inicio'
+  def normalize_slug
+    self.slug = nil if slug.blank?
   end
+  # def set_default_slug
+  #   self.slug ||= nil if name.downcase.strip == 'home' || name.downcase.strip == 'inicio'
+  # end
 end
