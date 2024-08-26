@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_09_221708) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_25_215912) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -377,6 +377,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_09_221708) do
     t.string "tenant_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+  end
+
+  create_table "pages", force: :cascade do |t|
+    t.string "name"
+    t.string "slug"
+    t.string "seo_title"
+    t.text "seo_description"
+    t.integer "lang"
+    t.string "canonical"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug", "lang"], name: "index_pages_on_slug_and_lang", unique: true
   end
 
   create_table "participants", force: :cascade do |t|
