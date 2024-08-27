@@ -17,7 +17,7 @@ class Page < ApplicationRecord
   before_validation :normalize_slug
   before_save :strip_slug
 
-  def self.find_by_param(param_id)
+  def self.find_by_param!(param_id)
     lang, *slug_parts = param_id.split('-')
     slug = slug_parts.join('-')
 
@@ -51,6 +51,17 @@ class Page < ApplicationRecord
       lang:,
       canonical: canonical || default_canonical
     }
+  end
+
+  def as_recommendation
+    super
+      .merge('subtitle' => seo_description)
+      .merge('slug' => slug)
+      .merge('title' => title)
+  end
+
+  def title
+    name || seo_title
   end
 
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true

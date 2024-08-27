@@ -30,8 +30,12 @@ class Resource < ApplicationRecord
 
   def as_recommendation
     super
-      .merge('title' => title_es)
+      .merge('title' => title)
       .merge('subtitle' => description_es)
       .merge('cover' => cover_es)
+  end
+
+  def title
+    title_es
   end
 end

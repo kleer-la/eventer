@@ -11,7 +11,7 @@ ActiveAdmin.register Page do
 
   controller do
     def find_resource
-      scoped_collection.find_by_param(params[:id])
+      scoped_collection.find_by_param!(params[:id])
     end
   end
 
