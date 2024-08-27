@@ -3,7 +3,7 @@
 ActiveAdmin.register Page do
   menu priority: 2 # Adjust as needed
 
-  permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :content,
+  permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   filter :name
@@ -11,14 +11,7 @@ ActiveAdmin.register Page do
 
   controller do
     def find_resource
-      lang, *slug_parts = params[:id].split('-')
-      slug = slug_parts.join('-')
-
-      if slug.present?
-        scoped_collection.where(lang:).friendly.find(slug)
-      else
-        scoped_collection.find_by!(lang:, slug: nil)
-      end
+      scoped_collection.find_by_param(params[:id])
     end
   end
 

@@ -5,17 +5,28 @@ class Page < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: %i[slugged history scoped], scope: :lang
 
-  enum lang: { en: 0, sp: 1 } # Adjust languages as needed
+  enum lang:  %i[es en]
 
   validates :name, presence: true
   validates :lang, presence: true
   validates :slug, uniqueness: { scope: :lang, allow_nil: true }
 
   scope :en, -> { where(lang: :en) }
-  scope :sp, -> { where(lang: :sp) }
+  scope :es, -> { where(lang: :es) }
 
   before_validation :normalize_slug
   before_save :strip_slug
+
+  def self.find_by_param(param_id)
+    lang, *slug_parts = param_id.split('-')
+    slug = slug_parts.join('-')
+
+    if slug.present?
+      where(lang:).friendly.find(slug)
+    else
+      find_by!(lang:, slug: nil)
+    end
+  end
 
   def should_generate_new_friendly_id?
     !home_page? && (slug.blank? || saved_change_to_name?)

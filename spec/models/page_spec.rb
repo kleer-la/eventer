@@ -5,50 +5,50 @@ require 'rails_helper'
 RSpec.describe Page, type: :model do
   describe 'home pages' do
     let!(:en_home) { Page.create(name: 'Home', lang: :en, slug: nil) }
-    let!(:sp_home) { Page.create(name: 'home', lang: :sp, slug: nil) }
+    let!(:es_home) { Page.create(name: 'home', lang: :es, slug: nil) }
 
     it 'allows creation of home pages with nil slugs' do
       expect(en_home).to be_valid
-      expect(sp_home).to be_valid
+      expect(es_home).to be_valid
     end
 
     it 'identifies home pages correctly' do
       expect(en_home.home_page?).to be true
-      expect(sp_home.home_page?).to be true
+      expect(es_home.home_page?).to be true
     end
 
     it 'generates correct to_param for home pages' do
       expect(en_home.to_param).to eq 'en'
-      expect(sp_home.to_param).to eq 'sp'
+      expect(es_home.to_param).to eq 'es'
     end
   end
 
   describe 'regular pages' do
     let!(:en_about) { Page.create(name: 'About Us', lang: :en) }
-    let!(:sp_about) { Page.create(name: 'Sobre Nosotros', lang: :sp) }
+    let!(:es_about) { Page.create(name: 'Sobre Nosotros', lang: :es) }
 
     it 'generates slugs for regular pages' do
       expect(en_about.slug).to eq 'about-us'
-      expect(sp_about.slug).to eq 'sobre-nosotros'
+      expect(es_about.slug).to eq 'sobre-nosotros'
     end
 
     it 'identifies regular pages correctly' do
       expect(en_about.home_page?).to be false
-      expect(sp_about.home_page?).to be false
+      expect(es_about.home_page?).to be false
     end
 
     it 'generates correct to_param for regular pages' do
       expect(en_about.to_param).to eq 'en-about-us'
-      expect(sp_about.to_param).to eq 'sp-sobre-nosotros'
+      expect(es_about.to_param).to eq 'es-sobre-nosotros'
     end
 
     it 'allows pages with the same slug in different languages' do
       en_contact = Page.create(name: 'Contact', lang: :en)
-      sp_contact = Page.create(name: 'Contact', lang: :sp)
+      es_contact = Page.create(name: 'Contact', lang: :es)
       expect(en_contact).to be_valid
-      expect(sp_contact).to be_valid
+      expect(es_contact).to be_valid
       expect(en_contact.slug).to eq 'contact'
-      expect(sp_contact.slug).to eq 'contact'
+      expect(es_contact.slug).to eq 'contact'
     end
   end
 
@@ -70,14 +70,14 @@ RSpec.describe Page, type: :model do
   describe 'scopes' do
     before do
       Page.create(name: 'Home', lang: :en, slug: nil)
-      Page.create(name: 'Home', lang: :sp, slug: nil)
+      Page.create(name: 'Home', lang: :es, slug: nil)
       Page.create(name: 'About', lang: :en)
-      Page.create(name: 'Sobre', lang: :sp)
+      Page.create(name: 'Sobre', lang: :es)
     end
 
     it 'filters pages by language' do
       expect(Page.en.count).to eq 2
-      expect(Page.sp.count).to eq 2
+      expect(Page.es.count).to eq 2
     end
   end
 
