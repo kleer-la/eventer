@@ -14,7 +14,16 @@ RSpec.describe Service, type: :model do
     service.save
     expect(service.slug).to eq('test-slug')
   end
+  describe '#program_list' do
+    it 'returns a list of strings with basic HTML styling' do
+      service = Service.new
+      service.program = ActionText::Content.new(
+        '<ol><li>item title<ul><li>item <strong>content</strong></li></ul></li></ol>'
+      )
 
+      expect(service.program_list).to eq([['item title', 'item <strong>content</strong>']])
+    end
+  end
   describe '#recommended' do
     let(:service) { FactoryBot.create(:service) }
     let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended', subtitle: 'For sure') }

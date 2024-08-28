@@ -64,7 +64,7 @@ class Service < ApplicationRecord
     doc = Nokogiri::HTML(field.body.to_html)
     doc.css('ol > li').map do |li|
       main_item = li.at_css('> text()').to_s.strip
-      collapsible_items = li.css('ul > li').map(&:text).map(&:strip)
+      collapsible_items = li.css('ul > li').map { |item| item.inner_html.strip }
       [main_item, collapsible_items[0]]
     end
   end
