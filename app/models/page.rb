@@ -33,7 +33,7 @@ class Page < ApplicationRecord
   end
 
   def display_name
-    home_page? ? "#{name} (Home - #{lang})" : name
+    "#{name} - #{lang}"
   end
 
   def home_page?
@@ -61,7 +61,7 @@ class Page < ApplicationRecord
   end
 
   def title
-    name || seo_title
+    display_name || seo_title
   end
 
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
