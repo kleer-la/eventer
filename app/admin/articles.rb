@@ -89,7 +89,7 @@ ActiveAdmin.register Article do
     f.inputs 'Recommended Contents' do
       f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
         rc.input :target_type, as: :select,
-                               collection: %w[Article EventType Service],
+                               collection: %w[Article EventType Service Resource],
                                input_html: { class: 'target-type-select' }
         rc.input :target_id, label: 'Target', as: :select,
                              collection: [],
@@ -103,62 +103,8 @@ ActiveAdmin.register Article do
       end
     end
     f.actions
-
-    targets = {
-      'Article' => Article.all.order(:title).pluck(:title, :id),
-      'EventType' => EventType.included_in_catalog.order(:name).map { |et| [et.unique_name, et.id] },
-      'Service' => Service.all.order(:name).pluck(:name, :id)
-    }
     script do
-      raw <<~JS
-        $(document).ready(function() {
-          window.targetOptions = #{targets.to_json};
-
-          function updateTargetSelect($targetTypeSelect) {
-            var $container = $targetTypeSelect.closest('.has_many_fields');
-            var $targetIdSelect = $container.find(".target-id-select");
-            var $currentTargetInfo = $container.find(".current-target-info");
-            var selectedType = $targetTypeSelect.val();
-
-            var currentTargetInfo;
-            try {
-              currentTargetInfo = JSON.parse($currentTargetInfo.val() || '{}');
-            } catch (e) {
-              console.error("Error parsing current target info:", e);
-              currentTargetInfo = {};
-            }
-            var currentTargetType = currentTargetInfo.type;
-            var currentTargetId = currentTargetInfo.id;
-
-            $targetIdSelect.empty();
-            if (window.targetOptions[selectedType]) {
-              $.each(window.targetOptions[selectedType], function(index, item) {
-                var option = $('<option></option>').attr('value', item[1]).text(item[0]);
-                if (selectedType === currentTargetType && item[1] == currentTargetId) {
-                  option.prop('selected', true);
-                }
-                $targetIdSelect.append(option);
-              });
-            }
-            $targetIdSelect.trigger('change');
-          }
-
-          $(document).on('change', ".target-type-select", function() {
-            updateTargetSelect($(this));
-          });
-
-          // Initialize existing fields
-          $(".target-type-select").each(function() {
-            updateTargetSelect($(this));
-          });
-
-          // Handle dynamically added fields
-          $(document).on('has_many_add:after', function() {
-            var $newTargetTypeSelect = $(".target-type-select").last();
-            updateTargetSelect($newTargetTypeSelect);
-          });
-        });
-      JS
+      raw RecommendableHelper.recommended_content_js(Article)
     end
   end
 end
