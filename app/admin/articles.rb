@@ -3,7 +3,7 @@
 ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
-  permit_params :lang, :published, :selected, :category, :title, :tabtitle, :description, :slug, :cover, :body,
+  permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :body,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   FriendlyId::Slug.class_eval do
@@ -25,7 +25,9 @@ ActiveAdmin.register Article do
     column :lang
     column :published
     column :selected
-    column :category
+    column :category do |article|
+      article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
+    end
     column :created_at
     actions
   end
@@ -39,7 +41,9 @@ ActiveAdmin.register Article do
       row :lang
       row :published
       row :selected
-      row :category
+      row :category do |article|
+        article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
+      end
       row :slug
       row :cover
       row :body
@@ -77,7 +81,7 @@ ActiveAdmin.register Article do
       f.input :lang, as: :radio
       f.input :published
       f.input :selected
-      f.input :category
+      f.input :category, as: :select, collection: Category.sorted
       f.input :title
       f.input :tabtitle
       f.input :description
