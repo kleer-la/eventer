@@ -101,4 +101,22 @@ RSpec.describe Page, type: :model do
       expect(recommended.first['cover']).to eq(recommended_service.side_image)
     end
   end
+
+  describe 'cover field' do
+    let(:page) { Page.new(name: 'Test Page', lang: :en) }
+
+    it 'can be created with a cover' do
+      page.cover = 'https://example.com/image.jpg'
+      expect(page).to be_valid
+    end
+
+    it 'can be created without a cover' do
+      expect(page).to be_valid
+    end
+
+    it 'can update the cover' do
+      page.save
+      expect(page.update(cover: 'https://example.com/new_image.jpg')).to be true
+    end
+  end
 end

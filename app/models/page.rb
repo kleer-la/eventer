@@ -10,6 +10,7 @@ class Page < ApplicationRecord
   validates :name, presence: true
   validates :lang, presence: true
   validates :slug, uniqueness: { scope: :lang, allow_nil: true }
+  validates :cover, presence: true, allow_blank: true
 
   scope :en, -> { where(lang: :en) }
   scope :es, -> { where(lang: :es) }

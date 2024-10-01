@@ -3,7 +3,7 @@
 ActiveAdmin.register Page do
   menu priority: 2 # Adjust as needed
 
-  permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical,
+  permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :cover,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   filter :name
@@ -41,6 +41,16 @@ ActiveAdmin.register Page do
       row :seo_title
       row :seo_description
       row :canonical
+      row :cover do |page|
+        if page.cover.present?
+          div do
+            image_tag page.cover, style: 'max-width: 300px; max-height: 300px'
+          end
+          div do
+            link_to page.cover, page.cover, target: '_blank'
+          end
+        end
+      end
       row :created_at
       row :updated_at
     end
@@ -74,6 +84,7 @@ ActiveAdmin.register Page do
       f.input :seo_title
       f.input :seo_description
       f.input :canonical, hint: 'Leave empty to auto-generate'
+      f.input :cover, as: :url
     end
 
     f.inputs 'Recommended Contents' do
