@@ -34,4 +34,26 @@ RSpec.describe Resource, type: :model do
       expect(recommended_first['type']).to eq('resource')
     end
   end
+  describe 'slug generation' do
+    it 'removes leading and trailing spaces from the slug' do
+      resource = FactoryBot.create(:resource, title_es: '  Spaced Title  ')
+      expect(resource.slug).to eq('spaced-title')
+    end
+
+    it 'updates slug when title changes' do
+      resource = FactoryBot.create(:resource, title_es: 'Original Title')
+      expect(resource.slug).to eq('original-title')
+
+      resource.update(title_es: '  New Spaced Title  ')
+      expect(resource.slug).to eq('new-spaced-title')
+    end
+
+    it 'maintains slug if only spaces change' do
+      resource = FactoryBot.create(:resource, title_es: 'Consistent Title')
+      original_slug = resource.slug
+
+      resource.update(title_es: '  Consistent Title  ')
+      expect(resource.slug).to eq(original_slug)
+    end
+  end
 end

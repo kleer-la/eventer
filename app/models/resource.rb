@@ -3,7 +3,7 @@
 class Resource < ApplicationRecord
   include Recommendable
   extend FriendlyId
-  friendly_id :title_es, use: :slugged
+  friendly_id :title_es, use: %i[slugged history]
   belongs_to :category, optional: true
 
   enum format: { card: 0, book: 1, infographic: 2, canvas: 3,
@@ -19,9 +19,14 @@ class Resource < ApplicationRecord
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }
   validates :description_es, presence: true, length: { maximum: 220 }
+  before_save :strip_slug
 
   def should_generate_new_friendly_id?
-    !slug.present?
+    title_es_changed? || super
+  end
+
+  def strip_slug
+    slug&.strip!
   end
 
   def category_name

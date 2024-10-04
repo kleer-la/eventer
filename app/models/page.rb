@@ -88,7 +88,4 @@ class Page < ApplicationRecord
   def normalize_slug
     self.slug = nil if slug.blank?
   end
-  # def set_default_slug
-  #   self.slug ||= nil if name.downcase.strip == 'home' || name.downcase.strip == 'inicio'
-  # end
 end
