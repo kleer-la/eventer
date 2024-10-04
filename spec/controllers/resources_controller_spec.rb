@@ -33,24 +33,23 @@ describe ResourcesController do
 
   describe 'POST create' do
     describe 'with valid params' do
+      let(:valid_attributes) { FactoryBot.attributes_for(:resource) }
+
       it 'creates a new resource' do
         expect do
-          resource = FactoryBot.build(:resource)
-          post :create, params: { resource: resource.attributes }
+          post :create, params: { resource: valid_attributes }
         end.to change(Resource, :count).by(1)
       end
 
       it 'assigns a newly created resource as @resource' do
-        resource = FactoryBot.build(:resource)
-        post :create, params: { resource: resource.attributes }
+        post :create, params: { resource: valid_attributes }
         expect(assigns(:resource)).to be_a Resource
         expect(assigns(:resource)).to be_persisted
       end
 
       it 'redirects to the created resource' do
-        resource = FactoryBot.build(:resource)
-        post :create, params: { resource: resource.attributes }
-        expect(response).to redirect_to edit_resource_path(resource)
+        post :create, params: { resource: valid_attributes }
+        expect(response).to redirect_to edit_resource_path(Resource.last)
       end
     end
 

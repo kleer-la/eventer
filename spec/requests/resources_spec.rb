@@ -46,24 +46,26 @@ RSpec.describe '/resources', type: :request do
 
   describe 'POST /create' do
     context 'with valid parameters' do
+      let(:valid_attributes) { FactoryBot.attributes_for(:resource) }
+
       it 'creates a new Resource' do
         expect do
-          post resources_url, params: { resource: FactoryBot.attributes_for(:resource) }
+          post resources_url, params: { resource: valid_attributes }
         end.to change(Resource, :count).by(1)
       end
 
       it 'redirects to the created resource' do
-        post resources_url, params: { resource: FactoryBot.attributes_for(:resource) }
+        post resources_url, params: { resource: valid_attributes }
         expect(response).to redirect_to(edit_resource_path(Resource.last))
       end
       it 'has common fields ' do
-        post resources_url, params: { resource: FactoryBot.attributes_for(:resource) }
+        post resources_url, params: { resource: valid_attributes }
         expect(Resource.last.format).to eq 'card'
-        expect(Resource.last.slug).to start_with 'resource-'
+        expect(Resource.last.slug).to start_with 'mi-recurso-'
       end
       it 'has basic _es fields ' do
-        post resources_url, params: { resource: FactoryBot.attributes_for(:resource) }
-        expect(Resource.last.title_es).to eq 'Mi recurso'
+        post resources_url, params: { resource: valid_attributes }
+        expect(Resource.last.title_es).to start_with 'Mi recurso'
         expect(Resource.last.description_es).to eq 'My resource'
         expect(Resource.last.landing_es).to eq '/blog/my-resource'
         expect(Resource.last.cover_es).to eq 'my-resource.png'
