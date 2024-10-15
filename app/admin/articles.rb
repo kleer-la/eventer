@@ -4,6 +4,7 @@ ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
   permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :body,
+                :industry,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   FriendlyId::Slug.class_eval do
@@ -11,6 +12,8 @@ ActiveAdmin.register Article do
       %w[created_at id id_value scope slug sluggable_id sluggable_type]
     end
   end
+
+  filter :industry, as: :select, collection: Article.industries
 
   controller do
     def find_resource
@@ -25,6 +28,7 @@ ActiveAdmin.register Article do
     column :lang
     column :published
     column :selected
+    column :industry
     column :category do |article|
       article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
     end
@@ -41,6 +45,7 @@ ActiveAdmin.register Article do
       row :lang
       row :published
       row :selected
+      row :industry
       row :category do |article|
         article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
       end
@@ -81,6 +86,9 @@ ActiveAdmin.register Article do
       f.input :lang, as: :radio
       f.input :published
       f.input :selected
+      f.input :industry, as: :select, collection: Article.industries.keys.map { |industry|
+        [industry.titleize, industry]
+      }
       f.input :category, as: :select, collection: Category.sorted
       f.input :title
       f.input :tabtitle

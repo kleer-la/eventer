@@ -13,6 +13,14 @@ class Article < ApplicationRecord
   # validates :published, presence: true
   validates :description, presence: true, length: { maximum: 160 }
 
+  enum industry: {
+    financial: 0,
+    technology: 1,
+    public_services: 2,
+    consumer_goods: 3,
+    energy: 4
+  }, _prefix: true
+
   def should_generate_new_friendly_id?
     !slug.present?
   end
@@ -42,7 +50,7 @@ class Article < ApplicationRecord
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[body category_id cover created_at description id lang published selected slug tabtitle title updated_at]
+    %w[body category_id cover created_at description id lang published selected slug tabtitle title updated_at industry]
   end
 
   def self.ransackable_associations(_auth_object = nil)
