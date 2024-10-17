@@ -14,6 +14,7 @@ ActiveAdmin.register Article do
   end
 
   filter :industry, as: :select, collection: Article.industries
+  filter :body
 
   controller do
     def find_resource
