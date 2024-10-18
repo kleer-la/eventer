@@ -14,7 +14,7 @@ class Article < ApplicationRecord
   validates :description, presence: true, length: { maximum: 160 }
 
   enum industry: {
-    financial: 0,
+    finantial: 0,
     technology: 1,
     public_services: 2,
     consumer_goods: 3,
