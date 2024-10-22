@@ -526,7 +526,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_22_173411) do
     t.string "target_title"
     t.string "seo_title"
     t.string "seo_description"
-    t.boolean "is_training_program"
+    t.boolean "is_training_program", default: false, null: false
     t.index ["slug"], name: "index_service_areas_on_slug", unique: true
   end
 
