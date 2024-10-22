@@ -3,6 +3,33 @@
 require 'rails_helper'
 
 describe Api::ServiceAreasController do
+  describe "GET 'index'" do
+    before do
+      @regular_service = FactoryBot.create(:service_area, visible: true, is_training_program: false)
+      @training_program = FactoryBot.create(:service_area, visible: true, is_training_program: true)
+    end
+
+    it 'shows only regular services in /services.json' do
+      get :index, params: { format: 'json' }
+      expect(response).to have_http_status(:success)
+      json_response = JSON.parse(response.body)
+
+      service_slugs = json_response.map { |sa| sa['slug'] }
+      expect(service_slugs).to include(@regular_service.slug)
+      expect(service_slugs).not_to include(@training_program.slug)
+    end
+
+    it 'shows only training programs in /programs.json' do
+      get :programs, params: { format: 'json' }
+      expect(response).to have_http_status(:success)
+      json_response = JSON.parse(response.body)
+
+      program_slugs = json_response.map { |sa| sa['slug'] }
+      expect(program_slugs).to include(@training_program.slug)
+      expect(program_slugs).not_to include(@regular_service.slug)
+    end
+  end
+
   describe "GET 'ServiceAreas/#' (/api/services/#.<format>)" do
     it 'fetch a ServiceArea' do
       sa = FactoryBot.create(:service_area)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_15_133444) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_22_173411) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -526,6 +526,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_15_133444) do
     t.string "target_title"
     t.string "seo_title"
     t.string "seo_description"
+    t.boolean "is_training_program"
     t.index ["slug"], name: "index_service_areas_on_slug", unique: true
   end
 

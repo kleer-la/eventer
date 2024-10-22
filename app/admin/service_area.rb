@@ -5,7 +5,7 @@ ActiveAdmin.register ServiceArea do
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary, :cta_message,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
-                :target_title, :seo_title, :seo_description
+                :target_title, :seo_title, :seo_description, :is_training_program
   filter :name
 
   controller do
@@ -25,6 +25,7 @@ ActiveAdmin.register ServiceArea do
     column :subtitle
     column :slug
     column :ordering
+    column :is_training_program
     column :visible
     actions
   end
@@ -35,6 +36,7 @@ ActiveAdmin.register ServiceArea do
       f.input :name
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :visible, as: :boolean
+      f.input :is_training_program, as: :boolean
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' }

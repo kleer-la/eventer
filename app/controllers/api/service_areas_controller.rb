@@ -4,10 +4,16 @@ module Api
   class ServiceAreasController < ApplicationController
     # GET /api/service_areas
     def index
-      @service_areas = ServiceArea.where(visible: true).order(:ordering).includes(:services)
+      list ServiceArea.where(visible: true, is_training_program: false).order(:ordering).includes(:services)
+    end
 
+    def programs
+      list ServiceArea.where(visible: true, is_training_program: true).order(:ordering).includes(:services)
+    end
+
+    def list(service_areas)
       # needs the map bc the rich text.body.to_s
-      render json: @service_areas.map { |service_area|
+      render json: service_areas.map { |service_area|
         {
           id: service_area.id,
           slug: service_area.slug,

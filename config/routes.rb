@@ -27,7 +27,11 @@ Rails.application.routes.draw do
       post 'participants/interest'
       resources :podcasts, only: [:index]
     end
-    resources :service_areas, only: %i[index show]
+    resources :service_areas, only: %i[index show] do
+      collection do
+        get 'programs', to: 'service_areas#programs'
+      end
+    end
     resources :articles, only: %i[index show]
     resources :resources, only: %i[index]
     resources :pages, only: %i[show]
