@@ -87,7 +87,7 @@ ActiveAdmin.register Article do
       f.input :lang, as: :radio
       f.input :published
       f.input :selected
-      f.input :industry, as: :select, collection: Article.industries.keys.map { |industry|
+      f.input :industry, as: :select, hint: 'Tiene industria solo si es un caso de estudio', collection: Article.industries.keys.map { |industry|
         [industry.titleize, industry]
       }
       f.input :category, as: :select, collection: Category.sorted
