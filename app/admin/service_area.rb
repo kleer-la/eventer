@@ -80,6 +80,7 @@ ActiveAdmin.register ServiceArea do
       row :name
       row :slug
       row :visible
+      row :is_training_program
       row :icon do |service_area|
         if service_area.icon.present?
           image_tag service_area.icon, width: '50px', alt: 'Service Area Icon'
