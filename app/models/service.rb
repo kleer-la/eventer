@@ -26,6 +26,8 @@ class Service < ApplicationRecord
        rich_text_value_proposition service_area testimonies]
   end
 
+  accepts_nested_attributes_for :recommended_contents, allow_destroy: true
+
   def should_generate_new_friendly_id?
     slug.blank?
   end

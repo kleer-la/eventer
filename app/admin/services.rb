@@ -3,21 +3,10 @@
 ActiveAdmin.register Service do
   menu parent: 'Services Mgnt'
 
-  # See permitted parameters documentation:
-  # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-  #
-  # Uncomment all parameters which should be permitted for assignment
-  #
   permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
-                   outcomes program target faq definitions pricing brochure side_image ordering]
+                   outcomes program target faq definitions pricing brochure side_image ordering],
+                recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
-  # or
-  #
-  # permit_params do
-  #   permitted = [:name, :card_description, :subtitle, :service_area_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
   controller do
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
@@ -59,8 +48,27 @@ ActiveAdmin.register Service do
       f.input :pricing
       f.input :faq, as: :rich_text_area, hint: hint_colapsable
       f.input :brochure
+      f.inputs 'Recommended Contents' do
+        f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
+          rc.input :target_type, as: :select,
+                                 collection: %w[Article EventType Service Resource],
+                                 input_html: { class: 'target-type-select' }
+          rc.input :target_id, label: 'Target', as: :select,
+                               collection: [],
+                               input_html: { class: 'target-id-select' }
+          rc.input :relevance_order
+          rc.input :current_target_info, as: :hidden,
+                                         input_html: {
+                                           class: 'current-target-info',
+                                           value: { type: rc.object.target_type, id: rc.object.target_id }.to_json
+                                         }
+        end
+      end
     end
     f.actions
+    script do
+      raw RecommendableHelper.recommended_content_js(Page)
+    end
   end
 
   show do
@@ -160,6 +168,22 @@ ActiveAdmin.register Service do
           end
         else
           'No PDF available'
+        end
+      end
+      panel 'Recommended Content' do
+        table_for resource.recommended do
+          column :relevance_order do |recommendation|
+            recommendation['relevance_order']
+          end
+          column :title do |recommendation|
+            recommendation['title']
+          end
+          column :type do |recommendation|
+            recommendation['type']
+          end
+          column :subtitle do |recommendation|
+            recommendation['subtitle']
+          end
         end
       end
     end

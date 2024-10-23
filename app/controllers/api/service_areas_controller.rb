@@ -85,7 +85,8 @@ module Api
             pricing: service.pricing,
             faq: service.faq_list,
             brochure: service.brochure,
-            side_image: service.side_image
+            side_image: service.side_image,
+            recommended: service.recommended
           }
         end
       }
