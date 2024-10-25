@@ -172,6 +172,9 @@ ActiveAdmin.register Service do
       end
       panel 'Recommended Content' do
         table_for resource.recommended do
+          column :level do |recommendation|
+            recommendation['level']
+          end
           column :relevance_order do |recommendation|
             recommendation['relevance_order']
           end

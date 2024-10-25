@@ -10,6 +10,17 @@ module Recommendable
                                  }, through: :recommended_contents, source: :target, source_type: 'Article'
   end
 
+  def calculate_level(relevance_order)
+    case relevance_order
+    when 0...100
+      'initial'
+    when 100...200
+      'intermediate'
+    else
+      'advanced'
+    end
+  end
+
   def as_recommendation
     as_json(only: %i[id title subtitle slug cover])
       .merge('type' => self.class.name.underscore)
@@ -17,7 +28,8 @@ module Recommendable
 
   def recommended
     recommended_contents.includes(:target).order(:relevance_order).map do |content|
-      content.target.as_recommendation.merge('relevance_order' => content.relevance_order)
+      content.target.as_recommendation.merge('relevance_order' => content.relevance_order,
+                                             'level' => calculate_level(content.relevance_order))
     end
   end
 
