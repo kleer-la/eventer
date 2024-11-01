@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_22_173411) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_29_165814) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -542,6 +542,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_22_173411) do
     t.string "slug"
     t.string "side_image"
     t.integer "ordering"
+    t.boolean "visible", default: false, null: false
     t.index ["service_area_id"], name: "index_services_on_service_area_id"
     t.index ["slug"], name: "index_services_on_slug", unique: true
   end

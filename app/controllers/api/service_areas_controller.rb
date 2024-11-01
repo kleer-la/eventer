@@ -47,9 +47,20 @@ module Api
 
     # GET /api/service_areas/:id
     def show
+      services_area_json(visible: true)
+    end
+
+    def preview
+      services_area_json(visible: false)
+    end
+
+    def services_area_json(visible: false)
       req_slug = params[:id]
       service_area, service_area_chg, service_chg = find_area_or_service(req_slug)
       return render(json: { error: 'ServiceArea not found' }, status: :not_found) unless service_area.present?
+
+      services = service_area.services
+      services = services.where(visible: true) if visible
 
       render json: {
         id: service_area.id,
@@ -70,29 +81,33 @@ module Api
         value_proposition: service_area.value_proposition.body.to_s,
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
-        services: service_area.services.order(:ordering).map do |service|
-          {
-            id: service.id,
-            slug: service.slug,
-            slug_old: service_chg.nil? || service.slug != service_chg ? nil : req_slug,
-            name: service.name,
-            subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
-            value_proposition: service.value_proposition.body.to_s,
-            outcomes: service.outcomes_list,
-            definitions: content_or_nil(service.definitions),
-            program: service.program_list,
-            target: service.target.body.to_s,
-            pricing: service.pricing,
-            faq: service.faq_list,
-            brochure: service.brochure,
-            side_image: service.side_image,
-            recommended: service.recommended
-          }
-        end
+        services: services2json(services, service_chg, req_slug)
       }
     end
 
     private
+
+    def services2json(services, service_chg, req_slug)
+      services.order(:ordering).map do |service|
+        {
+          id: service.id,
+          slug: service.slug,
+          slug_old: service_chg.nil? || service.slug != service_chg ? nil : req_slug,
+          name: service.name,
+          subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
+          value_proposition: service.value_proposition.body.to_s,
+          outcomes: service.outcomes_list,
+          definitions: content_or_nil(service.definitions),
+          program: service.program_list,
+          target: service.target.body.to_s,
+          pricing: service.pricing,
+          faq: service.faq_list,
+          brochure: service.brochure,
+          side_image: service.side_image,
+          recommended: service.recommended
+        }
+      end
+    end
 
     def content_or_nil(active_text)
       active_text.blank? ? nil : active_text.body.to_s

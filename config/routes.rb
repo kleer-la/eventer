@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       resources :podcasts, only: [:index]
     end
     resources :service_areas, only: %i[index show] do
+      get :preview, on: :member
       collection do
         get 'programs', to: 'service_areas#programs'
       end
