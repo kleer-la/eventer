@@ -3,7 +3,8 @@
 ActiveAdmin.register ServiceArea do
   menu parent: 'Services Mgnt'
 
-  permit_params :name, :slug, :icon, :primary_color, :secondary_color, :visible, :summary, :cta_message,
+  permit_params :name, :slug, :icon, :primary_color, :secondary_color, :primary_font_color, :secondary_font_color,
+                :visible, :summary, :cta_message,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
                 :target_title, :seo_title, :seo_description, :is_training_program
   filter :name
@@ -39,7 +40,10 @@ ActiveAdmin.register ServiceArea do
       f.input :is_training_program, as: :boolean
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
+      f.input :primary_font_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' }
+      f.input :secondary_font_color, as: :color, input_html: { style: 'width: 100%;' }
+      f.input :summary, as: :rich_text_area
       f.input :summary, as: :rich_text_area
       f.input :cta_message, as: :rich_text_area,
                             hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
@@ -89,19 +93,31 @@ ActiveAdmin.register ServiceArea do
         end
       end
 
-      row :primary_color do |service_area|
-        if service_area.primary_color.present?
-          div style: "width: 30px; height: 30px; background-color: #{service_area.primary_color};"
+      %i[primary_color primary_font_color secondary_color secondary_font_color].each do |color_field|
+        row color_field do |service_area|
+          color_value = service_area.send(color_field)
+          div style: "width: 30px; height: 30px; background-color: #{color_value};" if color_value.present?
+          text_node color_value
         end
-        text_node service_area.primary_color
       end
 
-      row :secondary_color do |service_area|
-        if service_area.secondary_color.present?
-          div style: "width: 30px; height: 30px; background-color: #{service_area.secondary_color};"
+      %i[primary secondary].each do |type|
+        row type do |record|
+          bg_color = record.send("#{type}_color")
+          font_color = record.send("#{type}_font_color")
+
+          next unless bg_color.present? && font_color.present?
+
+          div style: 'margin: 10px 0;' do
+            div style: 'display: inline-block; padding: 8px 16px; border-radius: 4px; ' \
+                      "background-color: #{bg_color}; " \
+                      "color: #{font_color};" do
+              "#{type.to_s.titleize} Button Preview"
+            end
+          end
         end
-        text_node service_area.secondary_color
       end
+
       # This will safely render the rich text content, including formatting and attachments.
       rich_row :summary
       rich_row :cta_message

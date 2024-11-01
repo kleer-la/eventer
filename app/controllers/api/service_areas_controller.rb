@@ -22,7 +22,9 @@ module Api
           summary: service_area.summary.body.to_s, # Get just the content of the rich text
           cta_message: service_area.cta_message.body.to_s,
           primary_color: service_area.primary_color,
+          primary_font_color: service_area.primary_font_color,
           secondary_color: service_area.secondary_color,
+          secondary_font_color: service_area.secondary_font_color,
           services: service_area.services.order(:ordering).map do |service|
             {
               id: service.id,
@@ -71,7 +73,9 @@ module Api
         summary: service_area.summary.body.to_s,
         cta_message: service_area.cta_message.body.to_s,
         primary_color: service_area.primary_color,
+        primary_font_color: service_area.primary_font_color,
         secondary_color: service_area.secondary_color,
+        secondary_font_color: service_area.secondary_font_color,
         slogan: service_area.slogan.body.to_s,
         subtitle: service_area.subtitle.body.to_s.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
         description: service_area.description.body.to_s,
