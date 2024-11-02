@@ -44,7 +44,6 @@ ActiveAdmin.register ServiceArea do
       f.input :secondary_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :secondary_font_color, as: :color, input_html: { style: 'width: 100%;' }
       f.input :summary, as: :rich_text_area
-      f.input :summary, as: :rich_text_area
       f.input :cta_message, as: :rich_text_area,
                             hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
       f.input :side_image, as: :url
