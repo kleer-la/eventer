@@ -9,4 +9,9 @@ class MailTemplate < ApplicationRecord
     template = Liquid::Template.parse(content)
     template.render(contact.form_data.with_indifferent_access)
   end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[active cc content created_at delivery_schedule id id_value identifier subject to
+       trigger_type updated_at]
+  end
 end

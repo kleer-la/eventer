@@ -1,0 +1,32 @@
+-# app/views/admin/mail_templates/preview.html.haml
+%h2 Template Preview: #{@template.identifier}
+
+.panel
+  %h3 Test with Custom Data
+  = form_tag preview_admin_mail_template_path(@template), method: :post do
+    = text_area_tag :custom_data, JSON.pretty_generate(@sample_data), rows: 10, style: "width: 100%; font-family: monospace;"
+    %br
+    = submit_tag "Update Preview", class: "button"
+
+- if @preview_content.present?
+  .panel
+    %h3 Preview
+    .preview-html
+      %h4 HTML Version
+      .email-preview{style: "border: 1px solid #ccc; padding: 20px; margin: 10px 0;"}
+        = @preview_content.html_safe
+    
+    .preview-text
+      %h4 Plain Text Version
+      %pre{style: "background: #f4f4f4; padding: 15px;"}
+        = @preview_content
+
+.panel
+  %h3 Available Variables
+  %pre
+    :preserve
+      {{name}} - Contact name
+      {{email}} - Contact email
+      {{message}} - Contact message
+      {{context}} - Page path
+      # Add more variables as needed
