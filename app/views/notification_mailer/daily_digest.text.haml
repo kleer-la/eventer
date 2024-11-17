@@ -1,0 +1,5 @@
+= @content
+
+Contacts received:
+- @contacts.each do |contact|
+  = "* #{contact.email} (#{contact.created_at.strftime('%Y-%m-%d %H:%M')})"

@@ -67,6 +67,7 @@ gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'formtastic'
 gem 'formtastic-bootstrap'
 gem 'importmap-rails'
+gem 'liquid'
 gem 'matrix', '~> 0.4' # needed to solve an error when migrating to ruby 3.1 (prawn related)
 gem 'money'
 gem 'prawn'
@@ -85,8 +86,8 @@ gem 'recaptcha', require: 'recaptcha/rails' # , :github => "ambethia/recaptcha"
 ## Gemfile for Rails 3+, Sinatra, and Merb
 gem 'will_paginate'
 
-gem 'rack-ssl-enforcer'
 gem 'puma'
+gem 'rack-ssl-enforcer'
 gem 'rails-controller-testing' # assigns (rails 5)
 
 gem 'responders', '~> 3.0'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_01_214141) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_16_220943) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -130,6 +130,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_214141) do
   create_table "categories_event_types", id: false, force: :cascade do |t|
     t.integer "category_id"
     t.integer "event_type_id"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.integer "trigger_type", null: false
+    t.string "email", null: false
+    t.json "form_data", default: {}, null: false
+    t.integer "status", default: 0
+    t.datetime "processed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "countries", force: :cascade do |t|
@@ -349,6 +359,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_214141) do
     t.text "details"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+  end
+
+  create_table "mail_templates", force: :cascade do |t|
+    t.integer "trigger_type", null: false
+    t.string "identifier", null: false
+    t.string "subject", null: false
+    t.text "content", null: false
+    t.integer "delivery_schedule", default: 0
+    t.string "to", null: false
+    t.string "cc"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["delivery_schedule"], name: "index_mail_templates_on_delivery_schedule"
+    t.index ["identifier"], name: "index_mail_templates_on_identifier", unique: true
+    t.index ["trigger_type"], name: "index_mail_templates_on_trigger_type"
   end
 
   create_table "news", force: :cascade do |t|
