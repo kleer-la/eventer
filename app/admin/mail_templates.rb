@@ -60,6 +60,7 @@ ActiveAdmin.register MailTemplate do
 
   member_action :preview, method: %i[get post] do
     @template = resource
+    @page_title = "Preview: #{@template.identifier}"
     @sample_data = params[:sample_data] || {
       name: 'John Doe',
       email: 'test@example.com',
