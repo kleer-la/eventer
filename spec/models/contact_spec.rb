@@ -54,8 +54,8 @@ RSpec.describe Contact, type: :model do
       pending = create(:contact, status: :pending)
       processed = create(:contact, status: :processed)
 
-      expect(Contact.unprocessed).to include(pending)
-      expect(Contact.unprocessed).not_to include(processed)
+      expect(Contact.pending).to include(pending)
+      expect(Contact.pending).not_to include(processed)
     end
 
     it 'last_24h returns recent records' do
