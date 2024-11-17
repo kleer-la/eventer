@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register Page do
-  menu priority: 2 # Adjust as needed
+  menu parent: 'Assets', priority: 11
 
   permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :cover,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]

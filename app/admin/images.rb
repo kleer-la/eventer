@@ -5,7 +5,7 @@ def unique_extensions
 end
 
 ActiveAdmin.register_page 'Images' do
-  menu priority: 10, label: 'Images'
+  menu parent: 'Assets', priority: 10, label: 'Images'
 
   action_item :images do
     link_to 'Images', admin_images_path(bucket: 'image')
