@@ -74,12 +74,12 @@ RSpec.describe MailTemplate, type: :model do
     end
   end
 
-  # describe '#render_content' do
-  #   let(:template) { create(:mail_template, content: 'Hello {{name}}!') }
-  #   let(:contact) { create(:contact_record, form_data: { name: 'John' }) }
+  describe '#render_content' do
+    let(:template) { create(:mail_template, content: 'Hello {{name}}!') }
+    let(:contact) { create(:contact, form_data: { name: 'John' }) }
 
-  #   it 'replaces variables in content' do
-  #     expect(template.render_content(contact)).to eq('Hello John!')
-  #   end
-  # end
+    it 'replaces variables in content' do
+      expect(template.render_content(contact)).to eq('Hello John!')
+    end
+  end
 end
