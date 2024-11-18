@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     resources :articles, only: %i[index show]
     resources :resources, only: %i[index]
     resources :pages, only: %i[show]
+    resources :contacts, only: [:create]
     get 'news'
     get 'event_types', to: 'event_types#index'
     get 'event_types/:id' => 'event_types#show'
