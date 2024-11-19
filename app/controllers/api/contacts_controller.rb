@@ -9,17 +9,7 @@ module Api
       validator = ContactValidator.new(contact_params)
 
       if validator.valid?
-        contact = Contact.new(
-          trigger_type: 'contact_form',
-          email: contact_params[:email],
-          form_data: {
-            name: contact_params[:name],
-            message: contact_params[:message],
-            page: contact_params[:context],
-            ip: request.remote_ip,
-            user_agent: request.user_agent
-          }
-        )
+        contact = build_contact
 
         if contact.save
           process_notifications(contact)
@@ -32,23 +22,52 @@ module Api
         log_error('Validation failed', validator.error)
         render json: { error: validator.error }, status: 422
       end
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { error: 'Resource not found' }, status: 422
     end
 
     private
 
     def contact_params
-      params.permit(:name, :email, :context, :subject, :message, :secret)
+      params.permit(:name, :email, :context, :subject, :message, :secret, :resource_slug)
+    end
+
+    def build_contact
+      form_data = {
+        name: contact_params[:name],
+        message: contact_params[:message],
+        page: contact_params[:context]
+      }
+
+      if contact_params[:resource_slug].present?
+        resource = Resource.find_by!(slug: contact_params[:resource_slug])
+        form_data.merge!(
+          resource_title_es: resource.title_es,
+          resource_getit_es: resource.getit_es,
+          resource_slug: resource.slug
+        )
+      end
+
+      Contact.new(
+        trigger_type: determine_trigger_type,
+        email: contact_params[:email],
+        form_data:
+      )
+    end
+
+    def determine_trigger_type
+      contact_params[:resource_slug].present? ? 'download_form' : 'contact_form'
     end
 
     def process_notifications(contact)
       templates = MailTemplate.where(
-        trigger_type: 'contact_form',
+        trigger_type: contact.trigger_type,
         active: true,
         delivery_schedule: 'immediate'
       )
 
       templates.each do |template|
-        NotificationMailer.custom_notification(contact, template).deliver_later
+        NotificationMailer.custom_notification(contact, template).deliver_later(queue: 'default')
       end
     end
 

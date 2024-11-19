@@ -2,8 +2,12 @@ class MailTemplate < ApplicationRecord
   enum trigger_type: { contact_form: 0, download_form: 1 }
   enum delivery_schedule: { immediate: 0, daily: 1 }
 
-  validates :trigger_type, :identifier, :subject, :content, :to, presence: true
-  validates :identifier, uniqueness: true
+  validates :identifier, presence: true, uniqueness: true
+  validates :trigger_type, presence: true
+  validates :to, presence: true
+  validates :subject, presence: true
+  validates :content, presence: true
+  validates :delivery_schedule, presence: true
 
   def render_content(contact)
     template = Liquid::Template.parse(content)
