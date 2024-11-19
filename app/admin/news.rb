@@ -23,7 +23,7 @@ ActiveAdmin.register News do
 
   form do |f|
     f.inputs do
-      f.input :lang, as: :select, collection: News.langs
+      f.input :lang, as: :select, collection: News.langs.keys
       f.input :title
       f.input :where
       f.input :description
