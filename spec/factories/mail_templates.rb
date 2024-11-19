@@ -1,4 +1,5 @@
-# spec/factories/mail_templates.rb
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :mail_template do
     trigger_type { :contact_form }

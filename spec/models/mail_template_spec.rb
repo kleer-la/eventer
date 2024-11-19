@@ -82,4 +82,102 @@ RSpec.describe MailTemplate, type: :model do
       expect(template.render_content(contact)).to eq('Hello John!')
     end
   end
+
+  describe '#render_field' do
+    let(:contact) do
+      create(:contact,
+             email: 'john@example.com',
+             form_data: {
+               'name' => 'John Doe',
+               'message' => 'Test message',
+               'resource_title_es' => 'Resource Guide'
+             })
+    end
+
+    context 'when rendering to field' do
+      it 'renders simple template' do
+        template = create(:mail_template, to: 'support@example.com')
+        expect(template.render_field('to', contact)).to eq('support@example.com')
+      end
+
+      it 'renders with contact attributes' do
+        template = create(:mail_template, to: '{{contact.email}}')
+        expect(template.render_field('to', contact)).to eq('john@example.com')
+      end
+
+      it 'renders with form data' do
+        template = create(:mail_template, to: '{{form_data.name}} <{{contact.email}}>')
+        expect(template.render_field('to', contact)).to eq('John Doe <john@example.com>')
+      end
+    end
+
+    context 'when rendering subject field' do
+      it 'renders simple template' do
+        template = create(:mail_template, subject: 'Contact Form Submission')
+        expect(template.render_field('subject', contact)).to eq('Contact Form Submission')
+      end
+
+      it 'renders with form data' do
+        template = create(:mail_template, subject: 'Message from {{form_data.name}}')
+        expect(template.render_field('subject', contact)).to eq('Message from John Doe')
+      end
+
+      it 'renders with multiple variables' do
+        template = create(:mail_template,
+                          subject: 'Download request: {{form_data.resource_title_es}} by {{form_data.name}}')
+        expect(template.render_field('subject', contact))
+          .to eq('Download request: Resource Guide by John Doe')
+      end
+    end
+
+    context 'when rendering cc field' do
+      it 'returns nil for blank cc' do
+        template = create(:mail_template, cc: nil)
+        expect(template.render_field('cc', contact)).to be_nil
+      end
+
+      it 'renders empty string' do
+        template = create(:mail_template, cc: '')
+        expect(template.render_field('cc', contact)).to eq('')
+      end
+
+      it 'renders with form data' do
+        template = create(:mail_template, cc: 'copy-{{form_data.name}}@example.com')
+        expect(template.render_field('cc', contact)).to eq('copy-John Doe@example.com')
+      end
+    end
+
+    context 'with invalid liquid syntax' do
+      it 'preserves the template text' do
+        template = create(:mail_template, subject: 'Hello {{invalid}')
+        expect(template.render_field('subject', contact)).to eq('Hello {{invalid}')
+      end
+    end
+
+    context 'with non-existent variables' do
+      it 'renders empty string for missing values' do
+        template = create(:mail_template, subject: 'Value: {{form_data.non_existent}}')
+        expect(template.render_field('subject', contact)).to eq('Value: ')
+      end
+    end
+
+    context 'with complex nested data' do
+      let(:contact_with_nested) do
+        create(:contact,
+               email: 'john@example.com',
+               form_data: {
+                 'user' => {
+                   'name' => 'John Doe',
+                   'role' => 'Admin'
+                 }
+               })
+      end
+
+      it 'renders nested form data' do
+        template = create(:mail_template, subject: 'New {{form_data.user.role}}: {{form_data.user.name}}')
+        expect(template.render_field('subject', contact_with_nested))
+          .to eq('New Admin: John Doe')
+      end
+    end
+  end
 end

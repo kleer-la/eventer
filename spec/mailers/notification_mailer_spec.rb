@@ -5,16 +5,16 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:contact) { create(:contact, email: 'user@example.com', form_data: { name: 'John' }) }
     let(:template) do
       create(:mail_template,
-             subject: 'Welcome',
+             subject: 'Welcome {{contact.form_data.name}}',
              content: 'Hello {{name}}!',
-             to: 'admin@example.com',
+             to: '{{contact.email}}',
              cc: 'manager@example.com')
     end
     let(:mail) { NotificationMailer.custom_notification(contact, template) }
 
     it 'renders the headers' do
-      expect(mail.subject).to eq('Welcome')
-      expect(mail.to).to eq(['admin@example.com'])
+      expect(mail.subject).to eq('Welcome John')
+      expect(mail.to).to eq(['user@example.com'])
       expect(mail.cc).to eq(['manager@example.com'])
     end
 
@@ -39,7 +39,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:mail) { NotificationMailer.daily_digest(contacts, template) }
 
     it 'renders the headers' do
-      expect(mail.subject).to eq('Daily Digest: Daily Contacts')
+      expect(mail.subject).to eq('Daily Contacts')
       expect(mail.to).to eq(['admin@example.com'])
     end
 
