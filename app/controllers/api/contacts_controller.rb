@@ -19,7 +19,7 @@ module Api
           render json: { error: 'Processing failed' }, status: 422
         end
       else
-        log_error('Validation failed', validator.error)
+        log_error('Validation failed', "#{validator.error} #{contact_params}}")
         render json: { error: validator.error }, status: 422
       end
     rescue ActiveRecord::RecordNotFound => e

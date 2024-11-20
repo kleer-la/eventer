@@ -42,6 +42,8 @@ class ContactValidator
   end
 
   def invalid_message?
+    return false if @params[:resource_slug].present?
+
     message = @params[:message].to_s
     return true if message.blank?
 
