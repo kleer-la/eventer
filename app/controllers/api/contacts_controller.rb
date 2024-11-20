@@ -3,7 +3,7 @@
 module Api
   class ContactsController < ApplicationController
     # Skip CSRF if needed
-    # skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token
 
     def create
       validator = ContactValidator.new(contact_params)
