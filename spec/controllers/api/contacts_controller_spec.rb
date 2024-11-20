@@ -11,8 +11,8 @@ RSpec.describe Api::ContactsController, type: :controller do
     {
       name: 'John Doe',
       email: 'john@example.com',
-      message: 'Test message',
       context: '/recursos',
+      message: 'Test message',
       secret: 'valid_secret'
     }
   end
@@ -85,7 +85,10 @@ RSpec.describe Api::ContactsController, type: :controller do
       end
 
       it 'logs the error' do
-        expect(Log).to receive(:log).with(:mail, :info, 'Validation failed', 'validation error')
+        p valid_contact_params
+        params = valid_contact_params.transform_keys(&:to_s)
+        expect(Log).to receive(:log).with(:mail, :info, 'Validation failed',
+                                          "validation error #{params}")
         post :create, params: valid_contact_params
       end
     end

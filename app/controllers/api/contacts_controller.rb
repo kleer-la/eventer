@@ -19,7 +19,7 @@ module Api
           render json: { error: 'Processing failed' }, status: 422
         end
       else
-        log_error('Validation failed', "#{validator.error} #{contact_params}}")
+        log_error('Validation failed', "#{validator.error} #{contact_params}")
         render json: { error: validator.error }, status: 422
       end
     rescue ActiveRecord::RecordNotFound => e
@@ -68,6 +68,8 @@ module Api
 
       templates.each do |template|
         NotificationMailer.custom_notification(contact, template).deliver_later(queue: 'default')
+      rescue StandardError => e
+        log_error('Notification delivery failed', e.message)
       end
     end
 
