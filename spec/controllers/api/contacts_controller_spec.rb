@@ -85,11 +85,18 @@ RSpec.describe Api::ContactsController, type: :controller do
       end
 
       it 'logs the error' do
-        p valid_contact_params
-        params = valid_contact_params.transform_keys(&:to_s)
-        expect(Log).to receive(:log).with(:mail, :info, 'Validation failed',
-                                          "validation error #{params}")
         post :create, params: valid_contact_params
+        last_log = Log.last
+
+        expect(last_log.area).to eq('mail')
+        expect(last_log.level).to eq('info')
+        expect(last_log.message).to eq('Validation failed')
+
+        # Test presence of key parameters in details
+        expect(last_log.details).to include('name')
+        expect(last_log.details).to include('john@example.com')
+        expect(last_log.details).to include('/recursos')
+        expect(last_log.details).to include('Test message')
       end
     end
 

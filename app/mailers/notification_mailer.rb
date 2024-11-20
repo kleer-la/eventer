@@ -1,4 +1,6 @@
+CONTACT_MAIL = 'info@kleer.la'
 class NotificationMailer < ApplicationMailer
+  default from: CONTACT_MAIL
   def custom_notification(contact, template)
     @content = template.render_content(contact)
     rendered_to = template.render_field('to', contact)
