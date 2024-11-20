@@ -35,6 +35,7 @@ module Api
     def build_contact
       form_data = {
         name: contact_params[:name],
+        email: contact_params[:email],
         message: contact_params[:message],
         page: contact_params[:context]
       }
@@ -44,6 +45,8 @@ module Api
         form_data.merge!(
           resource_title_es: resource.title_es,
           resource_getit_es: resource.getit_es,
+          resource_title_en: resource.title_en,
+          resource_getit_en: resource.getit_en,
           resource_slug: resource.slug
         )
       end
