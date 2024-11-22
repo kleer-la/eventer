@@ -88,6 +88,7 @@ RSpec.describe MailTemplate, type: :model do
       create(:contact,
              email: 'john@example.com',
              form_data: {
+               'email': 'john@example.com',
                'name' => 'John Doe',
                'message' => 'Test message',
                'resource_title_es' => 'Resource Guide'
@@ -101,12 +102,12 @@ RSpec.describe MailTemplate, type: :model do
       end
 
       it 'renders with contact attributes' do
-        template = create(:mail_template, to: '{{contact.email}}')
+        template = create(:mail_template, to: '{{email}}')
         expect(template.render_field('to', contact)).to eq('john@example.com')
       end
 
       it 'renders with form data' do
-        template = create(:mail_template, to: '{{form_data.name}} <{{contact.email}}>')
+        template = create(:mail_template, to: '{{name}} <{{email}}>')
         expect(template.render_field('to', contact)).to eq('John Doe <john@example.com>')
       end
     end
@@ -118,13 +119,13 @@ RSpec.describe MailTemplate, type: :model do
       end
 
       it 'renders with form data' do
-        template = create(:mail_template, subject: 'Message from {{form_data.name}}')
+        template = create(:mail_template, subject: 'Message from {{name}}')
         expect(template.render_field('subject', contact)).to eq('Message from John Doe')
       end
 
       it 'renders with multiple variables' do
         template = create(:mail_template,
-                          subject: 'Download request: {{form_data.resource_title_es}} by {{form_data.name}}')
+                          subject: 'Download request: {{resource_title_es}} by {{name}}')
         expect(template.render_field('subject', contact))
           .to eq('Download request: Resource Guide by John Doe')
       end
@@ -142,7 +143,7 @@ RSpec.describe MailTemplate, type: :model do
       end
 
       it 'renders with form data' do
-        template = create(:mail_template, cc: 'copy-{{form_data.name}}@example.com')
+        template = create(:mail_template, cc: 'copy-{{name}}@example.com')
         expect(template.render_field('cc', contact)).to eq('copy-John Doe@example.com')
       end
     end
@@ -174,7 +175,7 @@ RSpec.describe MailTemplate, type: :model do
       end
 
       it 'renders nested form data' do
-        template = create(:mail_template, subject: 'New {{form_data.user.role}}: {{form_data.user.name}}')
+        template = create(:mail_template, subject: 'New {{user.role}}: {{user.name}}')
         expect(template.render_field('subject', contact_with_nested))
           .to eq('New Admin: John Doe')
       end

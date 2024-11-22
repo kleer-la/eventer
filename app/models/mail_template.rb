@@ -10,8 +10,7 @@ class MailTemplate < ApplicationRecord
   validates :delivery_schedule, presence: true
 
   def render_content(contact)
-    template = Liquid::Template.parse(content)
-    template.render(contact.form_data.with_indifferent_access)
+    render_field(:content, contact)
   end
 
   def render_field(field_name, contact)
@@ -31,10 +30,11 @@ class MailTemplate < ApplicationRecord
 
     begin
       liquid_template = Liquid::Template.parse(template)
-      liquid_template.render(
-        'contact' => contact.attributes,
-        'form_data' => contact.form_data
-      )
+      liquid_template.render(contact.form_data.with_indifferent_access)
+      # liquid_template.render(
+      #   'contact' => contact.attributes,
+      #   'form_data' => contact.form_data
+      # )
     rescue Liquid::SyntaxError => e
       Rails.logger.error("Liquid syntax error in template: #{e.message}")
       template

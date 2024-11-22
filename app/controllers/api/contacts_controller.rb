@@ -37,7 +37,8 @@ module Api
         name: contact_params[:name],
         email: contact_params[:email],
         message: contact_params[:message],
-        page: contact_params[:context]
+        page: contact_params[:context],
+        language: contact_params[:language]
       }
 
       if contact_params[:resource_slug].present?
@@ -68,6 +69,8 @@ module Api
         active: true,
         delivery_schedule: 'immediate'
       )
+
+      Log.log(:mail, :info, 'Found templates', templates.map(&:identifier))
 
       templates.each do |template|
         NotificationMailer.custom_notification(contact, template).deliver_later(queue: 'default')

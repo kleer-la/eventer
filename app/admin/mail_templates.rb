@@ -28,7 +28,8 @@ ActiveAdmin.register MailTemplate do
       f.input :trigger_type
       f.input :identifier, hint: "Unique identifier for this template (e.g., 'contact_confirmation')"
       f.input :subject
-      f.input :content, as: :text, hint: 'Available variables: {{name}}, {{email}}, {{message}}'
+      f.input :content, as: :text,
+                        hint: 'Available variables: {{name}}, {{email}}, {{message}}, {{page}}, {{resource_slug}}. {{resource_getit_en}}, {{resource_getit_es}}, {{resource_title_en}}, {{resource_title_es}}'
       f.input :delivery_schedule
       f.input :to
       f.input :cc

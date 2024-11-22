@@ -5,9 +5,9 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:contact) { create(:contact, email: 'user@example.com', form_data: { name: 'John' }) }
     let(:template) do
       create(:mail_template,
-             subject: 'Welcome {{contact.form_data.name}}',
+             subject: 'Welcome {{name}}',
              content: 'Hello {{name}}!',
-             to: '{{contact.email}}',
+             to: '{{email}}',
              cc: 'manager@example.com')
     end
     let(:mail) { NotificationMailer.custom_notification(contact, template) }
