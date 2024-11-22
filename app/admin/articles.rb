@@ -16,6 +16,10 @@ ActiveAdmin.register Article do
   filter :industry, as: :select, collection: Article.industries
   filter :body
 
+  action_item :view_old_version, only: :index do
+    link_to 'Old Articles View', articles_path, class: 'button'
+  end
+
   controller do
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
