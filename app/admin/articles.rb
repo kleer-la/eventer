@@ -4,7 +4,7 @@ ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
   permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :body,
-                :industry,
+                :industry, :noindex,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   FriendlyId::Slug.class_eval do
