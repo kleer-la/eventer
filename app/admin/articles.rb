@@ -46,6 +46,7 @@ ActiveAdmin.register Article do
       row :lang
       row :published
       row :selected
+      row :noindex
       row :industry
       row :category do |article|
         article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
@@ -87,6 +88,7 @@ ActiveAdmin.register Article do
       f.input :lang, as: :radio
       f.input :published
       f.input :selected
+      f.input :noindex
       f.input :industry, as: :select, hint: 'Tiene industria solo si es un caso de estudio', collection: Article.industries.keys.map { |industry|
         [industry.titleize, industry]
       }
