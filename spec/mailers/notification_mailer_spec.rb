@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe NotificationMailer, type: :mailer do
   describe '#custom_notification' do
-    let(:contact) { create(:contact, email: 'user@example.com', form_data: { name: 'John' }) }
+    let(:contact) { create(:contact, form_data: { email: 'user@example.com', name: 'John' }) }
     let(:template) do
       create(:mail_template,
              subject: 'Welcome {{name}}',
