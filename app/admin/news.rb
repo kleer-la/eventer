@@ -2,7 +2,12 @@
 
 ActiveAdmin.register News do
   menu parent: 'We Publish'
-  permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date
+  permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date,
+                trainer_ids: []
+
+  action_item :view_old_version, only: :index do
+    link_to 'Old News View', news_index_path, class: 'button'
+  end
 
   index do
     selectable_column
@@ -32,6 +37,7 @@ ActiveAdmin.register News do
       f.input :video
       f.input :audio
       f.input :event_date, as: :datepicker
+      f.input :trainers, as: :check_boxes, collection: Trainer.sorted
     end
     f.actions
   end
@@ -71,6 +77,14 @@ ActiveAdmin.register News do
         end
       end
       row :event_date
+
+      panel 'Trainers' do
+        table_for resource.trainers do
+          column :name
+          column :email
+        end
+      end
+
       row :created_at
       row :updated_at
     end
