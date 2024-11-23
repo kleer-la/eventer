@@ -17,7 +17,7 @@ ActiveAdmin.register Article do
   filter :body
 
   action_item :view_old_version, only: :index do
-    link_to 'Old Articles View', articles_path, class: 'button'
+    link_to 'Old version', articles_path, class: 'button'
   end
 
   controller do
