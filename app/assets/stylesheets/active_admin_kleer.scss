@@ -36,9 +36,10 @@ html .panel > h3 {
 
 .cell-semaphore { padding-right: 0px; }
 
-.status-green   { border-right: 5px solid green; }
-.status-yellow  { border-right: 5px solid yellow; }
-.status-red     { border-right: 5px solid red; }
+.status-3   { border-right: 10px solid blue; }
+.status-2  { border-right: 10px solid rgb(134, 190, 2); }
+.status-1     { border-right: 10px solid orange; }
+.status-0     { border-right: 10px solid red; }
 
 /* Service model */
 .outcomes-list .custom-bullet {

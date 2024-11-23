@@ -34,11 +34,12 @@ ActiveAdmin.register_page 'Dashboard' do
                         event_participants_path(event)
               end
               column(nil, class: 'cell-semaphore') do |event|
+                confirmed_rate = event.confirmed_quantity.to_f / event.capacity
                 if event.registration_link.blank?
-                  color = %w[red yellow green][(event.completion / 33).floor]
+                  color = (confirmed_rate / 0.25).floor
                   class_name = "status-#{color}"
                   div class: class_name do
-                    "#{(event.completion * 100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
+                    "#{(confirmed_rate * 100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
                   end
                 end
               end
