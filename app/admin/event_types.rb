@@ -47,13 +47,14 @@ ActiveAdmin.register EventType do
     end
     column :deleted
     actions do |event_type|
-      item link_to('Preview', certificate_preview_event_type_path(event_type), title: 'Certificate Preview')
-      text_node ' | '
-      item link_to('Events', "/event_types/#{event_type.id}/events", title: 'Event list')
-      text_node ' | '
-      item link_to('Testimonies', "/event_types/#{event_type.id}/testimonies", title: 'Testimonies')
-      text_node ' | '
-      item link_to('Participants', participants_event_type_path(event_type), title: 'Participants')
+      span class: 'table_actions' do
+        dropdown_menu '...' do
+          item 'Preview', certificate_preview_event_type_path(event_type), title: 'Certificate Preview'
+          item 'Events', "/event_types/#{event_type.id}/events", title: 'Event list'
+          item 'Testimonies', "/event_types/#{event_type.id}/testimonies", title: 'Testimonies'
+          item 'Participants', participants_event_type_path(event_type), title: 'Participants'
+        end
+      end
     end
   end
 
