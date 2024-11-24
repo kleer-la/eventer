@@ -18,7 +18,9 @@ class OauthTokensController < ApplicationController
     token_set = xero_client.get_token_set_from_callback(params)
 
     if token_set['error']
-      redirect_to collection_path, notice: "Error generating token. #{token_set['error']}"
+      # TODO: reconfigure callbaclk and XERO app to the ActiveAdmin
+      # redirect_to collection_path, notice: "Error generating token. #{token_set['error']}"
+      redirect_to admin_oauth_tokens_path, notice: "Error generating token. #{token_set['error']}"
     else
       xero_client.set_token_set(token_set)
 
@@ -28,7 +30,9 @@ class OauthTokensController < ApplicationController
       oauth_token.tenant_id = xero_client.connections.last['tenantId']
       oauth_token.save!
 
-      redirect_to oauth_tokens_path, notice: 'Token generated successfully!'
+      # TODO: reconfigure callbaclk and XERO app to the ActiveAdmin
+      # redirect_to oauth_tokens_path, notice: 'Token generated successfully!'
+      redirect_to admin_oauth_tokens_path, notice: 'Token generated successfully!'
     end
   end
 end
