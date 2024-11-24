@@ -43,9 +43,9 @@ ActiveAdmin.register Event do
     column :is_sold_out
     actions defaults: false do |event|
       item link_to('Participantes', "/events/#{event.id}/participants")
-      text_node '&nbsp;'.html_safe
+      text_node ' | '
       item link_to('Editar', edit_event_path(event))
-      text_node '&nbsp;'.html_safe
+      text_node ' | '
       item link_to('Copiar', copy_event_path(event))
     end
   end

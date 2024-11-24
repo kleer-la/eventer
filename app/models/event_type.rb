@@ -119,11 +119,16 @@ class EventType < ApplicationRecord
        promoter_count recipients side_image subtitle surveyed_count tag_name takeaways updated_at]
   end
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[campaign_views canonical categories clons coupons events participants recommended_contents
+       recommended_items trainers]
+  end
+
   private
 
   def certification_requires_seal
-    if is_kleer_certification && kleer_cert_seal_image.blank?
-      errors.add(:kleer_cert_seal_image, "must be present if this is a Kleer certification")
-    end
-  end  
+    return unless is_kleer_certification && kleer_cert_seal_image.blank?
+
+    errors.add(:kleer_cert_seal_image, 'must be present if this is a Kleer certification')
+  end
 end

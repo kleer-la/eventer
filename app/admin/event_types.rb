@@ -12,6 +12,13 @@ ActiveAdmin.register EventType do
                 trainer_ids: [], category_ids: [],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
+  filter :name
+  filter :platform, as: :select
+  filter :lang, as: :select
+  filter :duration
+  filter :deleted
+  filter :noindex
+  filter :canonical
   filter :kleer_cert_seal_image_present, as: :boolean # , label: 'Cert Image is Empty'
   filter :kleer_cert_seal_image_blank, as: :boolean # , label: 'Cert Image is Not Empty'
   filter :kleer_cert_seal_image
@@ -19,13 +26,14 @@ ActiveAdmin.register EventType do
   scope :all, default: false
   scope 'Catalog', :included_in_catalog, default: true
 
-  EventType.attribute_names.each do |attribute|
-    filter attribute.to_sym
+  action_item :view_old_version, only: :index do
+    link_to 'Old version', event_types_path, class: 'button'
   end
 
   config.sort_order = 'name_asc'
   index do
     column :name
+    column :platform
     column :lang
     column :duration
     column :behavior do |event_type|
@@ -37,10 +45,16 @@ ActiveAdmin.register EventType do
         event_type.behavior
       end
     end
-    # actions defaults: false do |event_type|
-    #   link_to 'Edit', edit_event_type_path(event_type)
-    # end
-    actions
+    column :deleted
+    actions do |event_type|
+      item link_to('Preview', certificate_preview_event_type_path(event_type), title: 'Certificate Preview')
+      text_node ' | '
+      item link_to('Events', "/event_types/#{event_type.id}/events", title: 'Event list')
+      text_node ' | '
+      item link_to('Testimonies', "/event_types/#{event_type.id}/testimonies", title: 'Testimonies')
+      text_node ' | '
+      item link_to('Participants', participants_event_type_path(event_type), title: 'Participants')
+    end
   end
 
   show do
@@ -143,8 +157,8 @@ ActiveAdmin.register EventType do
       f.input :csd_eligible
       f.input :cover
       f.input :side_image
-      f.input :kleer_cert_seal_image, as: :select, collection: bkgd_imgs, 
-              input_html: { data: { allow_clear: true, placeholder: 'Select an image' } }
+      f.input :kleer_cert_seal_image, as: :select, collection: bkgd_imgs,
+                                      input_html: { data: { allow_clear: true, placeholder: 'Select an image' } }
       f.input :subtitle
       f.input :elevator_pitch, as: :text, input_html: { rows: 4, maxlength: 160 },
                                hint: 'No more than 160 characters. Plain text, no HTML or Markdown.'
