@@ -37,7 +37,9 @@ ActiveAdmin.register Event do
 
       content.join(' ').html_safe
     end
-    column :visibility_type
+    column 'Visibilidad', :event_type do |event|
+      { 'pu' => 'Publico', 'pr' => 'Privado', 'co' => 'Comunidad' }[event.visibility_type]
+    end
     column :draft
     column :cancelled
     column :is_sold_out
