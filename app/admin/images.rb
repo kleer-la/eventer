@@ -18,6 +18,9 @@ ActiveAdmin.register_page 'Images' do
   action_item :signatures do
     link_to 'Signatures', admin_images_path(bucket: 'signature')
   end
+  action_item :view_old_version, only: :index do
+    link_to 'Old version', '/images', class: 'button'
+  end
 
   sidebar 'Filters', only: :index do
     active_admin_form_for 'filter', method: :get do |f|
@@ -123,6 +126,9 @@ ActiveAdmin.register_page 'Images' do
         column 'Actions' do |base_key|
           dropdown_menu 'Actions' do
             grouped_images[base_key].each do |image|
+              item "View #{File.extname(image.key)}",
+                   admin_images_show_path(bucket: image_bucket, key: image.key)
+
               item "Usage #{File.extname(image.key)}",
                    admin_images_usage_path(bucket: image_bucket, key: image.key)
             end
