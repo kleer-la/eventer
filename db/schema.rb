@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_22_100528) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_26_112520) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -373,6 +373,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_22_100528) do
     t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "lang", default: 0, null: false
     t.index ["delivery_schedule"], name: "index_mail_templates_on_delivery_schedule"
     t.index ["identifier"], name: "index_mail_templates_on_identifier", unique: true
     t.index ["trigger_type"], name: "index_mail_templates_on_trigger_type"

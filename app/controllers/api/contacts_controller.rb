@@ -29,7 +29,7 @@ module Api
     private
 
     def contact_params
-      params.permit(:name, :email, :context, :subject, :message, :secret, :resource_slug)
+      params.permit(:name, :email, :context, :subject, :message, :secret, :language, :resource_slug)
     end
 
     def build_contact
@@ -64,12 +64,13 @@ module Api
     end
 
     def process_notifications(contact)
+      language = (contact.form_data['language'] || 'es').to_sym
       templates = MailTemplate.where(
         trigger_type: contact.trigger_type,
+        lang: language,
         active: true,
         delivery_schedule: 'immediate'
       )
-
       Log.log(:mail, :info, 'Found templates', templates.map(&:identifier))
 
       templates.each do |template|

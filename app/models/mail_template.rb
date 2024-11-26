@@ -1,6 +1,7 @@
 class MailTemplate < ApplicationRecord
   enum trigger_type: { contact_form: 0, download_form: 1 }
   enum delivery_schedule: { immediate: 0, daily: 1 }
+  enum lang: %i[es en]
 
   validates :identifier, presence: true, uniqueness: true
   validates :trigger_type, presence: true

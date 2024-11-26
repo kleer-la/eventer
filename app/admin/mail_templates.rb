@@ -1,20 +1,8 @@
 # app/admin/mail_templates.rb
 ActiveAdmin.register MailTemplate do
   menu parent: 'Mail'
-  permit_params :trigger_type, :identifier, :subject, :content, :delivery_schedule, :to, :cc, :active
-
-  index do
-    selectable_column
-    id_column
-    column :trigger_type
-    column :identifier
-    column :subject
-    column :to
-    column :delivery_schedule
-    column :active
-    column :updated_at
-    actions
-  end
+  permit_params :trigger_type, :identifier, :subject, :content,
+                :delivery_schedule, :to, :cc, :active, :lang
 
   filter :trigger_type
   filter :identifier
@@ -23,10 +11,25 @@ ActiveAdmin.register MailTemplate do
   filter :delivery_schedule
   filter :created_at
 
+  index do
+    selectable_column
+    id_column
+    column :trigger_type
+    column :identifier
+    column :lang
+    column :subject
+    column :to
+    column :delivery_schedule
+    column :active
+    column :updated_at
+    actions
+  end
+
   form do |f|
     f.inputs do
       f.input :trigger_type
       f.input :identifier, hint: "Unique identifier for this template (e.g., 'contact_confirmation')"
+      f.input :lang, as: :radio
       f.input :subject
       f.input :content, as: :text,
                         hint: 'Available variables: {{name}}, {{email}}, {{message}}, {{page}}, {{resource_slug}}. {{resource_getit_en}}, {{resource_getit_es}}, {{resource_title_en}}, {{resource_title_es}}'
@@ -42,6 +45,7 @@ ActiveAdmin.register MailTemplate do
     attributes_table do
       row :trigger_type
       row :identifier
+      row :lang
       row :subject
       row :content do |template|
         content_tag :pre, template.content

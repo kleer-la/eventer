@@ -10,6 +10,7 @@ FactoryBot.define do
     to { 'test@example.com' }
     cc { nil }
     active { true }
+    lang { :es }
 
     trait :for_downloads do
       trigger_type { 'download_form' }

@@ -148,4 +148,45 @@ RSpec.describe Api::ContactsController, type: :controller do
       end
     end
   end
+
+  context 'with language-specific templates' do
+    let!(:es_template) do
+      create(:mail_template, :for_contacts, lang: :es)
+    end
+
+    let!(:en_template) do
+      create(:mail_template, :for_contacts, lang: :en)
+    end
+
+    before do
+      allow(NotificationMailer).to receive(:custom_notification).and_return(
+        double(deliver_later: true)
+      )
+    end
+
+    it 'only sends notifications for templates matching contact language' do
+      post :create, params: valid_contact_params.merge(
+        language: 'es'
+      )
+
+      expect(NotificationMailer).to have_received(:custom_notification)
+        .with(anything, es_template)
+        .once
+
+      expect(NotificationMailer).not_to have_received(:custom_notification)
+        .with(anything, en_template)
+    end
+    it 'only sends notifications for templates matching contact language (en)' do
+      post :create, params: valid_contact_params.merge(
+        language: 'en'
+      )
+
+      expect(NotificationMailer).not_to have_received(:custom_notification)
+        .with(anything, es_template)
+
+      expect(NotificationMailer).to have_received(:custom_notification)
+        .with(anything, en_template)
+        .once
+    end
+  end
 end
