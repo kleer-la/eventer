@@ -29,13 +29,14 @@ module Api
     private
 
     def contact_params
-      params.permit(:name, :email, :context, :subject, :message, :secret, :language, :resource_slug)
+      params.permit(:name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug)
     end
 
     def build_contact
       form_data = {
         name: contact_params[:name],
         email: contact_params[:email],
+        company: contact_params[:company],
         message: contact_params[:message],
         page: contact_params[:context],
         language: contact_params[:language]

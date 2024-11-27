@@ -11,6 +11,7 @@ RSpec.describe Api::ContactsController, type: :controller do
     {
       name: 'John Doe',
       email: 'john@example.com',
+      company: 'Acme Corp',
       context: '/recursos',
       message: 'Test message',
       secret: 'valid_secret'
@@ -61,6 +62,18 @@ RSpec.describe Api::ContactsController, type: :controller do
         expect(contact.email).to eq('john@example.com')
         expect(contact.form_data).to include(
           'name' => 'John Doe',
+          'message' => 'Test message',
+          'page' => '/recursos'
+        )
+      end
+      it 'saves form data with company information' do
+        post :create, params: valid_contact_params
+
+        contact = Contact.last
+        expect(contact.email).to eq('john@example.com')
+        expect(contact.form_data).to include(
+          'name' => 'John Doe',
+          'company' => 'Acme Corp',
           'message' => 'Test message',
           'page' => '/recursos'
         )
