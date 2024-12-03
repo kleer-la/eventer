@@ -19,19 +19,57 @@ ActiveAdmin.register Contact do
   scope :processed
   scope :failed
 
+  action_item :toggle_view, only: :index do
+    if params[:grouped] == 'true'
+      link_to 'Show Regular View', admin_contacts_path(grouped: nil)
+    else
+      link_to 'Show Grouped View', admin_contacts_path(grouped: true)
+    end
+  end
   # Index view
   index do
-    selectable_column
-    id_column
-    column :email
-    column :trigger_type
-    column :status
-    column :created_at
-    column :processed_at
-    column :form_data do |contact|
-      truncate(contact.form_data.to_s, length: 50)
+    if params[:grouped]
+      selectable_column
+      id_column
+      column :created_at
+      column :trigger_type
+      column :email
+      column 'Name' do |contact|
+        contact.form_data&.dig('name')
+      end
+      column 'Company' do |contact|
+        contact.form_data&.dig('company')
+      end
+      column 'Resource' do |contact|
+        resources = Contact.where(email: contact.email)
+                           .where('DATE(created_at) = ?', contact.created_at.to_date)
+                           .map do |c|
+          c.form_data&.dig('resource_slug')
+        end.compact
+        resources.join(', ')
+      end
+      actions
+    else
+      selectable_column
+      id_column
+      column :email
+      column :trigger_type
+      column :status
+      column 'Name' do |contact|
+        contact.form_data&.dig('name')
+      end
+      column 'Company' do |contact|
+        contact.form_data&.dig('company')
+      end
+      column 'Slug' do |contact|
+        contact.form_data&.dig('resource_slug')
+      end
+      column :created_at
+      # column :form_data do |contact|
+      #   truncate(contact.form_data.to_s, length: 50)
+      # end
+      actions
     end
-    actions
   end
 
   show do
@@ -87,14 +125,15 @@ ActiveAdmin.register Contact do
     end
   end
 
-  # Custom action to resend notification
-  action_item :resend, only: :show do
-    link_to 'Resend Notification', resend_admin_contact_path(contact), method: :post if contact.processed?
-  end
-
-  member_action :resend, method: :post do
-    contact = Contact.find(params[:id])
-    # Add your resend logic here
-    redirect_to admin_contact_path(contact), notice: 'Notification queued for resending'
+  controller do
+    def scoped_collection
+      if params[:grouped]
+        grouped_ids = Contact.group("strftime('%Y-%m-%d', created_at)", :trigger_type, :email)
+                             .pluck('MIN(id) as id')
+        Contact.where(id: grouped_ids).reorder(created_at: :desc)
+      else
+        super
+      end
+    end
   end
 end
