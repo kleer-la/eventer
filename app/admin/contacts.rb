@@ -128,7 +128,12 @@ ActiveAdmin.register Contact do
   controller do
     def scoped_collection
       if params[:grouped]
-        grouped_ids = Contact.group("strftime('%Y-%m-%d', created_at)", :trigger_type, :email)
+        date_sql = if ActiveRecord::Base.connection.adapter_name.downcase == 'sqlite'
+                     "strftime('%Y-%m-%d', created_at)"
+                   else
+                     'DATE(created_at)'
+                   end
+        grouped_ids = Contact.group(date_sql, :trigger_type, :email)
                              .pluck('MIN(id) as id')
         Contact.where(id: grouped_ids).reorder(created_at: :desc)
       else
