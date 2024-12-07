@@ -251,13 +251,22 @@ class Participant < ApplicationRecord
     [batch.lines.count - errored_lines.count, errored_lines.count, errored_lines.join(',')]
   end
 
-  def self.search(searching, page, per_page)
+  def self.search(searching, page = 1, per_page = 1000)
+    return [] if searching.blank?
+
     s = searching.downcase
     offset_value = per_page * (page - 1)
 
-    Participant.where("lower(fname || ' ' || lname || verification_code) LIKE ?", "%#{s}%")
-               .offset(offset_value)
-               .limit(per_page)
+    Rails.logger.debug "Search term: #{s}"
+    results = where("LOWER(fname || ' ' || lname) LIKE :term OR LOWER(email) LIKE :term",
+                    term: "%#{s}%")
+              .limit(per_page)
+              .offset(offset_value)
+
+    Rails.logger.debug "SQL: #{results.to_sql}"
+    Rails.logger.debug "Results count: #{results.count}"
+
+    results
   end
 
   def self.search_by_invoice(invoice_id)
@@ -266,5 +275,14 @@ class Participant < ApplicationRecord
 
   def accept_terms
     # Placeholder for accepting terms & conditions
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[address campaign_id campaign_source_id company_name created_at email event_id event_rating
+       fname id id_number id_value influence_zone_id invoice_id is_payed konline_po_number lname notes online_invoice_url pay_notes payment_type phone photo_url profile_url promoter_score quantity referer_code selected status testimony trainer2_rating trainer_rating updated_at verification_code xero_invoice_amount xero_invoice_number xero_invoice_reference]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[campaign campaign_source event influence_zone]
   end
 end

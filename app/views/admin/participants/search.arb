@@ -1,0 +1,35 @@
+panel 'Search Participants' do
+  div class: 'search_form' do
+    form action: search_admin_participants_path, method: :get do
+      div class: 'filter_form_field' do
+        label 'Search by name', for: 'name'
+        input name: 'name', type: 'text', value: params[:name]
+        input type: 'submit', value: 'Search', class: 'button'
+      end
+    end
+  end
+
+  if participants.respond_to?(:any?)
+    table_for participants do
+      column 'Name' do |p|
+        "#{p.fname} #{p.lname}"
+      end
+      column :email
+      column('Event') { |p| p.event&.name }
+      column :status
+      column 'Actions' do |p|
+        span do
+          link_to 'View', admin_participant_path(p)
+          text_node ' '
+          link_to 'Edit', edit_admin_participant_path(p)
+        end
+      end
+    end
+  elsif params[:name].present?
+    div class: 'blank_slate_container' do
+      span class: 'blank_slate' do
+        text_node "No results found for '#{params[:name]}'"
+      end
+    end
+  end
+end

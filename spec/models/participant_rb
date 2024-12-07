@@ -1,0 +1,43 @@
+context 'search' do
+  let!(:participant) { create(:participant, fname: 'Pablo', lname: 'Picasso', email: 'pablo@example.com') }
+
+  it 'finds by last name' do
+    found = Participant.search('Pica', 1, 1000)
+    expect(found.count).to be 1
+    expect(found[0].lname).to eq 'Picasso'
+  end
+
+  it 'finds by first name' do
+    found = Participant.search('Pabl', 1, 1000)
+    expect(found.count).to eq 1
+    expect(found[0].lname).to eq 'Picasso'
+  end
+
+  it 'finds by email' do
+    found = Participant.search('pablo@example', 1, 1000)
+    expect(found.count).to eq 1
+    expect(found[0].email).to eq 'pablo@example.com'
+  end
+
+  it 'is case insensitive' do
+    found = Participant.search('PABL', 1, 1000)
+    expect(found.count).to be 1
+    expect(found[0].lname).to eq 'Picasso'
+  end
+
+  it 'finds by verification code' do
+    found = Participant.search(participant.verification_code.downcase, 1, 1000)
+    expect(found.count).to be 1
+    expect(found[0].verification_code).to eq participant.verification_code
+  end
+
+  it 'returns empty when no match' do
+    found = Participant.search('Ramanaya', 1, 1000)
+    expect(found).to eq []
+  end
+
+  it 'returns empty when search term is blank' do
+    found = Participant.search('', 1, 1000)
+    expect(found).to eq []
+  end
+end

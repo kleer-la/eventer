@@ -40,3 +40,16 @@
   font-weight: bold;
   margin-right: 5px;
 }
+
+.status_tag {
+  &.error { background: #f34541; }
+  &.warning { background: #f8a326; }
+  &.info { background: #00acec; }
+  &.success { background: #49bf67; }
+}
+
+// Icon styles
+.icon-user, .icon-envelope-alt, .icon-list, .icon-key,
+.icon-phone-sign, .icon-globe, .icon-tag, .icon-home {
+  margin-right: 5px;
+}
