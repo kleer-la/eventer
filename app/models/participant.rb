@@ -258,7 +258,7 @@ class Participant < ApplicationRecord
     offset_value = per_page * (page - 1)
 
     Rails.logger.debug "Search term: #{s}"
-    results = where("LOWER(fname || ' ' || lname) LIKE :term OR LOWER(email) LIKE :term",
+    results = where("LOWER(fname || ' ' || lname) LIKE :term OR LOWER(email) LIKE :term or verification_code LIKE :term",
                     term: "%#{s}%")
               .limit(per_page)
               .offset(offset_value)

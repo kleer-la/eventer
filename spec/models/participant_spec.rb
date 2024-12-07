@@ -342,7 +342,8 @@ describe Participant do
     before(:each) do
       @participant = FactoryBot.create(:participant,
                                        fname: 'Pablo',
-                                       lname: 'Picasso')
+                                       lname: 'Picasso',
+                                       verification_code: '065BECBA36F903CF6PPP')
     end
     it 'By last name' do
       found = Participant.search 'Pica', 1, 1000
@@ -365,7 +366,7 @@ describe Participant do
     end
     it 'By verification code' do
       found = Participant.search '065BECBA36F903CF6ppp', 1, 1000
-      expect(found.count).to be 1
+      expect(found.count).to eq 1
       expect(found[0].verification_code).to eq '065BECBA36F903CF6PPP'
     end
   end
