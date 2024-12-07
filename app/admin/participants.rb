@@ -20,7 +20,9 @@ ActiveAdmin.register Participant do
   # Index page customization
   index do
     selectable_column
-    column :created_at
+    column :created_at do |participant|
+      participant.created_at.strftime('%Y %b %d %H:%M')
+    end
     column 'Event' do |participant|
       "#{participant.event.date.strftime('%Y-%m-%d')} - #{participant.event.event_type.name}"
     end
