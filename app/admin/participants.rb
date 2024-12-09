@@ -21,6 +21,25 @@ ActiveAdmin.register Participant do
                 :accept_terms, :promoter_score, :event_rating, :trainer_rating,
                 :trainer2_rating, :campaign_source, :campaign
 
+  member_action :copy, method: :post do
+    original_participant = resource
+    copies_to_create = [1, original_participant.quantity - 1].max
+
+    ActiveRecord::Base.transaction do
+      copies_to_create.times do
+        new_participant = original_participant.dup
+        new_participant.event = original_participant.event
+        new_participant.save!
+      end
+    end
+
+    redirect_to admin_event_path(original_participant.event),
+                notice: "Successfully created #{copies_to_create} copies of participant"
+  rescue StandardError => e
+    redirect_to admin_event_path(original_participant.event),
+                alert: "Error creating copies: #{e.message}"
+  end
+
   # Index page customization
   index do
     selectable_column
@@ -28,7 +47,7 @@ ActiveAdmin.register Participant do
       participant.created_at.strftime('%Y %b %d %H:%M')
     end
     column 'Event' do |participant|
-      link_to "#{participant.event.date.strftime('%Y-%m-%d')} - #{participant.event.event_type.name}", 
+      link_to "#{participant.event.date.strftime('%Y-%m-%d')} - #{participant.event.event_type.name}",
               admin_event_path(participant.event)
     end
     column 'Name' do |participant|
@@ -129,11 +148,11 @@ ActiveAdmin.register Participant do
           f.input :id_number
           f.input :status, as: :select, collection: STATUS_LIST
           f.input :event, collection: Event.all.sort_by(&:unique_name),
-                         include_blank: 'Selecciona uno...',
-                         input_html: { style: 'width:500px' }
+                          include_blank: 'Selecciona uno...',
+                          input_html: { style: 'width:500px' }
           f.input :influence_zone, collection: InfluenceZone.all,
-                                 include_blank: 'Tu lugar más próximo ...',
-                                 hint: proc { |p| p.object.influence_zone&.tag_name || 'N/A' }
+                                   include_blank: 'Tu lugar más próximo ...',
+                                   hint: proc { |p| p.object.influence_zone&.tag_name || 'N/A' }
           f.input :quantity
           f.input :notes, input_html: { rows: 10 }
           f.input :referer_code
@@ -156,9 +175,7 @@ ActiveAdmin.register Participant do
           f.input :testimony
           f.input :photo_url
           div class: 'photo-preview' do
-            if f.object.photo_url.present?
-              image_tag f.object.photo_url, style: 'max-width: 300px; margin-top: 10px;'
-            end
+            image_tag f.object.photo_url, style: 'max-width: 300px; margin-top: 10px;' if f.object.photo_url.present?
           end
           f.input :profile_url
           f.input :accept_terms
@@ -179,13 +196,13 @@ ActiveAdmin.register Participant do
 
   # Add STATUS_LIST constant at the top of the file
   STATUS_LIST = [
-    ['Nuevo', 'N'],
-    ['Contactado', 'T'],
-    ['Confirmado', 'C'],
-    ['Presente', 'A'],
-    ['Certificado', 'K'],
-    ['Cancelado', 'X'],
-    ['Pospuesto', 'D']
+    %w[Nuevo N],
+    %w[Contactado T],
+    %w[Confirmado C],
+    %w[Presente A],
+    %w[Certificado K],
+    %w[Cancelado X],
+    %w[Pospuesto D]
   ].freeze
 
   show do

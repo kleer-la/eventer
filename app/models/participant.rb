@@ -56,6 +56,16 @@ class Participant < ApplicationRecord
     'X' => 'Cancelado'
   }.freeze
 
+  STATUS_OPTIONS = {
+    "N" => "Nuevo",
+    "T" => "Contactado",
+    "C" => "Confirmado", 
+    "A" => "Presente",
+    "K" => "Certificado",
+    "X" => "Cancelado",
+    "D" => "Postergado"
+  }.freeze
+
   PAYMENT_TYPE = {
     cash: 'C',
     mercado_pago: 'MP',

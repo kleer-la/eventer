@@ -61,3 +61,29 @@
   display: inline-block;
   background: #f5f5f5;
 }
+
+
+.stats-panel .stat-columns {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.stats-panel .stat-item {
+  text-align: center;
+  flex: 1;
+  padding: 10px;
+  background: #f4f4f4;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+
+.stats-panel .stat-item span:first-child {
+  font-weight: bold;
+  color: #5E6469;
+}
+
+.stats-panel .stat-item span:last-child {
+  font-size: 1.2em;
+  color: #000;
+}
