@@ -24,7 +24,8 @@ ActiveAdmin.register Participant do
       participant.created_at.strftime('%Y %b %d %H:%M')
     end
     column 'Event' do |participant|
-      "#{participant.event.date.strftime('%Y-%m-%d')} - #{participant.event.event_type.name}"
+      link_to "#{participant.event.date.strftime('%Y-%m-%d')} - #{participant.event.event_type.name}", 
+              admin_event_path(participant.event)
     end
     column 'Name' do |participant|
       icon_span('user', "#{participant.fname} #{participant.lname}")
