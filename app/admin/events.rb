@@ -14,6 +14,15 @@ ActiveAdmin.register Event do
     link_to 'Old version', events_path, class: 'button'
   end
 
+  member_action :download_participants, method: :get do
+    event = Event.find(params[:id])
+    participants = event.participants.includes(:influence_zone, influence_zone: :country)
+
+    send_data participants.to_comma,
+              filename: "participants-#{event.date.strftime('%Y-%m-%d')}-#{event.event_type.name.parameterize}.csv",
+              type: 'text/csv'
+  end
+
   index do
     column :date
     column 'Tipo evento', :event_type do |event|
@@ -51,10 +60,33 @@ ActiveAdmin.register Event do
       item link_to('Copiar', copy_event_path(event))
     end
   end
-
   show do
     tabs do
       tab 'Participants' do
+        div class: 'header-with-actions' do
+          div class: 'title-section' do
+            h2 "#{event.date.to_formatted_s(:short)} - #{event.city}", style: 'margin: 0; display: inline-block;'
+          end
+          div class: 'action-section', style: 'display: inline-block;' do
+            span style: 'margin: 0 5px;' do
+              link_to 'Download CSV', download_participants_admin_event_path(event, format: 'csv'),
+                      class: 'button-default'
+            end
+            span style: 'margin: 0 5px;' do
+              link_to 'Generate Certificates',
+                      './send_certificate',
+                      class: 'button-default',
+                      data: {
+                        confirm: "¡Atención!
+
+Esta operación enviará certificados de asistencia SOLO a las #{event.attended_quantity + event.participants.certified.count} personas  que están 'Presente' o 'Certificados'.
+Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas que participaron estén marcadas como 'Presente' y que quienes estuvieron ausentes estén marcados como 'Postergado' o 'Cancelado'.
+"
+                      }
+            end
+          end
+        end
+
         panel 'Event Statistics', class: 'stats-panel' do
           div class: 'stat-columns' do
             div class: 'stat-item' do

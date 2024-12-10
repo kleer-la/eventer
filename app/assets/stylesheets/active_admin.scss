@@ -87,3 +87,39 @@
   font-size: 1.2em;
   color: #000;
 }
+
+.header-with-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .title-section {
+    flex: 1;
+  }
+  
+  .action-section {
+    margin-left: 15px;
+  }
+
+  .button-default {
+    background: #5c6bc0;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.0em;
+    font-weight: bold;
+    line-height: 12px;
+    margin-right: 3px;
+    padding: 7px 16px 6px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 black;
+    
+    &:hover {
+      background: #484e53;
+    }
+  }
+}
