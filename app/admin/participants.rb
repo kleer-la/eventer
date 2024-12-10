@@ -2,13 +2,28 @@ ActiveAdmin.register Participant do
   menu parent: 'Courses Mgnt'
   belongs_to :event, optional: true
 
+  controller do
+    # Add eager loading to prevent N+1 queries
+    def scoped_collection
+      super.includes(
+        :influence_zone,
+        influence_zone: :country,
+        event: :event_type
+      )
+    end
+  end
   # Keep existing search functionality
   filter :email
   filter :fname
   filter :lname
   filter :event, collection: lambda {
-    Event.all.map { |e| ["#{e.date.strftime('%Y-%m-%d')} - #{e.event_type.name}", e.id] }
-         .sort.reverse
+    # Event.all.map { |e| ["#{e.date.strftime('%Y-%m-%d')} - #{e.event_type.name}", e.id] }
+    #      .sort.reverse
+    Event.includes(:event_type)
+         .order('date DESC')
+         .limit(100)
+         .pluck('events.date', 'event_types.name', 'events.id')
+         .map { |date, name, id| ["#{date.strftime('%Y-%m-%d')} - #{name}", id] }
   }
   filter :status
   filter :verification_code
