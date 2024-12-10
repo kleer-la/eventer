@@ -1,3 +1,15 @@
+unless defined?(STATUS_LIST)
+  STATUS_LIST = [
+    %w[Nuevo N],
+    %w[Contactado T],
+    %w[Confirmado C],
+    %w[Presente A],
+    %w[Certificado K],
+    %w[Cancelado X],
+    %w[Pospuesto D]
+  ].freeze
+end
+
 ActiveAdmin.register Participant do
   menu parent: 'Courses Mgnt'
   belongs_to :event, optional: true
@@ -55,7 +67,6 @@ ActiveAdmin.register Participant do
                 alert: "Error creating copies: #{e.message}"
   end
 
-  # Index page customization
   index do
     selectable_column
     column :created_at do |participant|
@@ -151,6 +162,9 @@ ActiveAdmin.register Participant do
   end
 
   form do |f|
+    influence_zones = InfluenceZone.includes(:country).order('countries.id, zone_name')
+    events = Event.includes(:event_type).order(date: :desc)
+
     tabs do
       tab 'General' do
         f.inputs do
@@ -162,17 +176,17 @@ ActiveAdmin.register Participant do
           f.input :company_name
           f.input :id_number
           f.input :status, as: :select, collection: STATUS_LIST
-          f.input :event, collection: Event.all.sort_by(&:unique_name),
+          f.input :event, collection: events.map { |e|
+            ["#{e.date.strftime('%Y-%m-%d')} - #{e.event_type.name}", e.id]
+          },
                           include_blank: 'Selecciona uno...',
                           input_html: { style: 'width:500px' }
-          f.input :influence_zone, collection: InfluenceZone.all,
+          f.input :influence_zone, collection: influence_zones.map { |z| [z.display_name, z.id] },
                                    include_blank: 'Tu lugar más próximo ...',
                                    hint: proc { |p| p.object.influence_zone&.tag_name || 'N/A' }
           f.input :quantity
           f.input :notes, input_html: { rows: 10 }
           f.input :referer_code
-          f.input :campaign_source
-          f.input :campaign
         end
       end
 
@@ -190,7 +204,10 @@ ActiveAdmin.register Participant do
           f.input :testimony
           f.input :photo_url
           div class: 'photo-preview' do
-            image_tag f.object.photo_url, style: 'max-width: 300px; margin-top: 10px;' if f.object.photo_url.present?
+            if f.object.photo_url.present?
+              image_tag f.object.photo_url,
+                        style: 'max-width: 300px; margin-top: 10px;'
+            end
           end
           f.input :profile_url
           f.input :accept_terms
@@ -208,17 +225,6 @@ ActiveAdmin.register Participant do
     end
     f.actions
   end
-
-  # Add STATUS_LIST constant at the top of the file
-  STATUS_LIST = [
-    %w[Nuevo N],
-    %w[Contactado T],
-    %w[Confirmado C],
-    %w[Presente A],
-    %w[Certificado K],
-    %w[Cancelado X],
-    %w[Pospuesto D]
-  ].freeze
 
   show do
     tabs do
@@ -242,8 +248,6 @@ ActiveAdmin.register Participant do
           row :quantity
           row :notes
           row :referer_code
-          row :campaign_source
-          row :campaign
         end
       end
 

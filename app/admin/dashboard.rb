@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-MAX_DAYS_WO_PUBLIC_EVENTS = 180
+MAX_DAYS_WO_PUBLIC_EVENTS = 180 unless defined?(MAX_DAYS_WO_PUBLIC_EVENTS)
 
 ActiveAdmin.register_page 'Dashboard' do
   menu priority: 1, label: 'Dashboard'
