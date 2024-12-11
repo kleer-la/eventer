@@ -53,6 +53,8 @@ ActiveAdmin.register Participant do
     copies_to_create = [1, original_participant.quantity - 1].max
 
     ActiveRecord::Base.transaction do
+      original_participant.quantity = 1
+      original_participant.save!
       copies_to_create.times do
         new_participant = original_participant.dup
         new_participant.event = original_participant.event

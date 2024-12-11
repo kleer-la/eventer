@@ -60,6 +60,7 @@ ActiveAdmin.register Event do
       item link_to('Copiar', copy_event_path(event))
     end
   end
+
   show do
     tabs do
       tab 'Participants' do
@@ -74,7 +75,8 @@ ActiveAdmin.register Event do
             end
             span style: 'margin: 0 5px;' do
               link_to 'Generate Certificates',
-                      './send_certificate',
+                      "/events/#{event.id}/send_certificate",
+                      # send_certificate_event_path(event),
                       class: 'button-default',
                       data: {
                         confirm: "¡Atención!
@@ -121,53 +123,7 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
           end
         end
 
-        panel 'Participants List' do
-          table_for event.participants do
-            column :created_at do |p|
-              p.created_at.strftime('%Y-%m-%d %H:%M')
-            end
-            column 'Participant' do |p|
-              "#{p.fname} #{p.lname} (#{p.email}) - Qty: #{p.quantity}"
-            end
-
-            column 'Contact Info' do |p|
-              "#{p.phone} - #{p.influence_zone&.display_name} - #{p.address}"
-            end
-
-            column :status do |p|
-              status_color = {
-                'N' => '#f34541',
-                'T' => '#9564e2',
-                'C' => '#00acec',
-                'A' => '#49bf67',
-                'K' => '#00b0b0',
-                'X' => '#f8a326',
-                'D' => '#f8a326'
-              }
-
-              div style: "background-color: #{status_color[p.status]}; color: white; padding: 3px 6px; border-radius: 3px;" do
-                best_in_place p, :status,
-                              as: :select,
-                              url: "/events/#{p.event.id}/participants/#{p.id}",
-                              collection: Participant::STATUS_OPTIONS
-              end
-            end
-
-            column :notes
-
-            column 'Actions' do |p|
-              links = []
-              links << link_to('Edit', edit_admin_event_participant_path(p.event, p))
-              links << link_to('Copy', copy_admin_event_participant_path(p.event, p),
-                               method: :post,
-                               data: { confirm: "Create #{[1, p.quantity - 1].max} copies?" })
-              if 'AK'.include?(p.status)
-                links << link_to('Certificate', "/events/#{p.event.id}/participants/#{p.id}/certificate.pdf")
-              end
-              links.join(' | ').html_safe
-            end
-          end
-        end
+        render partial: '/admin/events/participants_panel', locals: { event: }
       end
 
       tab 'Event Details' do
@@ -195,7 +151,6 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
           row :business_price
           row :enterprise_6plus_price
           row :enterprise_11plus_price
-          # Add other fields as needed
         end
       end
     end
