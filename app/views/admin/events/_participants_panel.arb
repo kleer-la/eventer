@@ -41,7 +41,7 @@ panel 'Participants List' do
       if 'AK'.include?(p.status)
         cert_url = "/events/#{p.event.id}/participants/#{p.id}/certificate.pdf?page_size=LETTER&verification_code=#{p.verification_code}"
         links << link_to('Certificate', cert_url)
-        links << link_to('Cert. Download', "#{cert_url}/download=true")
+        links << link_to('Cert. Download', "#{cert_url}&download=true")
       end
       links.join(' | ').html_safe
     end
