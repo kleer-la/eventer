@@ -36,36 +36,6 @@ class Participant < ApplicationRecord
     val_range(record, attr, value, :promoter_score_should_be_between_0_and_10, 0, 10)
   end
 
-  # STATUS = {
-  #   new: 'N',
-  #   contacted: 'T',
-  #   confirmed: 'C',
-  #   attended: 'A',
-  #   certified: 'K',
-  #   deffered: 'D',
-  #   cancelled: 'X'
-  # }.freeze
-
-  # STATUS_DESC = {
-  #   'N' => 'Nuevo',
-  #   'T' => 'Contactado',
-  #   'C' => 'Confirmado',
-  #   'A' => 'Presente',
-  #   'K' => 'Certificado',
-  #   'D' => 'Pospuesto',
-  #   'X' => 'Cancelado'
-  # }.freeze
-
-  # STATUS_OPTIONS = {
-  #   "N" => "Nuevo",
-  #   "T" => "Contactado",
-  #   "C" => "Confirmado",
-  #   "A" => "Presente",
-  #   "K" => "Certificado",
-  #   "X" => "Cancelado",
-  #   "D" => "Postergado"
-  # }.freeze
-
   STATUSES = {
     new: {
       code: 'N',

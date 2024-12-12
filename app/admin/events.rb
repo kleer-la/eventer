@@ -14,6 +14,17 @@ ActiveAdmin.register Event do
     link_to 'Old version', events_path, class: 'button'
   end
 
+  controller do
+    def find_resource # avoid N+1 queries
+      Event.includes(
+        participants: { influence_zone: :country },
+        event_type: {},
+        country: {},
+        trainer: {}
+      ).find(params[:id])
+    end
+  end
+
   member_action :download_participants, method: :get do
     event = Event.find(params[:id])
     participants = event.participants.includes(:influence_zone, influence_zone: :country)
@@ -56,7 +67,8 @@ ActiveAdmin.register Event do
         email: fields[2],
         phone: fields[3],
         status:,
-        influence_zone:
+        influence_zone:,
+        notes: 'Batch load'
       )
 
       if participant.save
@@ -136,7 +148,7 @@ ActiveAdmin.register Event do
                       data: {
                         confirm: "¡Atención!
 
-Esta operación enviará certificados de asistencia SOLO a las #{event.attended_quantity + event.participants.certified.count} personas  que están 'Presente' o 'Certificados'.
+Esta operación enviará certificados de asistencia SOLO a las #{event.attended_quantity + event.certified_quantity} personas  que están 'Presente' o 'Certificados'.
 Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas que participaron estén marcadas como 'Presente' y que quienes estuvieron ausentes estén marcados como 'Postergado' o 'Cancelado'.
 "
                       }
@@ -210,6 +222,10 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
       end
       tab 'Batch Upload' do
         panel 'Batch Upload Participants' do
+          influence_zones = InfluenceZone.includes(:country)
+                                         .order('countries.name, influence_zones.zone_name')
+                                         .map { |z| [z.display_name, z.id] }
+
           active_admin_form_for :batch_upload, url: batch_upload_admin_event_path do |f|
             f.inputs do
               f.input :participants_batch, as: :text,
@@ -224,7 +240,7 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
                                label: 'Status'
 
               f.input :influence_zone_id, as: :select,
-                                          collection: InfluenceZone.all.map { |z| [z.display_name, z.id] },
+                                          collection: influence_zones,
                                           label: 'Influence Zone'
             end
 

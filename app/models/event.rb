@@ -107,11 +107,15 @@ class Event < ApplicationRecord
   end
 
   def completion
-    if capacity.positive?
-      (participants.confirmed.count + participants.to_certify.count) * 1.0 / capacity
-    else
-      1.0
-    end
+    return 1.0 if capacity == 0
+
+    stats = participant_statistics
+    confirmed = stats[Participant::STATUSES[:confirmed][:code]] || 0
+    attended = stats[Participant::STATUSES[:attended][:code]] || 0
+    certified = stats[Participant::STATUSES[:certified][:code]] || 0
+
+    total = confirmed + attended + certified
+    total.zero? ? 0 : total.to_f / capacity
   end
 
   def attendance_counts
@@ -291,20 +295,30 @@ class Event < ApplicationRecord
     capacity - confirmed_quantity
   end
 
+  def participant_statistics
+    Rails.cache.fetch("#{cache_key_with_version}/participant_statistics") do
+      participants.group(:status).sum(:quantity)
+    end
+  end
+
   def new_ones_quantity
-    participants.new_ones.pluck(:quantity).reduce(0, :+)
+    participant_statistics[Participant::STATUSES[:new][:code]] || 0
   end
 
   def contacted_quantity
-    participants.contacted.pluck(:quantity).reduce(0, :+)
+    participant_statistics[Participant::STATUSES[:contacted][:code]] || 0
   end
 
   def confirmed_quantity
-    participants.confirmed.pluck(:quantity).reduce(0, :+)
+    participant_statistics[Participant::STATUSES[:confirmed][:code]] || 0
   end
 
   def attended_quantity
-    participants.attended.pluck(:quantity).reduce(0, :+)
+    participant_statistics[Participant::STATUSES[:attended][:code]] || 0
+  end
+
+  def certified_quantity
+    participant_statistics[Participant::STATUSES[:certified][:code]] || 0
   end
 
   def experimental_features
