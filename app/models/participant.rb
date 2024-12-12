@@ -36,35 +36,91 @@ class Participant < ApplicationRecord
     val_range(record, attr, value, :promoter_score_should_be_between_0_and_10, 0, 10)
   end
 
-  STATUS = {
-    new: 'N',
-    contacted: 'T',
-    confirmed: 'C',
-    attended: 'A',
-    certified: 'K',
-    deffered: 'D',
-    cancelled: 'X'
+  # STATUS = {
+  #   new: 'N',
+  #   contacted: 'T',
+  #   confirmed: 'C',
+  #   attended: 'A',
+  #   certified: 'K',
+  #   deffered: 'D',
+  #   cancelled: 'X'
+  # }.freeze
+
+  # STATUS_DESC = {
+  #   'N' => 'Nuevo',
+  #   'T' => 'Contactado',
+  #   'C' => 'Confirmado',
+  #   'A' => 'Presente',
+  #   'K' => 'Certificado',
+  #   'D' => 'Pospuesto',
+  #   'X' => 'Cancelado'
+  # }.freeze
+
+  # STATUS_OPTIONS = {
+  #   "N" => "Nuevo",
+  #   "T" => "Contactado",
+  #   "C" => "Confirmado",
+  #   "A" => "Presente",
+  #   "K" => "Certificado",
+  #   "X" => "Cancelado",
+  #   "D" => "Postergado"
+  # }.freeze
+
+  STATUSES = {
+    new: {
+      code: 'N',
+      label: 'Nuevo',
+      color: '#f34541' # Optional: adding the colors from your view
+    },
+    contacted: {
+      code: 'T',
+      label: 'Contactado',
+      color: '#9564e2'
+    },
+    confirmed: {
+      code: 'C',
+      label: 'Confirmado',
+      color: '#00acec'
+    },
+    attended: {
+      code: 'A',
+      label: 'Presente',
+      color: '#49bf67'
+    },
+    certified: {
+      code: 'K',
+      label: 'Certificado',
+      color: '#00b0b0'
+    },
+    postponed: { # Fixed spelling of 'deferred'
+      code: 'D',
+      label: 'Postergado',
+      color: '#f8a326'
+    },
+    cancelled: {
+      code: 'X',
+      label: 'Cancelado',
+      color: '#f8a326'
+    }
   }.freeze
 
-  STATUS_DESC = {
-    'N' => 'Nuevo',
-    'T' => 'Contactado',
-    'C' => 'Confirmado',
-    'A' => 'Presente',
-    'K' => 'Certificado',
-    'D' => 'Pospuesto',
-    'X' => 'Cancelado'
-  }.freeze
+  # Maintain backward compatibility with existing code
+  STATUS = STATUSES.transform_values { |v| v[:code] }.freeze
+  STATUS_DESC = STATUSES.values.to_h { |v| [v[:code], v[:label]] }.freeze
+  STATUS_OPTIONS = STATUS_DESC.dup.freeze
 
-  STATUS_OPTIONS = {
-    "N" => "Nuevo",
-    "T" => "Contactado",
-    "C" => "Confirmado", 
-    "A" => "Presente",
-    "K" => "Certificado",
-    "X" => "Cancelado",
-    "D" => "Postergado"
-  }.freeze
+  # Helper methods for better readability
+  def self.status_collection_for_select
+    STATUSES.values.map { |s| [s[:label], s[:code]] }
+  end
+
+  def status_label
+    STATUSES.values.find { |s| s[:code] == status }&.dig(:label) || 'Unknown'
+  end
+
+  def status_color
+    STATUSES.values.find { |s| s[:code] == status }&.dig(:color) || '#000000'
+  end
 
   PAYMENT_TYPE = {
     cash: 'C',
@@ -78,14 +134,13 @@ class Participant < ApplicationRecord
   scope :confirmed, -> { where(status: STATUS[:confirmed]) }
   scope :contacted, -> { where(status: STATUS[:contacted]) }
   scope :cancelled, -> { where(status: STATUS[:cancelled]) }
-  scope :deffered, -> { where(status: STATUS[:deffered]) }
+  scope :postponed, -> { where(status: STATUS[:postponed]) }
   scope :attended, -> { where(status: STATUS[:attended]) }
   scope :certified, -> { where(status: STATUS[:certified]) }
   scope :attended?, lambda {
-                      where('status=? OR status=? OR status=?',
-                            STATUS[:confirmed], STATUS[:attended], STATUS[:certified])
-                    }
-  scope :to_certify, -> { where('status=? OR status=?', STATUS[:attended], STATUS[:certified]) }
+    where('status IN (?)', [STATUS[:confirmed], STATUS[:attended], STATUS[:certified]])
+  }
+  scope :to_certify, -> { where(status: [STATUS[:attended], STATUS[:certified]]) }
 
   scope :surveyed, -> { where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1') }
   scope :cotrainer_surveyed, -> { where('trainer2_rating > 0 AND event_rating > 0 and promoter_score > -1') }

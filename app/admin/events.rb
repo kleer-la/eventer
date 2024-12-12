@@ -23,6 +23,61 @@ ActiveAdmin.register Event do
               type: 'text/csv'
   end
 
+  member_action :batch_upload, method: :post do
+    event = Event.find(params[:id])
+
+    Rails.logger.debug "Batch Upload Params: #{params.inspect}"
+
+    # Access the nested parameters
+    batch_upload_params = params[:batch_upload] || {}
+    raw_participants = batch_upload_params[:participants_batch]
+    status = batch_upload_params[:status]
+    influence_zone = InfluenceZone.find(batch_upload_params[:influence_zone_id])
+
+    success_count = 0
+    error_count = 0
+    error_lines = []
+
+    raw_participants.split("\n").each_with_index do |line, index|
+      next if line.blank?
+
+      # Split by comma or tab
+      fields = line.split(/[,\t]/).map(&:strip)
+
+      if fields.length < 4
+        error_lines << "Line #{index + 1}: Not enough fields"
+        error_count += 1
+        next
+      end
+
+      participant = event.participants.build(
+        lname: fields[0],
+        fname: fields[1],
+        email: fields[2],
+        phone: fields[3],
+        status:,
+        influence_zone:
+      )
+
+      if participant.save
+        success_count += 1
+      else
+        error_count += 1
+        error_lines << "Line #{index + 1}: #{participant.errors.full_messages.join(', ')}"
+      end
+    end
+
+    if error_count.zero?
+      redirect_to admin_event_path(event), notice: "Successfully imported #{success_count} participants"
+    else
+      redirect_to admin_event_path(event),
+                  notice: "Imported #{success_count} participants with #{error_count} errors",
+                  alert: error_lines.join("\n")
+    end
+  rescue StandardError => e
+    redirect_to admin_event_path(event), alert: "Error processing batch upload: #{e.message}"
+  end
+
   index do
     column :date
     column 'Tipo evento', :event_type do |event|
@@ -151,6 +206,33 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
           row :business_price
           row :enterprise_6plus_price
           row :enterprise_11plus_price
+        end
+      end
+      tab 'Batch Upload' do
+        panel 'Batch Upload Participants' do
+          active_admin_form_for :batch_upload, url: batch_upload_admin_event_path do |f|
+            f.inputs do
+              f.input :participants_batch, as: :text,
+                                           label: 'Participants (one per line)',
+                                           input_html: {
+                                             rows: 10,
+                                             placeholder: 'Smith, John, john.smith@example.com, +1234567890'
+                                           }
+
+              f.input :status, as: :select,
+                               collection: Participant.status_collection_for_select,
+                               label: 'Status'
+
+              f.input :influence_zone_id, as: :select,
+                                          collection: InfluenceZone.all.map { |z| [z.display_name, z.id] },
+                                          label: 'Influence Zone'
+            end
+
+            f.actions do
+              f.action :submit, label: 'Upload Participants'
+              f.action :cancel, label: 'Cancel'
+            end
+          end
         end
       end
     end
