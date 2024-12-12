@@ -1,15 +1,3 @@
-unless defined?(STATUS_LIST)
-  STATUS_LIST = [
-    %w[Nuevo N],
-    %w[Contactado T],
-    %w[Confirmado C],
-    %w[Presente A],
-    %w[Certificado K],
-    %w[Cancelado X],
-    %w[Pospuesto D]
-  ].freeze
-end
-
 ActiveAdmin.register Participant do
   menu parent: 'Courses Mgnt'
   belongs_to :event, optional: true
@@ -29,15 +17,13 @@ ActiveAdmin.register Participant do
   filter :fname
   filter :lname
   filter :event, collection: lambda {
-    # Event.all.map { |e| ["#{e.date.strftime('%Y-%m-%d')} - #{e.event_type.name}", e.id] }
-    #      .sort.reverse
     Event.includes(:event_type)
          .order('date DESC')
          .limit(100)
          .pluck('events.date', 'event_types.name', 'events.id')
          .map { |date, name, id| ["#{date.strftime('%Y-%m-%d')} - #{name}", id] }
   }
-  filter :status
+  filter :status, as: :select, collection: Participant.status_collection_for_select
   filter :verification_code
 
   # Permit params for editing
@@ -105,8 +91,8 @@ ActiveAdmin.register Participant do
 
     column :status do |participant|
       status_tag(
-        status_text(participant.status),
-        class: participant_status_class(participant.status)
+        participant.status_label,
+        style: "background-color: #{participant.status_color}"
       )
     end
 
@@ -128,35 +114,9 @@ ActiveAdmin.register Participant do
 
   # Helper methods
   controller do
-    helper_method :icon_span, :status_text, :participant_status_class
+    helper_method :icon_span
 
     private
-
-    def participant_status_class(status)
-      case status
-      when 'N' then 'error'
-      when 'T' then 'warning'
-      when 'C' then 'info'
-      when 'A' then 'success'
-      when 'K' then 'success'
-      when 'X' then 'warning'
-      when 'D' then 'warning'
-      else 'error'
-      end
-    end
-
-    def status_text(status)
-      case status
-      when 'N' then 'Nuevo'
-      when 'T' then 'Contactado'
-      when 'C' then 'Confirmado'
-      when 'A' then 'Presente'
-      when 'K' then 'Certificado'
-      when 'X' then 'Cancelado'
-      when 'D' then 'Pospuesto'
-      else 'Desconocido'
-      end
-    end
 
     def icon_span(icon_name, text)
       "<span style='white-space:nowrap;'><i class='icon-#{icon_name}'></i> #{text}</span>".html_safe
@@ -177,7 +137,7 @@ ActiveAdmin.register Participant do
           f.input :address
           f.input :company_name
           f.input :id_number
-          f.input :status, as: :select, collection: STATUS_LIST
+          f.input :status, as: :select, collection: Participant.status_collection_for_select
           f.input :event, collection: events.map { |e|
             ["#{e.date.strftime('%Y-%m-%d')} - #{e.event_type.name}", e.id]
           },
@@ -241,8 +201,8 @@ ActiveAdmin.register Participant do
           row :id_number
           row :status do |participant|
             status_tag(
-              status_text(participant.status),
-              class: participant_status_class(participant.status)
+              participant.status_label,
+              style: "background-color: #{participant.status_color}"
             )
           end
           row :event
