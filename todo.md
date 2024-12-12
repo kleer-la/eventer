@@ -5,9 +5,9 @@ X participant copy -> qty <-1
 / send_certificate (moverlo a ActiveAdmin)
 / ver certificate  (moverlo a ActiveAdmin)
 / download certificate  (moverlo a ActiveAdmin)
+X agregar nuevos participantes en batch
 - best in place
 - link desde dashboard a event/view
-- agregar nuevos participantes en batch
 
 ## Event
 - lógica fechas
@@ -19,6 +19,9 @@ X participant copy -> qty <-1
 ## event Type
 - Probar certificados
 - ???
+
+## Participants
+- use status color from model
 
 ## Gral
 - Revisar ActiveAdmin actuales para evitar N+1 queries
