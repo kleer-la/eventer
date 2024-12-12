@@ -2,14 +2,41 @@ ActiveAdmin.register Participant do
   menu parent: 'Courses Mgnt'
   belongs_to :event, optional: true
 
+  # Configure default sort order
+  config.sort_order = 'created_at_desc'
+
   controller do
-    # Add eager loading to prevent N+1 queries
     def scoped_collection
       super.includes(
         :influence_zone,
-        influence_zone: :country,
-        event: :event_type
-      )
+        { influence_zone: :country },
+        { event: [:event_type] }
+      ).select(
+        'participants.id',
+        'participants.created_at',
+        'participants.fname',
+        'participants.lname',
+        'participants.email',
+        'participants.phone',
+        'participants.address',
+        'participants.quantity',
+        'participants.status',
+        'participants.notes',
+        'participants.influence_zone_id',
+        'participants.event_id',
+        'participants.campaign_id',
+        'participants.campaign_source_id',
+        'influence_zones.zone_name',
+        'influence_zones.tag_name',
+        'countries.name as country_name',
+        'events.date as event_date',
+        'event_types.name as event_type_name'
+      ).joins(
+        'LEFT JOIN influence_zones ON influence_zones.id = participants.influence_zone_id
+         LEFT JOIN countries ON countries.id = influence_zones.country_id
+         LEFT JOIN events ON events.id = participants.event_id
+         LEFT JOIN event_types ON event_types.id = events.event_type_id'
+      ).distinct
     end
   end
   # Keep existing search functionality
