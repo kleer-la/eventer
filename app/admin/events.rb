@@ -15,6 +15,10 @@ ActiveAdmin.register Event do
   end
 
   controller do
+    def scoped_collection
+      super.includes(:event_type, :country, :trainer)
+    end
+
     def find_resource # avoid N+1 queries
       Event.includes(
         participants: { influence_zone: :country },
