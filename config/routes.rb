@@ -34,7 +34,7 @@ Rails.application.routes.draw do
       end
     end
     resources :articles, only: %i[index show]
-    resources :resources, only: %i[index]
+    resources :resources, only: %i[index show]
     resources :pages, only: %i[show]
     resources :contacts, only: [:create]
     get 'news'

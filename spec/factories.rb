@@ -16,25 +16,6 @@ FactoryBot.define do
     iso_code { 'AR' }
   end
 
-  factory :trainer do
-    name { 'Juan Alberto' }
-    signature_image { 'PT.png' }
-    signature_credentials { 'Agile Coach & Trainer' }
-  end
-
-  factory :trainer2, class: Trainer do
-    name { 'Juan Torto' }
-    signature_image { 'JG.png' }
-    signature_credentials { 'Agile Coach & Trainer2' }
-  end
-
-  factory :category do
-    name { 'Negocios' }
-    description { 'Management, Negocios y blah blah blah' }
-    tagline { 'pep pepepe' }
-    codename { 'BIZ' }
-  end
-
   factory :event_type do
     name { 'Tipo de Evento de Prueba' }
     duration { 8 }

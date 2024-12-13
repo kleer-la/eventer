@@ -8,4 +8,19 @@ FactoryBot.define do
     cover_es { 'my-resource.png' }
     landing_es { '/blog/my-resource' }
   end
+
+  factory :authorship do
+    resource
+    trainer
+  end
+
+  factory :illustration do
+    resource
+    trainer
+  end
+
+  factory :translation do
+    resource
+    trainer
+  end
 end
