@@ -7,7 +7,7 @@ module Api
     end
 
     def trainer_show_fields
-      %i[name bio gravatar_email twitter_username linkedin_url bio_en]
+      %i[name bio gravatar_email twitter_username linkedin_url bio_en landing]
     end
 
     def resources_with_associations
