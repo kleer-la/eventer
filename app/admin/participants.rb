@@ -152,7 +152,11 @@ ActiveAdmin.register Participant do
 
   form do |f|
     influence_zones = InfluenceZone.includes(:country).order('countries.id, zone_name')
-    events = Event.includes(:event_type).order(date: :desc)
+    events = Event.includes(:event_type)
+                  .joins(:event_type)
+                  .where.not(event_types: { name: nil })
+                  .where('events.date > ?', 1.year.ago)
+                  .order(date: :desc)
 
     tabs do
       tab 'General' do
