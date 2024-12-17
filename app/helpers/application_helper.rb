@@ -16,6 +16,8 @@ module ApplicationHelper
   end
 
   def markdown(text)
+    return '' if text.nil?
+
     renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
     renderer.render(text).html_safe
   end
