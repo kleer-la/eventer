@@ -111,8 +111,12 @@ ActiveAdmin.register Resource do
       row :description_en
       row :comments_es
       row :comments_en
-      row :long_description_es
-      row :long_description_en
+      row :long_description_es do
+        markdown resource.long_description_es
+      end
+      row :long_description_en do
+        markdown resource.long_description_en
+      end
       row :preview_es
       row :preview_en
       row :share_text_es
