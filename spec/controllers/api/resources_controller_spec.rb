@@ -124,5 +124,22 @@ describe Api::ResourcesController do
       json_response = JSON.parse(response.body)
       expect(json_response['id']).to eq(resource.id)
     end
+    it 'includes long_description and preview in the response' do
+      resource = create(:resource,
+                        long_description_es: 'Descripción extendida del recurso en español',
+                        long_description_en: 'Extensive resource description in English',
+                        preview_es: 'https://example.com/preview-es.png',
+                        preview_en: 'https://example.com/preview-en.png')
+
+      get :show, params: { id: resource.to_param, format: 'json' }
+
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+
+      expect(json_response['long_description_es']).to eq('Descripción extendida del recurso en español')
+      expect(json_response['long_description_en']).to eq('Extensive resource description in English')
+      expect(json_response['preview_es']).to eq('https://example.com/preview-es.png')
+      expect(json_response['preview_en']).to eq('https://example.com/preview-en.png')
+    end
   end
 end

@@ -5,7 +5,10 @@ ActiveAdmin.register Resource do
                 :getit_es, :getit_en, :buyit_es, :buyit_en, :cover_es, :cover_en,
                 :description_es, :description_en, :comments_es, :comments_en,
                 :share_text_es, :share_text_en, :tags_es, :tags_en,
-                category_ids: [], author_ids: [], translator_ids: [], illustrator_ids: []
+                :long_description_es, :preview_es,
+                :long_description_en, :preview_en,
+                category_ids: [], author_ids: [], translator_ids: [], illustrator_ids: [],
+                recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   controller do
     def find_resource
@@ -38,6 +41,9 @@ ActiveAdmin.register Resource do
       f.input :cover_es
       f.input :description_es, input_html: { maxlength: 220, rows: 5 }
       f.input :comments_es, input_html: { rows: 2 }
+      f.input :long_description_es, input_html: { rows: 7 },
+                                    hint: raw("Use <a href='https://www.markdownguide.org/basic-syntax/'>Markdown Cheatsheet</a> for formatting.")
+      f.input :preview_es, hint: 'URL para Preview'
       f.input :share_text_es
       f.input :tags_es
     end
@@ -50,6 +56,9 @@ ActiveAdmin.register Resource do
       f.input :cover_en
       f.input :description_en, input_html: { rows: 5 }
       f.input :comments_en, input_html: { rows: 2 }
+      f.input :long_description_en, input_html: { rows: 7 },
+                                    hint: raw("Use <a href='https://www.markdownguide.org/basic-syntax/'>Markdown Cheatsheet</a> for formatting.")
+      f.input :preview_en, hint: 'URL para Preview'
       f.input :share_text_en
       f.input :tags_en
     end
@@ -60,7 +69,27 @@ ActiveAdmin.register Resource do
       f.input :illustrators, as: :check_boxes, collection: Trainer.sorted
     end
 
+    f.inputs 'Recommended Contents' do
+      f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
+        rc.input :target_type, as: :select,
+                               collection: %w[Article EventType Service Resource],
+                               input_html: { class: 'target-type-select' }
+        rc.input :target_id, label: 'Target', as: :select,
+                             collection: [],
+                             input_html: { class: 'target-id-select' }
+        rc.input :relevance_order
+        rc.input :current_target_info, as: :hidden,
+                                       input_html: {
+                                         class: 'current-target-info',
+                                         value: { type: rc.object.target_type, id: rc.object.target_id }.to_json
+                                       }
+      end
+    end
+
     f.actions
+    script do
+      raw RecommendableHelper.recommended_content_js(Article)
+    end
   end
 
   show do
@@ -82,6 +111,10 @@ ActiveAdmin.register Resource do
       row :description_en
       row :comments_es
       row :comments_en
+      row :long_description_es
+      row :long_description_en
+      row :preview_es
+      row :preview_en
       row :share_text_es
       row :share_text_en
       row :tags_es
@@ -91,6 +124,23 @@ ActiveAdmin.register Resource do
       row :illustrators
       row :created_at
       row :updated_at
+
+      panel 'Recommended Content' do
+        table_for resource.recommended do
+          column :relevance_order do |recommendation|
+            recommendation['relevance_order']
+          end
+          column :title do |recommendation|
+            recommendation['title']
+          end
+          column :type do |recommendation|
+            recommendation['type']
+          end
+          column :subtitle do |recommendation|
+            recommendation['subtitle']
+          end
+        end
+      end
     end
   end
 end
