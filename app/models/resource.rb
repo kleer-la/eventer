@@ -2,6 +2,7 @@
 
 class Resource < ApplicationRecord
   include Recommendable
+  include FileSizeChecker
   extend FriendlyId
   friendly_id :title_es, use: %i[slugged history]
   belongs_to :category, optional: true

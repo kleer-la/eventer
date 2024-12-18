@@ -147,4 +147,24 @@ ActiveAdmin.register Resource do
       end
     end
   end
+
+  action_item :check_sizes, only: :index do
+    link_to 'Check Cover Sizes', check_sizes_admin_resources_path
+  end
+
+  collection_action :check_sizes, method: :get do
+    resources = Resource.all.map do |resource|
+      {
+        id: resource.id,
+        title: resource.title_es,
+        size_es: resource.cover_size(:es),
+        size_en: resource.cover_size(:en),
+        url_es: resource.cover_es,
+        url_en: resource.cover_en
+      }
+    end.compact
+    resources.sort_by! { |r| -(r[:size_es] + r[:size_en]) }
+
+    render 'check_sizes', locals: { resources: }
+  end
 end
