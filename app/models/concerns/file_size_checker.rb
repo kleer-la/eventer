@@ -2,21 +2,33 @@ require 'net/http'
 
 module FileSizeChecker
   extend ActiveSupport::Concern
-  require 'cgi'
+  require 'addressable/uri'
 
   BASE_URL = 'https://www.kleer.la'
 
   def get_remote_file_size(url)
     return 0 if url.blank?
 
-    full_url = url.start_with?('http://', 'https://') ? url : "#{BASE_URL}#{url}"
+    clear_url = url.strip
+    full_url = clear_url.start_with?('http://', 'https://') ? clear_url : "#{BASE_URL}#{clear_url}"
 
     begin
-      uri = URI(full_url.gsub(' ', '%20'))
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = (uri.scheme == 'https')
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      uri = Addressable::URI.parse(full_url).normalize
+      port = uri.scheme == 'https' ? 443 : 80
+      http = Net::HTTP.new(uri.host, port)
 
+      http.use_ssl = (uri.scheme == 'https')
+      if uri.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        http.max_retries = 3 # Add retries
+      end
+
+      # Add these lines to match wget's behavior better
+      http.keep_alive_timeout = 30
+      http.max_retries = 3
+      http.read_timeout = 30
+      http.open_timeout = 30
       # Create request with full path and headers
       request = Net::HTTP::Head.new(uri.request_uri)
       request['User-Agent'] = "Ruby/#{RUBY_VERSION}"
