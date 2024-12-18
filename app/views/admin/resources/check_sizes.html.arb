@@ -1,8 +1,8 @@
 panel "Cover Sizes (Sorted by Total Size)" do
   table_for resources do
     column("Title") { |r| link_to(r[:title], edit_admin_resource_path(r[:id])) }
-    column("ES Size") { |r| "#{(r[:size_es] / 1024.0 ).round(2)} MB" }
-    column("EN Size") { |r| "#{(r[:size_en] / 1024.0 ).round(2)} MB" }
+    column("ES Size") { |r| "#{(r[:size_es] / 1024.0 ).round(2)} KB" }
+    column("EN Size") { |r| "#{(r[:size_en] / 1024.0 ).round(2)} KB" }
     column("ES URL") { |r| r[:url_es] }
     column("EN URL") { |r| r[:url_en] }
   end
