@@ -7,12 +7,18 @@ ActiveAdmin.register Article do
                 :industry, :noindex,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
+  scope :all
+  scope :published, default: true
+  scope :unpublished
+
   FriendlyId::Slug.class_eval do
     def self.ransackable_attributes(_auth_object = nil)
       %w[created_at id id_value scope slug sluggable_id sluggable_type]
     end
   end
 
+  filter :title
+  filter :slug
   filter :industry, as: :select, collection: Article.industries
   filter :body
 
@@ -23,6 +29,16 @@ ActiveAdmin.register Article do
   controller do
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
+    end
+
+    def destroy
+      article = resource
+      if article.published?
+        flash[:error] = "Can't delete a published article"
+        redirect_to admin_article_path(article)
+      else
+        super
+      end
     end
   end
 
@@ -38,7 +54,21 @@ ActiveAdmin.register Article do
       article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
     end
     column :created_at
-    actions
+
+    actions defaults: false do |article|
+      item 'View', admin_article_path(article)
+      text_node '&nbsp;&nbsp;'.html_safe
+      item 'Edit', edit_admin_article_path(article)
+      text_node '&nbsp;&nbsp;'.html_safe
+      if article.published?
+        item 'Delete', '#',
+             onClick: "alert('Can\\'t delete a published article'); return(false);"
+      else
+        item 'Delete', admin_article_path(article),
+             method: :delete,
+             data: { confirm: 'Are you sure you want to delete this?' }
+      end
+    end
   end
 
   show do

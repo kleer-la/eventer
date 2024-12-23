@@ -11,14 +11,14 @@ RSpec.describe 'Admin Articles', type: :feature do
 
   describe 'index page' do
     it 'lists all articles' do
-      article1 = create(:article, title: 'First Article')
+      article1 = create(:article, title: 'First Article', published: true)
       article2 = create(:article, title: 'Second Article')
 
       visit admin_articles_path
 
       expect(page).to have_content('Articles')
       expect(page).to have_content(article1.title)
-      expect(page).to have_content(article2.title)
+      expect(page).not_to have_content(article2.title)
     end
   end
 

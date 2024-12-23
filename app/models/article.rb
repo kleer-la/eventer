@@ -8,6 +8,9 @@ class Article < ApplicationRecord
   enum lang: %i[es en]
   belongs_to :category, optional: true
 
+  scope :published, -> { where(published: true) }
+  scope :unpublished, -> { where(published: false) }
+
   validates :title, presence: true
   validates :body, presence: true
   # validates :published, presence: true
