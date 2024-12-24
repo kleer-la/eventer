@@ -3,6 +3,20 @@
 ActiveAdmin.register Event do
   menu parent: 'Courses Mgnt'
 
+  permit_params :event_type_id, :date, :finish_date, :registration_ends,
+                :capacity, :duration, :start_time, :end_time, :mode,
+                :time_zone_name, :place, :address, :city, :country_id,
+                :trainer_id, :trainer2_id, :trainer3_id, :visibility_type,
+                :currency_iso_code, :list_price, :business_price,
+                :enterprise_6plus_price, :enterprise_11plus_price,
+                :eb_price, :couples_eb_price, :business_eb_price,
+                :eb_end_date, :registration_link, :show_pricing,
+                :should_ask_for_referer_code, :should_welcome_email,
+                :monitor_email, :banner_text, :banner_type,
+                :specific_subtitle, :specific_conditions,
+                :cancellation_policy, :extra_script,
+                :sepyme_enabled, :is_sold_out, :draft, :cancelled
+
   Event.attribute_names.each do |attribute|
     filter attribute.to_sym
   end
@@ -256,5 +270,305 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
         end
       end
     end
+  end
+
+  form do |f|
+    f.semantic_errors
+    script do
+      raw <<~JS
+          $(document).ready(function() {
+            // Debug helper
+            function logDebug(msg, data) {
+              console.log('DEBUG:', msg, data);
+            }
+
+            function updateDates(selectedDate) {
+              logDebug('Selected date:', selectedDate);
+              const $finishDate = $('#event_finish_date');
+              const $registrationEnds = $('#event_registration_ends');
+              const $ebEndDate = $('#event_eb_end_date');
+              if (!$finishDate.val()) {
+                $finishDate.val(selectedDate);
+              }
+              if (!$registrationEnds.val()) {
+                $registrationEnds.val(selectedDate);
+              }
+              // Calculate early bird date (10 days before)
+              try {
+                const eventDate = new Date(selectedDate);
+                const ebDate = new Date(eventDate);
+                ebDate.setDate(eventDate.getDate() - 14);
+                // Format date as YYYY-MM-DD
+                const ebFormatted = ebDate.toISOString().split('T')[0];
+                $ebEndDate.val(ebFormatted);
+              } catch (e) {
+                console.error('Error calculating dates:', e);
+              }
+            }
+
+            // Initialize date handling
+            function initializeDateHandling() {
+              const $dateInput = $('#event_date');
+              // Remove any existing handlers
+              $dateInput.off('.eventHandlers');
+              // Add new handlers
+              $dateInput.on('change.eventHandlers', function() {
+                logDebug('Date changed:', this.value);
+                updateDates(this.value);
+              });
+
+              // Monitor ActiveAdmin datepicker
+              const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                  if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                    const newValue = $dateInput.val();
+                    logDebug('Date value mutated:', newValue);
+                    updateDates(newValue);
+                  }
+                });
+              });
+
+              observer.observe($dateInput[0], {
+                attributes: true,
+                attributeFilter: ['value']
+              });
+
+              logDebug('Date handling initialized');
+            }
+
+            // Initialize after a delay to ensure ActiveAdmin is ready
+            setTimeout(initializeDateHandling, 500);
+          });
+
+        document.addEventListener('DOMContentLoaded', function() {
+          function handleOnlineMode() {
+            const modeSelect = document.getElementById('event_mode');
+            const timeZoneInput = document.getElementById('event_time_zone_name_input');
+            const cityInput = document.getElementById('event_city');
+            const addressInput = document.getElementById('event_address');
+            const countrySelect = document.getElementById('event_country_id');
+            const placeInput = document.getElementById('event_place');
+
+            if (!modeSelect) return;
+
+            if (modeSelect.value === 'ol') {
+              cityInput.value = 'Online';
+              addressInput.value = 'Online';
+              countrySelect.value = '1'; // ID for Online
+
+              cityInput.readOnly = true;
+              addressInput.readOnly = true;
+              timeZoneInput.style.display = 'block';
+            } else {
+              cityInput.readOnly = false;
+              addressInput.readOnly = false;
+              timeZoneInput.style.display = 'none';
+            }
+          }
+
+          function handleVisibilityChange() {
+            const visibilityType = document.querySelector('input[name="event[visibility_type]"]:checked');
+            const pricesSection = document.querySelector('fieldset.inputs:has(#event_list_price)');
+
+            if (!visibilityType || !pricesSection) return;
+
+            const priceFields = pricesSection.querySelectorAll('input[type="number"]');
+
+            if (visibilityType.value === 'pr') {
+              priceFields.forEach(field => {
+                if (field.id !== 'event_list_price') {
+                  field.disabled = true;
+                  field.value = '';
+                }
+              });
+              pricesSection.style.display = 'block';
+            } else if (visibilityType.value === 'co') {
+              pricesSection.style.display = 'none';
+              const listPrice = document.getElementById('event_list_price');
+              if (listPrice) listPrice.value = '0';
+            } else {
+              priceFields.forEach(field => field.disabled = false);
+              pricesSection.style.display = 'block';
+            }
+          }
+
+          function calculateDiscounts() {
+            const listPrice = parseFloat(document.getElementById('event_list_price')?.value) || 0;
+            const isPrivate = document.querySelector('input[value="pr"]')?.checked;
+
+            if (!isPrivate) {
+              const fields = {
+                'event_eb_price': 0.95,
+                'event_couples_eb_price': 0.90,
+                'event_business_price': 0.88,
+                'event_business_eb_price': 0.85,
+                'event_enterprise_6plus_price': 0.83,
+                'event_enterprise_11plus_price': 0.80
+              };
+
+              Object.entries(fields).forEach(([id, multiplier]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                  element.value = Math.ceil(listPrice * multiplier);
+                }
+              });
+            }
+          }
+            // Set up all event listeners after a delay
+          setTimeout(function() {
+            // Setup mode handling
+            const modeSelect = document.getElementById('event_mode');
+            if (modeSelect) {
+              handleOnlineMode();
+              modeSelect.addEventListener('change', handleOnlineMode);
+            }
+
+            // Setup visibility handling
+            const visibilityRadios = document.querySelectorAll('input[name="event[visibility_type]"]');
+            visibilityRadios.forEach(radio => {
+              radio.addEventListener('change', handleVisibilityChange);
+            });
+
+            // Setup price handling
+            const listPriceInput = document.getElementById('event_list_price');
+            if (listPriceInput) {
+              listPriceInput.addEventListener('change', calculateDiscounts);
+              listPriceInput.addEventListener('input', calculateDiscounts);
+            }
+
+            // Initial setup
+            handleVisibilityChange();
+            handleOnlineMode();
+          }, 100);
+        });
+      JS
+    end
+    f.inputs 'Event Details' do
+      f.input :event_type,
+              collection: EventType.all,
+              include_blank: 'Select one...'
+
+      f.input :date, as: :datepicker,
+                     input_html: {
+                       autocomplete: 'off',
+                       data: {
+                         datepicker: true,
+                         datepicker_format: 'Y-m-d',
+                         onchange: 'handleDateChange()'
+                       }
+                     }
+      f.input :finish_date, as: :datepicker,
+                            input_html: {
+                              autocomplete: 'off',
+                              data: {
+                                datepicker: true,
+                                datepicker_format: 'Y-m-d'
+                              }
+                            }
+      f.input :registration_ends, as: :datepicker,
+                                  input_html: {
+                                    autocomplete: 'off',
+                                    data: {
+                                      datepicker: true,
+                                      datepicker_format: 'Y-m-d'
+                                    }
+                                  }
+      f.input :capacity
+      f.input :duration
+      f.input :start_time, as: :time_picker
+      f.input :end_time, as: :time_picker
+      f.input :mode,
+              as: :select,
+              collection: [
+                ['Classroom', 'cl'],
+                ['Online', 'ol'],
+                ['Blended Learning', 'bl']
+              ],
+              include_blank: 'Select one...'
+      f.input :time_zone_name,
+              as: :select,
+              collection: ActiveSupport::TimeZone.all.map { |tz| [tz.to_s, tz.name] },
+              include_blank: 'Select one...'
+    end
+
+    f.inputs 'Location' do
+      f.input :place
+      f.input :address
+      f.input :city
+      f.input :country
+    end
+
+    f.inputs 'Staff' do
+      f.input :trainer
+      f.input :trainer2
+      f.input :trainer3
+    end
+
+    f.inputs 'Visibility & Pricing' do
+      f.input :visibility_type,
+              as: :radio,
+              collection: [
+                %w[Public pu],
+                %w[Private pr],
+                %w[Community co]
+              ]
+
+      f.input :currency_iso_code,
+              as: :select,
+              collection: Money::Currency.all.map { |c| ["#{c.iso_code} - #{c.name}", c.iso_code] },
+              selected: 'USD'
+
+      f.input :list_price
+      f.input :business_price
+      f.input :enterprise_6plus_price
+      f.input :enterprise_11plus_price
+
+      f.input :eb_price, label: 'Early Bird Price'
+      f.input :couples_eb_price, label: 'Couples Early Bird Price'
+      f.input :business_eb_price, label: 'Business Early Bird Price'
+      f.input :eb_end_date, as: :datepicker, label: 'Early Bird End Date',
+                            input_html: {
+                              autocomplete: 'off',
+                              data: {
+                                datepicker: true,
+                                datepicker_format: 'Y-m-d'
+                              }
+                            }
+    end
+
+    f.inputs 'Registration' do
+      f.input :registration_link, as: :url
+      f.input :show_pricing
+      f.input :should_ask_for_referer_code
+      f.input :should_welcome_email
+      f.input :monitor_email
+    end
+
+    f.inputs 'Additional Information' do
+      f.input :banner_text, as: :text
+      f.input :banner_type,
+              as: :select,
+              collection: [
+                ['Info (blue)', 'info'],
+                ['Success (green)', 'success'],
+                ['Warning (yellow)', 'warning'],
+                ['Danger (red)', 'danger']
+              ],
+              include_blank: 'Select one...'
+
+      f.input :specific_subtitle
+      f.input :specific_conditions, as: :text
+      f.input :cancellation_policy, as: :text
+      f.input :extra_script, as: :text
+    end
+
+    f.inputs 'Status' do
+      f.input :sepyme_enabled
+      f.input :is_sold_out
+      f.input :draft
+      f.input :cancelled
+    end
+
+    f.actions
   end
 end
