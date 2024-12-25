@@ -437,22 +437,6 @@ describe Event do
       end
     end
   end
-  context 'Trainers' do
-    it 'should have one trainer' do
-      @event.trainer2 = nil
-      expect(@event.trainers.count).to eq 1
-    end
-    it 'should have two trainers' do
-      @event.trainer2 = FactoryBot.build(:trainer2)
-      expect(@event.trainers.count).to eq 2
-    end
-    it 'should have three trainers' do
-      @event.trainer2 = FactoryBot.build(:trainer2)
-      @event.trainer3 = FactoryBot.build(:trainer2)
-      expect(@event.trainers.count).to eq 3
-    end
-  end
-
   context 'Capacity' do
     it 'It should return a completion percentage w/confirmed participant' do
       @event.capacity = 10
@@ -636,6 +620,115 @@ describe Event do
       FactoryBot.create(:coupon, coupon_type: :percent_off, percent_off: 40.0)
                 .event_types << event.event_type
       expect(event.ask_for_coupons_code?).to eq true
+    end
+  end
+
+  describe 'trainer validations' do
+    let(:trainer1) { create(:trainer) }
+    let(:trainer2) { create(:trainer) }
+    let(:trainer3) { create(:trainer) }
+    let(:event) { build(:event, trainer: trainer1) } # Assuming factory provides other required attributes
+
+    describe 'trainer order validation' do
+      context 'with valid trainer assignments' do
+        it 'is valid with only primary trainer' do
+          event.trainer2 = nil
+          event.trainer3 = nil
+          expect(event).to be_valid
+        end
+
+        it 'is valid with primary and secondary trainers' do
+          event.trainer2 = trainer2
+          event.trainer3 = nil
+          expect(event).to be_valid
+        end
+
+        it 'is valid with all three trainers' do
+          event.trainer2 = trainer2
+          event.trainer3 = trainer3
+          expect(event).to be_valid
+        end
+      end
+
+      context 'with invalid trainer assignments' do
+        it 'is invalid with secondary trainer but no primary trainer' do
+          event.trainer = nil
+          event.trainer2 = trainer2
+          expect(event).not_to be_valid
+          expect(event.errors[:trainer2_id]).to include(I18n.t('activerecord.errors.models.event.attributes.trainer2_id.trainer2_without_trainer1'))
+        end
+
+        it 'is invalid with tertiary trainer but no secondary trainer' do
+          event.trainer2 = nil
+          event.trainer3 = trainer3
+          expect(event).not_to be_valid
+          expect(event.errors[:trainer3_id]).to include(I18n.t('activerecord.errors.models.event.attributes.trainer3_id.trainer3_without_trainer2'))
+        end
+
+        it 'is invalid with tertiary trainer but no primary trainer' do
+          event.trainer = nil
+          event.trainer2 = trainer2
+          event.trainer3 = trainer3
+          expect(event).not_to be_valid
+          expect(event.errors[:trainer2_id]).to include(I18n.t('activerecord.errors.models.event.attributes.trainer2_id.trainer2_without_trainer1'))
+        end
+      end
+    end
+
+    describe 'unique trainers validation' do
+      context 'with unique trainer assignments' do
+        it 'is valid when all assigned trainers are different' do
+          event.trainer2 = trainer2
+          event.trainer3 = trainer3
+          expect(event).to be_valid
+        end
+      end
+
+      context 'with duplicate trainer assignments' do
+        it 'is invalid when primary and secondary trainers are the same' do
+          event.trainer2 = trainer1
+          expect(event).not_to be_valid
+          expect(event.errors[:base]).to include(I18n.t('activerecord.errors.models.event.attributes.base.duplicate_trainer'))
+        end
+
+        it 'is invalid when primary and tertiary trainers are the same' do
+          event.trainer2 = trainer2
+          event.trainer3 = trainer1
+          expect(event).not_to be_valid
+          expect(event.errors[:base]).to include(I18n.t('activerecord.errors.models.event.attributes.base.duplicate_trainer'))
+        end
+
+        it 'is invalid when secondary and tertiary trainers are the same' do
+          event.trainer2 = trainer2
+          event.trainer3 = trainer2
+          expect(event).not_to be_valid
+          expect(event.errors[:base]).to include(I18n.t('activerecord.errors.models.event.attributes.base.duplicate_trainer'))
+        end
+
+        it 'is invalid when all trainers are the same' do
+          event.trainer2 = trainer1
+          event.trainer3 = trainer1
+          expect(event).not_to be_valid
+          expect(event.errors[:base]).to include(I18n.t('activerecord.errors.models.event.attributes.base.duplicate_trainer'))
+        end
+      end
+    end
+
+    describe '#trainers method' do
+      it 'returns array with only primary trainer when others are nil' do
+        expect(event.trainers).to eq([trainer1])
+      end
+
+      it 'returns array with primary and secondary trainers when tertiary is nil' do
+        event.trainer2 = trainer2
+        expect(event.trainers).to eq([trainer1, trainer2])
+      end
+
+      it 'returns array with all trainers when all are present' do
+        event.trainer2 = trainer2
+        event.trainer3 = trainer3
+        expect(event.trainers).to eq([trainer1, trainer2, trainer3])
+      end
     end
   end
 end

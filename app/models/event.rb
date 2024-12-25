@@ -34,6 +34,8 @@ class Event < ApplicationRecord
   validates :capacity, numericality: { greater_than: 0, message: :capacity_should_be_greater_than_0 }
   validates :duration, numericality: { greater_than: 0, message: :duration_should_be_greater_than_0 }
   validates :time_zone_name, presence: true, if: :online?
+  validate :validate_trainer_order
+  validate :validate_unique_trainers
 
   validates_each :eb_end_date do |record, attr, value|
     record.errors.add(attr, :eb_end_date_should_be_earlier_than_event_date) unless value.nil? || value < record.date
@@ -364,5 +366,22 @@ class Event < ApplicationRecord
 
   def merge_dates_in_same_month(start_date, end_date)
     "#{start_date.split(' ')[0]}-#{end_date.split(' ')[0]} #{start_date[-3, 3]}"
+  end
+
+  def validate_trainer_order
+    # Check if trainer2 is present without trainer1
+    errors.add(:trainer2_id, :trainer2_without_trainer1) if trainer2.present? && trainer.blank?
+
+    # Check if trainer3 is present without trainer2
+    return unless trainer3.present? && trainer2.blank?
+
+    errors.add(:trainer3_id, :trainer3_without_trainer2)
+  end
+
+  def validate_unique_trainers
+    trainer_ids = [trainer_id, trainer2_id, trainer3_id].compact
+    return unless trainer_ids.uniq.length != trainer_ids.length
+
+    errors.add(:base, :duplicate_trainer)
   end
 end

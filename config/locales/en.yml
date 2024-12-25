@@ -42,6 +42,15 @@ en:
             one: "No fue posible guardar %{model}: 1 error"
             other: "No fue posible guardar %{model}: %{count} errores."
           body: "Por favor, verifique el/lo(s) siguente(s) campo(s):"
+        models:
+          event:
+            attributes:
+              trainer2_id:
+                trainer2_without_trainer1: Secondary trainer cannot be assigned before primary trainer
+              trainer3_id:
+                trainer3_without_trainer2: Tertiary trainer cannot be assigned before secondary trainer
+              base:
+                duplicate_trainer: A trainer cannot be assigned multiple times
         messages:
           inclusion: "no está incluido en la lista"
           exclusion: "no está disponible"
