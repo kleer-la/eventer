@@ -10,11 +10,11 @@ X agregar nuevos participantes en batch
 - link desde dashboard a event/view
 
 ## Event
-- lógica fechas
-- lógica OL
+X lógica fechas
+X lógica OL
 - lógica trainers
-- logica precios
-- logica visibilidad
+X logica precios
+X logica visibilidad
 
 ## event Type
 - Probar certificados

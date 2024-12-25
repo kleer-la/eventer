@@ -277,13 +277,7 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
     script do
       raw <<~JS
           $(document).ready(function() {
-            // Debug helper
-            function logDebug(msg, data) {
-              console.log('DEBUG:', msg, data);
-            }
-
             function updateDates(selectedDate) {
-              logDebug('Selected date:', selectedDate);
               const $finishDate = $('#event_finish_date');
               const $registrationEnds = $('#event_registration_ends');
               const $ebEndDate = $('#event_eb_end_date');
@@ -309,12 +303,9 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
             // Initialize date handling
             function initializeDateHandling() {
               const $dateInput = $('#event_date');
-              // Remove any existing handlers
-              $dateInput.off('.eventHandlers');
-              // Add new handlers
+              $dateInput.off('.eventHandlers');// Remove any existing handlers
               $dateInput.on('change.eventHandlers', function() {
-                logDebug('Date changed:', this.value);
-                updateDates(this.value);
+                updateDates(this.value);// Add new handlers
               });
 
               // Monitor ActiveAdmin datepicker
@@ -322,50 +313,67 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
                 mutations.forEach(function(mutation) {
                   if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
                     const newValue = $dateInput.val();
-                    logDebug('Date value mutated:', newValue);
                     updateDates(newValue);
                   }
                 });
               });
-
               observer.observe($dateInput[0], {
                 attributes: true,
                 attributeFilter: ['value']
               });
-
-              logDebug('Date handling initialized');
             }
-
             // Initialize after a delay to ensure ActiveAdmin is ready
             setTimeout(initializeDateHandling, 500);
-          });
 
-        document.addEventListener('DOMContentLoaded', function() {
           function handleOnlineMode() {
-            const modeSelect = document.getElementById('event_mode');
-            const timeZoneInput = document.getElementById('event_time_zone_name_input');
-            const cityInput = document.getElementById('event_city');
-            const addressInput = document.getElementById('event_address');
-            const countrySelect = document.getElementById('event_country_id');
-            const placeInput = document.getElementById('event_place');
+            const $modeSelect = $('#event_mode');
+            const $timeZoneInput = $('#event_time_zone_name_input');
+            const $cityInput = $('#event_city');
+            const $addressInput = $('#event_address');
+            const $countrySelect = $('#event_country_id');
 
-            if (!modeSelect) return;
-
-            if (modeSelect.value === 'ol') {
-              cityInput.value = 'Online';
-              addressInput.value = 'Online';
-              countrySelect.value = '1'; // ID for Online
-
-              cityInput.readOnly = true;
-              addressInput.readOnly = true;
-              timeZoneInput.style.display = 'block';
+           if ($modeSelect.val() === 'ol') {
+              $cityInput.val('Online').prop('readonly', true);
+              $addressInput.val('Online').prop('readonly', true);
+              $countrySelect.val("1").trigger('change.select2');
+              $timeZoneInput.show();
             } else {
-              cityInput.readOnly = false;
-              addressInput.readOnly = false;
-              timeZoneInput.style.display = 'none';
+              $cityInput.prop('readonly', false);
+              $addressInput.prop('readonly', false);
+              $timeZoneInput.hide();
             }
           }
 
+          function handleTimezoneChange() {
+            const $timezoneSelect = $('#event_time_zone_name');
+            const $placeInput = $('#event_place');
+            const $modeSelect = $('#event_mode');
+
+            $timezoneSelect.on('change', function() {
+              if ($modeSelect.val() === 'ol') {
+                // Get the selected timezone text
+                const selectedTimezone = $(this).find('option:selected').text();
+                // Update the place field with the timezone description
+                $placeInput.val(selectedTimezone);
+              }
+            });
+          }
+
+          // Initial setup with delay for ActiveAdmin
+          setTimeout(function() {
+            const $modeSelect = $('#event_mode');
+            // Bind using jQuery on() for better event delegation
+            $modeSelect.on('change', function() {
+              handleOnlineMode();
+            });
+
+            // Initial call
+            handleTimezoneChange();
+            handleOnlineMode();
+          }, 500);
+          });
+
+        document.addEventListener('DOMContentLoaded', function() {
           function handleVisibilityChange() {
             const visibilityType = document.querySelector('input[name="event[visibility_type]"]:checked');
             const pricesSection = document.querySelector('fieldset.inputs:has(#event_list_price)');
@@ -416,12 +424,6 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
           }
             // Set up all event listeners after a delay
           setTimeout(function() {
-            // Setup mode handling
-            const modeSelect = document.getElementById('event_mode');
-            if (modeSelect) {
-              handleOnlineMode();
-              modeSelect.addEventListener('change', handleOnlineMode);
-            }
 
             // Setup visibility handling
             const visibilityRadios = document.querySelectorAll('input[name="event[visibility_type]"]');
@@ -438,7 +440,6 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
 
             // Initial setup
             handleVisibilityChange();
-            handleOnlineMode();
           }, 100);
         });
       JS
