@@ -332,7 +332,7 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
             const $addressInput = $('#event_address');
             const $countrySelect = $('#event_country_id');
 
-           if ($modeSelect.val() === 'ol') {
+            if ($modeSelect.val() === 'ol') {
               $cityInput.val('Online').prop('readonly', true);
               $addressInput.val('Online').prop('readonly', true);
               $countrySelect.val("1").trigger('change.select2');
@@ -442,6 +442,106 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
             handleVisibilityChange();
           }, 100);
         });
+
+        $(document).ready(function() {
+          // Store references to our select elements
+          const trainerSelects = {
+            trainer1: $('#event_trainer_id'),
+            trainer2: $('#event_trainer2_id'),
+            trainer3: $('#event_trainer3_id')
+          };
+
+          function clearErrorMessage($select) {
+            const $wrapper = $select.closest('.input');
+            $wrapper.removeClass('error');
+            $wrapper.find('.inline-errors').remove();
+          }
+
+          function addErrorMessage($select, message) {
+            const $wrapper = $select.closest('.input');
+            $wrapper.addClass('error');
+            if (!$wrapper.find('.inline-errors').length) {
+              $wrapper.append(`<p class="inline-errors">${message}</p>`);
+            }
+          }
+
+          function validateTrainerOrder() {
+            // Clear all previous error messages first
+            Object.values(trainerSelects).forEach(clearErrorMessage);
+
+            const trainer1Value = trainerSelects.trainer1.val();
+            const trainer2Value = trainerSelects.trainer2.val();
+            const trainer3Value = trainerSelects.trainer3.val();
+
+            // Check trainer2 requires trainer1
+            if (trainer2Value && !trainer1Value) {
+              addErrorMessage(trainerSelects.trainer2,#{' '}
+                "2nd trainer cannot be assigned before 1st trainer");
+            }
+
+            // Check trainer3 requires trainer2
+            if (trainer3Value && !trainer2Value) {
+              addErrorMessage(trainerSelects.trainer3,#{' '}
+                "3rd trainer cannot be assigned before 2nd trainer");
+            }
+          }
+
+          function validateUniqueTrainers() {
+            const selectedTrainers = new Map();
+            // Collect all selected trainers
+            Object.entries(trainerSelects).forEach(([position, $select]) => {
+              const value = $select.val();
+              if (value) {
+                if (selectedTrainers.has(value)) {
+                  // Duplicate found - mark both the original and duplicate with errors
+                  addErrorMessage($select, "Trainer is already assigned");
+                  addErrorMessage(selectedTrainers.get(value), "Trainer is already assigned");
+                } else {
+                  selectedTrainers.set(value, $select);
+                }
+              }
+            });
+          }
+
+          function updateDisabledOptions() {
+            const selectedValues = new Set(
+              Object.values(trainerSelects)
+                .map($select => $select.val())
+                .filter(Boolean)
+            );
+
+            // For each select
+            Object.values(trainerSelects).forEach($select => {
+              const currentValue = $select.val();
+              // For each option in this select
+              $select.find('option').each(function() {
+                const $option = $(this);
+                const value = $option.val();
+                // Don't disable empty option or currently selected value
+                if (!value || value === currentValue) {
+                  $option.prop('disabled', false);
+                  return;
+                }
+                // Disable if selected in another dropdown
+                $option.prop('disabled', selectedValues.has(value));
+              });
+            });
+          }
+
+          function validateAll() {
+            validateTrainerOrder();
+            validateUniqueTrainers();
+            updateDisabledOptions();
+          }
+
+          // Bind event handlers
+          Object.values(trainerSelects).forEach($select => {
+            $select.on('change', validateAll);
+          });
+
+          // Run initial validation
+          validateAll();
+        });
       JS
     end
     f.inputs 'Event Details' do
@@ -500,11 +600,16 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
     end
 
     f.inputs 'Staff' do
-      f.input :trainer
-      f.input :trainer2
-      f.input :trainer3
+      f.input :trainer,
+              wrapper_html: { class: 'trainer-select' },
+              input_html: { class: 'trainer-field', data: { trainer_position: 1 } }
+      f.input :trainer2,
+              wrapper_html: { class: 'trainer-select' },
+              input_html: { class: 'trainer-field', data: { trainer_position: 2 } }
+      f.input :trainer3,
+              wrapper_html: { class: 'trainer-select' },
+              input_html: { class: 'trainer-field', data: { trainer_position: 3 } }
     end
-
     f.inputs 'Visibility & Pricing' do
       f.input :visibility_type,
               as: :radio,
