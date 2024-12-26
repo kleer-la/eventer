@@ -10,19 +10,10 @@ panel 'Participants List' do
     column 'Contact Info' do |p|
       "#{p.phone} - #{p.influence_zone&.display_name} - #{p.address}"
     end
+    column :quantity
 
     column :status do |p|
-      status_color = {
-        'N' => '#f34541',
-        'T' => '#9564e2',
-        'C' => '#00acec',
-        'A' => '#49bf67',
-        'K' => '#00b0b0',
-        'X' => '#f8a326',
-        'D' => '#f8a326'
-      }
-
-      div style: "background-color: #{status_color[p.status]}; color: white; padding: 3px 6px; border-radius: 3px;" do
+      div style: "background-color: #{p.status_color}; color: white; padding: 3px 6px; border-radius: 3px;" do
         best_in_place p, :status,
                       as: :select,
                       url: "/events/#{p.event.id}/participants/#{p.id}",
