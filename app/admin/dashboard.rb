@@ -31,7 +31,7 @@ ActiveAdmin.register_page 'Dashboard' do
                 human_hours = event.start_time.strftime('%H:%Mhs.')
                 trainers = event.trainers.pluck(:name).join(',')
                 link_to "#{event.event_type.name} - #{event.date} | #{event.city} | #{human_hours} | #{event.place} | #{trainers}",
-                        event_participants_path(event)
+                        admin_event_path(event)
               end
               column(nil, class: 'cell-semaphore') do |event|
                 confirmed_rate = event.confirmed_quantity.to_f / event.capacity

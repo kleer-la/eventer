@@ -12,16 +12,17 @@ X agregar nuevos participantes en batch
 ## Event
 X lógica fechas
 X lógica OL
-- lógica trainers
+X lógica trainers
 X logica precios
 X logica visibilidad
+
 
 ## event Type
 - Probar certificados
 - ???
 
 ## Participants
-- use status color from model
+X use status color from model
 
 ## Gral
 - Revisar ActiveAdmin actuales para evitar N+1 queries
