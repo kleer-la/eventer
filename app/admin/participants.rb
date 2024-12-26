@@ -7,31 +7,26 @@ ActiveAdmin.register Participant do
 
   controller do
     def scoped_collection
+      participant_columns = %w[
+        id created_at fname lname email phone address quantity status notes
+        influence_zone_id event_id campaign_id campaign_source_id
+        company_name id_number invoice_id xero_invoice_number is_payed
+        selected testimony photo_url profile_url
+        promoter_score event_rating trainer_rating trainer2_rating
+        referer_code verification_code
+      ].map { |col| "participants.#{col}" }
+
       super.includes(
         :influence_zone,
         { influence_zone: :country },
         { event: [:event_type] }
-      ).select(
-        'participants.id',
-        'participants.created_at',
-        'participants.fname',
-        'participants.lname',
-        'participants.email',
-        'participants.phone',
-        'participants.address',
-        'participants.quantity',
-        'participants.status',
-        'participants.notes',
-        'participants.influence_zone_id',
-        'participants.event_id',
-        'participants.campaign_id',
-        'participants.campaign_source_id',
+      ).select(participant_columns + [
         'influence_zones.zone_name',
         'influence_zones.tag_name',
         'countries.name as country_name',
         'events.date as event_date',
         'event_types.name as event_type_name'
-      ).joins(
+      ]).joins(
         'LEFT JOIN influence_zones ON influence_zones.id = participants.influence_zone_id
          LEFT JOIN countries ON countries.id = influence_zones.country_id
          LEFT JOIN events ON events.id = participants.event_id
@@ -63,6 +58,7 @@ ActiveAdmin.register Participant do
 
   member_action :copy, method: :post do
     original_participant = resource
+    # original_participant = Participant.find(resource.id)
     copies_to_create = [1, original_participant.quantity - 1].max
 
     ActiveRecord::Base.transaction do
