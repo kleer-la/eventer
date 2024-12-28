@@ -7,7 +7,7 @@ X participant copy -> qty <-1
 / download certificate  (moverlo a ActiveAdmin)
 X agregar nuevos participantes en batch
 - best in place
-- link desde dashboard a event/view
+X link desde dashboard a event/view
 
 ## Event
 X lógica fechas
@@ -15,7 +15,8 @@ X lógica OL
 X lógica trainers
 X logica precios
 X logica visibilidad
-
+- carga dinámica de trainers x tipo evento
+- carga dinámica de política de cancelación x tipo evento
 
 ## event Type
 - Probar certificados

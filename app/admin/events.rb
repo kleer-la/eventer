@@ -27,6 +27,17 @@ ActiveAdmin.register Event do
   action_item :view_old_version, only: :index do
     link_to 'Old version', events_path, class: 'button'
   end
+  member_action :trainers, method: :get do
+    @event_type = EventType.find_by(id: params[:event_type_id])
+    trainers = @event_type ? @event_type.trainers : []
+    render json: trainers.map { |t| { id: t.id, name: t.name } }
+  end
+
+  member_action :cancellation_policy, method: :get do
+    @event_type = EventType.find_by(id: params[:event_type_id])
+    policy = @event_type&.cancellation_policy
+    render json: { policy: }
+  end
 
   controller do
     def scoped_collection
@@ -442,105 +453,134 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
             handleVisibilityChange();
           }, 100);
         });
-
+      JS
+    end
+    script do
+      raw <<~JS
         $(document).ready(function() {
-          // Store references to our select elements
+          const eventTypeSelect = $('#event_event_type_id');
           const trainerSelects = {
             trainer1: $('#event_trainer_id'),
             trainer2: $('#event_trainer2_id'),
             trainer3: $('#event_trainer3_id')
           };
+          const cancellationPolicyField = $('#event_cancellation_policy');
 
-          function clearErrorMessage($select) {
-            const $wrapper = $select.closest('.input');
-            $wrapper.removeClass('error');
-            $wrapper.find('.inline-errors').remove();
+          function updateTrainers(eventTypeId) {
+            if (!eventTypeId) return;
+
+            $.get('/admin/events/' + #{resource.id || 0} + '/trainers', { event_type_id: eventTypeId })
+              .done(function(trainers) {
+                // Update all trainer selects
+                Object.values(trainerSelects).forEach($select => {
+                  const currentValue = $select.val();
+                  $select.empty();
+                  $select.append('<option value="">Select trainer...</option>');
+
+                  trainers.forEach(trainer => {
+                    $select.append(
+                      $('<option></option>')
+                        .val(trainer.id)
+                        .text(trainer.name)
+                    );
+                  });
+
+                  // Restore selected value if it still exists in new options
+                  if (currentValue && trainers.some(t => t.id.toString() === currentValue)) {
+                    $select.val(currentValue);
+                  }
+                });
+
+                validateTrainerSelections();
+              });
           }
 
-          function addErrorMessage($select, message) {
-            const $wrapper = $select.closest('.input');
-            $wrapper.addClass('error');
-            if (!$wrapper.find('.inline-errors').length) {
-              $wrapper.append(`<p class="inline-errors">${message}</p>`);
+          function updateCancellationPolicy(eventTypeId) {
+            if (!eventTypeId) return;
+
+            const cancellationPolicyField = $('#event_cancellation_policy');
+            if (!cancellationPolicyField.length) {
+              console.log('Cancellation policy field not found');
+              return;
+            }
+
+            if (cancellationPolicyField.val().trim() === '') {
+              $.get('/admin/events/' + #{resource.id || 0} + '/cancellation_policy', { event_type_id: eventTypeId })
+                .done(function(data) {
+                  if (data.policy) {
+                    cancellationPolicyField.val(data.policy);
+                  } else {
+                    console.log('No policy data received');
+                  }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                  console.error('Failed to fetch policy:', textStatus, errorThrown);
+                });
             }
           }
 
-          function validateTrainerOrder() {
-            // Clear all previous error messages first
-            Object.values(trainerSelects).forEach(clearErrorMessage);
+          function validateTrainerSelections() {
+            // Clear previous validations
+            Object.values(trainerSelects).forEach($select => {
+              $select.closest('.input').removeClass('error');
+              $select.closest('.input').find('.inline-errors').remove();
+            });
 
-            const trainer1Value = trainerSelects.trainer1.val();
-            const trainer2Value = trainerSelects.trainer2.val();
-            const trainer3Value = trainerSelects.trainer3.val();
+            const selectedTrainers = new Set();
+            let hasError = false;
 
-            // Check trainer2 requires trainer1
-            if (trainer2Value && !trainer1Value) {
-              addErrorMessage(trainerSelects.trainer2,#{' '}
-                "2nd trainer cannot be assigned before 1st trainer");
-            }
-
-            // Check trainer3 requires trainer2
-            if (trainer3Value && !trainer2Value) {
-              addErrorMessage(trainerSelects.trainer3,#{' '}
-                "3rd trainer cannot be assigned before 2nd trainer");
-            }
-          }
-
-          function validateUniqueTrainers() {
-            const selectedTrainers = new Map();
-            // Collect all selected trainers
-            Object.entries(trainerSelects).forEach(([position, $select]) => {
+            Object.entries(trainerSelects).forEach(([key, $select]) => {
               const value = $select.val();
-              if (value) {
-                if (selectedTrainers.has(value)) {
-                  // Duplicate found - mark both the original and duplicate with errors
-                  addErrorMessage($select, "Trainer is already assigned");
-                  addErrorMessage(selectedTrainers.get(value), "Trainer is already assigned");
-                } else {
-                  selectedTrainers.set(value, $select);
-                }
+              if (!value) return;
+
+              // Check for duplicates
+              if (selectedTrainers.has(value)) {
+                $select.closest('.input').addClass('error')
+                      .append('<p class="inline-errors">This trainer is already selected</p>');
+                hasError = true;
+              }
+              selectedTrainers.add(value);
+
+              // Check for proper order (can't have trainer2 without trainer1, etc.)
+              if (key === 'trainer2' && !trainerSelects.trainer1.val()) {
+                $select.closest('.input').addClass('error')
+                      .append('<p class="inline-errors">Cannot select second trainer without first trainer</p>');
+                hasError = true;
+              }
+              if (key === 'trainer3' && !trainerSelects.trainer2.val()) {
+                $select.closest('.input').addClass('error')
+                      .append('<p class="inline-errors">Cannot select third trainer without second trainer</p>');
+                hasError = true;
               }
             });
+
+            return !hasError;
           }
 
-          function updateDisabledOptions() {
-            const selectedValues = new Set(
-              Object.values(trainerSelects)
-                .map($select => $select.val())
-                .filter(Boolean)
-            );
-
-            // For each select
-            Object.values(trainerSelects).forEach($select => {
-              const currentValue = $select.val();
-              // For each option in this select
-              $select.find('option').each(function() {
-                const $option = $(this);
-                const value = $option.val();
-                // Don't disable empty option or currently selected value
-                if (!value || value === currentValue) {
-                  $option.prop('disabled', false);
-                  return;
-                }
-                // Disable if selected in another dropdown
-                $option.prop('disabled', selectedValues.has(value));
-              });
-            });
-          }
-
-          function validateAll() {
-            validateTrainerOrder();
-            validateUniqueTrainers();
-            updateDisabledOptions();
-          }
-
-          // Bind event handlers
-          Object.values(trainerSelects).forEach($select => {
-            $select.on('change', validateAll);
+          // Event handlers
+          eventTypeSelect.on('change', function() {
+            const eventTypeId = $(this).val();
+            updateTrainers(eventTypeId);
+            updateCancellationPolicy(eventTypeId);
           });
 
-          // Run initial validation
-          validateAll();
+          Object.values(trainerSelects).forEach($select => {
+            $select.on('change', validateTrainerSelections);
+          });
+
+          // Initialize if event type is already selected
+          if (eventTypeSelect.val()) {
+            updateTrainers(eventTypeSelect.val());
+            updateCancellationPolicy(eventTypeSelect.val());
+          }
+
+          // Add form validation
+          $('form').on('submit', function(e) {
+            if (!validateTrainerSelections()) {
+              e.preventDefault();
+              alert('Please fix the trainer selection errors before submitting.');
+            }
+          });
         });
       JS
     end
@@ -600,15 +640,9 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
     end
 
     f.inputs 'Staff' do
-      f.input :trainer,
-              wrapper_html: { class: 'trainer-select' },
-              input_html: { class: 'trainer-field', data: { trainer_position: 1 } }
-      f.input :trainer2,
-              wrapper_html: { class: 'trainer-select' },
-              input_html: { class: 'trainer-field', data: { trainer_position: 2 } }
-      f.input :trainer3,
-              wrapper_html: { class: 'trainer-select' },
-              input_html: { class: 'trainer-field', data: { trainer_position: 3 } }
+      f.input :trainer
+      f.input :trainer2
+      f.input :trainer3
     end
     f.inputs 'Visibility & Pricing' do
       f.input :visibility_type,
