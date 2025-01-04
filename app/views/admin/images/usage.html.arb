@@ -1,22 +1,52 @@
-panel "Usage of Image: #{@image_key}" do
-  img src: image_url, style: 'max-width: 200px; max-height: 200px;'
-
-  usage.each do |model, instances|
-    h3 model.to_s.titleize
-    table_for instances do
-      column :slug do |instance|
-        link_to instance[:slug], send("admin_#{model}_path", instance[:id])
+# app/views/admin/images/usage.html.arb
+panel "Image Usage - #{image_key}" do
+  columns do
+    column do
+      panel 'Image Preview' do
+        image_tag image_url, style: 'max-width: 300px'
       end
-      column :field
-      column :type
+
+      panel 'Actions' do
+        if usage.any?
+          div class: 'delete-warning' do
+            para 'This image cannot be deleted as it is currently in use. Please remove all references first.',
+                 style: 'color: red;'
+          end
+        else
+          div class: 'delete-action' do
+            button_to 'Delete Image',
+                      admin_images_delete_path(bucket: image_bucket, key: image_key),
+                      method: :delete,
+                      data: { confirm: 'Are you sure you want to delete this image?' },
+                      class: 'button'
+          end
+        end
+      end
     end
-  end
 
-  para 'This image is not used in any known location.' if usage.empty?
-end
+    column do
+      panel 'Usage Details' do
+        if usage.any?
+          usage.each do |model, instances|
+            h3 model.to_s.titleize
+            table_for instances do
+              column :id
+              column :slug if instances.first[:slug].present?
+              column :field
+              column :type
+              column 'Link' do |instance|
+                # Assuming you have a route helper for each model
 
-div class: 'actions' do
-  span class: 'action_item' do
-    link_to 'Back to Images', admin_images_path(bucket: image_bucket), class: 'button'
+                link_to "View #{model}", send("admin_#{model}_path", instance[:id])
+              rescue StandardError
+                "ID: #{instance[:id]}"
+              end
+            end
+          end
+        else
+          para 'This image is not currently in use in any model.'
+        end
+      end
+    end
   end
 end

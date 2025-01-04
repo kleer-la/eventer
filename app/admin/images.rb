@@ -173,6 +173,31 @@ ActiveAdmin.register_page 'Images' do
     render 'show', layout: 'active_admin'
   end
 
+  page_action :delete, method: :delete do
+    @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
+    @image_key = params[:key]
+    @image_url = FileStoreService.image_url(@image_key, @image_bucket)
+
+    # Check if image is in use
+    usage = ImageUsageService.find_usage(@image_url)
+
+    if usage.any?
+      flash[:error] = 'Cannot delete image as it is in use. Please remove all references first.'
+      redirect_to admin_images_usage_path(bucket: @image_bucket, key: @image_key)
+      return
+    end
+
+    store = FileStoreService.current
+    begin
+      store.delete(@image_key, @image_bucket)
+      flash[:notice] = 'Image successfully deleted'
+    rescue StandardError => e
+      flash[:error] = "Error deleting image: #{e.message}"
+    end
+
+    redirect_to admin_images_path
+  end
+
   page_action :usage, method: :get do
     @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
     @image_key = params[:key]

@@ -2,20 +2,23 @@ panel 'Image Details' do
   attributes_table_for image_key do
     row 'Image' do
       if image_url.end_with?('.pdf')
-        embed src: image_url, type: "application/pdf", width: "100%", height: "600px"
+        embed src: image_url,
+              type: 'application/pdf',
+              width: '100%',
+              height: '600px'
       else
         image_tag image_url, style: 'max-width: 500px; max-height: 500px;'
       end
     end
-    
+
     row 'Bucket' do
       image_bucket
     end
-    
+
     row 'Key' do
       image_key
     end
-    
+
     row 'URL' do
       div class: 'url-container' do
         span image_url

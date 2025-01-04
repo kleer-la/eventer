@@ -108,6 +108,13 @@ class FileStoreService
     img_list = list('image').map(&:key)
     img_list.unshift '' # add empty option
   end
+
+  def delete(key, image_bucket = 'image')
+    bucket, folder = self.class.image_location(image_bucket)
+    file_path = folder.to_s + key
+    object = @store.objects(file_path, bucket)
+    object.delete
+  end
 end
 
 class NullFileStore
@@ -123,6 +130,10 @@ class NullFileStore
     list = OpenStruct.new
     list.contents = [NullStoreObject.new('some file.png', exists: @exists)]
     list
+  end
+
+  def delete(key, bucket_name = nil)
+    # No-op for testing
   end
 end
 
