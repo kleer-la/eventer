@@ -3,6 +3,9 @@
 require 'valid_email'
 
 class Participant < ApplicationRecord
+  include ImageReference
+  references_images_in :photo_url
+
   belongs_to :event
   belongs_to :influence_zone, optional: true
   belongs_to :campaign, optional: true

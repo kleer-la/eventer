@@ -5,6 +5,12 @@ class Resource < ApplicationRecord
   include FileSizeChecker
   extend FriendlyId
   friendly_id :title_es, use: %i[slugged history]
+
+  include ImageReference
+
+  references_images_in :cover_es, :cover_en,
+                       text_fields: %i[getit_es getit_en]
+
   belongs_to :category, optional: true
 
   enum format: { card: 0, book: 1, infographic: 2, canvas: 3,

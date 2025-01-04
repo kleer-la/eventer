@@ -2,6 +2,10 @@
 
 class EventType < ApplicationRecord
   include Recommendable
+  include ImageReference
+
+  references_images_in :brochure, :cover, :kleer_cert_seal_image, :side_image,
+                       text_fields: %i[description program recipients faq]
 
   belongs_to :canonical, class_name: 'EventType', optional: true
   has_and_belongs_to_many :trainers

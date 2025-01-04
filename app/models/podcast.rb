@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Podcast < ApplicationRecord
+  include ImageReference
+  references_images_in :thumbnail_url
+
   has_many :episodes, dependent: :destroy
   has_rich_text :description
 

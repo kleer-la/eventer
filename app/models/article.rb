@@ -4,6 +4,11 @@ class Article < ApplicationRecord
   include Recommendable
   extend FriendlyId
   friendly_id :title, use: %i[slugged history]
+
+  include ImageReference
+  references_images_in :cover,
+                       text_fields: %i[body description]
+
   has_and_belongs_to_many :trainers
   enum lang: %i[es en]
   belongs_to :category, optional: true

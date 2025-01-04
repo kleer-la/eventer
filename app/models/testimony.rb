@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Testimony < ApplicationRecord
+  include ImageReference
+  references_images_in :photo_url
+
   belongs_to :service
   has_rich_text :testimony
 
