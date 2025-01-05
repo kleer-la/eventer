@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Trainer < ApplicationRecord
+  include ImageReference
+  references_images_in :signature_image, :landing
+
   belongs_to :country, optional: true
   has_and_belongs_to_many :event_types
 

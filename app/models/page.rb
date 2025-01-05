@@ -5,7 +5,10 @@ class Page < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: %i[slugged history scoped], scope: :lang
 
-  enum lang:  %i[es en]
+  include ImageReference
+  references_images_in :cover
+
+  enum lang: %i[es en]
 
   validates :name, presence: true
   validates :lang, presence: true

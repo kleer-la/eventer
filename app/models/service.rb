@@ -5,6 +5,10 @@ class Service < ApplicationRecord
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]
+
+  include ImageReference
+  references_images_in :brochure, :side_image
+
   belongs_to :service_area
   has_many :testimonies
 

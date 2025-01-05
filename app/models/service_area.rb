@@ -5,6 +5,9 @@ class ServiceArea < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]
 
+  include ImageReference
+  references_images_in :icon, :side_image
+
   enum lang: { sp: 0, en: 1 }
   has_many :services, dependent: :destroy
 
