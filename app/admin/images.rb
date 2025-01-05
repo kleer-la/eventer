@@ -81,9 +81,29 @@ ActiveAdmin.register_page 'Images' do
     script do
       raw <<~JS
         $(document).ready(function() {
+          function cleanFilename(filename) {
+            // Split filename and extension
+            var lastDotIndex = filename.lastIndexOf('.');
+            var basename = lastDotIndex !== -1 ? filename.slice(0, lastDotIndex) : filename;
+            var extension = lastDotIndex !== -1 ? filename.slice(lastDotIndex) : '';
+        #{'    '}
+            // Clean the basename
+            var cleaned = basename
+              .normalize('NFD')                     // Normalize unicode characters
+              .replace(/[\u0300-\u036f]/g, '')     // Remove diacritics
+              .toLowerCase()                        // Convert to lowercase
+              .replace(/[^a-z0-9]+/g, '-')         // Replace special chars with hyphen
+              .replace(/^-+|-+$/g, '')             // Remove leading/trailing hyphens
+              .replace(/-+/g, '-');                // Replace multiple hyphens with single hyphen
+        #{'    '}
+            // Return cleaned name with lowercase extension
+            return cleaned + extension.toLowerCase();
+          }
+
           $('#image_file').change(function() {
             var fileName = $(this).val().split('\\\\').pop();
-            $('#image_path').val(fileName);
+            var cleanedFilename = cleanFilename(fileName);
+            $('#image_path').val(cleanedFilename);
           });
         });
       JS
