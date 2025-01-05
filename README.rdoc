@@ -86,3 +86,6 @@ Configurar el mail de destino con CONTACT_US_MAILTO
 
 Ejemplo como generar Claves para CONTACT_US_SECRET
   openssl rand -base64 128
+
+== ImageReference
+rails image_reference:list

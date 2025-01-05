@@ -15,8 +15,8 @@ X lógica OL
 X lógica trainers
 X logica precios
 X logica visibilidad
-- carga dinámica de trainers x tipo evento
-- carga dinámica de política de cancelación x tipo evento
+X carga dinámica de trainers x tipo evento
+X carga dinámica de política de cancelación x tipo evento
 
 ## event Type
 - Probar certificados
