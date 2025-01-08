@@ -29,7 +29,8 @@ X use status color from model
 - Revisar ActiveAdmin actuales para evitar N+1 queries
 
 ## imagenes
-- mostrar pdf en vez de bajarlos
-- borrar imágenes
-- filtro
+X mostrar pdf en vez de bajarlos
+X borrar imágenes
+? filtro
+X Limpiar nombre
 
