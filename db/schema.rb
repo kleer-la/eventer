@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_17_180038) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_08_115456) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -620,6 +620,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_17_180038) do
     t.text "bio_en"
     t.boolean "deleted", default: false
     t.string "landing"
+    t.text "long_bio"
+    t.text "long_bio_en"
   end
 
   create_table "translations", force: :cascade do |t|

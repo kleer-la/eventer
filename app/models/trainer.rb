@@ -25,6 +25,7 @@ class Trainer < ApplicationRecord
 
   scope :kleerer, -> { where(is_kleerer: true) }
   scope :active, -> { where(deleted: false) }
+  scope :deleted, -> { where(deleted: true) }
   scope :sorted, -> { where(deleted: false).order('name asc') } # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}
 
   validates :name, presence: true
@@ -37,6 +38,8 @@ class Trainer < ApplicationRecord
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[average_rating bio bio_en country_id created_at deleted gravatar_email id id_value
-       is_kleerer landing linkedin_url name net_promoter_score promoter_count signature_credentials signature_image surveyed_count tag_name twitter_username updated_at]
+       is_kleerer landing linkedin_url name net_promoter_score promoter_count signature_credentials signature_image
+       long_bio long_bio_en
+       surveyed_count tag_name twitter_username updated_at]
   end
 end
