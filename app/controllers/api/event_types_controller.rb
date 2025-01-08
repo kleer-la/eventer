@@ -15,10 +15,11 @@ module Api
     # GET /event_types/1
     # GET /event_types/1.json
     def show
-      @event_type = EventType.find(params[:id])
-
-      respond_to do |format|
-        format.json { render json: event_type_to_json(@event_type) }
+      @event_type = EventType.find_by(id: params[:id])
+      if @event_type
+        render json: event_type_to_json(@event_type)
+      else
+        render json: { error: 'Event type not found' }, status: :not_found
       end
     end
 

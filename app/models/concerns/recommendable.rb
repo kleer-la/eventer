@@ -28,9 +28,11 @@ module Recommendable
 
   def recommended
     recommended_contents.includes(:target).order(:relevance_order).map do |content|
+      next unless content.target.present? # Skip if target is nil
+
       content.target.as_recommendation.merge('relevance_order' => content.relevance_order,
                                              'level' => calculate_level(content.relevance_order))
-    end
+    end.compact
   end
 
   class_methods do

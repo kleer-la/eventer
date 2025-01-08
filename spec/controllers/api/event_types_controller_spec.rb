@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe Api::EventTypesController do
-  describe "GET 'event_types' (/api/event_types/#.<format>)" do
+  describe "'event_types' (/api/event_types/#.<format>)" do
     it 'fetch a event_type' do
       et = FactoryBot.create(:event_type)
       get :show, params: { id: et.to_param, format: 'json' }
@@ -73,6 +73,40 @@ describe Api::EventTypesController do
       recommended_item = json_response['recommended'].first
       expect(recommended_item['id']).to eq(recommended.id)
       expect(recommended_item['type']).to eq('resource')
+    end
+
+    it 'handles nil recommended content gracefully' do
+      event_type = create(:event_type)
+      # Create a recommended content with nil target
+      RecommendedContent.create(source: event_type, target: nil, relevance_order: 50)
+
+      get :show, params: { id: event_type.id, format: 'json' }
+
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response['recommended']).to be_an(Array)
+      expect(json_response['recommended']).to be_empty
+    end
+
+    it 'handles non-existent event type' do
+      # Try to get a non-existent event type ID
+      get :show, params: { id: 999_999, format: 'json' }
+
+      expect(response).to have_http_status(:not_found)
+      json_response = JSON.parse(response.body)
+      expect(json_response).to include('error')
+    end
+
+    it 'handles empty recommended contents' do
+      event_type = create(:event_type)
+      # Don't create any recommended content
+
+      get :show, params: { id: event_type.id, format: 'json' }
+
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response['recommended']).to be_an(Array)
+      expect(json_response['recommended']).to be_empty
     end
   end
 end
