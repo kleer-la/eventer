@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_08_115456) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_11_130852) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -526,6 +526,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_08_115456) do
     t.text "long_description_en"
     t.string "preview_es"
     t.string "preview_en"
+    t.string "seo_description_es"
+    t.string "seo_description_en"
+    t.string "tabtitle_es"
+    t.string "tabtitle_en"
     t.index ["categories_id"], name: "index_resources_on_categories_id"
     t.index ["slug"], name: "index_resources_on_slug", unique: true
     t.index ["trainers_id"], name: "index_resources_on_trainers_id"

@@ -7,6 +7,7 @@ ActiveAdmin.register Resource do
                 :share_text_es, :share_text_en, :tags_es, :tags_en,
                 :long_description_es, :preview_es,
                 :long_description_en, :preview_en,
+                :seo_description_en, :seo_description_es, :tabtitle_en, :tabtitle_es,
                 category_ids: [], author_ids: [], translator_ids: [], illustrator_ids: [],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
@@ -35,6 +36,8 @@ ActiveAdmin.register Resource do
       f.input :format
       f.input :categories, as: :check_boxes, collection: Category.all
       f.input :slug, hint: 'Empty -> automatic from "title es" (slug an id for human readable links)'
+      f.input :tabtitle_es
+      f.input :seo_description_es
       f.input :landing_es
       f.input :getit_es, hint: 'URL para descargar'
       f.input :buyit_es, hint: 'URL para Comprar'
@@ -50,6 +53,8 @@ ActiveAdmin.register Resource do
 
     f.inputs 'English Details' do
       f.input :title_en
+      f.input :tabtitle_en
+      f.input :seo_description_en
       f.input :landing_en
       f.input :getit_en, hint: 'URL para descargar'
       f.input :buyit_en, hint: 'URL para Comprar'
@@ -93,56 +98,85 @@ ActiveAdmin.register Resource do
   end
 
   show do
-    attributes_table do
-      row :title_es
-      row :title_en
-      row :format
-      row :slug
-      row :categories
-      row :landing_es
-      row :landing_en
-      row :getit_es
-      row :getit_en
-      row :buyit_es
-      row :buyit_en
-      row :cover_es
-      row :cover_en
-      row :description_es
-      row :description_en
-      row :comments_es
-      row :comments_en
-      row :long_description_es do
-        markdown resource.long_description_es
+    columns do
+      column do
+        panel 'General' do
+          attributes_table_for resource do
+            row :title_es
+            row :title_en
+            row :format
+            row :slug
+            row :categories
+          end
+        end
       end
-      row :long_description_en do
-        markdown resource.long_description_en
-      end
-      row :preview_es
-      row :preview_en
-      row :share_text_es
-      row :share_text_en
-      row :tags_es
-      row :tags_en
-      row :authors
-      row :translators
-      row :illustrators
-      row :created_at
-      row :updated_at
 
-      panel 'Recommended Content' do
-        table_for resource.recommended do
-          column :relevance_order do |recommendation|
-            recommendation['relevance_order']
+      column do
+        panel 'Español' do
+          attributes_table_for resource do
+            row :tabtitle_es
+            row :seo_description_es
+            row :landing_es
+            row :getit_es
+            row :buyit_es
+            row :cover_es
+            row :description_es
+            row :comments_es
+            row :long_description_es do
+              markdown resource.long_description_es
+            end
+            row :preview_es
+            row :share_text_es
+            row :tags_es
           end
-          column :title do |recommendation|
-            recommendation['title']
+        end
+      end
+
+      column do
+        panel 'English' do
+          attributes_table_for resource do
+            row :tabtitle_en
+            row :seo_description_en
+            row :landing_en
+            row :getit_en
+            row :buyit_en
+            row :cover_en
+            row :description_en
+            row :comments_en
+            row :long_description_en do
+              markdown resource.long_description_en
+            end
+            row :preview_en
+            row :share_text_en
+            row :tags_en
           end
-          column :type do |recommendation|
-            recommendation['type']
-          end
-          column :subtitle do |recommendation|
-            recommendation['subtitle']
-          end
+        end
+      end
+    end
+
+    panel 'Additional Info' do
+      attributes_table_for resource do
+        row :authors
+        row :translators
+        row :illustrators
+        row :created_at
+        row :updated_at
+      end
+    end
+
+    panel 'Recommended Content' do
+      table_for resource.recommended do
+        column :relevance_order do |recommendation|
+          recommendation['relevance_order']
+        end
+        column :title do |recommendation|
+          recommendation['title']
+        end
+        column :type do |recommendation|
+          recommendation['type']
+        end
+        column :subtitle do |recommendation|
+          recommendation['subtitle']
         end
       end
     end
