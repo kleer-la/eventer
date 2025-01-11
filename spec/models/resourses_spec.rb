@@ -44,7 +44,7 @@ RSpec.describe Resource, type: :model do
       resource = FactoryBot.create(:resource, title_es: 'Original Title')
       expect(resource.slug).to eq('original-title')
 
-      resource.update(title_es: '  New Spaced Title  ')
+      resource.update(slug: '', title_es: '  New Spaced Title  ')
       expect(resource.slug).to eq('new-spaced-title')
     end
 
@@ -54,6 +54,32 @@ RSpec.describe Resource, type: :model do
 
       resource.update(title_es: '  Consistent Title  ')
       expect(resource.slug).to eq(original_slug)
+    end
+
+    it 'allows slug to be edited independently of the title' do
+      resource = FactoryBot.create(:resource, title_es: 'Original Title', slug: 'original-title')
+
+      # First update just the slug
+      expect(resource.update(slug: 'custom-slug')).to be true
+      resource.reload # Make sure we have fresh data
+      expect(resource.slug).to eq('custom-slug')
+
+      # Then update the title
+      expect(resource.update(title_es: 'New Title')).to be true
+      resource.reload # Make sure we have fresh data
+      expect(resource.slug).to eq('custom-slug')
+    end
+
+    it 'finds resource with both new and old slug using friendly.find' do
+      resource = FactoryBot.create(:resource, title_es: 'Original Title', slug: 'original-title')
+      expect(resource.slug).to eq('original-title')
+
+      expect(resource.update(slug: 'new-title')).to be true
+      resource.reload
+
+      # Try finding with both slugs
+      expect(Resource.friendly.find('original-title')).to eq(resource)
+      expect(Resource.friendly.find('new-title')).to eq(resource)
     end
   end
 end

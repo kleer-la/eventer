@@ -29,7 +29,7 @@ class Resource < ApplicationRecord
   before_save :strip_slug
 
   def should_generate_new_friendly_id?
-    title_es_changed? || super
+    slug.blank? && (title_es_changed? || super)
   end
 
   def strip_slug
@@ -62,6 +62,7 @@ class Resource < ApplicationRecord
        description_en description_es downloadable format getit_en getit_es id id_value landing_en landing_es
        long_description_es preview_en
        long_description_en preview_es
-       share_link_en share_link_es share_text_en share_text_es slug tags_en tags_es title_en title_es trainers_id updated_at]
+       share_link_en share_link_es share_text_en share_text_es slug tags_en tags_es title_en title_es trainers_id updated_at
+       seo_description_en seo_description_es tabtitle_en tabtitle_es]
   end
 end
