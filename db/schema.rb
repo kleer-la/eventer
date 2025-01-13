@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_11_130852) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_13_221134) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -141,6 +141,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_11_130852) do
     t.datetime "processed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "resource_slug"
+    t.boolean "can_we_contact", default: false
+    t.boolean "suscribe", default: false
+    t.index ["resource_slug"], name: "index_contacts_on_resource_slug"
   end
 
   create_table "countries", force: :cascade do |t|

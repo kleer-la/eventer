@@ -19,6 +19,11 @@ class Contact < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[created_at email form_data id id_value processed_at status trigger_type updated_at]
+    %w[created_at email form_data id id_value processed_at status trigger_type updated_at
+       resource_slug can_we_contact suscribe]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
   end
 end

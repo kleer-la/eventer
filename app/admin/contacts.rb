@@ -3,7 +3,8 @@ ActiveAdmin.register Contact do
   menu parent: 'Mail'
 
   # Read-only as contacts are created from frontend
-  actions :all, except: %i[new create edit update]
+  actions :index, :show, :destroy
+  config.clear_action_items!
 
   # Filters
   filter :email
@@ -11,6 +12,9 @@ ActiveAdmin.register Contact do
   filter :status
   filter :created_at
   filter :processed_at
+  filter :resource_slug
+  filter :can_we_contact, as: :select
+  filter :suscribe, as: :select
 
   # Scopes for quick filtering
   scope :last_24h
@@ -26,6 +30,13 @@ ActiveAdmin.register Contact do
       link_to 'Show Grouped View', admin_contacts_path(grouped: true)
     end
   end
+
+  action_item :destroy, only: :show do
+    link_to 'Delete Contact', admin_contact_path(contact),
+            method: :delete,
+            data: { confirm: 'Are you sure you want to delete this contact?' }
+  end
+
   # Index view
   index do
     if params[:grouped]
@@ -48,7 +59,9 @@ ActiveAdmin.register Contact do
         end.compact
         resources.join(', ')
       end
-      actions
+      actions defaults: false do |contact|
+        item 'View', admin_contact_path(contact)
+      end
     else
       selectable_column
       id_column
@@ -65,10 +78,12 @@ ActiveAdmin.register Contact do
         contact.form_data&.dig('resource_slug')
       end
       column :created_at
-      # column :form_data do |contact|
-      #   truncate(contact.form_data.to_s, length: 50)
-      # end
-      actions
+      column :resource_slug         # Changed from form_data dig
+      column :can_we_contact        # New column
+      column :suscribe
+      actions defaults: false do |contact|
+        item 'View', admin_contact_path(contact)
+      end
     end
   end
 
@@ -78,6 +93,9 @@ ActiveAdmin.register Contact do
       row :email
       row :trigger_type
       row :status
+      row :resource_slug
+      row :can_we_contact
+      row :suscribe
       row :created_at
       row :processed_at
       row :form_data do |contact|
@@ -92,6 +110,9 @@ ActiveAdmin.register Contact do
     column :email
     column :trigger_type
     column :status
+    column :resource_slug
+    column :can_we_contact
+    column :suscribe
     column :created_at
     column :processed_at
     column(:form_data) { |contact| contact.form_data.to_json }
