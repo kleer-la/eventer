@@ -3,7 +3,7 @@
 source 'http://rubygems.org'
 
 ruby '~> 3.3.4'
-gem 'rails', '~> 7.1'
+gem 'rails', '~> 7.1.3'
 
 group :development do
   gem 'brakeman'
