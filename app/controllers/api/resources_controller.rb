@@ -33,7 +33,7 @@ module Api
       resource = resources_with_associations.friendly.find(params[:id].downcase)
       render(
         json: resource,
-        methods: %i[category_name recommended],
+        methods: %i[category_name recommended downloadable],
         include: {
           authors: { only: trainer_show_fields },
           translators: { only: trainer_show_fields },
