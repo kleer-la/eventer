@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '~> 3.3.4'
+ruby '~> 3.3.6'
 gem 'rails', '~> 7.1.3'
 
 group :development do
@@ -104,4 +104,4 @@ gem 'activeadmin_addons'
 
 gem 'aws-sdk-s3', '~> 1.0'
 
-gem "addressable", "~> 2.8"
+gem 'addressable', '~> 2.8'
