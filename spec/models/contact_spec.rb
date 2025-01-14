@@ -66,4 +66,53 @@ RSpec.describe Contact, type: :model do
       expect(Contact.last_24h).not_to include(old)
     end
   end
+
+  describe 'callbacks' do
+    describe 'after_create' do
+      it 'updates fields from form_data' do
+        form_data = {
+          'resource_slug' => 'test-resource',
+          'can_we_contact' => '1',
+          'suscribe' => 'true'
+        }
+
+        contact = create(:contact, form_data:)
+
+        expect(contact.resource_slug).to eq('test-resource')
+        expect(contact.can_we_contact).to be true
+        expect(contact.suscribe).to be true
+      end
+
+      it 'handles missing form_data fields' do
+        form_data = { 'resource_slug' => 'test-resource' }
+        contact = create(:contact, form_data:)
+
+        expect(contact.resource_slug).to eq('test-resource')
+        expect(contact.can_we_contact).to be false
+        expect(contact.suscribe).to be false
+      end
+
+      it 'converts various truthy values to boolean' do
+        form_data = {
+          'can_we_contact' => '1',
+          'suscribe' => 'yes'
+        }
+        contact = create(:contact, form_data:)
+
+        expect(contact.can_we_contact).to be true
+        expect(contact.suscribe).to be true
+      end
+
+      it 'converts various falsy values to boolean' do
+        form_data = {
+          can_we_contact: '0',
+          suscribe: 'false'
+        }
+        contact = create(:contact, form_data:)
+
+        expect(contact.can_we_contact).to be false
+        expect(contact.suscribe).to be false
+      end
+    end
+  end
 end

@@ -4,6 +4,8 @@ class Contact < ApplicationRecord
 
   validates :trigger_type, :email, :form_data, presence: true
 
+  after_create :update_form_fields
+
   scope :pending, -> { where(status: :pending) }
   scope :processed, -> { where(status: :processed) }
   scope :failed, -> { where(status: :failed) }
@@ -25,5 +27,21 @@ class Contact < ApplicationRecord
 
   def self.ransackable_associations(auth_object = nil)
     []
+  end
+
+  private
+
+  def update_form_fields
+    update_columns(
+      resource_slug: form_data['resource_slug'],
+      can_we_contact: boolean_value(form_data['can_we_contact']),
+      suscribe: boolean_value(form_data['suscribe'])
+    )
+  end
+
+  def boolean_value(value)
+    return false if value.nil? || value.blank?
+
+    value.to_s.downcase.in?(%w[true 1 yes])
   end
 end
