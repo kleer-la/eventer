@@ -45,6 +45,7 @@ class Resource < ApplicationRecord
       .merge('title' => title)
       .merge('subtitle' => description_es)
       .merge('cover' => cover_es)
+      .merge('downloadable' => getit_es.present?)
   end
 
   def title
