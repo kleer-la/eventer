@@ -8,33 +8,67 @@ ActiveAdmin.register Resource do
                 :long_description_es, :preview_es,
                 :long_description_en, :preview_en,
                 :seo_description_en, :seo_description_es, :tabtitle_en, :tabtitle_es,
-                category_ids: [], author_ids: [], translator_ids: [], illustrator_ids: [],
+                :category_id, author_ids: [], translator_ids: [], illustrator_ids: [],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
+  config.clear_action_items!
+
+  action_item :new, only: :index do
+    link_to 'New Resource', new_admin_resource_path
+  end
+  
   controller do
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
     end
   end
 
+  filter :slug
+  filter :title_es
+  filter :title_en
+  filter :format
+  filter :category
+  filter :getit_es, as: :string, filters: [:cont, :blank],
+          label: 'getit_es - "Is Blank", type true/false'
+  filter :getit_en, as: :string, filters: [:cont, :blank],
+          label: 'getit_en - "Is Blank", type true/false'
+  filter :created_at
+
   index do
     selectable_column
-    id_column
-    column :slug
+    column :slug do |resource|
+      link_to resource.slug, admin_resource_path(resource)
+    end
     column :title_es
     column :title_en
     column :category do |article|
       article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
     end
+    column :getit_es
+    column :getit_en
     column :created_at
-    actions
+
+    actions defaults: false do |resource| # Custom actions block
+      item 'View', admin_resource_path(resource)
+      span ' '
+      item 'Edit', edit_admin_resource_path(resource)
+    end
+  end
+
+  action_item :edit, only: :show do
+    link_to 'Edit Resource', edit_admin_resource_path(resource)
+  end
+  action_item :destroy, only: :show do
+    link_to 'Delete Resource', admin_resource_path(resource), 
+            method: :delete, 
+            data: { confirm: 'Are you sure you want to delete this?' }
   end
 
   form do |f|
     f.inputs 'Spanish Details' do
       f.input :title_es
       f.input :format
-      f.input :categories, as: :check_boxes, collection: Category.all
+      f.input :category, as: :select, collection: Category.all
       f.input :slug, hint: 'Empty -> automatic from "title es" (slug an id for human readable links)'
       f.input :tabtitle_es
       f.input :seo_description_es
@@ -106,7 +140,7 @@ ActiveAdmin.register Resource do
             row :title_en
             row :format
             row :slug
-            row :categories
+            row :category
           end
         end
       end

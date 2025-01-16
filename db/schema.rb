@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_13_221134) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_16_120618) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -500,8 +500,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_13_221134) do
 
   create_table "resources", force: :cascade do |t|
     t.integer "format"
-    t.integer "categories_id"
-    t.integer "trainers_id"
+    t.integer "category_id"
     t.string "slug", null: false
     t.string "landing_es"
     t.string "cover_es"
@@ -534,9 +533,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_13_221134) do
     t.string "seo_description_en"
     t.string "tabtitle_es"
     t.string "tabtitle_en"
-    t.index ["categories_id"], name: "index_resources_on_categories_id"
+    t.index ["category_id"], name: "index_resources_on_category_id"
     t.index ["slug"], name: "index_resources_on_slug", unique: true
-    t.index ["trainers_id"], name: "index_resources_on_trainers_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -668,8 +666,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_13_221134) do
   add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"
-  add_foreign_key "resources", "categories", column: "categories_id"
-  add_foreign_key "resources", "trainers", column: "trainers_id"
+  add_foreign_key "resources", "categories"
   add_foreign_key "services", "service_areas"
   add_foreign_key "testimonies", "services"
   add_foreign_key "translations", "resources"

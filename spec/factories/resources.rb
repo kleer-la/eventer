@@ -7,6 +7,7 @@ FactoryBot.define do
     description_es { 'My resource' }
     cover_es { 'my-resource.png' }
     landing_es { '/blog/my-resource' }
+    # association :category
   end
 
   factory :authorship do
