@@ -89,3 +89,6 @@ Ejemplo como generar Claves para CONTACT_US_SECRET
 
 == ImageReference
 rails image_reference:list
+
+== Crear CSV con recursos con evaluación de contenido
+heroku run "rails runner 'Resource.pluck(:slug).each { |slug| puts \"https://www.kleer.la/es/recursos/#{slug}\" }'" -a app
