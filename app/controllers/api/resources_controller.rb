@@ -17,7 +17,7 @@ module Api
     public
 
     def index
-      resources = resources_with_associations.order(created_at: :desc)
+      resources = resources_with_associations.where(published: true).order(created_at: :desc)
       render(
         json: resources,
         methods: %i[category_name],

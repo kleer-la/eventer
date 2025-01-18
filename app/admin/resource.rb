@@ -2,6 +2,7 @@ ActiveAdmin.register Resource do
   menu parent: 'We Publish'
 
   permit_params :title_es, :title_en, :format, :slug, :landing_es, :landing_en,
+                :published,
                 :getit_es, :getit_en, :buyit_es, :buyit_en, :cover_es, :cover_en,
                 :description_es, :description_en, :comments_es, :comments_en,
                 :share_text_es, :share_text_en, :tags_es, :tags_en,
@@ -33,6 +34,7 @@ ActiveAdmin.register Resource do
   filter :getit_en, as: :string, filters: [:cont, :blank],
           label: 'getit_en - "Is Blank", type true/false'
   filter :created_at
+  filter :published
 
   index do
     selectable_column
@@ -46,6 +48,7 @@ ActiveAdmin.register Resource do
     end
     column :getit_es
     column :getit_en
+    column :published
     column :created_at
 
     actions defaults: false do |resource| # Custom actions block
@@ -59,9 +62,14 @@ ActiveAdmin.register Resource do
     link_to 'Edit Resource', edit_admin_resource_path(resource)
   end
   action_item :destroy, only: :show do
-    link_to 'Delete Resource', admin_resource_path(resource), 
+    link_to 'Delete Resource', admin_resource_path(resource),
             method: :delete, 
             data: { confirm: 'Are you sure you want to delete this?' }
+  end
+  action_item :preview, only: :show do
+    link_to 'Preview', "https://www.kleer.la/es/recursos/#{resource.slug}",
+      class: 'button', 
+      target: '_blank'
   end
 
   form do |f|
@@ -70,6 +78,7 @@ ActiveAdmin.register Resource do
       f.input :format
       f.input :category, as: :select, collection: Category.all
       f.input :slug, hint: 'Empty -> automatic from "title es" (slug an id for human readable links)'
+      f.input :published
       f.input :tabtitle_es
       f.input :seo_description_es
       f.input :landing_es
@@ -141,6 +150,7 @@ ActiveAdmin.register Resource do
             row :format
             row :slug
             row :category
+            row :published
           end
         end
       end

@@ -65,6 +65,7 @@ class Resource < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[buyit_en buyit_es categories_id comments_en comments_es cover_en cover_es created_at
        description_en description_es format getit_en getit_es id id_value landing_en landing_es
+       published 
        long_description_es preview_en
        long_description_en preview_es
        share_link_en share_link_es share_text_en share_text_es slug tags_en tags_es title_en title_es trainers_id updated_at
