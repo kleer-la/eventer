@@ -70,6 +70,11 @@ ActiveAdmin.register Article do
       end
     end
   end
+  action_item :preview, only: :show do
+    link_to 'Preview', "https://www.kleer.la/es/blog-preview/#{resource.slug}", 
+      class: 'button', 
+      target: '_blank'
+  end
 
   show do
     attributes_table do
@@ -87,7 +92,10 @@ ActiveAdmin.register Article do
       end
       row :slug
       row :cover
-      row :body
+      row :body do
+        markdown resource.body
+      end
+
       row :created_at
       row :updated_at
     end
