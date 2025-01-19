@@ -29,7 +29,8 @@ module Api
     private
 
     def contact_params
-      params.permit(:name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug)
+      params.permit(:name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug,
+        :can_we_contact, :suscribe, :initial_slug )
     end
 
     def build_contact
@@ -39,7 +40,10 @@ module Api
         company: contact_params[:company],
         message: contact_params[:message],
         page: contact_params[:context],
-        language: contact_params[:language]
+        language: contact_params[:language],
+        initial_slug: contact_params[:initial_slug],
+        can_we_contact: contact_params[:can_we_contact] == 'on',
+        suscribe: contact_params[:suscribe] == 'on' 
       }
 
       if contact_params[:resource_slug].present?

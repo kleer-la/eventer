@@ -14,7 +14,8 @@ RSpec.describe Api::ContactsController, type: :controller do
       company: 'Acme Corp',
       context: '/recursos',
       message: 'Test message',
-      secret: 'valid_secret'
+      secret: 'valid_secret',
+      initial_slug: 'original-page'
     }
   end
 
@@ -160,46 +161,91 @@ RSpec.describe Api::ContactsController, type: :controller do
         expect(JSON.parse(response.body)['error']).to eq('Resource not found')
       end
     end
-  end
 
-  context 'with language-specific templates' do
-    let!(:es_template) do
-      create(:mail_template, :for_contacts, lang: :es)
+    context 'with language-specific templates' do
+      let!(:es_template) do
+        create(:mail_template, :for_contacts, lang: :es)
+      end
+
+      let!(:en_template) do
+        create(:mail_template, :for_contacts, lang: :en)
+      end
+
+      before do
+        allow(NotificationMailer).to receive(:custom_notification).and_return(
+          double(deliver_later: true)
+        )
+      end
+
+      it 'only sends notifications for templates matching contact language' do
+        post :create, params: valid_contact_params.merge(
+          language: 'es'
+        )
+
+        expect(NotificationMailer).to have_received(:custom_notification)
+          .with(anything, es_template)
+          .once
+
+        expect(NotificationMailer).not_to have_received(:custom_notification)
+          .with(anything, en_template)
+      end
+      it 'only sends notifications for templates matching contact language (en)' do
+        post :create, params: valid_contact_params.merge(
+          language: 'en'
+        )
+
+        expect(NotificationMailer).not_to have_received(:custom_notification)
+          .with(anything, es_template)
+
+        expect(NotificationMailer).to have_received(:custom_notification)
+          .with(anything, en_template)
+          .once
+      end
     end
 
-    let!(:en_template) do
-      create(:mail_template, :for_contacts, lang: :en)
-    end
+    describe 'multi download fields handling' do
+      it 'handles missing can_we_contact and suscribe' do
+        post :create, params: valid_contact_params # For controller specs, we use the action symbol
+        
+        expect(response).to have_http_status(200)
+        contact = Contact.last
+        expect(contact).to be_present
+        expect(contact.can_we_contact).to be false
+        expect(contact.suscribe).to be false
+      end
 
-    before do
-      allow(NotificationMailer).to receive(:custom_notification).and_return(
-        double(deliver_later: true)
-      )
-    end
+      it 'processes can_we_contact correctly when on' do
+        post :create, params: valid_contact_params.merge(can_we_contact: 'on')
+        
+        expect(response).to have_http_status(200)
+        contact = Contact.last
+        expect(contact.can_we_contact).to be true
+      end
 
-    it 'only sends notifications for templates matching contact language' do
-      post :create, params: valid_contact_params.merge(
-        language: 'es'
-      )
+      it 'processes suscribe correctly when on' do
+        post :create, params: valid_contact_params.merge(suscribe: 'on')
+        
+        expect(response).to have_http_status(200)
+        contact = Contact.last
+        expect(contact.suscribe).to be true
+      end
 
-      expect(NotificationMailer).to have_received(:custom_notification)
-        .with(anything, es_template)
-        .once
+      context 'when resource download includes initial_slug' do
+        let!(:resource) { create(:resource, slug: 'test-resource') }
 
-      expect(NotificationMailer).not_to have_received(:custom_notification)
-        .with(anything, en_template)
-    end
-    it 'only sends notifications for templates matching contact language (en)' do
-      post :create, params: valid_contact_params.merge(
-        language: 'en'
-      )
+        it 'maintains initial_slug different from resource_slug' do
+          post :create, params: valid_contact_params.merge(
+            resource_slug: 'test-resource',
+            initial_slug: 'came-from-here'
+          )
 
-      expect(NotificationMailer).not_to have_received(:custom_notification)
-        .with(anything, es_template)
-
-      expect(NotificationMailer).to have_received(:custom_notification)
-        .with(anything, en_template)
-        .once
+          expect(response).to have_http_status(200)
+          contact = Contact.last
+          expect(contact).to be_present
+          expect(contact.form_data['initial_slug']).to eq('came-from-here')
+          expect(contact.form_data['resource_slug']).to eq('test-resource')
+        end
+      end
     end
   end
 end
