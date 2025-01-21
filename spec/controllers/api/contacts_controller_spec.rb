@@ -103,7 +103,7 @@ RSpec.describe Api::ContactsController, type: :controller do
         last_log = Log.last
 
         expect(last_log.area).to eq('mail')
-        expect(last_log.level).to eq('info')
+        expect(last_log.level).to eq('error')
         expect(last_log.message).to eq('Validation failed')
 
         # Test presence of key parameters in details
@@ -206,7 +206,7 @@ RSpec.describe Api::ContactsController, type: :controller do
     describe 'multi download fields handling' do
       it 'handles missing can_we_contact and suscribe' do
         post :create, params: valid_contact_params # For controller specs, we use the action symbol
-        
+
         expect(response).to have_http_status(200)
         contact = Contact.last
         expect(contact).to be_present
@@ -216,7 +216,7 @@ RSpec.describe Api::ContactsController, type: :controller do
 
       it 'processes can_we_contact correctly when on' do
         post :create, params: valid_contact_params.merge(can_we_contact: 'on')
-        
+
         expect(response).to have_http_status(200)
         contact = Contact.last
         expect(contact.can_we_contact).to be true
@@ -224,7 +224,23 @@ RSpec.describe Api::ContactsController, type: :controller do
 
       it 'processes suscribe correctly when on' do
         post :create, params: valid_contact_params.merge(suscribe: 'on')
-        
+
+        expect(response).to have_http_status(200)
+        contact = Contact.last
+        expect(contact.suscribe).to be true
+      end
+
+      it 'processes can_we_contact correctly when true' do
+        post :create, params: valid_contact_params.merge(can_we_contact: 'true')
+
+        expect(response).to have_http_status(200)
+        contact = Contact.last
+        expect(contact.can_we_contact).to be true
+      end
+
+      it 'processes suscribe correctly when true' do
+        post :create, params: valid_contact_params.merge(suscribe: 'true')
+
         expect(response).to have_http_status(200)
         contact = Contact.last
         expect(contact.suscribe).to be true
@@ -246,6 +262,36 @@ RSpec.describe Api::ContactsController, type: :controller do
           expect(contact.form_data['resource_slug']).to eq('test-resource')
         end
       end
+    end
+  end
+  describe 'error logging' do
+    it 'logs contact save errors' do
+      allow_any_instance_of(Contact).to receive(:save).and_return(false)
+      allow_any_instance_of(Contact).to receive(:errors).and_return(
+        double(full_messages: ['Test error message'])
+      )
+
+      post :create, params: valid_contact_params
+
+      last_log = Log.last
+      expect(last_log.area).to eq('mail')
+      expect(last_log.level).to eq('error') # NOTE: Changed from :info to :error as per our previous fix
+      expect(last_log.message).to eq('Contact save failed')
+      expect(last_log.details).to include('Test error message')
+    end
+
+    it 'logs unexpected errors' do
+      allow_any_instance_of(Contact).to receive(:save).and_raise(StandardError.new('Unexpected error'))
+
+      post :create, params: valid_contact_params
+
+      expect(response).to have_http_status(500) # Add this line
+      last_log = Log.last
+      expect(last_log.area).to eq('mail')
+      expect(last_log.level).to eq('error')
+      expect(last_log.message).to eq('Unexpected error')
+      expect(last_log.details).to include('Unexpected error')
+      expect(last_log.details).to include('backtrace')
     end
   end
 end

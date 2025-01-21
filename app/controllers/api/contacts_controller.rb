@@ -10,13 +10,20 @@ module Api
 
       if validator.valid?
         contact = build_contact
-
-        if contact.save
-          process_notifications(contact)
-          render json: { data: nil }, status: 200
-        else
-          log_error('Contact save failed', contact.errors.full_messages)
-          render json: { error: 'Processing failed' }, status: 422
+        begin
+          if contact.save
+            process_notifications(contact)
+            render json: { data: nil }, status: 200
+          else
+            log_error('Contact save failed', contact.errors.full_messages)
+            render json: { error: 'Processing failed' }, status: 422
+          end
+        rescue StandardError => e
+          log_error('Unexpected error', {
+                      error: e.message,
+                      backtrace: e.backtrace&.first(5)
+                    })
+          render json: { error: 'Processing failed' }, status: 500
         end
       else
         log_error('Validation failed', "#{validator.error} #{contact_params}")
@@ -30,7 +37,7 @@ module Api
 
     def contact_params
       params.permit(:name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug,
-        :can_we_contact, :suscribe, :initial_slug )
+                    :can_we_contact, :suscribe, :initial_slug)
     end
 
     def build_contact
@@ -42,8 +49,8 @@ module Api
         page: contact_params[:context],
         language: contact_params[:language],
         initial_slug: contact_params[:initial_slug],
-        can_we_contact: contact_params[:can_we_contact] == 'on',
-        suscribe: contact_params[:suscribe] == 'on' 
+        can_we_contact: %w[true on 1].include?(contact_params[:can_we_contact]),
+        suscribe: %w[true on 1].include?(contact_params[:suscribe])
       }
 
       if contact_params[:resource_slug].present?
@@ -86,7 +93,7 @@ module Api
     end
 
     def log_error(message, details)
-      Log.log(:mail, :info, message, details)
+      Log.log(:mail, :error, message, details)
     end
   end
 end
