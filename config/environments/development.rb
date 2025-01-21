@@ -10,6 +10,10 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.enable_reloading = true
 
+  # To enable local front end connection
+  # Docker container name for this app
+  config.hosts << "eventer_devcontainer-app-1" 
+
   # Do not eager load code on boot.
   config.eager_load = false
 

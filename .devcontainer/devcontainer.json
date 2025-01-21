@@ -58,6 +58,9 @@
 		}
 	},
 
-	"postCreateCommand": "bundle install"
+	"postCreateCommand": "bundle install",
+  "runArgs": [
+    "--network=local-kleer-network"
+  ]
 }
 
