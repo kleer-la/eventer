@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_18_200200) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -549,6 +549,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_18_200200) do
     t.integer "user_id"
   end
 
+  create_table "sections", force: :cascade do |t|
+    t.integer "page_id"
+    t.string "title"
+    t.text "content"
+    t.integer "position"
+    t.string "slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["page_id"], name: "index_sections_on_page_id"
+    t.index ["slug", "page_id"], name: "index_sections_on_slug_and_page_id", unique: true
+  end
+
   create_table "service_areas", force: :cascade do |t|
     t.string "name"
     t.text "abstract"
@@ -668,6 +680,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_18_200200) do
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"
   add_foreign_key "resources", "categories"
+  add_foreign_key "sections", "pages"
   add_foreign_key "services", "service_areas"
   add_foreign_key "testimonies", "services"
   add_foreign_key "translations", "resources"

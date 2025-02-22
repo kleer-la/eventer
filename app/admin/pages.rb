@@ -4,7 +4,8 @@ ActiveAdmin.register Page do
   menu parent: 'Assets', priority: 11
 
   permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :cover,
-                recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
+                recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy],
+                sections_attributes: %i[id title content position slug _destroy]
 
   filter :name
   filter :lang, as: :select, collection: Page.langs
@@ -70,6 +71,16 @@ ActiveAdmin.register Page do
         end
       end
     end
+    panel 'Sections' do
+      table_for resource.sections.order(:position) do
+        column :title
+        column :slug
+        column :content do |section|
+          truncate(section.content, length: 100) # Shorten long content
+        end
+        column :position
+      end
+    end
   end
 
   form do |f|
@@ -101,6 +112,14 @@ ActiveAdmin.register Page do
                                          class: 'current-target-info',
                                          value: { type: rc.object.target_type, id: rc.object.target_id }.to_json
                                        }
+      end
+      f.inputs 'Sections' do
+        f.has_many :sections, allow_destroy: true, new_record: true, heading: 'Page Sections' do |s|
+          s.input :title
+          s.input :slug, hint: 'Generated from title if left blank'
+          s.input :content, as: :text, input_html: { rows: 5 }
+          s.input :position, hint: 'Order of appearance (lower numbers first)'
+        end
       end
     end
 

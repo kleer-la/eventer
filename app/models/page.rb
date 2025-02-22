@@ -8,6 +8,9 @@ class Page < ApplicationRecord
   include ImageReference
   references_images_in :cover
 
+  has_many :sections, dependent: :destroy
+  accepts_nested_attributes_for :sections, allow_destroy: true
+
   enum lang: %i[es en]
 
   validates :name, presence: true
