@@ -6,7 +6,7 @@ class Section < ApplicationRecord
   validates :slug, uniqueness: { scope: :page_id }
 
   def should_generate_new_friendly_id?
-    title_changed? || new_record?
+    slug.blank?
   end
 
   def resolve_friendly_id_conflict(candidates)

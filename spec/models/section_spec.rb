@@ -23,7 +23,7 @@ RSpec.describe Section, type: :model do
       expect(section.slug).to eq('recommended-content')
     end
 
-    it 'regenerates slug when title changes' do
+    it 'slug unchanged when title changes' do
       section = Section.create!(
         page:,
         title: 'Recommended Content',
@@ -32,7 +32,7 @@ RSpec.describe Section, type: :model do
       expect(section.slug).to eq('recommended-content')
 
       section.update!(title: 'Updated Recommendations')
-      expect(section.slug).to eq('updated-recommendations')
+      expect(section.slug).to eq('recommended-content')
     end
 
     it 'enforces slug uniqueness within page scope' do
