@@ -26,7 +26,7 @@ RSpec.describe Contact, type: :model do
   describe 'enums' do
     describe 'trigger_type' do
       it 'has the expected values' do
-        expect(Contact.trigger_types.keys).to match_array(%w[contact_form download_form])
+        expect(Contact.trigger_types.keys).to match_array(%w[contact_form download_form assessment_submission])
       end
 
       it 'can be set and queried' do
@@ -113,6 +113,24 @@ RSpec.describe Contact, type: :model do
         expect(contact.can_we_contact).to be false
         expect(contact.suscribe).to be false
       end
+    end
+  end
+
+  describe 'assessment submission' do
+    let(:assessment) { Assessment.create(title: 'Skills Assessment', description: 'Evaluate skills') }
+
+    it 'belongs to an assessment and stores user info for a submission' do
+      contact = assessment.contacts.create(
+        trigger_type: :assessment_submission,
+        email: 'jane@acme.com',
+        form_data: { name: 'Jane', company: 'Acme' }
+      )
+      expect(contact.persisted?).to be true
+      expect(contact.assessment).to eq assessment
+      expect(contact.email).to eq 'jane@acme.com'
+      expect(contact.form_data['name']).to eq 'Jane'
+      expect(contact.form_data['company']).to eq 'Acme'
+      expect(contact.trigger_type).to eq 'assessment_submission'
     end
   end
 end

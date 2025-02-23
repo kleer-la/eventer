@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_23_140504) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -49,6 +49,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "answers", force: :cascade do |t|
+    t.integer "question_id", null: false
+    t.string "text"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
     t.text "body"
@@ -72,6 +81,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
     t.integer "article_id", null: false
     t.integer "trainer_id", null: false
     t.index ["article_id", "trainer_id"], name: "index_articles_trainers_on_article_id_and_trainer_id"
+  end
+
+  create_table "assessments", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "authorships", force: :cascade do |t|
@@ -144,6 +160,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
     t.string "resource_slug"
     t.boolean "can_we_contact", default: false
     t.boolean "suscribe", default: false
+    t.integer "assessment_id"
+    t.string "graph_file_path"
+    t.datetime "graph_generated_at"
+    t.index ["assessment_id"], name: "index_contacts_on_assessment_id"
     t.index ["resource_slug"], name: "index_contacts_on_resource_slug"
   end
 
@@ -473,6 +493,27 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "question_groups", force: :cascade do |t|
+    t.integer "assessment_id", null: false
+    t.string "name"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id"], name: "index_question_groups_on_assessment_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.integer "assessment_id", null: false
+    t.integer "question_group_id"
+    t.string "text"
+    t.integer "position"
+    t.string "question_type", default: "linear_scale"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id"], name: "index_questions_on_assessment_id"
+    t.index ["question_group_id"], name: "index_questions_on_question_group_id"
+  end
+
   create_table "ratings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "global_nps"
@@ -536,6 +577,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
     t.boolean "published"
     t.index ["category_id"], name: "index_resources_on_category_id"
     t.index ["slug"], name: "index_resources_on_slug", unique: true
+  end
+
+  create_table "responses", force: :cascade do |t|
+    t.integer "contact_id", null: false
+    t.integer "question_id", null: false
+    t.integer "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_responses_on_answer_id"
+    t.index ["contact_id"], name: "index_responses_on_contact_id"
+    t.index ["question_id"], name: "index_responses_on_question_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -672,14 +724,22 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_195734) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "answers", "questions"
   add_foreign_key "articles", "categories"
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
+  add_foreign_key "contacts", "assessments"
   add_foreign_key "episodes", "podcasts"
   add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"
+  add_foreign_key "question_groups", "assessments"
+  add_foreign_key "questions", "assessments"
+  add_foreign_key "questions", "question_groups"
   add_foreign_key "resources", "categories"
+  add_foreign_key "responses", "answers"
+  add_foreign_key "responses", "contacts"
+  add_foreign_key "responses", "questions"
   add_foreign_key "sections", "pages"
   add_foreign_key "services", "service_areas"
   add_foreign_key "testimonies", "services"
