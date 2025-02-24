@@ -1,12 +1,11 @@
 ActiveAdmin.register Assessment do
+  menu parent: 'We Publish'
   permit_params :title, :description,
                 question_groups_attributes: [:id, :name, :position, :_destroy,
                                              { questions_attributes: [:id, :text, :position, :question_type, :_destroy,
                                                                       { answers_attributes: %i[id text position _destroy] }] }],
                 questions_attributes: [:id, :text, :position, :question_type, :_destroy,
                                        { answers_attributes: %i[id text position _destroy] }]
-
-  menu parent: 'Assessments'
 
   index do
     selectable_column
