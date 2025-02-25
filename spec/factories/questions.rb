@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :question do
     assessment
-    text { 'Expertise Level' }
+    name { 'Expertise Level' }
     position { 1 }
     question_type { 'linear_scale' }
 

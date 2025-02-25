@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_23_140504) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_25_173911) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -88,6 +88,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_23_140504) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "resource_id"
+    t.index ["resource_id"], name: "index_assessments_on_resource_id"
   end
 
   create_table "authorships", force: :cascade do |t|
@@ -499,17 +501,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_23_140504) do
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
     t.index ["assessment_id"], name: "index_question_groups_on_assessment_id"
   end
 
   create_table "questions", force: :cascade do |t|
     t.integer "assessment_id", null: false
     t.integer "question_group_id"
-    t.string "text"
+    t.string "name"
     t.integer "position"
     t.string "question_type", default: "linear_scale"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
     t.index ["assessment_id"], name: "index_questions_on_assessment_id"
     t.index ["question_group_id"], name: "index_questions_on_question_group_id"
   end
@@ -726,6 +730,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_23_140504) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "answers", "questions"
   add_foreign_key "articles", "categories"
+  add_foreign_key "assessments", "resources"
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
   add_foreign_key "contacts", "assessments"

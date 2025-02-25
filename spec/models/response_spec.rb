@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Response, type: :model do
   describe 'creation' do
     let(:assessment) { Assessment.create(title: 'Skills Assessment', description: 'Evaluate skills') }
-    let(:question) { assessment.questions.create(text: 'How confident are you?') }
+    let(:question) { assessment.questions.create(name: 'How confident are you?') }
     let(:answer) { question.answers.create(text: 'Low', position: 1) }
     let(:contact) do
       assessment.contacts.create(

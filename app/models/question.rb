@@ -8,7 +8,7 @@ class Question < ApplicationRecord
   before_validation :set_assessment_from_group, if: :question_group_id?
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[assessment_id created_at id id_value position question_group_id question_type text
+    %w[assessment_id created_at id id_value position question_group_id question_type name description
        updated_at]
   end
 

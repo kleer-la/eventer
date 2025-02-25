@@ -2,9 +2,9 @@ ActiveAdmin.register Assessment do
   menu parent: 'We Publish'
   permit_params :title, :description,
                 question_groups_attributes: [:id, :name, :position, :_destroy,
-                                             { questions_attributes: [:id, :text, :position, :question_type, :_destroy,
+                                             { questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
                                                                       { answers_attributes: %i[id text position _destroy] }] }],
-                questions_attributes: [:id, :text, :position, :question_type, :_destroy,
+                questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
                                        { answers_attributes: %i[id text position _destroy] }]
 
   index do
@@ -30,7 +30,7 @@ ActiveAdmin.register Assessment do
         column 'Questions' do |group|
           ul do
             group.questions.order(:position).each do |question|
-              li "#{question.text} (#{question.answers.pluck(:text).join(', ')})"
+              li "#{question.name} (#{question.answers.pluck(:text).join(', ')})"
             end
           end
         end
@@ -39,7 +39,7 @@ ActiveAdmin.register Assessment do
 
     panel 'Standalone Questions' do
       table_for assessment.questions.where(question_group_id: nil).order(:position) do
-        column :text
+        column :name
         column :position
         column 'Answers' do |question|
           question.answers.pluck(:text).join(', ')
@@ -56,9 +56,11 @@ ActiveAdmin.register Assessment do
 
     f.has_many :question_groups, heading: 'Question Groups', allow_destroy: true, new_record: true do |qg|
       qg.input :name
+      qg.input :description
       qg.input :position
       qg.has_many :questions, heading: 'Questions in Group', allow_destroy: true, new_record: true do |q|
-        q.input :text
+        q.input :name
+        q.input :description
         q.input :position
         q.input :question_type, as: :select, collection: [['Linear Scale', 'linear_scale']], include_blank: false
         q.has_many :answers, heading: 'Answers', allow_destroy: true, new_record: true do |a|
@@ -69,7 +71,8 @@ ActiveAdmin.register Assessment do
     end
 
     f.has_many :questions, heading: 'Standalone Questions', allow_destroy: true, new_record: true do |q|
-      q.input :text
+      q.input :name
+      q.input :description
       q.input :position
       q.input :question_type, as: :select, collection: [['Linear Scale', 'linear_scale']], include_blank: false
       q.has_many :answers, heading: 'Answers', allow_destroy: true, new_record: true do |a|

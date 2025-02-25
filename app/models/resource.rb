@@ -14,7 +14,7 @@ class Resource < ApplicationRecord
   belongs_to :category, optional: true
 
   enum format: { card: 0, book: 1, infographic: 2, canvas: 3,
-                 guide: 4, game: 5 }
+                 guide: 4, game: 5, assessment: 6, video: 7, other: 8 }
 
   has_many  :authorships, -> { order(updated_at: :desc) }
   has_many  :authors, through: :authorships, source: :trainer
@@ -22,6 +22,7 @@ class Resource < ApplicationRecord
   has_many  :translators, through: :translations, source: :trainer
   has_many :illustrations
   has_many :illustrators, through: :illustrations, source: :trainer
+  has_many :assessments, dependent: :nullify
 
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }
@@ -65,7 +66,7 @@ class Resource < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[buyit_en buyit_es categories_id comments_en comments_es cover_en cover_es created_at
        description_en description_es format getit_en getit_es id id_value landing_en landing_es
-       published 
+       published
        long_description_es preview_en
        long_description_en preview_es
        share_link_en share_link_es share_text_en share_text_es slug tags_en tags_es title_en title_es trainers_id updated_at
