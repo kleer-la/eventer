@@ -1,7 +1,7 @@
 ActiveAdmin.register Assessment do
   menu parent: 'We Publish'
-  permit_params :title, :description,
-                question_groups_attributes: [:id, :name, :position, :_destroy,
+  permit_params :title, :description, :resource_id, # Moved :resource_id here
+                question_groups_attributes: [:id, :name, :description, :position, :_destroy, # Added :description, :_destroy, removed :resource_id
                                              { questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
                                                                       { answers_attributes: %i[id text position _destroy] }] }],
                 questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
@@ -12,6 +12,9 @@ ActiveAdmin.register Assessment do
     id_column
     column :title
     column :description
+    column :resource do |assessment|
+      assessment.resource&.title_es
+    end
     column :created_at
     actions
   end
@@ -20,6 +23,9 @@ ActiveAdmin.register Assessment do
     attributes_table do
       row :title
       row :description
+      row :resource do |assessment|
+        assessment.resource&.title_es
+      end
       row :created_at
     end
 
@@ -52,6 +58,7 @@ ActiveAdmin.register Assessment do
     f.inputs 'Details' do
       f.input :title
       f.input :description
+      f.input :resource, as: :select, collection: Resource.all.pluck(:title_es, :id), include_blank: true
     end
 
     f.has_many :question_groups, heading: 'Question Groups', allow_destroy: true, new_record: true do |qg|
