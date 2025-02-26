@@ -37,7 +37,8 @@ module Api
         include: {
           authors: { only: trainer_show_fields },
           translators: { only: trainer_show_fields },
-          illustrators: { only: trainer_show_fields }
+          illustrators: { only: trainer_show_fields },
+          assessment: { only: :id }
         }
       )
     rescue ActiveRecord::RecordNotFound
