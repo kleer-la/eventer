@@ -14,6 +14,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       company: 'Acme Corp',
       context: '/recursos',
       message: 'Test message',
+      language: 'es',
       secret: 'valid_secret',
       initial_slug: 'original-page'
     }
@@ -292,6 +293,36 @@ RSpec.describe Api::ContactsController, type: :controller do
       expect(last_log.message).to eq('Unexpected error')
       expect(last_log.details).to include('Unexpected error')
       expect(last_log.details).to include('backtrace')
+    end
+  end
+  describe 'an assessment' do
+    let(:assessment) { create(:assessment) }
+    let(:assessment_resources) { create(:resource, slug: 'un-assessment', title_es: 'Un Assessment', assessment:) }
+    let(:valid_assessment_params) do
+      valid_contact_params.merge({ resource_slug: 'un-assessment',
+                                   resource_title_es: 'Un Assessment',
+                                   assessment_id: assessment.id.to_s,
+                                   assessment_results: '{"1"=>"5"}' })
+    end
+
+    before { assessment_resources }
+
+    it 'creates a new contact with the correct form data' do
+      post :create, params: valid_assessment_params
+
+      expect(response).to have_http_status(:ok)
+      contact = Contact.last
+      expect(contact.form_data).to include(
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'company' => 'Acme Corp',
+        'page' => '/recursos',
+        'language' => 'es',
+        'resource_title_es' => 'Un Assessment',
+        'resource_slug' => 'un-assessment',
+        'assessment_id' => assessment.id.to_s,
+        'assessment_results' => '{"1"=>"5"}'
+      )
     end
   end
 end

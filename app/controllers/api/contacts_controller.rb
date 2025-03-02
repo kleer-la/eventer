@@ -37,7 +37,7 @@ module Api
 
     def contact_params
       params.permit(:name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug,
-                    :can_we_contact, :suscribe, :initial_slug)
+                    :can_we_contact, :suscribe, :initial_slug, :assessment_id, :assessment_results)
     end
 
     def build_contact
@@ -62,6 +62,12 @@ module Api
           resource_getit_en: resource.getit_en,
           resource_slug: resource.slug
         )
+      end
+
+      form_data[:assessment_id] = contact_params[:assessment_id] if contact_params[:assessment_id].present?
+      if contact_params[:assessment_results].present?
+        form_data[:assessment_results] =
+          contact_params[:assessment_results]
       end
 
       Contact.new(

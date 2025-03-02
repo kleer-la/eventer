@@ -50,7 +50,7 @@ class HomeController < ApplicationController
     if error.present?
       Log.log(:mail, :info,
               "Contact Us - #{error}",
-              "name:#{name} #{email} #{context}, message: #{message} // subject: #{subject}")
+              "name:#{name} #{email} #{context}, data: #{params.inspect}")
     else
       ApplicationMailer.delay.contact_us(
         name,
