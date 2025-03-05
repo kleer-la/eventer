@@ -101,6 +101,15 @@ ActiveAdmin.register Contact do
       row :form_data do |contact|
         content_tag :pre, JSON.pretty_generate(contact.form_data)
       end
+      if contact.assessment.present?
+        panel 'Responses' do
+          table_for contact.responses do
+            column :id
+            column :question
+            column :answer
+          end
+        end
+      end
     end
   end
 

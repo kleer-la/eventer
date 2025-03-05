@@ -1,6 +1,6 @@
 class Contact < ApplicationRecord
   enum trigger_type: { contact_form: 0, download_form: 1, assessment_submission: 2 }
-  enum status: { pending: 0, processed: 1, failed: 2 }
+  enum status: { pending: 0, processed: 1, failed: 2, processing: 3 }
 
   belongs_to :assessment, optional: true
   has_many :responses, dependent: :destroy
@@ -25,7 +25,7 @@ class Contact < ApplicationRecord
 
   def self.ransackable_attributes(auth_object = nil)
     %w[created_at email form_data id id_value processed_at status trigger_type updated_at
-       resource_slug can_we_contact suscribe graph_file_path graph_generated_at]
+       resource_slug can_we_contact suscribe assessment_report_url assessment_report_generated_at]
   end
 
   def self.ransackable_associations(auth_object = nil)

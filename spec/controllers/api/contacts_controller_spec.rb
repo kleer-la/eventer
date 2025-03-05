@@ -267,26 +267,25 @@ RSpec.describe Api::ContactsController, type: :controller do
   end
   describe 'error logging' do
     it 'logs contact save errors' do
-      allow_any_instance_of(Contact).to receive(:save).and_return(false)
-      allow_any_instance_of(Contact).to receive(:errors).and_return(
-        double(full_messages: ['Test error message'])
-      )
+      contact = Contact.new # Real instance
+      allow(contact).to receive(:errors).and_return(double(full_messages: ['Test error message']))
+      allow_any_instance_of(Contact).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(contact))
 
       post :create, params: valid_contact_params
 
       last_log = Log.last
       expect(last_log.area).to eq('mail')
-      expect(last_log.level).to eq('error') # NOTE: Changed from :info to :error as per our previous fix
-      expect(last_log.message).to eq('Contact save failed')
+      expect(last_log.level).to eq('error')
+      expect(last_log.message).to eq('Validation failed during processing')
       expect(last_log.details).to include('Test error message')
     end
 
     it 'logs unexpected errors' do
-      allow_any_instance_of(Contact).to receive(:save).and_raise(StandardError.new('Unexpected error'))
+      allow_any_instance_of(Contact).to receive(:save!).and_raise(StandardError.new('Unexpected error'))
 
       post :create, params: valid_contact_params
 
-      expect(response).to have_http_status(500) # Add this line
+      expect(response).to have_http_status(500)
       last_log = Log.last
       expect(last_log.area).to eq('mail')
       expect(last_log.level).to eq('error')
@@ -296,22 +295,28 @@ RSpec.describe Api::ContactsController, type: :controller do
     end
   end
   describe 'an assessment' do
+    let(:question) { create(:question, id: 1) }
+    let(:answer) { create(:answer, id: 5) }
     let(:assessment) { create(:assessment) }
     let(:assessment_resources) { create(:resource, slug: 'un-assessment', title_es: 'Un Assessment', assessment:) }
     let(:valid_assessment_params) do
       valid_contact_params.merge({ resource_slug: 'un-assessment',
                                    resource_title_es: 'Un Assessment',
                                    assessment_id: assessment.id.to_s,
-                                   assessment_results: '{"1"=>"5"}' })
+                                   assessment_results: '{"1":"5"}' })
     end
+    let(:contact) { Contact.last }
 
-    before { assessment_resources }
+    before do
+      question
+      answer
+      assessment_resources
+    end
 
     it 'creates a new contact with the correct form data' do
       post :create, params: valid_assessment_params
 
       expect(response).to have_http_status(:ok)
-      contact = Contact.last
       expect(contact.form_data).to include(
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -321,7 +326,16 @@ RSpec.describe Api::ContactsController, type: :controller do
         'resource_title_es' => 'Un Assessment',
         'resource_slug' => 'un-assessment',
         'assessment_id' => assessment.id.to_s,
-        'assessment_results' => '{"1"=>"5"}'
+        'assessment_results' => '{"1":"5"}'
+      )
+    end
+    it 'creates responses for assessment results' do
+      post :create, params: valid_assessment_params
+
+      expect(response).to have_http_status(:ok)
+      expect(contact.responses.count).to eq(1)
+      expect(contact.responses.pluck(:question_id, :answer_id)).to contain_exactly(
+        [1, 5]
       )
     end
   end
