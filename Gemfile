@@ -66,6 +66,7 @@ gem 'delayed_job_active_record'
 gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'formtastic'
 gem 'formtastic-bootstrap'
+gem 'gruff' # For generating charts like the radar chart - assessments
 gem 'importmap-rails'
 gem 'liquid'
 gem 'matrix', '~> 0.4' # needed to solve an error when migrating to ruby 3.1 (prawn related)

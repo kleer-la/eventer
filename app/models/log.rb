@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Log < ApplicationRecord
-  enum area: %i[xero mail aws app]
+  enum area: %i[xero mail aws app assessment]
   enum level: %i[info warn error]
 
   def self.log(area, level, message, details = nil)

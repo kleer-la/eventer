@@ -38,7 +38,7 @@ RSpec.describe Contact, type: :model do
 
     describe 'status' do
       it 'has the expected values' do
-        expect(Contact.statuses.keys).to match_array(%w[pending processed failed])
+        expect(Contact.statuses.keys).to match_array(%w[pending processed failed processing])
       end
 
       it 'can be set and queried' do

@@ -303,7 +303,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       valid_contact_params.merge({ resource_slug: 'un-assessment',
                                    resource_title_es: 'Un Assessment',
                                    assessment_id: assessment.id.to_s,
-                                   assessment_results: '{"1":"5"}' })
+                                   assessment_results: { '1' => '5' } })
     end
     let(:contact) { Contact.last }
 
@@ -326,7 +326,7 @@ RSpec.describe Api::ContactsController, type: :controller do
         'resource_title_es' => 'Un Assessment',
         'resource_slug' => 'un-assessment',
         'assessment_id' => assessment.id.to_s,
-        'assessment_results' => '{"1":"5"}'
+        'assessment_results' => { '1' => '5' }
       )
     end
     it 'creates responses for assessment results' do
