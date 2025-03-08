@@ -147,6 +147,16 @@ RSpec.describe Api::ContactsController, type: :controller do
           .with('NotificationMailer', 'custom_notification', 'deliver_now', anything)
           .on_queue('default')
       end
+      it 'returns created status with contact data' do
+        post :create, params: valid_contact_params
+        expect(response).to have_http_status(:created)
+        json_response = JSON.parse(response.body)
+        expect(json_response['data']).to include(
+          'id' => Contact.last.id,
+          'status' => Contact.last.status,
+          'assessment_report_url' => Contact.last.assessment_report_url
+        )
+      end
     end
 
     context 'with invalid params' do
@@ -208,7 +218,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       it 'handles missing can_we_contact and suscribe' do
         post :create, params: valid_contact_params # For controller specs, we use the action symbol
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:created)
         contact = Contact.last
         expect(contact).to be_present
         expect(contact.can_we_contact).to be false
@@ -218,7 +228,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       it 'processes can_we_contact correctly when on' do
         post :create, params: valid_contact_params.merge(can_we_contact: 'on')
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:created)
         contact = Contact.last
         expect(contact.can_we_contact).to be true
       end
@@ -226,7 +236,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       it 'processes suscribe correctly when on' do
         post :create, params: valid_contact_params.merge(suscribe: 'on')
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:created)
         contact = Contact.last
         expect(contact.suscribe).to be true
       end
@@ -234,7 +244,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       it 'processes can_we_contact correctly when true' do
         post :create, params: valid_contact_params.merge(can_we_contact: 'true')
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:created)
         contact = Contact.last
         expect(contact.can_we_contact).to be true
       end
@@ -242,7 +252,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       it 'processes suscribe correctly when true' do
         post :create, params: valid_contact_params.merge(suscribe: 'true')
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:created)
         contact = Contact.last
         expect(contact.suscribe).to be true
       end
@@ -256,7 +266,7 @@ RSpec.describe Api::ContactsController, type: :controller do
             initial_slug: 'came-from-here'
           )
 
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:created)
           contact = Contact.last
           expect(contact).to be_present
           expect(contact.form_data['initial_slug']).to eq('came-from-here')
@@ -316,7 +326,7 @@ RSpec.describe Api::ContactsController, type: :controller do
     it 'creates a new contact with the correct form data' do
       post :create, params: valid_assessment_params
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:created)
       expect(contact.form_data).to include(
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -332,7 +342,7 @@ RSpec.describe Api::ContactsController, type: :controller do
     it 'creates responses for assessment results' do
       post :create, params: valid_assessment_params
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:created)
       expect(contact.responses.count).to eq(1)
       expect(contact.responses.pluck(:question_id, :answer_id)).to contain_exactly(
         [1, 5]

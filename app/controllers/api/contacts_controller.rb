@@ -16,7 +16,7 @@ module Api
             process_assessment(contact)
             process_notifications(contact)
           end
-          render json: { data: nil }, status: 200
+          render json: { data: contact.as_json(only: %i[id status assessment_report_url]) }, status: :created
         rescue ActiveRecord::RecordInvalid => e
           log_error('Validation failed during processing', e.message)
           render json: { error: e.message }, status: 422
@@ -30,6 +30,11 @@ module Api
       end
     rescue ActiveRecord::RecordNotFound => e
       render json: { error: 'Resource not found' }, status: 422
+    end
+
+    def status
+      contact = Contact.find(params[:contact_id])
+      render json: { status: contact.status, assessment_report_url: contact.assessment_report_url }
     end
 
     private
