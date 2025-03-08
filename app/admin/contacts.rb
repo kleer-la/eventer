@@ -114,14 +114,16 @@ ActiveAdmin.register Contact do
         end
       end
       row :assessment_report_url
-      row 'Assessement report' do
-        if contact.assessment_report_url.end_with?('.pdf')
-          embed src: contact.assessment_report_url,
-                type: 'application/pdf',
-                width: '100%',
-                height: '600px'
-        else
-          image_tag contact.assessment_report_url, style: 'max-width: 500px; max-height: 500px;'
+      if contact.assessment_report_url.present?
+        row 'Assessement report' do
+          if contact.assessment_report_url.end_with?('.pdf')
+            embed src: contact.assessment_report_url,
+                  type: 'application/pdf',
+                  width: '100%',
+                  height: '600px'
+          else
+            image_tag contact.assessment_report_url, style: 'max-width: 500px; max-height: 500px;'
+          end
         end
       end
     end
