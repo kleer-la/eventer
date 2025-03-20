@@ -346,11 +346,12 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
             if ($modeSelect.val() === 'ol') {
               $cityInput.val('Online').prop('readonly', true);
               $addressInput.val('Online').prop('readonly', true);
-              $countrySelect.val("1").trigger('change.select2');
+              $countrySelect.val("1").prop('disabled', true).trigger('change.select2');
               $timeZoneInput.show();
             } else {
               $cityInput.prop('readonly', false);
               $addressInput.prop('readonly', false);
+              $countrySelect.prop('disabled', false).trigger('change.select2');
               $timeZoneInput.hide();
             }
           }
