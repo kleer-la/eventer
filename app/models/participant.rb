@@ -6,7 +6,7 @@ class Participant < ApplicationRecord
   include ImageReference
   references_images_in :photo_url
 
-  belongs_to :event
+  belongs_to :event, touch: true # Event's updated_at is updated -> so cache is invalidated
   belongs_to :influence_zone, optional: true
   belongs_to :campaign, optional: true
   belongs_to :campaign_source, optional: true
