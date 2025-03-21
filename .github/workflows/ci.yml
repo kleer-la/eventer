@@ -8,19 +8,18 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmagickwand-dev
+
       - name: Set up Ruby
         # automatic versioning https://github.com/ruby/setup-ruby#versioning):
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.7
           bundler-cache: true
-
-      - name: Install ImageMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libmagickwand-dev
-
       - name: Install dependencies
         run: bundle install
       - name: Run tests
