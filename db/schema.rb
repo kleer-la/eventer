@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_02_204222) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_21_180115) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -613,6 +613,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_02_204222) do
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "cta_text"
     t.index ["page_id"], name: "index_sections_on_page_id"
     t.index ["slug", "page_id"], name: "index_sections_on_slug_and_page_id", unique: true
   end

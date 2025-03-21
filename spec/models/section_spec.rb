@@ -96,4 +96,37 @@ RSpec.describe Section, type: :model do
         .to raise_error(ActiveRecord::RecordNotFound)
     end
   end
+  describe 'cta_text' do
+    it 'can save and retrieve cta_text' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_text: 'Click Here'
+      )
+      expect(section.reload.cta_text).to eq('Click Here')
+    end
+
+    it 'allows cta_text to be blank' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_text: ''
+      )
+      expect(section).to be_valid
+      expect(section.cta_text).to eq('')
+    end
+
+    it 'allows cta_text to be nil' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_text: nil
+      )
+      expect(section).to be_valid
+      expect(section.cta_text).to be_nil
+    end
+  end
 end

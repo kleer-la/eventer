@@ -9,7 +9,7 @@ module Api
       render json: page,
              methods: %i[recommended],
              only: %i[seo_title seo_description lang canonical cover],
-             include: { sections: { only: %i[slug title content position] } }
+             include: { sections: { only: %i[slug title content cta_text position] } }
     end
 
     private
