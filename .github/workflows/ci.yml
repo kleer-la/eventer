@@ -13,11 +13,14 @@ jobs:
         # automatic versioning https://github.com/ruby/setup-ruby#versioning):
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3
-      #- name: Install curb lib
-      #  run: sudo apt-get install libcurl4 libcurl3-gnutls libcurl4-openssl-dev
-      #- name: Install curb gem
-      #  run: gem install curb
+          ruby-version: 3.3.7
+          bundler-cache: true
+
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmagickwand-dev
+
       - name: Install dependencies
         run: bundle install
       - name: Run tests
