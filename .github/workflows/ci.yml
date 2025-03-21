@@ -18,7 +18,7 @@ jobs:
         # automatic versioning https://github.com/ruby/setup-ruby#versioning):
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.7
+          ruby-version: 3.3.6
           bundler-cache: true
       - name: Install dependencies
         run: bundle install
