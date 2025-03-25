@@ -186,7 +186,7 @@ class Event < ApplicationRecord
   end
 
   def registration_ended?(current_date = Date.today)
-    [date, registration_ends].compact.min.to_date <= current_date.to_date
+    [date, registration_ends].compact.min < current_date.to_date
   end
 
   def finished?

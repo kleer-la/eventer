@@ -476,17 +476,16 @@ describe Event do
   end
 
   context 'registration_ended?' do
+    let(:today) { Date.today }
     it 'Not started' do
       event = FactoryBot.create(:event, date: Date.today + 10)
       expect(event.registration_ended?).to be false
     end
     it 'Started today' do
-      today = Date.today
       event = FactoryBot.create(:event, date: today)
-      expect(event.registration_ended?(today)).to be true
+      expect(event.registration_ended?(today)).to be false
     end
-    it 'Started yestertoday' do
-      today = Date.today
+    it 'Started yesterday' do
       event = FactoryBot.create(:event, date: today - 1)
       expect(event.registration_ended?(today)).to be true
     end
@@ -495,14 +494,19 @@ describe Event do
       expect(event.registration_ended?).to be false
     end
     it 'registration ended today' do
-      today = Date.today
       event = FactoryBot.create(:event, date: today + 1, registration_ends: today)
-      expect(event.registration_ended?(today)).to be true
+      expect(event.registration_ended?(today)).to be false
     end
     it 'registration ended yestertoday' do
-      today = Date.today
       event = FactoryBot.create(:event, date: today, registration_ends: today - 1)
       expect(event.registration_ended?(today)).to be true
+    end
+    it 'prevents registration_ends after event date' do
+      event = FactoryBot.build(:event, date: today + 5, registration_ends: today + 6)
+      expect(event).not_to be_valid
+      expect(event.errors.details[:registration_ends]).to include(
+        { error: :registration_ends_should_be_earlier_than_event_date }
+      )
     end
   end
 
