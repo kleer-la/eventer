@@ -1,6 +1,6 @@
 class Contact < ApplicationRecord
   enum trigger_type: { contact_form: 0, download_form: 1, assessment_submission: 2 }
-  enum status: { pending: 0, processed: 1, failed: 2, processing: 3 }
+  enum status: { pending: 0, in_progress: 1, completed: 2, failed: 3 }
 
   belongs_to :assessment, optional: true
   has_many :responses, dependent: :destroy
@@ -10,7 +10,7 @@ class Contact < ApplicationRecord
   after_create :update_form_fields
 
   scope :pending, -> { where(status: :pending) }
-  scope :processed, -> { where(status: :processed) }
+  scope :completed, -> { where(status: :completed) }
   scope :failed, -> { where(status: :failed) }
   scope :last_24h, -> { where('created_at >= ?', 25.hours.ago) } # to handle  limit cases
 
@@ -23,12 +23,12 @@ class Contact < ApplicationRecord
     }
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[created_at email form_data id id_value processed_at status trigger_type updated_at
-       resource_slug can_we_contact suscribe assessment_report_url assessment_report_generated_at]
+       resource_slug content_updates_opt_in newsletter_opt_in newsletter_added assessment_report_url assessment_report_generated_at]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     %w[assessment responses]
   end
 
@@ -37,8 +37,8 @@ class Contact < ApplicationRecord
   def update_form_fields
     update_columns(
       resource_slug: form_data['resource_slug'],
-      can_we_contact: boolean_value(form_data['can_we_contact']),
-      suscribe: boolean_value(form_data['suscribe'])
+      content_updates_opt_in: boolean_value(form_data['content_updates_opt_in']),
+      newsletter_opt_in: boolean_value(form_data['newsletter_opt_in'])
     )
   end
 

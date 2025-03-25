@@ -40,11 +40,28 @@ module Api
     private
 
     def contact_params
-      params.permit(:name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug,
-                    :can_we_contact, :suscribe, :initial_slug, :assessment_id, assessment_results: {})
+      params.permit(
+        :name, :email, :context, :subject, :message, :company, :secret, :language, :resource_slug,
+        # New parameter names
+        :content_updates_opt_in, :newsletter_opt_in,
+        # Old parameter names (for backward compatibility)
+        :can_we_contact, :suscribe,
+        :initial_slug, :assessment_id, assessment_results: {}
+      )
+    end
+
+    def boolean_value(param)
+      %w[true on 1].include?(param.to_s.downcase)
     end
 
     def build_contact
+      if contact_params[:suscribe] && !contact_params[:newsletter_opt_in]
+        Rails.logger.warn("Deprecated param 'suscribe' used")
+      end
+      if contact_params[:can_we_contact] && !contact_params[:content_updates_opt_in]
+        Rails.logger.warn("Deprecated param 'can_we_contact' used")
+      end
+
       form_data = {
         name: contact_params[:name],
         email: contact_params[:email],
@@ -53,8 +70,8 @@ module Api
         page: contact_params[:context],
         language: contact_params[:language],
         initial_slug: contact_params[:initial_slug],
-        can_we_contact: %w[true on 1].include?(contact_params[:can_we_contact]),
-        suscribe: %w[true on 1].include?(contact_params[:suscribe])
+        content_updates_opt_in: boolean_value(contact_params[:content_updates_opt_in] || contact_params[:can_we_contact]),
+        newsletter_opt_in: boolean_value(contact_params[:newsletter_opt_in] || contact_params[:suscribe])
       }
 
       if contact_params[:resource_slug].present?

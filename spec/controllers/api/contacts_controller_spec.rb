@@ -215,46 +215,46 @@ RSpec.describe Api::ContactsController, type: :controller do
     end
 
     describe 'multi download fields handling' do
-      it 'handles missing can_we_contact and suscribe' do
+      it 'handles missing content_updates_opt_in and newsletter_opt_in' do
         post :create, params: valid_contact_params # For controller specs, we use the action symbol
 
         expect(response).to have_http_status(:created)
         contact = Contact.last
         expect(contact).to be_present
-        expect(contact.can_we_contact).to be false
-        expect(contact.suscribe).to be false
+        expect(contact.content_updates_opt_in).to be false
+        expect(contact.newsletter_opt_in).to be false
       end
 
-      it 'processes can_we_contact correctly when on' do
-        post :create, params: valid_contact_params.merge(can_we_contact: 'on')
+      it 'processes content_updates_opt_in correctly when on' do
+        post :create, params: valid_contact_params.merge(content_updates_opt_in: 'on')
 
         expect(response).to have_http_status(:created)
         contact = Contact.last
-        expect(contact.can_we_contact).to be true
+        expect(contact.content_updates_opt_in).to be true
       end
 
-      it 'processes suscribe correctly when on' do
-        post :create, params: valid_contact_params.merge(suscribe: 'on')
+      it 'processes newsletter_opt_in correctly when on' do
+        post :create, params: valid_contact_params.merge(newsletter_opt_in: 'on')
 
         expect(response).to have_http_status(:created)
         contact = Contact.last
-        expect(contact.suscribe).to be true
+        expect(contact.newsletter_opt_in).to be true
       end
 
-      it 'processes can_we_contact correctly when true' do
-        post :create, params: valid_contact_params.merge(can_we_contact: 'true')
+      it 'processes content_updates_opt_in correctly when true' do
+        post :create, params: valid_contact_params.merge(content_updates_opt_in: 'true')
 
         expect(response).to have_http_status(:created)
         contact = Contact.last
-        expect(contact.can_we_contact).to be true
+        expect(contact.content_updates_opt_in).to be true
       end
 
-      it 'processes suscribe correctly when true' do
-        post :create, params: valid_contact_params.merge(suscribe: 'true')
+      it 'processes newsletter_opt_in correctly when true' do
+        post :create, params: valid_contact_params.merge(newsletter_opt_in: 'true')
 
         expect(response).to have_http_status(:created)
         contact = Contact.last
-        expect(contact.suscribe).to be true
+        expect(contact.newsletter_opt_in).to be true
       end
 
       context 'when resource download includes initial_slug' do

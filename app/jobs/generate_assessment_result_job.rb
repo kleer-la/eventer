@@ -4,7 +4,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
   def perform(contact_id)
     contact = Contact.find(contact_id)
-    contact.update(status: :processing)
+    contact.update(status: :in_progress)
 
     # Fetch responses for the contact and map to competencies
     competencies = fetch_key_value_from_responses(contact)
@@ -65,7 +65,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     store = FileStoreService.current
 
     public_url = store.upload(pdf_path, pdf_file_name, 'certificate')
-    contact.update(assessment_report_url: public_url, status: :processed)
+    contact.update(assessment_report_url: public_url, status: :completed)
     Log.log(:assessment, :info, "PDF generated for contact #{contact_id}", { public_url: })
   end
 

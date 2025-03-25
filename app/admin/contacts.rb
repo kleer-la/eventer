@@ -8,19 +8,19 @@ ActiveAdmin.register Contact do
 
   # Filters
   filter :email
-  filter :trigger_type
-  filter :status
+  filter :trigger_type, as: :select, collection: Contact.trigger_types.keys
+  filter :status, as: :select, collection: Contact.statuses.keys
   filter :created_at
-  filter :processed_at
   filter :resource_slug
-  filter :can_we_contact, as: :select
-  filter :suscribe, as: :select
+  filter :content_updates_opt_in, as: :select
+  filter :newsletter_opt_in, as: :select
+  filter :newsletter_added, as: :select
 
   # Scopes for quick filtering
   scope :last_24h
   scope :all
   scope :pending
-  scope :processed
+  scope :completed
   scope :failed
 
   action_item :toggle_view, only: :index do
@@ -35,6 +35,51 @@ ActiveAdmin.register Contact do
     link_to 'Delete Contact', admin_contact_path(contact),
             method: :delete,
             data: { confirm: 'Are you sure you want to delete this contact?' }
+  end
+
+  action_item :update_status, only: :show do
+    # Mostrar un enlace para cada estado posible, excepto el estado actual
+    Contact.statuses.keys.map do |status|
+      next if status == contact.status # No mostrar el estado actual
+
+      link_to "Mark as #{status.humanize}", update_status_admin_contact_path(contact, status:),
+              method: :post,
+              class: 'button',
+              data: { confirm: "Are you sure you want to mark this contact as #{status.humanize}?" }
+    end.join(' ').html_safe
+  end
+  action_item :toggle_newsletter_added, only: :show do
+    new_value = !contact.newsletter_added
+    label = new_value ? 'Add to Newsletter' : 'Remove from Newsletter'
+    link_to label, toggle_newsletter_added_admin_contact_path(contact, newsletter_added: new_value),
+            method: :post,
+            class: 'button',
+            data: { confirm: "Are you sure you want to #{new_value ? 'add this contact to' : 'remove this contact from'} the newsletter?" }
+  end
+
+  batch_action :mark_as_completed do |ids|
+    Contact.where(id: ids).update_all(status: :completed, processed_at: Time.current)
+    redirect_to collection_path, notice: "#{ids.count} contacts marked as completed."
+  end
+  batch_action :add_to_newsletter, confirm: 'Are you sure you want to add these contacts to the newsletter?' do |ids|
+    Contact.where(id: ids).update_all(newsletter_added: true)
+    redirect_to collection_path, notice: "#{ids.count} contacts added to the newsletter."
+  end
+
+  member_action :update_status, method: :post do
+    new_status = params[:status]
+    if Contact.statuses.key?(new_status)
+      resource.update(status: new_status)
+      redirect_to admin_contact_path(resource), notice: "Status updated to #{new_status}"
+    else
+      redirect_to admin_contact_path(resource), alert: 'Invalid status'
+    end
+  end
+  member_action :toggle_newsletter_added, method: :post do
+    new_value = params[:newsletter_added] == 'true'
+    resource.update(newsletter_added: new_value)
+    redirect_to admin_contact_path(resource),
+                notice: "Contact #{new_value ? 'added to' : 'removed from'} the newsletter."
   end
 
   # Index view
@@ -78,9 +123,11 @@ ActiveAdmin.register Contact do
         contact.form_data&.dig('resource_slug')
       end
       column :created_at
-      column :resource_slug         # Changed from form_data dig
-      column :can_we_contact        # New column
-      column :suscribe
+      column :resource_slug # Changed from form_data dig
+      column :content_updates_opt_in # New column
+      column :newsletter_opt_in
+      column :newsletter_added
+
       actions defaults: false do |contact|
         item 'View', admin_contact_path(contact)
       end
@@ -94,8 +141,9 @@ ActiveAdmin.register Contact do
       row :trigger_type
       row :status
       row :resource_slug
-      row :can_we_contact
-      row :suscribe
+      row :content_updates_opt_in
+      row :newsletter_opt_in
+      row :newsletter_added
       row :created_at
       row :processed_at
       row :form_data do |contact|
@@ -136,8 +184,9 @@ ActiveAdmin.register Contact do
     column :trigger_type
     column :status
     column :resource_slug
-    column :can_we_contact
-    column :suscribe
+    column :content_updates_opt_in
+    column :newsletter_opt_in
+    column :newsletter_added
     column :created_at
     column :processed_at
     column(:form_data) { |contact| contact.form_data.to_json }
@@ -147,18 +196,9 @@ ActiveAdmin.register Contact do
   sidebar 'Stats', only: :index do
     div class: 'panel_contents' do
       table do
-        tr do
-          th 'Total Contacts'
-          td Contact.count
-        end
-        tr do
-          th 'Last 24h'
-          td Contact.last_24h.count
-        end
-        tr do
-          th 'Pending'
-          td Contact.pending.count
-        end
+        tr { [th('Total Contacts'), td(Contact.count)] }
+        tr { [th('Last 24h'), td(Contact.last_24h.count)] }
+        tr { [th('Pending'), td(Contact.pending.count)] }
         tr do
           th 'By Type'
           td do

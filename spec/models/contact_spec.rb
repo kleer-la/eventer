@@ -38,24 +38,24 @@ RSpec.describe Contact, type: :model do
 
     describe 'status' do
       it 'has the expected values' do
-        expect(Contact.statuses.keys).to match_array(%w[pending processed failed processing])
+        expect(Contact.statuses.keys).to match_array(%w[pending in_progress completed failed])
       end
 
       it 'can be set and queried' do
         contact = build(:contact, status: :pending)
         expect(contact.pending?).to be true
-        expect(contact.processed?).to be false
+        expect(contact.completed?).to be false
       end
     end
   end
 
   describe 'scopes' do
-    it 'unprocessed returns pending records' do
+    it 'uncompleted returns pending records' do
       pending = create(:contact, status: :pending)
-      processed = create(:contact, status: :processed)
+      completed = create(:contact, status: :completed)
 
       expect(Contact.pending).to include(pending)
-      expect(Contact.pending).not_to include(processed)
+      expect(Contact.pending).not_to include(completed)
     end
 
     it 'last_24h returns recent records' do
@@ -72,15 +72,15 @@ RSpec.describe Contact, type: :model do
       it 'updates fields from form_data' do
         form_data = {
           'resource_slug' => 'test-resource',
-          'can_we_contact' => '1',
-          'suscribe' => 'true'
+          'content_updates_opt_in' => '1',
+          'newsletter_opt_in' => 'true'
         }
 
         contact = create(:contact, form_data:)
 
         expect(contact.resource_slug).to eq('test-resource')
-        expect(contact.can_we_contact).to be true
-        expect(contact.suscribe).to be true
+        expect(contact.content_updates_opt_in).to be true
+        expect(contact.newsletter_opt_in).to be true
       end
 
       it 'handles missing form_data fields' do
@@ -88,30 +88,30 @@ RSpec.describe Contact, type: :model do
         contact = create(:contact, form_data:)
 
         expect(contact.resource_slug).to eq('test-resource')
-        expect(contact.can_we_contact).to be false
-        expect(contact.suscribe).to be false
+        expect(contact.content_updates_opt_in).to be false
+        expect(contact.newsletter_opt_in).to be false
       end
 
       it 'converts various truthy values to boolean' do
         form_data = {
-          'can_we_contact' => '1',
-          'suscribe' => 'yes'
+          'content_updates_opt_in' => '1',
+          'newsletter_opt_in' => 'yes'
         }
         contact = create(:contact, form_data:)
 
-        expect(contact.can_we_contact).to be true
-        expect(contact.suscribe).to be true
+        expect(contact.content_updates_opt_in).to be true
+        expect(contact.newsletter_opt_in).to be true
       end
 
       it 'converts various falsy values to boolean' do
         form_data = {
-          can_we_contact: '0',
-          suscribe: 'false'
+          content_updates_opt_in: '0',
+          newsletter_opt_in: 'false'
         }
         contact = create(:contact, form_data:)
 
-        expect(contact.can_we_contact).to be false
-        expect(contact.suscribe).to be false
+        expect(contact.content_updates_opt_in).to be false
+        expect(contact.newsletter_opt_in).to be false
       end
     end
   end

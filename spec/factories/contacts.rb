@@ -2,13 +2,15 @@ FactoryBot.define do
   factory :contact do
     trigger_type { :contact_form }
     email { 'user@example.com' }
-    form_data { { 
-      name: 'John Doe', 
-      message: 'Hello', lang: 'es',
-      resource_slug: 'default-resource',
-      can_we_contact: '0',
-      suscribe: 'false'
-    } }
+    form_data do
+      {
+        name: 'John Doe',
+        message: 'Hello', lang: 'es',
+        resource_slug: 'default-resource',
+        content_updates_opt_in: '0',
+        newsletter_opt_in: 'false'
+      }
+    end
 
     status { :pending }
 
