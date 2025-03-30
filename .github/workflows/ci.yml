@@ -26,10 +26,10 @@ jobs:
       #- name: Run acceptance tests
       #  run: cucumber
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Coveralls
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
 #    - name: Check rubycritic
 #      run: rubycritic -f html --no-browser
