@@ -13,7 +13,7 @@ class Resource < ApplicationRecord
 
   belongs_to :category, optional: true
 
-  enum format: { card: 0, book: 1, infographic: 2, canvas: 3,
+  enum :format, { card: 0, book: 1, infographic: 2, canvas: 3,
                  guide: 4, game: 5, assessment: 6, video: 7, other: 8 }
 
   has_many  :authorships, -> { order(updated_at: :desc) }

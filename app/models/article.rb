@@ -10,7 +10,7 @@ class Article < ApplicationRecord
                        text_fields: %i[body description]
 
   has_and_belongs_to_many :trainers
-  enum lang: %i[es en]
+  enum :lang, %w[es en]
   belongs_to :category, optional: true
 
   scope :published, -> { where(published: true) }
@@ -21,13 +21,13 @@ class Article < ApplicationRecord
   # validates :published, presence: true
   validates :description, presence: true, length: { maximum: 160 }
 
-  enum industry: {
+  enum :industry, {
     finantial: 0,
     technology: 1,
     public_services: 2,
     consumer_goods: 3,
     energy: 4
-  }, _prefix: true
+  }, prefix: true
 
   def should_generate_new_friendly_id?
     !slug.present?

@@ -1,6 +1,6 @@
 class Contact < ApplicationRecord
-  enum trigger_type: { contact_form: 0, download_form: 1, assessment_submission: 2 }
-  enum status: { pending: 0, in_progress: 1, completed: 2, failed: 3 }
+  enum :trigger_type, { contact_form: 0, download_form: 1, assessment_submission: 2 }
+  enum :status, { pending: 0, in_progress: 1, completed: 2, failed: 3 }
 
   belongs_to :assessment, optional: true
   has_many :responses, dependent: :destroy

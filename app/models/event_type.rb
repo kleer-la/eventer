@@ -16,8 +16,8 @@ class EventType < ApplicationRecord
   has_many :clons, class_name: 'EventType', foreign_key: 'canonical_id'
   has_and_belongs_to_many :coupons
 
-  enum lang: %i[es en]
-  enum platform: { keventer: 0, academia: 1 }
+  enum :lang, %w[es en]
+  enum :platform, { keventer: 0, academia: 1 }
 
   scope :included_in_catalog, -> { where(include_in_catalog: true, deleted: false) }
 

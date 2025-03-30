@@ -11,7 +11,7 @@ class Page < ApplicationRecord
   has_many :sections, dependent: :destroy
   accepts_nested_attributes_for :sections, allow_destroy: true
 
-  enum lang: %i[es en]
+  enum :lang, %w[es en]
 
   validates :name, presence: true
   validates :lang, presence: true
