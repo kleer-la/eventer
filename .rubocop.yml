@@ -1,11 +1,12 @@
 AllCops:
+  NewCops: disable
   Exclude:
     - 'bin/**/*'
     - 'db/migrate/201*'
     - 'db/schema.rb'
 
 Metrics/BlockLength:
-  IgnoredMethods:
+  AllowedMethods:
     - 'describe'
     - 'context'
   Exclude:

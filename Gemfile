@@ -11,6 +11,7 @@ group :development do
   gem 'derailed_benchmarks'
   gem 'listen'
   gem 'rubocop'
+  gem 'ruby-lsp', '>= 0.23', require: false # Add ruby-lsp gem
   gem 'solargraph'
   gem 'stackprof'
 end
