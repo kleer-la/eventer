@@ -43,10 +43,11 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     PUBLIC_DOMAIN=http://localhost:3000
 
 - Si están todas las variables en eventer.env (no es necesario si se ejecuta con ./runserver)
-  set -a;. ./eventer.env;set +a
+    set -a;. ./eventer.env;set +a
 
-- Inicia la aplicación: bundle exec rails s -b 0
- rails s -b 'ssl://0:3000?key=localhost.key&cert=localhost.crt'
+- Inicia la aplicación: 
+    rails s -b 0 # sin ssl -> para desarrollo local con website
+    rails s -b 'ssl://0:3000?key=localhost.key&cert=localhost.crt'
  
 - Alternativamente, podés iniciar la aplicación (incluye seteo de variables)
   ./runserver.sh
@@ -92,3 +93,7 @@ rails image_reference:list
 
 == Crear CSV con recursos con evaluación de contenido
 heroku run "rails runner 'Resource.pluck(:slug).each { |slug| puts \"https://www.kleer.la/es/recursos/#{slug}\" }'" -a app
+
+
+== Regenerar reporte de assessment
+    rails contacts:generate_assessment[38] 
