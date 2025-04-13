@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_25_121919) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_08_132726) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -166,6 +166,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_121919) do
     t.string "assessment_report_url"
     t.datetime "assessment_report_generated_at"
     t.boolean "newsletter_added", default: false, null: false
+    t.string "name"
+    t.string "company"
     t.index ["assessment_id"], name: "index_contacts_on_assessment_id"
     t.index ["resource_slug"], name: "index_contacts_on_resource_slug"
   end

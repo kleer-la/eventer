@@ -36,7 +36,7 @@ Rails.application.routes.draw do
     resources :articles, only: %i[index show]
     resources :resources, only: %i[index show]
     resources :pages, only: %i[show]
-    resources :contacts, only: [:create] do
+    resources :contacts, only: %i[create show] do
       get ':contact_id/status', on: :collection, to: 'contacts#status'
     end
 

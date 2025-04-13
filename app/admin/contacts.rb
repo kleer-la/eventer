@@ -90,19 +90,14 @@ ActiveAdmin.register Contact do
       column :created_at
       column :trigger_type
       column :email
-      column 'Name' do |contact|
-        contact.form_data&.dig('name')
-      end
-      column 'Company' do |contact|
-        contact.form_data&.dig('company')
-      end
-      column 'Resource' do |contact|
-        resources = Contact.where(email: contact.email)
-                           .where('DATE(created_at) = ?', contact.created_at.to_date)
-                           .map do |c|
-          c.form_data&.dig('resource_slug')
-        end.compact
-        resources.join(', ')
+      column :name
+      column :company
+      column 'Resources' do |contact|
+        Contact.where(email: contact.email)
+               .where('DATE(created_at) = ?', contact.created_at.to_date)
+               .pluck(:resource_slug)
+               .compact
+               .join(', ')
       end
       actions defaults: false do |contact|
         item 'View', admin_contact_path(contact)
@@ -113,15 +108,9 @@ ActiveAdmin.register Contact do
       column :email
       column :trigger_type
       column :status
-      column 'Name' do |contact|
-        contact.form_data&.dig('name')
-      end
-      column 'Company' do |contact|
-        contact.form_data&.dig('company')
-      end
-      column 'Slug' do |contact|
-        contact.form_data&.dig('resource_slug')
-      end
+      column :name
+      column :company
+      column :resource_slug
       column :created_at
       column :resource_slug # Changed from form_data dig
       column :content_updates_opt_in # New column
@@ -140,6 +129,8 @@ ActiveAdmin.register Contact do
       row :email
       row :trigger_type
       row :status
+      row :name
+      row :company
       row :resource_slug
       row :content_updates_opt_in
       row :newsletter_opt_in
@@ -176,6 +167,8 @@ ActiveAdmin.register Contact do
     column :email
     column :trigger_type
     column :status
+    column :name
+    column :company
     column :resource_slug
     column :content_updates_opt_in
     column :newsletter_opt_in

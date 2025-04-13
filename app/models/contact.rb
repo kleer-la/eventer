@@ -6,6 +6,7 @@ class Contact < ApplicationRecord
   has_many :responses, dependent: :destroy
 
   validates :trigger_type, :email, :form_data, presence: true
+  # validates :name, :company, presence: true
 
   after_create :update_form_fields
 
@@ -38,7 +39,9 @@ class Contact < ApplicationRecord
     update_columns(
       resource_slug: form_data['resource_slug'],
       content_updates_opt_in: boolean_value(form_data['content_updates_opt_in']),
-      newsletter_opt_in: boolean_value(form_data['newsletter_opt_in'])
+      newsletter_opt_in: boolean_value(form_data['newsletter_opt_in']),
+      name: form_data&.dig('name'),
+      company: form_data&.dig('company')
     )
   end
 

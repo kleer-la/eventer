@@ -63,7 +63,7 @@ RSpec.describe Api::ContactsController, type: :controller do
         contact = Contact.last
         expect(contact.email).to eq('john@example.com')
         expect(contact.form_data).to include(
-          'name' => 'John Doe',
+          'name' => 'John Doe', # Validate name in form_data
           'message' => 'Test message',
           'page' => '/recursos'
         )
@@ -73,6 +73,20 @@ RSpec.describe Api::ContactsController, type: :controller do
 
         contact = Contact.last
         expect(contact.email).to eq('john@example.com')
+        expect(contact.form_data).to include(
+          'name' => 'John Doe', # Validate name in form_data
+          'company' => 'Acme Corp', # Validate company in form_data
+          'message' => 'Test message',
+          'page' => '/recursos'
+        )
+      end
+      it 'saves form data and extracts name and company' do
+        post :create, params: valid_contact_params
+
+        contact = Contact.last
+        expect(contact.email).to eq('john@example.com')
+        expect(contact.name).to eq('John Doe') # Validate name is extracted
+        expect(contact.company).to eq('Acme Corp') # Validate company is extracted
         expect(contact.form_data).to include(
           'name' => 'John Doe',
           'company' => 'Acme Corp',
@@ -153,6 +167,18 @@ RSpec.describe Api::ContactsController, type: :controller do
         json_response = JSON.parse(response.body)
         expect(json_response['data']).to include(
           'id' => Contact.last.id,
+          'status' => Contact.last.status,
+          'assessment_report_url' => Contact.last.assessment_report_url
+        )
+      end
+      it 'returns created status with extracted name and company' do
+        post :create, params: valid_contact_params
+        expect(response).to have_http_status(:created)
+        json_response = JSON.parse(response.body)
+        expect(json_response['data']).to include(
+          'id' => Contact.last.id,
+          'name' => 'John Doe', # Validate name is included in response
+          'company' => 'Acme Corp', # Validate company is included in response
           'status' => Contact.last.status,
           'assessment_report_url' => Contact.last.assessment_report_url
         )
@@ -275,6 +301,34 @@ RSpec.describe Api::ContactsController, type: :controller do
       end
     end
   end
+
+  describe 'GET #show' do
+    let!(:contact) { create(:contact) }
+
+    context 'with a valid contact ID' do
+      it 'returns the contact details' do
+        get :show, params: { id: contact.id }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response['data']).to include(
+          'id' => contact.id,
+          'email' => contact.email
+        )
+      end
+    end
+
+    context 'with an invalid contact ID' do
+      it 'returns a not found error' do
+        get :show, params: { id: 'non-existent-id' }
+
+        expect(response).to have_http_status(:not_found)
+        json_response = JSON.parse(response.body)
+        expect(json_response['error']).to eq('Contact not found')
+      end
+    end
+  end
+
   describe 'error logging' do
     it 'logs contact save errors' do
       contact = Contact.new # Real instance
