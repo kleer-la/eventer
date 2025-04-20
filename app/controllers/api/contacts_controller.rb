@@ -16,9 +16,7 @@ module Api
             process_assessment(contact)
             process_notifications(contact)
           end
-          render json: { 
-            data: contact.as_json(only: %i[id status assessment_report_url name company]) 
-          }, status: :created
+          render json: contact.as_json(only: %i[id status assessment_report_url name company]), status: :created
         rescue ActiveRecord::RecordInvalid => e
           log_error('Validation failed during processing', e.message)
           render json: { error: e.message }, status: 422
@@ -41,14 +39,25 @@ module Api
 
     def show
       contact = Contact.find(params[:id])
-      render json: { 
-        data: contact.as_json(only: %i[id name email company status assessment_report_url]) 
-      }
+      render json: contact_as_json(contact)
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Contact not found' }, status: 404
     end
 
     private
+
+    def contact_as_json(contact)
+      json = contact.as_json(only: %i[id name email company status assessment_report_url])
+      json[:assessment] = assessment_as_json(contact.assessment) if contact.assessment
+      json
+    end
+
+    def assessment_as_json(assessment)
+      assessment.as_json(only: %i[id title description created_at updated_at]).merge(
+        questions: assessment.questions.as_json(only: %i[id text]),
+        responses: assessment.contacts.find_by(id: params[:id])&.responses&.as_json(only: %i[id question_id answer_id])
+      )
+    end
 
     def contact_params
       params.permit(

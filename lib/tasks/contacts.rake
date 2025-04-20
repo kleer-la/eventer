@@ -6,7 +6,7 @@ namespace :contacts do
 
     GenerateAssessmentResultJob.perform_now(contact.id)
 
-    puts "Assessment generation queued for contact #{contact.id}"
+    puts "Assessment generated for contact #{contact.id} #{contact.status} #{contact.assessment_report_url}"
   rescue ActiveRecord::RecordNotFound
     puts "Error: Contact with ID #{args[:contact_id]} not found"
     # rescue StandardError => e

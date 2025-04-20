@@ -165,7 +165,7 @@ RSpec.describe Api::ContactsController, type: :controller do
         post :create, params: valid_contact_params
         expect(response).to have_http_status(:created)
         json_response = JSON.parse(response.body)
-        expect(json_response['data']).to include(
+        expect(json_response).to include(
           'id' => Contact.last.id,
           'status' => Contact.last.status,
           'assessment_report_url' => Contact.last.assessment_report_url
@@ -175,7 +175,7 @@ RSpec.describe Api::ContactsController, type: :controller do
         post :create, params: valid_contact_params
         expect(response).to have_http_status(:created)
         json_response = JSON.parse(response.body)
-        expect(json_response['data']).to include(
+        expect(json_response).to include(
           'id' => Contact.last.id,
           'name' => 'John Doe', # Validate name is included in response
           'company' => 'Acme Corp', # Validate company is included in response
@@ -311,7 +311,7 @@ RSpec.describe Api::ContactsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
-        expect(json_response['data']).to include(
+        expect(json_response).to include(
           'id' => contact.id,
           'email' => contact.email
         )
