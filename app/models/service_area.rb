@@ -8,8 +8,7 @@ class ServiceArea < ApplicationRecord
   include ImageReference
   references_images_in :icon, :side_image
 
-  #TODO change sp to es
-  enum :lang, { sp: 0, en: 1 }
+  enum :lang, { es: 0, en: 1 }
   has_many :services, dependent: :destroy
 
   has_rich_text :summary

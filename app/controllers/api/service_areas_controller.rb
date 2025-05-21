@@ -17,6 +17,7 @@ module Api
         {
           id: service_area.id,
           slug: service_area.slug,
+          lang: service_area.lang,
           name: service_area.name,
           icon: service_area.icon,
           summary: service_area.summary.body.to_s, # Get just the content of the rich text
@@ -68,6 +69,7 @@ module Api
         id: service_area.id,
         slug: service_area.slug,
         slug_old: service_area_chg,
+        lang: service_area.lang,
         name: service_area.name,
         icon: service_area.icon,
         summary: service_area.summary.body.to_s,

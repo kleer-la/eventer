@@ -4,7 +4,7 @@ ActiveAdmin.register ServiceArea do
   menu parent: 'Services Mgnt'
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :primary_font_color, :secondary_font_color,
-                :visible, :summary, :cta_message,
+                :visible, :summary, :cta_message, :lang,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
                 :target_title, :seo_title, :seo_description, :is_training_program
   filter :name
@@ -25,6 +25,7 @@ ActiveAdmin.register ServiceArea do
     column :name
     column :subtitle
     column :slug
+    column :lang
     column :ordering
     column :is_training_program
     column :visible
@@ -36,6 +37,7 @@ ActiveAdmin.register ServiceArea do
     f.inputs 'ServiceArea Details' do
       f.input :name
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
+      f.input :lang, as: :radio
       f.input :visible, as: :boolean
       f.input :is_training_program, as: :boolean
       f.input :icon, as: :url
@@ -82,6 +84,7 @@ ActiveAdmin.register ServiceArea do
     attributes_table do
       row :name
       row :slug
+      row :lang
       row :visible
       row :is_training_program
       row :icon do |service_area|
