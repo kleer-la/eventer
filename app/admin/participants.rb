@@ -43,7 +43,10 @@ ActiveAdmin.register Participant do
          .order('date DESC')
          .limit(100)
          .pluck('events.date', 'event_types.name', 'events.id')
-         .map { |date, name, id| ["#{date.strftime('%Y-%m-%d')} - #{name}", id] }
+         .map do |date, name, id|
+      event_type_name = name || 'No Event Type'
+      ["#{date.strftime('%Y-%m-%d')} - #{event_type_name}", id]
+    end
   }
   filter :status, as: :select, collection: Participant.status_collection_for_select
   filter :verification_code
@@ -84,8 +87,13 @@ ActiveAdmin.register Participant do
       participant.created_at.strftime('%Y %b %d %H:%M')
     end
     column 'Event' do |participant|
-      link_to "#{participant.event.date.strftime('%Y-%m-%d')} - #{participant.event.event_type.name}",
-              admin_event_path(participant.event)
+      if participant.event
+        event_type_name = participant.event.event_type&.name || 'No Event Type'
+        link_to "#{participant.event.date.strftime('%Y-%m-%d')} - #{event_type_name}",
+                admin_event_path(participant.event)
+      else
+        'No Event'
+      end
     end
     column 'Name' do |participant|
       icon_span('user', "#{participant.fname} #{participant.lname}")
