@@ -46,6 +46,8 @@ ActiveAdmin.register Page do
         if page.cover.present?
           div do
             image_tag page.cover, style: 'max-width: 300px; max-height: 300px'
+          rescue Sprockets::Rails::Helper::AssetNotFound
+            content_tag :p, 'Image not available', class: 'asset-missing'
           end
           div do
             link_to page.cover, page.cover, target: '_blank'
