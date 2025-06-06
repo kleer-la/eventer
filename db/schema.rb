@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_08_132726) do
+ActiveRecord::Schema[7.2].define(version: 2025_06_06_211002) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -665,6 +665,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_08_132726) do
     t.text "value"
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
+  end
+
+  create_table "short_urls", force: :cascade do |t|
+    t.string "short_code", null: false
+    t.text "original_url", null: false
+    t.integer "click_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["short_code"], name: "index_short_urls_on_short_code", unique: true
   end
 
   create_table "testimonies", force: :cascade do |t|

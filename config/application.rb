@@ -25,5 +25,6 @@ module Eventer
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.short_url_base = ENV['SHORT_URL_BASE'] || 'https://kleer.la'
   end
 end
