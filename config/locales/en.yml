@@ -390,9 +390,9 @@ en:
       subject: Kleer | Contact from the website by %{name}
       body: >-
         %{message}
-        ----------
-        %{context}
-        %{name}<%{email}>
+        \n\n----------
+        \n%{context}
+        \n%{name}<%{email}> from %{company}
     invoice:
       item_one: >-
         %{course} -

@@ -407,9 +407,9 @@ es:
       subject: Kleer | Contacto desde el sitio web por %{name}
       body: >-
         %{message}
-        ----------
-        %{context}
-        %{name}<%{email}>
+        \n\n----------
+        \n%{context}
+        \n%{name}<%{email}> de %{company}
     invoice:
       item_one: >-
         %{course} -

@@ -36,12 +36,13 @@ class HomeController < ApplicationController
   end
 
   def contact_us
-    # params.from_jsonapi.permit(:name, :email, :context, :subject, :message)
     name = params[:name]
     email = params[:email]
     context = params[:context]
     subject = params[:subject]
     message = params[:message]
+    company = params[:company]
+    language = params[:language]
 
     error = self.class.valid_contact_us(
       name, email, context, subject, message,
@@ -55,6 +56,8 @@ class HomeController < ApplicationController
       ApplicationMailer.delay.contact_us(
         name,
         email,
+        company,
+        language,
         context,
         subject,
         message
