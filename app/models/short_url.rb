@@ -1,6 +1,6 @@
 class ShortUrl < ApplicationRecord
   extend FriendlyId
-  friendly_id :short_code, use: :finders
+  friendly_id :short_code, use: %i[finders history]
 
   validates :original_url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }
   validates :short_code, presence: true, length: { in: 4..16 },
@@ -9,7 +9,6 @@ class ShortUrl < ApplicationRecord
 
   before_validation :generate_short_code, on: :create, unless: :short_code_present?
 
-
   def self.ransackable_attributes(_auth_object = nil)
     %w[click_count created_at id id_value original_url short_code updated_at]
   end
@@ -17,7 +16,7 @@ class ShortUrl < ApplicationRecord
   private
 
   def generate_short_code
-    self.short_code = SecureRandom.alphanumeric(6) until unique_short_code?       
+    self.short_code = SecureRandom.alphanumeric(6) until unique_short_code?
   end
 
   def unique_short_code?
@@ -33,5 +32,4 @@ class ShortUrl < ApplicationRecord
   def should_generate_new_friendly_id?
     short_code_changed? || super
   end
-
 end
