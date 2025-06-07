@@ -1,6 +1,6 @@
 class ShortUrl < ApplicationRecord
   extend FriendlyId
-  friendly_id :short_code, use: %i[finders history]
+  friendly_id :short_code, use: %i[finders]
 
   validates :original_url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }
   validates :short_code, presence: true, length: { in: 4..16 },
