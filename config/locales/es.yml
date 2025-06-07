@@ -402,8 +402,14 @@ es:
     previous_label: "<<"
     page_gap: "..."
     next_label: ">>"
-
   mail:
+    contact_us:
+      subject: Kleer | Contacto desde el sitio web por %{name}
+      body: >-
+        %{message}
+        ----------
+        %{context}
+        %{name}<%{email}>
     invoice:
       item_one: >-
         %{course} -

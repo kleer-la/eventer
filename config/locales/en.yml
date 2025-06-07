@@ -386,6 +386,13 @@ en:
     next_label: ">>"
 
   mail:
+    contact_us:
+      subject: Kleer | Contact from the website by %{name}
+      body: >-
+        %{message}
+        ----------
+        %{context}
+        %{name}<%{email}>
     invoice:
       item_one: >-
         %{course} -
