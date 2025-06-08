@@ -3,7 +3,7 @@
 source 'http://rubygems.org'
 
 ruby '~> 3.3.6'
-gem 'rails', '7.2.2.1' #~> 
+gem 'rails', '7.2.2.1' # ~>
 
 group :development do
   gem 'brakeman'
@@ -32,6 +32,7 @@ group :test do
   gem 'factory_bot_rails', require: false
   gem 'faker'
   gem 'selenium-webdriver' # , '~> 3'
+  gem 'webmock'
 end
 
 group :test, :production do

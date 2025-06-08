@@ -282,12 +282,14 @@ describe 'render certificates' do
   end
 
   it 'fail to persist a certificate file. Wrong credentials' do
+    WebMock.allow_net_connect!
     certificate_filename = ParticipantsHelper.generate_certificate(@participant, 'A4', @certificate_store)
     expect do
       ParticipantsHelper.upload_certificate(
         certificate_filename, access_key_id: 'fail', secret_access_key: 'fail'
       )
     end.to raise_error Aws::S3::Errors::InvalidAccessKeyId
+    WebMock.disable_net_connect!(allow_localhost: true)
   end
 
   it 'new (2021) certificate file' do

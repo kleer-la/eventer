@@ -22,15 +22,13 @@ RSpec.describe 'Admin Resources', type: :feature do
 
   describe 'index page' do
     it 'lists all resources' do
-      resource1 = create(:resource, 
-        title_es: 'Primer Recurso',
-        format: :book,
-        category: category
-      )
-      resource2 = create(:resource, 
-        title_es: 'Segundo Recurso',
-        format: :guide
-      )
+      resource1 = create(:resource,
+                         title_es: 'Primer Recurso',
+                         format: :book,
+                         category: category)
+      resource2 = create(:resource,
+                         title_es: 'Segundo Recurso',
+                         format: :guide)
 
       create(:authorship, resource: resource1, trainer: author)
 
@@ -43,7 +41,7 @@ RSpec.describe 'Admin Resources', type: :feature do
       expect(page).to have_content('None') # For resource2 with no category
     end
 
-    #TODO: Fix this test
+    # TODO: Fix this test
     # it works with rails spec SPEC=spec/features/admin/resources_spec.rb
     # but not with rspec ci
     # it 'allows filtering resources' do
@@ -61,17 +59,16 @@ RSpec.describe 'Admin Resources', type: :feature do
   end
 
   describe 'show page' do
-    let(:resource) do 
+    let(:resource) do
       create(:resource,
-        title_es: 'Test Resource ES',
-        description_es: 'Test Description ES',
-        format: :book,
-        category: category,
-        getit_es: 'http://example.com/download',
-        cover_es: 'cover.jpg',
-        landing_es: '/blog/test-resource',
-        long_description_es: '# Test markdown'
-      )
+             title_es: 'Test Resource ES',
+             description_es: 'Test Description ES',
+             format: :book,
+             category: category,
+             getit_es: 'http://example.com/download',
+             cover_es: 'cover.jpg',
+             landing_es: '/blog/test-resource',
+             long_description_es: '# Test markdown')
     end
 
     before do
@@ -104,7 +101,6 @@ RSpec.describe 'Admin Resources', type: :feature do
         end
       end
     end
-
 
     it 'renders markdown content' do
       expect(page).to have_css('h1', text: 'Test markdown')
@@ -148,7 +144,7 @@ RSpec.describe 'Admin Resources', type: :feature do
     it 'allows updating an existing resource' do
       visit edit_admin_resource_path(resource)
       fill_in 'Title es', with: 'Título Actualizado'
-      select 'Guide', from: 'Format'  # Capitalized as shown in the output
+      select 'Guide', from: 'Format' # Capitalized as shown in the output
       find('input[type="submit"]').click
 
       expect(page).to have_content('Título Actualizado')
@@ -160,11 +156,10 @@ RSpec.describe 'Admin Resources', type: :feature do
     it 'displays recommended content' do
       resource = create(:resource)
       recommended_resource = create(:resource, title_es: 'Recurso Recomendado')
-      create(:recommended_content, 
-        source: resource, 
-        target: recommended_resource, 
-        relevance_order: 1
-      )
+      create(:recommended_content,
+             source: resource,
+             target: recommended_resource,
+             relevance_order: 1)
 
       visit admin_resource_path(resource)
 
@@ -178,6 +173,9 @@ RSpec.describe 'Admin Resources', type: :feature do
   end
 
   describe 'check sizes action' do
+    before { WebMock.allow_net_connect! }
+    after { WebMock.disable_net_connect!(allow_localhost: true) }
+
     it 'displays cover sizes for all resources' do
       resource = create(:resource, cover_es: 'cover.jpg')
 

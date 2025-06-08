@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Contact < ApplicationRecord
   enum :trigger_type, { contact_form: 0, download_form: 1, assessment_submission: 2 }
   enum :status, { pending: 0, in_progress: 1, completed: 2, failed: 3 }
@@ -9,6 +11,7 @@ class Contact < ApplicationRecord
   # validates :name, :company, presence: true
 
   after_create :update_form_fields
+  after_create :trigger_webhook
 
   scope :pending, -> { where(status: :pending) }
   scope :completed, -> { where(status: :completed) }
@@ -26,7 +29,8 @@ class Contact < ApplicationRecord
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at email form_data id id_value processed_at status trigger_type updated_at
-       resource_slug content_updates_opt_in newsletter_opt_in newsletter_added assessment_report_url assessment_report_generated_at]
+       resource_slug content_updates_opt_in newsletter_opt_in newsletter_added assessment_report_url
+       assessment_report_generated_at]
   end
 
   def self.ransackable_associations(_auth_object = nil)
@@ -49,5 +53,9 @@ class Contact < ApplicationRecord
     return false if value.nil? || value.blank?
 
     value.to_s.downcase.in?(%w[true 1 yes])
+  end
+
+  def trigger_webhook
+    WebhookService.new(self).delay.deliver
   end
 end

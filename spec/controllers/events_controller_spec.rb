@@ -163,6 +163,8 @@ describe EventsController do
   end
 
   describe 'GET send_certificate' do
+    before { WebMock.allow_net_connect! }
+    after { WebMock.disable_net_connect!(allow_localhost: true) }
     login_admin
     it 'one present' do
       participant = FactoryBot.create(:participant)
