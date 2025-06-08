@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationMailer < ActionMailer::Base
-  # default from: 'entrenamos@kleer.la'
   # layout 'mailer'
   def contact_us(name, email, company, language, context, _subject, message)
     kleer_email = Setting.get(:CONTACT_US_MAILTO) || 'info@kleer.la'
