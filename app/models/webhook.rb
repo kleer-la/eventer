@@ -8,4 +8,12 @@ class Webhook < ApplicationRecord
   def generate_secret
     self.secret = SecureRandom.hex(32)
   end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[active created_at event id secret updated_at url]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
 end

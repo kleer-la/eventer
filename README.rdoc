@@ -97,3 +97,19 @@ heroku run "rails runner 'Resource.pluck(:slug).each { |slug| puts \"https://www
 
 == Regenerar reporte de assessment
     rails contacts:generate_assessment[38] 
+
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test User",
+    "email": "test@example.com",
+    "company": "Test Inc",
+    "resource_slug": "supercard",
+    "language": "en",
+    "content_updates_opt_in": "true",
+    "newsletter_opt_in": "true",
+    "context": "/some/path",
+    "secret": ""
+  }' \
+  http://localhost:3000/api/contacts

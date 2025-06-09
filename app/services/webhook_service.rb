@@ -10,7 +10,7 @@ class WebhookService
     return unless webhook
 
     conn = Faraday.new(url: webhook.url)
-    conn.post do |req|
+    resp = conn.post do |req|
       req.body = {
         contact: {
           id: @contact.id,
@@ -23,5 +23,7 @@ class WebhookService
       }.to_json
       req.headers['Content-Type'] = 'application/json'
     end
+    Log.log(:mail, :info, 'Webhook', "#{resp.status} - #{resp.body}")
+    resp
   end
 end
