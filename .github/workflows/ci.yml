@@ -7,6 +7,7 @@ on:
 jobs:
   CI:
     runs-on: ubuntu-latest
+    environment: keventer 
     env:
       KEVENTER_AWS_ACCESS_KEY_ID: ${{ secrets.KEVENTER_AWS_ACCESS_KEY_ID }}
       KEVENTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.KEVENTER_AWS_SECRET_ACCESS_KEY }}
