@@ -8,8 +8,8 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.KEVENTER_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.KEVENTER_AWS_SECRET_ACCESS_KEY }}
+      KEVENTER_AWS_ACCESS_KEY_ID: ${{ secrets.KEVENTER_AWS_ACCESS_KEY_ID }}
+      KEVENTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.KEVENTER_AWS_SECRET_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v4
       - name: Install ImageMagick
