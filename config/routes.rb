@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     resources :pages, only: %i[show]
     resources :contacts, only: %i[create show] do
       get ':contact_id/status', on: :collection, to: 'contacts#status'
+      post :contact_us, on: :collection
     end
 
     resources :assessments, only: [:show]
@@ -47,6 +48,8 @@ Rails.application.routes.draw do
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
     resources :short_urls, only: [:show], param: :short_code
   end
+  post 'api/contact_us' => 'contacts#contact_us' # TODO: remove, duplicated with api/contacts_controller.rb
+
   get 'api/events' => 'home#index'
   get 'api/trainers' => 'home#trainers'
   get 'api/kleerers' => 'home#kleerers'
@@ -55,7 +58,6 @@ Rails.application.routes.draw do
   get 'api/events/event_types/:id' => 'home#event_by_event_type' # TODO: should deprecate (used in website?)
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
-  post 'api/contact_us' => 'home#contact_us'
 
   get 'api/2/participants/synch' => 'api#participants_synch'
 

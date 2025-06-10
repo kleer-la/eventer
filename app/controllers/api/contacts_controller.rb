@@ -44,6 +44,94 @@ module Api
       render json: { error: 'Contact not found' }, status: 404
     end
 
+    class << self
+      def valid_name?(name)
+        return false if name.to_s == ''
+
+        name = name.strip
+        return false unless /^[a-z]+[A-Z]/.match(name).nil?
+        return false unless /[a-z]+[A-Z]+[a-z]/.match(name).nil?
+        return false if name.length > 50
+
+        true
+      end
+
+      def valid_message?(msg, filter = 'http://')
+        return false if msg.to_s == ''
+        return false if filter.split(',').map { |f| msg.include? f }.reduce(false) { |r, elem| r || elem }
+
+        true
+      end
+
+      def valid_email?(email)
+        !!(email =~ /\A[\w+\-.]+@[a-z\d-]+(\.[a-z]+)*\.[a-z]+\z/i)
+      end
+
+      def valid_contact_us(name, email, context, subject, message, secret, filter)
+        local_secret = ENV['CONTACT_US_SECRET'].to_s
+        ('bad secret' if local_secret != '' && local_secret != secret) ||
+          ('bad name' unless valid_name?(name)) ||
+          ('bad message' unless valid_message?(message, filter)) ||
+          ('empty email' unless email.present?) ||
+          ('invalid email' unless valid_email?(email)) ||
+          ('empty context' unless context.present?) ||
+          ('subject honeypot' if subject.present?)
+      end
+    end
+
+    def contact_us
+      name = params[:name]
+      email = params[:email]
+      context = params[:context]
+      subject = params[:subject]
+      message = params[:message]
+      company = params[:company]
+      language = params[:language]
+
+      error = self.class.valid_contact_us(
+        name, email, context, subject, message,
+        params[:secret], Setting.get('CONTACT_US_MESSAGE_FILTER')
+      )
+      if error.present?
+        log_error('Contact Us validation failed', "#{error} #{params.inspect}")
+        render json: { error: error }, status: 422
+      else
+        contact = Contact.new(
+          trigger_type: 'contact_form',
+          email: email,
+          form_data: {
+            name: name,
+            email: email,
+            company: company,
+            message: message,
+            page: context,
+            language: language,
+            subject: subject
+          }
+        )
+        contact.save!
+
+        # Trigger mail and webhook independently (no transaction)
+        ApplicationMailer.delay.contact_us(
+          name,
+          email,
+          company,
+          language,
+          context,
+          subject,
+          message
+        )
+
+        render json: { data: nil }, status: 200
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      log_error('Contact creation failed', e.message)
+      render json: { error: e.message }, status: 422
+      # rescue StandardError => e
+      #   log_error('Unexpected error', e.message)
+      #   render json: { error: 'Processing failed' }, status: 500
+    end
+
     private
 
     def contact_as_json(contact)

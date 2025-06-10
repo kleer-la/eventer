@@ -56,6 +56,8 @@ class Contact < ApplicationRecord
   end
 
   def trigger_webhook
-    WebhookService.new(self).delay.deliver
+    Webhook.where(event: "contact.#{trigger_type}", active: true).each do |webhook|
+      WebhookService.new(self, webhook: webhook).delay.deliver
+    end
   end
 end

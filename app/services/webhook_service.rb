@@ -1,15 +1,15 @@
 require 'faraday'
 
 class WebhookService
-  def initialize(contact)
+  def initialize(contact, webhook: nil)
     @contact = contact
+    @webhook = webhook || Webhook.find_by(event: "contact.#{@contact.trigger_type}", active: true)
   end
 
   def deliver
-    webhook = Webhook.find_by(event: 'contact.created', active: true)
-    return unless webhook
+    return unless @webhook
 
-    conn = Faraday.new(url: webhook.url)
+    conn = Faraday.new(url: @webhook.url)
     resp = conn.post do |req|
       req.body = {
         contact: {
