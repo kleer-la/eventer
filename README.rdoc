@@ -115,15 +115,15 @@ curl -X POST \
   http://localhost:3000/api/contacts
 
 
-  curl -X POST http://localhost:3000/api/contacts/contact_us \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "company": "Test Inc",
-    "context": "/contact",
-    "subject": "",
-    "message": "Hello, I have a question.",
-    "language": "en",
-    "secret": ""
-  }'
+curl -X POST http://localhost:3000/api/contacts/contact_us \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Test User",
+  "email": "test@example.com",
+  "company": "Test Inc",
+  "context": "/contact",
+  "subject": "",
+  "message": "Hello, I have a question.",
+  "language": "en",
+  "secret": ""
+}'
