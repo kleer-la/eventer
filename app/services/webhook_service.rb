@@ -17,6 +17,7 @@ class WebhookService
           name: @contact.name,
           email: @contact.email,
           company: @contact.company,
+          message: @contact.form_data['message'] || '',
           resource_slug: @contact.resource_slug,
           trigger_type: @contact.trigger_type,
           content_updates_opt_in: @contact.content_updates_opt_in,
