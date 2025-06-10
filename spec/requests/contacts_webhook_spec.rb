@@ -46,7 +46,10 @@ RSpec.describe 'Api::Contacts Webhook Integration', type: :request do
             email: 'test@example.com',
             company: 'Test Inc',
             resource_slug: 'test-resource',
-            trigger_type: 'download_form'
+            trigger_type: 'download_form',
+            content_updates_opt_in: true,
+            newsletter_opt_in: true,
+            language: 'en'
           }
         }.to_json,
         headers: { 'Content-Type' => 'application/json' }

@@ -18,7 +18,10 @@ class WebhookService
           email: @contact.email,
           company: @contact.company,
           resource_slug: @contact.resource_slug,
-          trigger_type: @contact.trigger_type
+          trigger_type: @contact.trigger_type,
+          content_updates_opt_in: @contact.content_updates_opt_in,
+          newsletter_opt_in: @contact.newsletter_opt_in,
+          language: @contact.form_data['language'] || 'es'
         }
       }.to_json
       req.headers['Content-Type'] = 'application/json'
