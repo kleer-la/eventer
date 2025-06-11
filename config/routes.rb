@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       get ':contact_id/status', on: :collection, to: 'contacts#status'
       post :contact_us, on: :collection
     end
+    post 'contact_us', to: 'contacts#contact_us' # TODO: remove, duplicated with api/contacts/contact_us
 
     resources :assessments, only: [:show]
     get 'news'
@@ -48,7 +49,6 @@ Rails.application.routes.draw do
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
     resources :short_urls, only: [:show], param: :short_code
   end
-  post 'api/contact_us' => 'contacts#contact_us' # TODO: remove, duplicated with api/contacts_controller.rb
 
   get 'api/events' => 'home#index'
   get 'api/trainers' => 'home#trainers'
