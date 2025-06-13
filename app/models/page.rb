@@ -60,7 +60,7 @@ class Page < ApplicationRecord
     }
   end
 
-  def as_recommendation
+  def as_recommendation(lang: 'es')
     super
       .merge('subtitle' => seo_description)
       .merge('slug' => slug)

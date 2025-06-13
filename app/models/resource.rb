@@ -14,7 +14,7 @@ class Resource < ApplicationRecord
   belongs_to :category, optional: true
 
   enum :format, { card: 0, book: 1, infographic: 2, canvas: 3,
-                 guide: 4, game: 5, assessment: 6, video: 7, other: 8 }
+                  guide: 4, game: 5, assessment: 6, video: 7, other: 8 }
 
   has_many  :authorships, -> { order(updated_at: :desc) }
   has_many  :authors, through: :authorships, source: :trainer
@@ -45,11 +45,12 @@ class Resource < ApplicationRecord
     getit_es.present?
   end
 
-  def as_recommendation
+  def as_recommendation(lang: 'es')
+    is_en = lang == 'en'
     super
-      .merge('title' => title)
-      .merge('subtitle' => description_es)
-      .merge('cover' => cover_es)
+      .merge('title' => is_en ? title_en : title_es)
+      .merge('subtitle' => is_en ? description_en : description_es)
+      .merge('cover' => is_en ? cover_en : cover_es)
       .merge('downloadable' => downloadable)
   end
 

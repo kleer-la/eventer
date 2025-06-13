@@ -49,7 +49,7 @@ class Article < ApplicationRecord
     category&.name
   end
 
-  def as_recommendation
+  def as_recommendation(lang: 'es')
     super
       .merge('subtitle' => description)
       .merge('slug' => slug)

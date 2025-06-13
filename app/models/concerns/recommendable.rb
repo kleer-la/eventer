@@ -21,17 +21,17 @@ module Recommendable
     end
   end
 
-  def as_recommendation
+  def as_recommendation(lang: 'es')
     as_json(only: %i[id title subtitle slug cover])
       .merge('type' => self.class.name.underscore)
   end
 
-  def recommended
-    recommended_contents.includes(:target).order(:relevance_order).map do |content|
+  def recommended(lang: 'es')
+    recommended_contents.preload(:target).order(:relevance_order).map do |content|
       next unless content.target.present? # Skip if target is nil
 
-      content.target.as_recommendation.merge('relevance_order' => content.relevance_order,
-                                             'level' => calculate_level(content.relevance_order))
+      content.target.as_recommendation(lang:).merge('relevance_order' => content.relevance_order,
+                                                    'level' => calculate_level(content.relevance_order))
     end.compact
   end
 

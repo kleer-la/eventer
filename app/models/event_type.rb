@@ -106,7 +106,7 @@ class EventType < ApplicationRecord
     name
   end
 
-  def as_recommendation
+  def as_recommendation(lang: 'es')
     super
       .merge('title' => name) # is a method, not an attribute
       .merge('slug' => slug)

@@ -30,16 +30,22 @@ module Api
     end
 
     def show
+      lang = params[:lang] || 'es'
+      return render json: { error: 'Invalid language' }, status: :bad_request unless %w[es en].include?(lang)
+
       resource = resources_with_associations.friendly.find(params[:id].downcase)
       render(
-        json: resource,
-        methods: %i[category_name recommended downloadable],
-        include: {
-          authors: { only: trainer_show_fields },
-          translators: { only: trainer_show_fields },
-          illustrators: { only: trainer_show_fields },
-          assessment: { only: :id }
-        }
+        json: resource.as_json(
+          methods: %i[category_name downloadable],
+          include: {
+            authors: { only: trainer_show_fields },
+            translators: { only: trainer_show_fields },
+            illustrators: { only: trainer_show_fields },
+            assessment: { only: :id }
+          }
+        ).merge(
+          recommended: resource.recommended(lang: lang)
+        )
       )
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Resource not found' }, status: :not_found
