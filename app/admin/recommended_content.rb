@@ -7,12 +7,12 @@ ActiveAdmin.register RecommendedContent do
     column :source do |rc|
       link_to "#{rc.source_type} - #{rc.source.title}", edit_polymorphic_path([:admin, rc.source])
     rescue NoMethodError, ActionController::UrlGenerationError
-      "#{rc.source_type} - #{rc.source.title}"
+      'Missing'
     end
     column :target do |rc|
       link_to "#{rc.target_type} - #{rc.target.title}", edit_polymorphic_path([:admin, rc.target])
     rescue NoMethodError, ActionController::UrlGenerationError
-      "#{rc.target_type} - #{rc.target.title}"
+      'Missing'
     end
     column :relevance_order
   end
