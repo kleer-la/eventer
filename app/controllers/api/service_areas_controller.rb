@@ -62,6 +62,8 @@ module Api
       service_area, service_area_chg, service_chg = find_area_or_service(req_slug)
       return render(json: { error: 'ServiceArea not found' }, status: :not_found) unless service_area.present?
 
+      lang = service_area.lang
+
       services = service_area.services
       services = services.where(visible: true) if visible
 
@@ -87,13 +89,13 @@ module Api
         value_proposition: service_area.value_proposition.body.to_s,
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
-        services: services2json(services, service_chg, req_slug)
+        services: services2json(services, service_chg, req_slug, lang)
       }
     end
 
     private
 
-    def services2json(services, service_chg, req_slug)
+    def services2json(services, service_chg, req_slug, lang)
       services.order(:ordering).map do |service|
         {
           id: service.id,
@@ -110,7 +112,7 @@ module Api
           faq: service.faq_list,
           brochure: service.brochure,
           side_image: service.side_image,
-          recommended: service.recommended
+          recommended: service.recommended(lang:)
         }
       end
     end

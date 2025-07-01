@@ -22,8 +22,12 @@ module Recommendable
   end
 
   def as_recommendation(lang: 'es')
-    as_json(only: %i[id title subtitle slug cover])
-      .merge('type' => self.class.name.underscore)
+    result = as_json(only: %i[id title subtitle slug cover])
+             .merge('type' => self.class.name.underscore)
+
+    # Add lang from model attribute if it exists, otherwise use the parameter
+    result['lang'] = try(:lang) || lang
+    result
   end
 
   def recommended(lang: 'es')

@@ -44,7 +44,7 @@ module Api
             assessment: { only: :id }
           }
         ).merge(
-          recommended: resource.recommended(lang: lang)
+          recommended: resource.recommended(lang:)
         )
       )
     rescue ActiveRecord::RecordNotFound
