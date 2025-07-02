@@ -56,10 +56,12 @@ class Service < ApplicationRecord
   end
 
   def as_recommendation(lang: 'es')
+    area_lang = service_area&.lang || lang
     super
       .merge('title' => name)
       .merge('subtitle' => subtitle.gsub('<h1>', '').gsub('</h1>', ''))
       .merge('cover' => side_image)
+      .merge('lang' => area_lang)
   end
 
   private
