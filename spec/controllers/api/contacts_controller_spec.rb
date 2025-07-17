@@ -402,5 +402,72 @@ RSpec.describe Api::ContactsController, type: :controller do
         [1, 5]
       )
     end
+
+    context 'assessment report generation' do
+      it 'should enqueue assessment report generation job' do
+        # This test will FAIL when the job is commented out (reproducing the bug)
+        # and PASS when the job is uncommented (fixing the bug)
+        expect do
+          post :create, params: valid_assessment_params
+        end.to have_enqueued_job(GenerateAssessmentResultJob)
+          .on_queue('default')
+      end
+
+      it 'sets trigger_type correctly for assessment submission' do
+        post :create, params: valid_assessment_params
+
+        expect(contact.trigger_type).to eq('assessment_submission')
+      end
+
+      it 'creates responses successfully' do
+        post :create, params: valid_assessment_params
+
+        # Responses are created successfully
+        expect(contact.responses.count).to eq(1)
+        expect(contact.responses.pluck(:question_id, :answer_id)).to contain_exactly([1, 5])
+      end
+
+      it 'starts with pending status before job processing' do
+        post :create, params: valid_assessment_params
+
+        # Contact starts in pending status, will be updated by the job
+        expect(contact.status).to eq('pending')
+        expect(contact.assessment_report_url).to be_nil
+      end
+    end
+  end
+
+  describe 'GET #status' do
+    let(:contact) { create(:contact, status: :pending) }
+
+    it 'returns contact status and assessment report URL' do
+      get :status, params: { contact_id: contact.id }
+
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response).to include(
+        'status' => 'pending',
+        'assessment_report_url' => nil
+      )
+    end
+
+    it 'returns contact status when completed' do
+      contact.update!(status: :completed, assessment_report_url: 'https://example.com/report.pdf')
+
+      get :status, params: { contact_id: contact.id }
+
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response).to include(
+        'status' => 'completed',
+        'assessment_report_url' => 'https://example.com/report.pdf'
+      )
+    end
+
+    it 'returns 404 for non-existent contact' do
+      get :status, params: { contact_id: 'non-existent' }
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 end

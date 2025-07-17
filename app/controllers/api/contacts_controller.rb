@@ -35,6 +35,8 @@ module Api
     def status
       contact = Contact.find(params[:contact_id])
       render json: { status: contact.status, assessment_report_url: contact.assessment_report_url }
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: 'Contact not found' }, status: 404
     end
 
     def show
@@ -228,7 +230,7 @@ module Api
           )
         end
       end
-      # GenerateAssessmentResultJob.perform_later(contact.id)
+      GenerateAssessmentResultJob.perform_later(contact.id)
       true
     rescue ActiveRecord::RecordInvalid => e
       log_error('Response creation failed', e.message)
