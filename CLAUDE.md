@@ -6,7 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 KEventer is a comprehensive event management and training platform built with Rails 7.2.2 and Ruby 3.3.6. It serves as the backend for Kleer's public website, managing courses, calendars, registrations, and educational content delivery. The platform supports both online and classroom-based training with robust participant management, content delivery, and business intelligence capabilities.
 
-## Common Development Commands
+## Development Environment Setup
+
+**IMPORTANT**: All Rails commands must be executed inside the devcontainer, not on the host Ubuntu system.
+
+### Accessing the Devcontainer
+The Rails application runs inside a Docker devcontainer. You cannot execute Rails commands directly from the Ubuntu host.
+
+### Common Development Commands (Inside Devcontainer)
 
 ### Setup and Dependencies
 ```bash
@@ -35,6 +42,7 @@ rails s -b 'ssl://0:3000?key=localhost.key&cert=localhost.crt'  # With SSL
 ### Database Operations
 ```bash
 RAILS_ENV=test rails db:migrate   # Run migrations in test environment
+rails db:schema:dump             # Generate schema file
 ```
 
 ### Code Quality
