@@ -36,7 +36,7 @@ ActiveAdmin.register Assessment do
         column 'Questions' do |group|
           ul do
             group.questions.order(:position).each do |question|
-              li "#{question.name} (#{question.answers.pluck(:text).join(', ')})"
+              li "#{question.name} [#{question.question_type.humanize}] (#{question.answers.pluck(:text).join(', ')})"
             end
           end
         end
@@ -46,6 +46,9 @@ ActiveAdmin.register Assessment do
     panel 'Standalone Questions' do
       table_for assessment.questions.where(question_group_id: nil).order(:position) do
         column :name
+        column :question_type do |question|
+          question.question_type.humanize
+        end
         column :position
         column 'Answers' do |question|
           question.answers.pluck(:text).join(', ')
@@ -69,7 +72,12 @@ ActiveAdmin.register Assessment do
         q.input :name
         q.input :description
         q.input :position
-        q.input :question_type, as: :select, collection: [['Linear Scale', 'linear_scale']], include_blank: false
+        q.input :question_type, as: :select, collection: [
+          ['Linear Scale', 'linear_scale'],
+          ['Radio Button', 'radio_button'],
+          ['Short Text', 'short_text'],
+          ['Long Text', 'long_text']
+        ], include_blank: false
         q.has_many :answers, heading: 'Answers', allow_destroy: true, new_record: true do |a|
           a.input :text
           a.input :position
@@ -81,7 +89,12 @@ ActiveAdmin.register Assessment do
       q.input :name
       q.input :description
       q.input :position
-      q.input :question_type, as: :select, collection: [['Linear Scale', 'linear_scale']], include_blank: false
+      q.input :question_type, as: :select, collection: [
+        ['Linear Scale', 'linear_scale'],
+        ['Radio Button', 'radio_button'],
+        ['Short Text', 'short_text'],
+        ['Long Text', 'long_text']
+      ], include_blank: false
       q.has_many :answers, heading: 'Answers', allow_destroy: true, new_record: true do |a|
         a.input :text
         a.input :position

@@ -437,6 +437,153 @@ RSpec.describe Api::ContactsController, type: :controller do
     end
   end
 
+  describe 'GenerateAssessmentResultJob' do
+    let(:question1) { create(:question, name: 'lean-agile') }
+    let(:question2) { create(:question, name: 'training') }
+    let(:answer1) { create(:answer, question: question1, position: 4) }
+    let(:answer2) { create(:answer, question: question2, position: 2) }
+    let(:assessment) { create(:assessment) }
+    let(:contact) do
+      create(:contact, 
+        trigger_type: 'assessment_submission', 
+        assessment_id: assessment.id,
+        status: 'pending'
+      )
+    end
+
+    before do
+      question1
+      question2
+      answer1
+      answer2
+      assessment
+      
+      # Create responses for the contact
+      contact.responses.create!(question: question1, answer: answer1)
+      contact.responses.create!(question: question2, answer: answer2)
+    end
+
+    it 'handles assessments with fewer than 3 competencies' do
+      # Mock the file store service to avoid actual S3 uploads
+      allow(FileStoreService).to receive(:current).and_return(
+        double(upload: 'https://example.com/test.pdf')
+      )
+      
+      # Mock file operations
+      allow(File).to receive(:write)
+      allow(Rails.root).to receive(:join).and_return('/tmp/test_path')
+      
+      # Mock Gruff chart generation
+      chart_mock = double('CustomSpider')
+      allow(CustomSpider).to receive(:new).and_return(chart_mock)
+      allow(chart_mock).to receive(:data)
+      allow(chart_mock).to receive(:theme=)
+      allow(chart_mock).to receive(:write)
+      
+      # Mock Prawn PDF generation
+      pdf_mock = double('Prawn::Document')
+      allow(Prawn::Document).to receive(:generate).and_yield(pdf_mock)
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:move_down)
+
+      # Execute the job
+      job = GenerateAssessmentResultJob.new
+      job.perform(contact.id)
+
+      # Verify the job completed successfully
+      contact.reload
+      expect(contact.status).to eq('completed')
+      expect(contact.assessment_report_url).to eq('https://example.com/test.pdf')
+      
+      # Verify that the chart was created with at least 3 data points
+      # (the job should add a placeholder to meet the minimum requirement)
+      expect(CustomSpider).to have_received(:new).with(5)
+      expect(chart_mock).to have_received(:data).at_least(3).times
+    end
+
+    it 'processes competencies correctly with sufficient data' do
+      # Add a third question to have enough data points
+      question3 = create(:question, name: 'facilitacion')
+      answer3 = create(:answer, question: question3, position: 3)
+      contact.responses.create!(question: question3, answer: answer3)
+      
+      # Mock the file store service
+      allow(FileStoreService).to receive(:current).and_return(
+        double(upload: 'https://example.com/test.pdf')
+      )
+      
+      # Mock file operations
+      allow(File).to receive(:write)
+      allow(Rails.root).to receive(:join).and_return('/tmp/test_path')
+      
+      # Mock Gruff chart generation
+      chart_mock = double('CustomSpider')
+      allow(CustomSpider).to receive(:new).and_return(chart_mock)
+      allow(chart_mock).to receive(:data)
+      allow(chart_mock).to receive(:theme=)
+      allow(chart_mock).to receive(:write)
+      
+      # Mock Prawn PDF generation
+      pdf_mock = double('Prawn::Document')
+      allow(Prawn::Document).to receive(:generate).and_yield(pdf_mock)
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:move_down)
+
+      # Execute the job
+      job = GenerateAssessmentResultJob.new
+      job.perform(contact.id)
+
+      # Verify the job completed successfully
+      contact.reload
+      expect(contact.status).to eq('completed')
+      expect(contact.assessment_report_url).to eq('https://example.com/test.pdf')
+      
+      # Verify that the chart was created with exactly 3 data points (no placeholders needed)
+      expect(CustomSpider).to have_received(:new).with(5)
+      expect(chart_mock).to have_received(:data).exactly(3).times
+    end
+
+    it 'sets contact status to failed when job encounters an error' do
+      # Mock the file store service to return a valid store initially
+      store_mock = double('FileStoreService')
+      allow(FileStoreService).to receive(:current).and_return(store_mock)
+      
+      # Mock file operations
+      allow(File).to receive(:write)
+      allow(Rails.root).to receive(:join).and_return('/tmp/test_path')
+      
+      # Mock Gruff chart generation to work initially
+      chart_mock = double('CustomSpider')
+      allow(CustomSpider).to receive(:new).and_return(chart_mock)
+      allow(chart_mock).to receive(:data)
+      allow(chart_mock).to receive(:theme=)
+      allow(chart_mock).to receive(:write)
+      
+      # Mock Prawn PDF generation
+      pdf_mock = double('Prawn::Document')
+      allow(Prawn::Document).to receive(:generate).and_yield(pdf_mock)
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:move_down)
+      
+      # Make the upload operation fail (this happens after in_progress is set)
+      allow(store_mock).to receive(:upload).and_raise(StandardError.new('S3 upload failed'))
+      
+      # Execute the job and expect it to handle the error
+      job = GenerateAssessmentResultJob.new
+      expect {
+        job.perform(contact.id)
+      }.to raise_error(StandardError, 'S3 upload failed')
+
+      # Verify the contact status was set to failed
+      contact.reload
+      expect(contact.status).to eq('failed')
+      expect(contact.assessment_report_url).to be_nil
+    end
+  end
+
   describe 'GET #status' do
     let(:contact) { create(:contact, status: :pending) }
 

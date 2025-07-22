@@ -12,6 +12,15 @@ class GenerateAssessmentResultJob < ActiveJob::Base
       # Fetch responses for the contact and map to competencies
       competencies = fetch_key_value_from_responses(contact)
       puts "Competencies: #{competencies}"
+      
+      # Ensure we have at least 3 data points for the spider chart
+      if competencies.size < 3
+        # Add placeholder competencies to meet minimum requirement
+        while competencies.size < 3
+          competencies["placeholder_#{competencies.size}"] = 0
+        end
+      end
+      
       # Generate the radar chart using Gruff
       g = CustomSpider.new(5)
       # g.title = 'Agile Coach Competency Framework Assessment'
@@ -52,10 +61,12 @@ class GenerateAssessmentResultJob < ActiveJob::Base
         # Add the radar chart
         pdf.image chart_path, width: 400, align: :center
 
-        # Add competency levels as a list
+        # Add competency levels as a list (excluding placeholder entries)
         pdf.move_down 20
         pdf.text 'Competency Levels:', size: 16, style: :bold
         competencies.each do |key, value|
+          next if key.to_s.start_with?('placeholder_') # Skip placeholder entries
+          
           level = case value
                   when 0 then 'Novato'
                   when 1 then 'Principiante'
