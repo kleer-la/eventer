@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_22_000001) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_23_191051) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -89,6 +89,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_22_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "resource_id"
+    t.string "language", default: "es", null: false
+    t.boolean "rule_based", default: false, null: false
     t.index ["resource_id"], name: "index_assessments_on_resource_id"
   end
 
@@ -609,6 +611,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_22_000001) do
     t.integer "user_id"
   end
 
+  create_table "rules", force: :cascade do |t|
+    t.integer "assessment_id", null: false
+    t.integer "position", null: false
+    t.text "conditions", default: "{}", null: false
+    t.text "diagnostic_text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id", "position"], name: "index_rules_on_assessment_id_and_position", unique: true
+    t.index ["assessment_id"], name: "index_rules_on_assessment_id"
+  end
+
   create_table "sections", force: :cascade do |t|
     t.integer "page_id"
     t.string "title"
@@ -768,6 +781,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_22_000001) do
   add_foreign_key "responses", "answers"
   add_foreign_key "responses", "contacts"
   add_foreign_key "responses", "questions"
+  add_foreign_key "rules", "assessments"
   add_foreign_key "sections", "pages"
   add_foreign_key "services", "service_areas"
   add_foreign_key "testimonies", "services"
