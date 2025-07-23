@@ -1,6 +1,6 @@
 ActiveAdmin.register Assessment do
   menu parent: 'We Publish'
-  permit_params :title, :description, :resource_id, # Moved :resource_id here
+  permit_params :title, :description, :resource_id, :language, :rule_based, # Added language and rule_based
                 question_groups_attributes: [:id, :name, :description, :position, :_destroy, # Added :description, :_destroy, removed :resource_id
                                              { questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
                                                                       { answers_attributes: %i[id text position _destroy] }] }],
@@ -12,6 +12,8 @@ ActiveAdmin.register Assessment do
     id_column
     column :title
     column :description
+    column :language
+    column :rule_based
     column :resource do |assessment|
       assessment.resource&.title_es
     end
@@ -23,6 +25,8 @@ ActiveAdmin.register Assessment do
     attributes_table do
       row :title
       row :description
+      row :language
+      row :rule_based
       row :resource do |assessment|
         assessment.resource&.title_es
       end
@@ -55,12 +59,44 @@ ActiveAdmin.register Assessment do
         end
       end
     end
+
+    if assessment.rule_based?
+      panel 'Assessment Rules' do
+        div style: 'margin-bottom: 15px;' do
+          link_to 'Add New Rule', new_admin_rule_path(assessment_id: assessment.id), class: 'button'
+        end
+        
+        if assessment.rules.any?
+          table_for assessment.rules.order(:position) do
+            column :position
+            column :diagnostic_text do |rule|
+              truncate(rule.diagnostic_text, length: 100)
+            end
+            column :conditions do |rule|
+              rule.conditions
+            end
+            column :actions do |rule|
+              link_to 'View', admin_rule_path(rule), class: 'member_link'
+            end
+          end
+        else
+          div class: 'blank_slate_container' do
+            span class: 'blank_slate' do
+              span 'No rules defined yet. '
+              span link_to('Create Rule', new_admin_rule_path(assessment_id: assessment.id), class: 'button')
+            end
+          end
+        end
+      end
+    end
   end
 
   form do |f|
     f.inputs 'Details' do
       f.input :title
       f.input :description
+      f.input :language, as: :select, collection: [['English', 'en'], ['Spanish', 'es']], include_blank: false
+      f.input :rule_based, as: :boolean
       f.input :resource, as: :select, collection: Resource.all.pluck(:title_es, :id), include_blank: true
     end
 

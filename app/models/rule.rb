@@ -9,6 +9,14 @@ class Rule < ApplicationRecord
 
   scope :ordered, -> { order(:position) }
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[assessment_id conditions created_at diagnostic_text id position updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    ['assessment']
+  end
+
   # Parse JSON conditions from text field (for SQLite compatibility)
   def parsed_conditions
     @parsed_conditions ||= JSON.parse(conditions)
@@ -30,7 +38,7 @@ class Rule < ApplicationRecord
     parsed_conditions.all? do |question_id_str, condition|
       question_id = question_id_str.to_i
       response = responses.find { |r| r.question_id == question_id }
-      
+
       evaluate_condition(response, condition)
     end
   end
@@ -62,10 +70,10 @@ class Rule < ApplicationRecord
       # Range match (only for numeric values)
       range = condition['range']
       return false unless range.is_a?(Array) && range.size == 2
-      
+
       actual_value = get_response_value(response)
       return false unless actual_value.is_a?(Numeric)
-      
+
       min_val, max_val = range
       actual_value >= min_val && actual_value <= max_val
     elsif condition.key?('text_contains')
