@@ -223,11 +223,26 @@ module Api
       # contact.assessment = Assessment.find(contact.form_data['assessment_id'].to_i)
       assessment_results = contact.form_data['assessment_results']
       ActiveRecord::Base.transaction do
-        assessment_results.each do |question_id, answer_id|
-          contact.responses.create!(
-            question_id:,
-            answer_id:
-          )
+        assessment_results.each do |question_id, response_value|
+          question = Question.find(question_id)
+
+          case question.question_type
+          when 'linear_scale', 'radio_button'
+            # For scale/button questions, response_value should be an answer_id
+            contact.responses.create!(
+              question_id:,
+              answer_id: response_value
+            )
+          when 'short_text', 'long_text'
+            # For text questions, response_value is the actual text response
+            contact.responses.create!(
+              question_id:,
+              text_response: response_value
+            )
+          else
+            log_error('Unknown question type', "Question #{question_id} has unknown type: #{question.question_type}")
+            raise ActiveRecord::RecordInvalid.new(question)
+          end
         end
       end
       GenerateAssessmentResultJob.perform_later(contact.id)

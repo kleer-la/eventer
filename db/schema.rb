@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_08_151823) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_22_000001) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -589,9 +589,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_08_151823) do
   create_table "responses", force: :cascade do |t|
     t.integer "contact_id", null: false
     t.integer "question_id", null: false
-    t.integer "answer_id", null: false
+    t.integer "answer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "text_response"
     t.index ["answer_id"], name: "index_responses_on_answer_id"
     t.index ["contact_id"], name: "index_responses_on_contact_id"
     t.index ["question_id"], name: "index_responses_on_question_id"

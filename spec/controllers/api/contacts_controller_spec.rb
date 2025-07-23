@@ -617,4 +617,123 @@ RSpec.describe Api::ContactsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'assessments with text-based questions' do
+    let(:short_text_question) { create(:question, :short_text, assessment: assessment, id: 10) }
+    let(:long_text_question) { create(:question, :long_text, assessment: assessment, id: 11) }
+    let(:assessment) { create(:assessment) }
+    let(:assessment_resources) { create(:resource, slug: 'text-assessment', title_es: 'Text Assessment', assessment:) }
+    let(:valid_text_assessment_params) do
+      valid_contact_params.merge({
+        resource_slug: 'text-assessment',
+        resource_title_es: 'Text Assessment',
+        assessment_id: assessment.id.to_s,
+        assessment_results: {
+          '10' => 'This is my short answer',
+          '11' => 'This is my much longer and more detailed answer that spans multiple sentences and provides comprehensive information.'
+        }
+      })
+    end
+    let(:contact) { Contact.last }
+
+    before do
+      short_text_question
+      long_text_question
+      assessment_resources
+    end
+
+    it 'creates a new contact with text assessment results' do
+      post :create, params: valid_text_assessment_params
+
+      expect(response).to have_http_status(:created)
+      expect(contact.form_data).to include(
+        'assessment_id' => assessment.id.to_s,
+        'assessment_results' => {
+          '10' => 'This is my short answer',
+          '11' => 'This is my much longer and more detailed answer that spans multiple sentences and provides comprehensive information.'
+        }
+      )
+    end
+
+    it 'creates text responses for text-based questions' do
+      post :create, params: valid_text_assessment_params
+
+      expect(response).to have_http_status(:created)
+      expect(contact.responses.count).to eq(2)
+      
+      short_response = contact.responses.find_by(question: short_text_question)
+      long_response = contact.responses.find_by(question: long_text_question)
+      
+      expect(short_response.text_response).to eq('This is my short answer')
+      expect(short_response.answer).to be_nil
+      
+      expect(long_response.text_response).to eq('This is my much longer and more detailed answer that spans multiple sentences and provides comprehensive information.')
+      expect(long_response.answer).to be_nil
+    end
+
+    it 'enqueues assessment report generation job for text assessments' do
+      expect do
+        post :create, params: valid_text_assessment_params
+      end.to have_enqueued_job(GenerateAssessmentResultJob)
+        .on_queue('default')
+    end
+
+    it 'sets trigger_type correctly for text assessment submission' do
+      post :create, params: valid_text_assessment_params
+
+      expect(contact.trigger_type).to eq('assessment_submission')
+    end
+  end
+
+  describe 'assessments with mixed question types' do
+    let(:linear_question) { create(:question, :linear_scale, assessment: assessment, id: 20) }
+    let(:short_text_question) { create(:question, :short_text, assessment: assessment, id: 21) }
+    let(:radio_question) { create(:question, :radio_button, assessment: assessment, id: 22) }
+    let(:linear_answer) { create(:answer, question: linear_question, id: 50) }
+    let(:radio_answer) { create(:answer, question: radio_question, id: 51) }
+    let(:assessment) { create(:assessment) }
+    let(:assessment_resources) { create(:resource, slug: 'mixed-assessment', title_es: 'Mixed Assessment', assessment:) }
+    let(:valid_mixed_assessment_params) do
+      valid_contact_params.merge({
+        resource_slug: 'mixed-assessment',
+        resource_title_es: 'Mixed Assessment',
+        assessment_id: assessment.id.to_s,
+        assessment_results: {
+          '20' => '50',  # linear_scale answer_id
+          '21' => 'My text response',  # short_text response
+          '22' => '51'   # radio_button answer_id
+        }
+      })
+    end
+    let(:contact) { Contact.last }
+
+    before do
+      linear_question
+      short_text_question
+      radio_question
+      linear_answer
+      radio_answer
+      assessment_resources
+    end
+
+    it 'creates responses for mixed question types correctly' do
+      post :create, params: valid_mixed_assessment_params
+
+      expect(response).to have_http_status(:created)
+      expect(contact.responses.count).to eq(3)
+      
+      linear_response = contact.responses.find_by(question: linear_question)
+      text_response = contact.responses.find_by(question: short_text_question)
+      radio_response = contact.responses.find_by(question: radio_question)
+      
+      expect(linear_response.answer_id).to eq(50)
+      expect(linear_response.text_response).to be_nil
+      
+      expect(text_response.text_response).to eq('My text response')
+      expect(text_response.answer).to be_nil
+      
+      expect(radio_response.answer_id).to eq(51)
+      expect(radio_response.text_response).to be_nil
+    end
+  end
 end

@@ -11,16 +11,14 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     begin
       # Fetch responses for the contact and map to competencies
       competencies = fetch_key_value_from_responses(contact)
-      puts "Competencies: #{competencies}"
-      
+      # puts "Competencies: #{competencies}"
+
       # Ensure we have at least 3 data points for the spider chart
       if competencies.size < 3
         # Add placeholder competencies to meet minimum requirement
-        while competencies.size < 3
-          competencies["placeholder_#{competencies.size}"] = 0
-        end
+        competencies["placeholder_#{competencies.size}"] = 0 while competencies.size < 3
       end
-      
+
       # Generate the radar chart using Gruff
       g = CustomSpider.new(5)
       # g.title = 'Agile Coach Competency Framework Assessment'
@@ -66,15 +64,15 @@ class GenerateAssessmentResultJob < ActiveJob::Base
         pdf.text 'Competency Levels:', size: 16, style: :bold
         competencies.each do |key, value|
           next if key.to_s.start_with?('placeholder_') # Skip placeholder entries
-          
+
           level = case value
                   when 0 then 'Novato'
                   when 1 then 'Principiante'
                   when 2 then 'Intermedio'
                   when 3 then 'Avanzado'
-            when 4 then 'Experto'
-            else 'Novato' # Default
-            end
+                  when 4 then 'Experto'
+                  else 'Novato' # Default
+                  end
           pdf.text "#{key.to_s.humanize}: #{level}", indent_paragraphs: 20
         end
       end
@@ -84,7 +82,8 @@ class GenerateAssessmentResultJob < ActiveJob::Base
       Log.log(:assessment, :info, "PDF generated for contact #{contact_id}", { public_url: })
     rescue StandardError => e
       contact.update(status: :failed)
-      Log.log(:assessment, :error, "Failed to generate PDF for contact #{contact_id}", { error: e.message, backtrace: e.backtrace })
+      Log.log(:assessment, :error, "Failed to generate PDF for contact #{contact_id}",
+              { error: e.message, backtrace: e.backtrace })
       raise e
     end
   end
@@ -106,12 +105,21 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
     contact.responses.includes(:question, :answer).reduce({}) do |ac, response|
       question_name = response.question.name.downcase.gsub(/\s+/, '_')
-      position = (response.answer.position || 1).to_i
 
-      # Normalize position (1-5) to 0-4 for the radar chart
-      normalized_score = position # - 1
-
-      ac.merge(question_name => normalized_score)
+      case response.question.question_type
+      when 'linear_scale', 'radio_button'
+        position = (response.answer&.position || 1).to_i
+        # Normalize position (1-5) to 0-4 for the radar chart
+        normalized_score = position # - 1
+        ac.merge(question_name => normalized_score)
+      when 'short_text', 'long_text'
+        # For text responses, we could analyze sentiment, length, keyword matching, etc.
+        # For now, let's assign a placeholder score or skip them from radar charts
+        # ac.merge(question_name + '_text' => response.text_response)
+        ac # Skip text responses from radar chart for now
+      else
+        ac # Skip unknown question types
+      end
     end
   end
 end
