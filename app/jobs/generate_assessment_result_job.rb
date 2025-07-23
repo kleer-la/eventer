@@ -108,10 +108,14 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
       case response.question.question_type
       when 'linear_scale', 'radio_button'
-        position = (response.answer&.position || 1).to_i
-        # Normalize position (1-5) to 0-4 for the radar chart
-        normalized_score = position # - 1
-        ac.merge(question_name => normalized_score)
+        if response.answer.present?
+          position = (response.answer.position || 0).to_i
+          # For radio buttons, position represents the competency level (0-4 scale expected)
+          normalized_score = position
+          ac.merge(question_name => normalized_score)
+        else
+          ac # Skip if no answer
+        end
       when 'short_text', 'long_text'
         # For text responses, we could analyze sentiment, length, keyword matching, etc.
         # For now, let's assign a placeholder score or skip them from radar charts

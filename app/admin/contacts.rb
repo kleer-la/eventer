@@ -144,10 +144,17 @@ ActiveAdmin.register Contact do
         panel 'Responses' do
           table_for contact.responses do
             column :id
-            column :question
-            column :answer
-            column 'Position' do |response|
-              response.answer.position
+            column :question do |response|
+              "#{response.question.name} (#{response.question.question_type})"
+            end
+            column 'Response' do |response|
+              if response.answer.present?
+                "#{response.answer.text} (pos: #{response.answer.position})"
+              elsif response.text_response.present?
+                response.text_response
+              else
+                'No response'
+              end
             end
           end
         end
