@@ -19,14 +19,32 @@ module Api
           render json: contact.as_json(only: %i[id status assessment_report_url name company]), status: :created
         rescue ActiveRecord::RecordInvalid => e
           log_error('Validation failed during processing', e.message)
-          render json: { error: e.message }, status: 422
+          user_friendly_error = case e.message
+                               when /email/i
+                                 'Invalid email address'
+                               when /assessment/i
+                                 'Assessment data is invalid'
+                               else
+                                 'Invalid submission data'
+                               end
+          render json: { error: user_friendly_error }, status: 422
         rescue StandardError => e
           log_error('Unexpected error', { error: e.message, backtrace: e.backtrace&.first(5) })
-          render json: { error: 'Processing failed' }, status: 500
+          render json: { error: 'Server error occurred while processing your submission' }, status: 500
         end
       else
         log_error('Validation failed', "#{validator.error} #{contact_params}")
-        render json: { error: validator.error }, status: 422
+        user_friendly_error = case validator.error
+                             when 'bad secret'
+                               'Authentication failed'
+                             when 'bad name', 'empty email', 'invalid email'
+                               'Please check your contact information'
+                             when 'bad message', 'empty context'
+                               'Please complete all required fields'
+                             else
+                               validator.error
+                             end
+        render json: { error: user_friendly_error }, status: 422
       end
     rescue ActiveRecord::RecordNotFound => e
       render json: { error: 'Resource not found' }, status: 422
