@@ -16,7 +16,7 @@ module Api
             process_assessment(contact)
             process_notifications(contact)
           end
-          render json: contact.as_json(only: %i[id status assessment_report_url name company]), status: :created
+          render json: contact.as_json(only: %i[id status assessment_report_url assessment_report_html name company]), status: :created
         rescue ActiveRecord::RecordInvalid => e
           log_error('Validation failed during processing', e.message)
           user_friendly_error = case e.message
@@ -52,7 +52,13 @@ module Api
 
     def status
       contact = Contact.find(params[:contact_id])
-      render json: { status: contact.status, assessment_report_url: contact.assessment_report_url }
+      response_data = { 
+        status: contact.status, 
+        assessment_report_url: contact.assessment_report_url,
+        assessment_report_html: contact.assessment_report_html
+      }
+      response_data[:assessment] = { rule_based: contact.assessment.rule_based } if contact.assessment
+      render json: response_data
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Contact not found' }, status: 404
     end
@@ -155,13 +161,13 @@ module Api
     private
 
     def contact_as_json(contact)
-      json = contact.as_json(only: %i[id name email company status assessment_report_url])
+      json = contact.as_json(only: %i[id name email company status assessment_report_url assessment_report_html])
       json[:assessment] = assessment_as_json(contact.assessment) if contact.assessment
       json
     end
 
     def assessment_as_json(assessment)
-      assessment.as_json(only: %i[id title description created_at updated_at]).merge(
+      assessment.as_json(only: %i[id title description rule_based created_at updated_at]).merge(
         questions: assessment.questions.as_json(only: %i[id text]),
         responses: assessment.contacts.find_by(id: params[:id])&.responses&.as_json(only: %i[id question_id answer_id])
       )

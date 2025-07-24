@@ -611,6 +611,32 @@ RSpec.describe Api::ContactsController, type: :controller do
       )
     end
 
+    context 'with rule-based assessment' do
+      let(:assessment) { create(:assessment, rule_based: true) }
+      let(:contact) { create(:contact, assessment: assessment, status: :completed) }
+      let(:html_content) { '<html><body><h1>Test Report</h1></body></html>' }
+
+      before do
+        contact.update!(
+          assessment_report_url: 'https://example.com/report.pdf',
+          assessment_report_html: html_content
+        )
+      end
+
+      it 'returns HTML content and rule_based flag' do
+        get :status, params: { contact_id: contact.id }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response).to include(
+          'status' => 'completed',
+          'assessment_report_url' => 'https://example.com/report.pdf',
+          'assessment_report_html' => html_content,
+          'assessment' => { 'rule_based' => true }
+        )
+      end
+    end
+
     it 'returns 404 for non-existent contact' do
       get :status, params: { contact_id: 'non-existent' }
 

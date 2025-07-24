@@ -48,7 +48,12 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     File.binwrite(pdf_path, pdf_content)
     public_url = store.upload(pdf_path, pdf_file_name, 'certificate')
 
-    contact.update(assessment_report_url: public_url, status: :completed)
+    # Update contact with both PDF URL and HTML content
+    contact.update(
+      assessment_report_url: public_url, 
+      assessment_report_html: html_content,
+      status: :completed
+    )
 
     # Clean up temporary file
     File.delete(pdf_path) if File.exist?(pdf_path)

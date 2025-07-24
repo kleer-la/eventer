@@ -15,13 +15,15 @@ ActiveAdmin.register Contact do
   filter :content_updates_opt_in, as: :select
   filter :newsletter_opt_in, as: :select
   filter :newsletter_added, as: :select
-
   # Scopes for quick filtering
   scope :last_24h
   scope :all
   scope :pending
   scope :completed
   scope :failed
+  scope :with_html_reports, lambda {
+    joins(:assessment).where(assessments: { rule_based: true }).where.not(assessment_report_html: [nil, ''])
+  }
 
   action_item :toggle_view, only: :index do
     if params[:grouped] == 'true'
@@ -57,6 +59,14 @@ ActiveAdmin.register Contact do
             data: { confirm: "Are you sure you want to #{new_value ? 'add this contact to' : 'remove this contact from'} the newsletter?" }
   end
 
+  action_item :view_html_report, only: :show do
+    if contact.assessment&.rule_based? && contact.assessment_report_html.present?
+      link_to 'View HTML Report', html_report_admin_contact_path(contact),
+              target: '_blank',
+              class: 'button'
+    end
+  end
+
   batch_action :mark_as_completed do |ids|
     Contact.where(id: ids).update_all(status: :completed, processed_at: Time.current)
     redirect_to collection_path, notice: "#{ids.count} contacts marked as completed."
@@ -80,6 +90,14 @@ ActiveAdmin.register Contact do
     resource.update(newsletter_added: new_value)
     redirect_to admin_contact_path(resource),
                 notice: "Contact #{new_value ? 'added to' : 'removed from'} the newsletter."
+  end
+
+  member_action :html_report, method: :get do
+    if resource.assessment&.rule_based? && resource.assessment_report_html.present?
+      render html: resource.assessment_report_html.html_safe, layout: false
+    else
+      render plain: 'HTML report not available', status: :not_found
+    end
   end
 
   # Index view
@@ -160,9 +178,25 @@ ActiveAdmin.register Contact do
         end
       end
       row :assessment_report_url
+      if contact.assessment&.rule_based?
+        row :assessment_report_html do |contact|
+          if contact.assessment_report_html.present?
+            content_tag :div, 'HTML content available', class: 'status_tag'
+          else
+            content_tag :div, 'No HTML content', class: 'status_tag'
+          end
+        end
+      end
       if contact.assessment_report_url.present?
-        row 'Assessement report' do
-          image_tag contact.assessment_report_url.sub('.pdf', '.png'), style: 'max-width: 500px; max-height: 500px;'
+        row 'Assessment report' do
+          if contact.assessment&.rule_based? && contact.assessment_report_html.present?
+            # Display HTML content for rule-based assessments
+            content_tag :div, contact.assessment_report_html.html_safe,
+                        style: 'max-width: 600px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; background: white; border-radius: 4px;'
+          else
+            # Display PNG image for competency-based assessments
+            image_tag contact.assessment_report_url.sub('.pdf', '.png'), style: 'max-width: 500px; max-height: 500px;'
+          end
         end
       end
     end
@@ -180,6 +214,8 @@ ActiveAdmin.register Contact do
     column :content_updates_opt_in
     column :newsletter_opt_in
     column :newsletter_added
+    column :assessment_report_url
+    column :assessment_report_html
     column :created_at
     column :processed_at
     column(:form_data) { |contact| contact.form_data.to_json }

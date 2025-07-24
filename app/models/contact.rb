@@ -17,6 +17,7 @@ class Contact < ApplicationRecord
   scope :completed, -> { where(status: :completed) }
   scope :failed, -> { where(status: :failed) }
   scope :last_24h, -> { where('created_at >= ?', 25.hours.ago) } # to handle  limit cases
+  scope :with_html_reports, -> { joins(:assessment).where(assessments: { rule_based: true }).where.not(assessment_report_html: [nil, '']) }
 
   def self.stats
     {

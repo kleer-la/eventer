@@ -51,6 +51,18 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         expect(contact.reload.assessment_report_url).to eq('https://example.com/report.pdf')
       end
 
+      it 'stores HTML content in assessment_report_html field' do
+        GenerateAssessmentResultJob.perform_now(contact.id)
+        contact.reload
+
+        expect(contact.assessment_report_html).to be_present
+        expect(contact.assessment_report_html).to include('<!DOCTYPE html>')
+        expect(contact.assessment_report_html).to include('Leadership Assessment')
+        expect(contact.assessment_report_html).to include('John Doe')
+        expect(contact.assessment_report_html).to include('You show strong leadership potential.')
+        expect(contact.assessment_report_html).to include('Your communication style is collaborative.')
+      end
+
       it 'evaluates rules and includes matching diagnostics in PDF' do
         job = GenerateAssessmentResultJob.new
 
