@@ -192,7 +192,7 @@ ActiveAdmin.register Contact do
           if contact.assessment&.rule_based? && contact.assessment_report_html.present?
             # Display HTML content for rule-based assessments
             content_tag :div, contact.assessment_report_html.html_safe,
-                        style: 'max-width: 600px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; background: white; border-radius: 4px;'
+                        style: 'max-width: 600px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; background: white; border-radius: 4px;'
           else
             # Display PNG image for competency-based assessments
             image_tag contact.assessment_report_url.sub('.pdf', '.png'), style: 'max-width: 500px; max-height: 500px;'

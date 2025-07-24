@@ -124,45 +124,188 @@ class GenerateAssessmentResultJob < ActiveJob::Base
   end
 
   def generate_html_report(contact, diagnostics)
-    name = contact.form_data&.dig('name') || 'Participant'
+    name = contact.form_data&.dig('name') || 'Participante'
+    company = contact.form_data&.dig('company') || ''
     assessment_title = contact.assessment.title
+    assessment_language = contact.assessment.language || 'es'
+    assessment_date = contact.created_at.strftime('%B %d, %Y')
+    
+    # Get questions and answers
+    questions_and_answers = get_questions_and_answers(contact)
 
     html = <<~HTML
       <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>#{assessment_title} - Assessment Report</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
-            h1 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
-            h2 { color: #34495e; margin-top: 30px; }
-            .participant-name { text-align: center; font-size: 18px; margin-bottom: 40px; }
-            .diagnostic { margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff; }
-            .no-diagnostics { text-align: center; color: #6c757d; font-style: italic; }
-          </style>
-        </head>
-        <body>
-          <h1>#{assessment_title}</h1>
-          <div class="participant-name">Participant: #{name}</div>
-      #{'    '}
-          <h2>Assessment Results</h2>
+      <html lang="#{assessment_language}">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>#{assessment_title} - Reporte de Evaluación</title>
+        <style>
+          .assessment-report {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+          }
+
+          .assessment-report header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px;
+            text-align: center;
+          }
+
+          .assessment-report section {
+            margin: 20px 0;
+          }
+
+          .assessment-report h1 {
+            margin: 0;
+            color: white;
+            font-size: 1.8em;
+          }
+
+          .assessment-report h2 {
+            color: #007BFF;
+            margin-top: 20px;
+            margin-bottom: 15px;
+          }
+
+          .assessment-report p {
+            margin: 5px 0;
+            line-height: 1.4;
+          }
+
+          .assessment-report dl {
+            margin: 10px 0;
+          }
+
+          .assessment-report dt {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+          }
+
+          .assessment-report dd {
+            margin-left: 20px;
+            margin-bottom: 8px;
+            color: #555;
+          }
+
+          .assessment-report footer {
+            text-align: center;
+            font-size: 0.8em;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 30px;
+          }
+
+          .assessment-report .diagnostic-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+          }
+
+          .assessment-report .diagnostic-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: white;
+            border-left: 4px solid #007BFF;
+            border-radius: 4px;
+            line-height: 1.5;
+          }
+
+          .assessment-report .no-diagnostics {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+          }
+
+          .assessment-report img {
+            max-width: 100%;
+            height: auto;
+          }
+        </style>
+      </head>
+
+      <body>
+        <div class="assessment-report">
+          <header>
+            <img src="https://www.kleer.la/app/img/black_logo.webp" alt="Kleer Logo"
+              style="max-width: 200px; margin-bottom: 10px;">
+            <h1>#{assessment_title}</h1>
+            <p>Participante: #{name}</p>
+            #{company.present? ? "<p>Empresa: #{company}</p>" : ""}
+            <p>Fecha de la Evaluación: #{assessment_date}</p>
+          </header>
+
+          <!-- Assessment Data: Questions and Answers -->
+          <section id="data">
+            <h2>Datos de la Evaluación: Preguntas y Respuestas</h2>
+            <dl>
+              #{questions_and_answers}
+            </dl>
+          </section>
+
+          <!-- Diagnostic Results -->
+          <section id="insights">
+            <h2>Diagnóstico</h2>
+            <div class="diagnostic-section">
     HTML
 
     if diagnostics.any?
       diagnostics.each do |diagnostic|
-        html += "<div class=\"diagnostic\">#{diagnostic}</div>\n"
+        html += "<div class=\"diagnostic-item\">#{diagnostic}</div>\n"
       end
     else
-      html += "<div class=\"no-diagnostics\">No specific diagnostics were triggered based on your responses.</div>\n"
+      html += "<div class=\"no-diagnostics\">No se activaron diagnósticos específicos basados en tus respuestas.</div>\n"
     end
 
     html += <<~HTML
-        </body>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <footer>
+            <p>Este reporte se basa en datos auto-reportados y reglas generales; no constituye consejo profesional. Datos de contacto: info@kleer.la</p>
+          </footer>
+        </div>
+      </body>
       </html>
     HTML
 
     html
+  end
+
+  def get_questions_and_answers(contact)
+    return '' unless contact.responses.any?
+
+    questions_html = ''
+    contact.responses.includes(:question, :answer).each do |response|
+      question_text = response.question.name || response.question.text || "Pregunta #{response.question.id}"
+      
+      answer_text = case response.question.question_type
+                   when 'linear_scale', 'radio_button'
+                     if response.answer.present?
+                       response.answer.text.presence || "Opción #{response.answer.position}"
+                     else
+                       'Sin respuesta'
+                     end
+                   when 'short_text', 'long_text'
+                     response.text_response.presence || 'Sin respuesta'
+                   else
+                     'Tipo de pregunta no reconocido'
+                   end
+
+      questions_html += "<dt>Pregunta: #{question_text}</dt>\n"
+      questions_html += "<dd>Respuesta: #{answer_text}</dd>\n"
+    end
+
+    questions_html
   end
 
   def generate_pdf_from_html(html_content, contact)

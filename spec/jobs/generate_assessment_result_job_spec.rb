@@ -61,6 +61,9 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         expect(contact.assessment_report_html).to include('John Doe')
         expect(contact.assessment_report_html).to include('You show strong leadership potential.')
         expect(contact.assessment_report_html).to include('Your communication style is collaborative.')
+        expect(contact.assessment_report_html).to include('Datos de la Evaluación: Preguntas y Respuestas')
+        expect(contact.assessment_report_html).to include('Diagnóstico')
+        expect(contact.assessment_report_html).to include('Kleer Logo')
       end
 
       it 'evaluates rules and includes matching diagnostics in PDF' do
@@ -201,7 +204,13 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       expect(html).to include('Test User')
       expect(html).to include('First diagnostic message')
       expect(html).to include('Second diagnostic message')
-      expect(html).to include('<div class="diagnostic">')
+      expect(html).to include('<div class="diagnostic-item">')
+      expect(html).to include('Datos de la Evaluación: Preguntas y Respuestas')
+      expect(html).to include('Diagnóstico')
+      expect(html).to include('Kleer Logo')
+      expect(html).to include('lang="es"')
+      expect(html).to include('<div class="assessment-report">')
+      expect(html).to include('.assessment-report')
     end
 
     it 'handles empty diagnostics gracefully' do
@@ -209,7 +218,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       expect(html).to include('Test Assessment')
       expect(html).to include('Test User')
-      expect(html).to include('No specific diagnostics were triggered')
+      expect(html).to include('No se activaron diagnósticos específicos basados en tus respuestas')
       expect(html).to include('no-diagnostics')
     end
 
@@ -218,7 +227,26 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       html = job.send(:generate_html_report, contact, ['Test diagnostic'])
 
-      expect(html).to include('Participant: Participant') # Default name
+      expect(html).to include('Participante: Participante') # Default name
+    end
+
+    it 'includes questions and answers section' do
+      # Create some test responses
+      question1 = create(:question, assessment: assessment, name: 'Nivel de Agilidad', question_type: 'radio_button')
+      question2 = create(:question, assessment: assessment, name: '¿Qué más dirías?', question_type: 'short_text')
+      answer1 = create(:answer, question: question1, text: 'Escalando', position: 2)
+      
+      create(:response, contact: contact, question: question1, answer: answer1)
+      create(:response, contact: contact, question: question2, text_response: 'Somos una startup')
+
+      html = job.send(:generate_html_report, contact, ['Test diagnostic'])
+
+      expect(html).to include('Pregunta: Nivel de Agilidad')
+      expect(html).to include('Respuesta: Escalando')
+      expect(html).to include('Pregunta: ¿Qué más dirías?')
+      expect(html).to include('Respuesta: Somos una startup')
+      expect(html).to include('<dt>')
+      expect(html).to include('<dd>')
     end
   end
 

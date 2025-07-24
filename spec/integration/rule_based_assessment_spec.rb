@@ -148,7 +148,7 @@ RSpec.describe 'Rule-based Assessment Integration', type: :feature do
         job = GenerateAssessmentResultJob.new
         html = job.send(:generate_html_report, contact, [])
 
-        expect(html).to include('No specific diagnostics were triggered')
+        expect(html).to include('No se activaron diagnósticos específicos basados en tus respuestas')
       end
     end
   end
