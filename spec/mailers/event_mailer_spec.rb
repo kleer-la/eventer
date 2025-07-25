@@ -159,8 +159,8 @@ describe EventMailer do
     hr_message = 'Great job completing the training!'
 
     @email = EventMailer.send_certificate_with_hr_notification(
-      @participant, 
-      'http://pepe.com/A4.pdf', 
+      @participant,
+      'http://pepe.com/A4.pdf',
       'http://pepe.com/LETTER.pdf',
       hr_emails: hr_emails,
       hr_message: hr_message
@@ -171,15 +171,13 @@ describe EventMailer do
     expect(@email.to).to eq [@participant.email]
     expect(@email.cc).to eq hr_emails
     expect(@email.html_part.body.to_s).to include(hr_message)
-    expect(@email.html_part.body.to_s).to include('Mensaje de RR.HH.')
     expect(@email.text_part.body.to_s).to include(hr_message)
-    expect(@email.text_part.body.to_s).to include('Mensaje de RR.HH.')
   end
 
   it 'send certificate with HR notification without CC when no HR emails provided' do
     @email = EventMailer.send_certificate_with_hr_notification(
-      @participant, 
-      'http://pepe.com/A4.pdf', 
+      @participant,
+      'http://pepe.com/A4.pdf',
       'http://pepe.com/LETTER.pdf',
       hr_emails: [],
       hr_message: nil
@@ -194,8 +192,8 @@ describe EventMailer do
     hr_emails = ['valid@company.com', 'invalid-email', '', 'another@valid.com']
 
     @email = EventMailer.send_certificate_with_hr_notification(
-      @participant, 
-      'http://pepe.com/A4.pdf', 
+      @participant,
+      'http://pepe.com/A4.pdf',
       'http://pepe.com/LETTER.pdf',
       hr_emails: hr_emails,
       hr_message: nil

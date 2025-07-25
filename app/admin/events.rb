@@ -421,12 +421,20 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
             if ($modeSelect.val() === 'ol') {
               $cityInput.val('Online').prop('readonly', true);
               $addressInput.val('Online').prop('readonly', true);
-              $countrySelect.val("1").prop('disabled', true).trigger('change.select2');
+              $countrySelect.val("1").trigger('change.select2');
+              // Disable select2 but ensure the value persists
+              $countrySelect.select2('enable', false);
+              // Add a hidden input to ensure the value is submitted
+              if ($('#online_country_hidden').length === 0) {
+                $('<input type="hidden" id="online_country_hidden" name="event[country_id]" value="1">').insertAfter($countrySelect);
+              }
               $timeZoneInput.show();
             } else {
               $cityInput.prop('readonly', false);
               $addressInput.prop('readonly', false);
-              $countrySelect.prop('disabled', false).trigger('change.select2');
+              $countrySelect.select2('enable', true);
+              // Remove the hidden input when not online
+              $('#online_country_hidden').remove();
               $timeZoneInput.hide();
             }
           }
