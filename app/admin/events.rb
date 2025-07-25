@@ -51,6 +51,30 @@ ActiveAdmin.register Event do
     end
   end
 
+  member_action :send_certificate, method: :get do
+    result = EventCertificateService.send_certificates(resource)
+
+    if result.success?
+      redirect_to admin_event_path(resource), notice: result.message
+    else
+      redirect_to admin_event_path(resource), alert: result.message
+    end
+  end
+
+  member_action :send_certificate_with_hr, method: :post do
+    result = EventCertificateService.send_certificates_with_hr(
+      resource,
+      hr_emails: params[:hr_emails],
+      hr_message: params[:hr_message]
+    )
+
+    if result.success?
+      redirect_to admin_event_path(resource), notice: result.message
+    else
+      redirect_to admin_event_path(resource), alert: result.message
+    end
+  end
+
   controller do
     def scoped_collection
       super.includes(:event_type, :country, :trainer)
@@ -183,8 +207,7 @@ ActiveAdmin.register Event do
             end
             span style: 'margin: 0 5px;' do
               link_to 'Generate Certificates',
-                      "/events/#{event.id}/send_certificate",
-                      # send_certificate_event_path(event),
+                      send_certificate_admin_event_path(event),
                       class: 'button-default',
                       data: {
                         confirm: "¡Atención!
@@ -352,7 +375,7 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
       raw <<~JS
         function showHRForm(eventId) {
           document.getElementById('hr-form-overlay').style.display = 'block';
-          document.getElementById('hr-certificate-form').action = '/events/' + eventId + '/send_certificate_with_hr';
+          document.getElementById('hr-certificate-form').action = '/admin/events/' + eventId + '/send_certificate_with_hr';
         }
 
         function hideHRForm() {
