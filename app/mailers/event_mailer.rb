@@ -58,6 +58,30 @@ class EventMailer < ApplicationMailer
     end
   end
 
+  def send_certificate_with_hr_notification(participant, _certificate_url_a4, certificate_url_letter, hr_emails: [], hr_message: nil)
+    @participant = participant
+    # @certificate_link_a4 = certificate_url_a4
+    @certificate_link_letter = certificate_url_letter
+    @hr_message = hr_message
+    @markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(hard_wrap: true), autolink: true)
+    
+    # Clean and validate HR emails
+    clean_hr_emails = hr_emails.map(&:strip).reject(&:blank?).select { |email| valid_email?(email) }
+    
+    mail_options = {
+      to: @participant.email,
+      subject: "Kleer | Certificado del #{@participant.event.event_type.name}"
+    }
+    
+    # Add CC if HR emails are provided
+    mail_options[:cc] = clean_hr_emails.join(', ') if clean_hr_emails.any?
+    
+    mail(mail_options) do |format|
+      format.text { render 'send_certificate_with_hr' }
+      format.html { render 'send_certificate_with_hr', layout: 'event_mailer' }
+    end
+  end
+
   def alert_event_monitor(participant, edit_registration_link)
     @pih = ParticipantInvoiceHelper.new(participant, :es)
     event = participant.event
@@ -71,6 +95,12 @@ class EventMailer < ApplicationMailer
     mail(to: event.monitor_email.presence || ALERT_MAIL,
          subject: "[Keventer] Nuevo registro a #{event_info}: #{participant.company_name}",
          body:)
+  end
+
+  private
+
+  def valid_email?(email)
+    email.match?(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i)
   end
 
   def event_data(event_name, country, date)

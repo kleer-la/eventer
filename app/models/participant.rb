@@ -254,6 +254,17 @@ class Participant < ApplicationRecord
     EventMailer.send_certificate(self, certificate_url['A4'], certificate_url['LETTER']).deliver
   end
 
+  def generate_certificate_and_notify_with_hr(hr_emails: [], hr_message: nil)
+    certificate_url = generate_certificate
+    EventMailer.send_certificate_with_hr_notification(
+      self, 
+      certificate_url['A4'], 
+      certificate_url['LETTER'],
+      hr_emails: hr_emails,
+      hr_message: hr_message
+    ).deliver
+  end
+
   def applicable_unit_price
     event.price(quantity, created_at, referer_code)
   end

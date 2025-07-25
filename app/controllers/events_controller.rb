@@ -150,6 +150,43 @@ class EventsController < ApplicationController
     end
   end
 
+  def send_certificate_with_hr
+    @event = Event.find(params[:id])
+
+    if @event.trainer.signature_image.nil? || @event.trainer.signature_image == ''
+      flash[:alert] = t('flash.event.send_certificate.signature_failure')
+      redirect_to admin_event_path(@event) and return
+    end
+
+    # Extract HR notification parameters
+    hr_emails = params[:hr_emails].to_s.split(/[,;\n]/).map(&:strip).reject(&:blank?)
+    hr_message = params[:hr_message].to_s.strip
+
+    # Validate HR emails
+    invalid_emails = hr_emails.reject { |email| email.match?(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i) }
+    
+    if invalid_emails.any?
+      flash[:alert] = "Email addresses inválidas: #{invalid_emails.join(', ')}"
+      redirect_to admin_event_path(@event) and return
+    end
+
+    sent = 0
+
+    @event.participants.each do |participant|
+      if participant.could_receive_certificate?
+        participant.delay.generate_certificate_and_notify_with_hr(
+          hr_emails: hr_emails,
+          hr_message: hr_message.present? ? hr_message : nil
+        )
+        sent += 1
+      end
+    end
+
+    hr_info = hr_emails.any? ? " con copia a: #{hr_emails.join(', ')}" : ""
+    flash[:notice] = "Se están enviando #{sent} certificados#{hr_info}."
+    redirect_to admin_event_path(@event)
+  end
+
   private
 
   def activate_menu

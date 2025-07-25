@@ -182,6 +182,13 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
 "
                       }
             end
+            span style: 'margin: 0 5px;' do
+              link_to 'Generate Certificates with HR Notification',
+                      "#",
+                      class: 'button-default',
+                      id: 'hr-certificate-btn',
+                      onclick: "showHRForm(#{event.id}); return false;"
+            end
           end
         end
 
@@ -280,6 +287,74 @@ Antes de seguir, asegúrate que el evento ya haya finalizado, que las personas q
           end
         end
       end
+    end
+    
+    # HR Certificate Notification Form
+    div id: 'hr-form-overlay', style: 'display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;' do
+      div style: 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); width: 90%; max-width: 600px;' do
+        h3 'Send Certificates with HR Notification'
+        
+        form method: 'post', id: 'hr-certificate-form', style: 'margin-top: 20px;' do
+          input type: 'hidden', name: 'authenticity_token', value: form_authenticity_token
+          
+          div style: 'margin-bottom: 20px;' do
+            label 'HR Email Addresses (separate with commas, semicolons, or new lines):', 
+                  style: 'display: block; margin-bottom: 8px; font-weight: bold;'
+            textarea name: 'hr_emails', 
+                     placeholder: 'hr@company.com, manager@company.com',
+                     style: 'width: 100%; height: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; box-sizing: border-box;'
+          end
+          
+          div style: 'margin-bottom: 20px;' do
+            label 'HR Message (optional):',
+                  style: 'display: block; margin-bottom: 8px; font-weight: bold;'
+            textarea name: 'hr_message',
+                     placeholder: 'Add a custom message from HR that will be included in the certificate email...',
+                     style: 'width: 100%; height: 100px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; box-sizing: border-box;'
+          end
+          
+          div style: 'margin-bottom: 20px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;' do
+            strong 'Note: '
+            span 'This will send individual certificate emails to each participant marked as "Present" or "Certified", with HR emails included as CC recipients.'
+          end
+          
+          div style: 'text-align: right;' do
+            button type: 'button', 
+                   onclick: 'hideHRForm()',
+                   style: 'margin-right: 10px; padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;' do
+              'Cancel'
+            end
+            button type: 'submit',
+                   onclick: "return confirm('Are you sure you want to send certificates with HR notification?')",
+                   style: 'padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;' do
+              'Send Certificates with HR CC'
+            end
+          end
+        end
+      end
+    end
+
+    # JavaScript for HR Certificate Form
+    script type: 'text/javascript' do
+      raw <<~JS
+        function showHRForm(eventId) {
+          document.getElementById('hr-form-overlay').style.display = 'block';
+          document.getElementById('hr-certificate-form').action = '/events/' + eventId + '/send_certificate_with_hr';
+        }
+        
+        function hideHRForm() {
+          document.getElementById('hr-form-overlay').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('hr-form-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+              hideHRForm();
+            }
+          });
+        });
+      JS
     end
   end
 

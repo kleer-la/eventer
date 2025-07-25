@@ -93,6 +93,7 @@ Rails.application.routes.draw do
   get 'events/filter/:country_iso' => 'events#index'
 
   get 'events/:id/send_certificate' => 'events#send_certificate'
+  post 'events/:id/send_certificate_with_hr' => 'events#send_certificate_with_hr'
 
   get 'events/:event_id/participant_confirmed' => 'participants#confirm'
   get 'events/:event_id/participants/:id/certificate' => 'participants#certificate'

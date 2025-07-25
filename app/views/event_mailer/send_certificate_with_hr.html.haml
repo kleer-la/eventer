@@ -1,0 +1,41 @@
+%div{ :style => "background-color:rgb(110, 233, 241);margin-bottom:20px;padding:10px;font-size:34px;" }
+  %font{ :face => "raleway, verdana, sans-serif", :size => "5" }
+    %span{ :style => "line-height: 22px;" }
+    = @participant.event.event_type.name
+%div{ :style => "padding:6px;font-size:12px" }
+  %font{ :face => "raleway, verdana, sans-serif"}
+    = "Hola " + @participant.fname + ","
+    %br
+    %br
+    Gracias por haber participado en el evento 
+    %b= @participant.event.event_type.name
+    , facilitado por  
+    %b= @participant.event.trainer.name
+    %br
+    %br
+    Sigue el link para obtener tu certificado en el formato deseado:
+    %br
+    %a{ :href => @certificate_link_letter } 
+      Certificado
+    %br
+    %br
+    - if @hr_message.present?
+      %div{ :style => "background-color:#f8f9fa;border-left:4px solid #007bff;padding:15px;margin:20px 0;" }
+        %strong Mensaje de RR.HH.:
+        %br
+        = simple_format(@hr_message)
+      %br
+    Cualquier consulta que tengas no dudes en contactarnos.
+    %br
+    ¡Saludos!
+    %br
+    %br
+    %strong Kleer - Agile Coaching & Training
+    %br
+    = "website | "
+    %a{ :href => "http://www.kleer.la", :target => "_blank" }
+      http://www.kleer.la
+- content_for  :side_image do
+  %img{ :src => "https://kleer-images.s3-sa-east-1.amazonaws.com/mails/img_derecha_celebrar.png", :alt => "", :border => "0", :width => "160", :height => "247", :style => "border:0px none;min-height:247px;line-height:16px;outline:none;display:inline;width:160px;margin:0px;padding:0px;max-width:160px" }
+
+  

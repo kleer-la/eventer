@@ -396,4 +396,38 @@ describe Participant do
       expect(@participant.paid?).to be true
     end
   end
+
+  describe 'certificate generation with HR notification' do
+    before do
+      @participant = FactoryBot.create(:participant, status: 'A')  # Present status
+      allow(@participant).to receive(:generate_certificate).and_return({
+        'A4' => 'http://example.com/cert_a4.pdf',
+        'LETTER' => 'http://example.com/cert_letter.pdf'
+      })
+    end
+
+    it 'sends certificate with HR emails and message' do
+      hr_emails = ['hr@company.com', 'manager@company.com']
+      hr_message = 'Congratulations on completing the training!'
+
+      expect(EventMailer).to receive(:send_certificate_with_hr_notification)
+        .with(@participant, 'http://example.com/cert_a4.pdf', 'http://example.com/cert_letter.pdf',
+              hr_emails: hr_emails, hr_message: hr_message)
+        .and_return(double(deliver: true))
+
+      @participant.generate_certificate_and_notify_with_hr(
+        hr_emails: hr_emails,
+        hr_message: hr_message
+      )
+    end
+
+    it 'sends certificate without HR info when none provided' do
+      expect(EventMailer).to receive(:send_certificate_with_hr_notification)
+        .with(@participant, 'http://example.com/cert_a4.pdf', 'http://example.com/cert_letter.pdf',
+              hr_emails: [], hr_message: nil)
+        .and_return(double(deliver: true))
+
+      @participant.generate_certificate_and_notify_with_hr
+    end
+  end
 end

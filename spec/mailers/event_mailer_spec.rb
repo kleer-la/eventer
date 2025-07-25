@@ -154,6 +154,54 @@ describe EventMailer do
     expect(@email.from).to eq ['entrenamos@kleer.la']
   end
 
+  it 'send certificate with HR notification and CC' do
+    hr_emails = ['hr@company.com', 'manager@company.com']
+    hr_message = 'Great job completing the training!'
+
+    @email = EventMailer.send_certificate_with_hr_notification(
+      @participant, 
+      'http://pepe.com/A4.pdf', 
+      'http://pepe.com/LETTER.pdf',
+      hr_emails: hr_emails,
+      hr_message: hr_message
+    ).deliver_now
+
+    expect(ActionMailer::Base.deliveries.count).to be 1
+    expect(@email.from).to eq ['entrenamos@kleer.la']
+    expect(@email.to).to eq [@participant.email]
+    expect(@email.cc).to eq hr_emails
+    expect(@email.body.to_s).to include(hr_message)
+    expect(@email.body.to_s).to include('Mensaje de RR.HH.')
+  end
+
+  it 'send certificate with HR notification without CC when no HR emails provided' do
+    @email = EventMailer.send_certificate_with_hr_notification(
+      @participant, 
+      'http://pepe.com/A4.pdf', 
+      'http://pepe.com/LETTER.pdf',
+      hr_emails: [],
+      hr_message: nil
+    ).deliver_now
+
+    expect(ActionMailer::Base.deliveries.count).to be 1
+    expect(@email.to).to eq [@participant.email]
+    expect(@email.cc).to be_nil
+  end
+
+  it 'filters invalid email addresses from HR emails' do
+    hr_emails = ['valid@company.com', 'invalid-email', '', 'another@valid.com']
+
+    @email = EventMailer.send_certificate_with_hr_notification(
+      @participant, 
+      'http://pepe.com/A4.pdf', 
+      'http://pepe.com/LETTER.pdf',
+      hr_emails: hr_emails,
+      hr_message: nil
+    ).deliver_now
+
+    expect(@email.cc).to eq ['valid@company.com', 'another@valid.com']
+  end
+
   context 'alert_event_monitor' do
     it 'send registration to AlertMail when the event dont have alert email address' do
       @email = EventMailer.alert_event_monitor(@participant, '')
