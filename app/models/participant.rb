@@ -254,7 +254,10 @@ class Participant < ApplicationRecord
     EventMailer.send_certificate(self, certificate_url['A4'], certificate_url['LETTER']).deliver
   end
 
-  def generate_certificate_and_notify_with_hr(hr_emails: [], hr_message: nil)
+  def generate_certificate_and_notify_with_hr(options = {})
+    hr_emails = options[:hr_emails] || []
+    hr_message = options[:hr_message]
+    
     certificate_url = generate_certificate
     EventMailer.send_certificate_with_hr_notification(
       self, 
