@@ -30,6 +30,44 @@ ActiveAdmin.register EventType do
     link_to 'Old version', event_types_path, class: 'button'
   end
 
+  action_item :certificate_preview, only: :show do
+    link_to 'Certificate Preview', certificate_preview_admin_event_type_path(resource), class: 'button'
+  end
+
+  member_action :certificate_preview, method: :get do
+    respond_to do |format|
+      format.html do
+        result = EventTypeCertificatePreviewService.prepare_preview_form(resource, params[:event_type] || {})
+
+        if result.success?
+          @images = result.data[:images]
+          @trainers = result.data[:trainers]
+          @certificate_values = result.data[:certificate_values]
+          @page_size = result.data[:page_size]
+          render 'admin/event_types/certificate_preview'
+        else
+          redirect_to admin_event_types_path, alert: result.message
+        end
+      end
+
+      format.pdf do
+        certificate_params = params[:event_type] || {}
+        result = EventTypeCertificatePreviewService.generate_certificate_pdf(resource, certificate_params)
+
+        if result.success?
+          @certificate = result.data[:certificate]
+          @participant = result.data[:participant]
+          @event = result.data[:event]
+          @certificate_store = result.data[:certificate_store] # PDF view expects @certificate_store
+          @page_size = 'LETTER' # PDF view expects @page_size
+          render 'event_types/certificate_preview'
+        else
+          redirect_to admin_event_types_path, alert: result.message
+        end
+      end
+    end
+  end
+
   config.sort_order = 'name_asc'
   index do
     column :name

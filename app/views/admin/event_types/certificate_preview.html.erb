@@ -1,0 +1,91 @@
+<div class="panel">
+  <%= form_tag certificate_preview_admin_event_type_path(resource), method: :get, html: { class: "formtastic" } do %>
+    <%= hidden_field_tag :format, :pdf %>
+    
+    <fieldset class="inputs">
+      <legend><span>Certificate Configuration</span></legend>
+      <ol>
+        <li class="select input optional">
+          <label for="event_type_certificate_background_image_url" class="label">Background image URL</label>
+          <%= select_tag "event_type[certificate_background_image_url]", 
+                         options_for_select(@images.map { |img| [img, img] }, @certificate_values[:certificate_background_image_url]) %>
+        </li>
+        
+        <li class="boolean input optional">
+          <label for="event_type_certificate_kleer_cert" class="label">Cert Kleer</label>
+          <%= check_box_tag "event_type[certificate_kleer_cert]", "1", 
+                             (@certificate_values[:certificate_kleer_cert] == '1') %>
+        </li>
+        
+        <li class="boolean input optional">
+          <label for="event_type_certificate_new_version" class="label">Nueva Versión</label>
+          <%= check_box_tag "event_type[certificate_new_version]", "1", 
+                             (@certificate_values[:certificate_new_version] == '1') %>
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset class="inputs">
+      <legend><span>Location Details</span></legend>
+      <ol>
+        <li class="string input optional">
+          <label for="event_type_certificate_city" class="label"><%= t("formtastic.labels.event.city") %></label>
+          <%= text_field_tag "event_type[certificate_city]", @certificate_values[:certificate_city] %>
+        </li>
+        
+        <li class="select input optional">
+          <label for="event_type_certificate_country" class="label"><%= t("formtastic.labels.event.country") %></label>
+          <%= select_tag "event_type[certificate_country]", 
+                         options_from_collection_for_select(Country.order(:name), :id, :name, @certificate_values[:certificate_country]) %>
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset class="inputs">
+      <legend><span>Date Configuration</span></legend>
+      <ol>
+        <li class="date input optional">
+          <label for="event_type_certificate_date" class="label"><%= t("formtastic.labels.event.date") %></label>
+          <%= date_field_tag "event_type[certificate_date]", @certificate_values[:certificate_date] %>
+        </li>
+        
+        <li class="date input optional">
+          <label for="event_type_certificate_finish_date" class="label"><%= t("formtastic.labels.event.finish_date") %></label>
+          <%= date_field_tag "event_type[certificate_finish_date]", @certificate_values[:certificate_finish_date] %>
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset class="inputs">
+      <legend><span>Participant & Trainers</span></legend>
+      <ol>
+        <li class="string input optional">
+          <label for="event_type_certificate_name" class="label">Participant Name</label>
+          <%= text_field_tag "event_type[certificate_name]", @certificate_values[:certificate_name] %>
+        </li>
+        
+        <li class="select input optional">
+          <label for="event_type_certificate_trainer1" class="label">Trainer 1</label>
+          <%= select_tag "event_type[certificate_trainer1]", 
+                         options_from_collection_for_select(@trainers, :id, :name, @certificate_values[:certificate_trainer1]) %>
+        </li>
+        
+        <li class="select input optional">
+          <label for="event_type_certificate_trainer2" class="label">Trainer 2</label>
+          <%= select_tag "event_type[certificate_trainer2]", 
+                         options_from_collection_for_select(@trainers, :id, :name, @certificate_values[:certificate_trainer2]),
+                         { include_blank: true } %>
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset class="actions">
+      <ol>
+        <li class="action input_action">
+          <%= submit_tag "Preview Certificate", class: "btn btn-primary" %>
+          <%= link_to "Back to Event Type", admin_event_type_path(resource), class: "btn btn-default" %>
+        </li>
+      </ol>
+    </fieldset>
+  <% end %>
+</div>
