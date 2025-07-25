@@ -735,4 +735,53 @@ describe Event do
       end
     end
   end
+
+  describe '#duplicate' do
+    let(:original_event) do
+      create(:event,
+             date: Date.new(2024, 6, 15),
+             finish_date: Date.new(2024, 6, 16),
+             registration_ends: Date.new(2024, 6, 10),
+             eb_end_date: Date.new(2024, 6, 5),
+             online_cohort_codename: 'COHORT123',
+             place: 'Conference Center',
+             city: 'Buenos Aires',
+             capacity: 20)
+    end
+
+    context 'when duplicating an event' do
+      let(:duplicated_event) { original_event.duplicate }
+
+      it 'returns a new Event instance' do
+        expect(duplicated_event).to be_a(Event)
+        expect(duplicated_event).not_to eq(original_event)
+        expect(duplicated_event.id).to be_nil # Not saved yet
+      end
+
+      it 'clears date fields' do
+        expect(duplicated_event.date).to be_nil
+        expect(duplicated_event.finish_date).to be_nil
+        expect(duplicated_event.registration_ends).to be_nil
+        expect(duplicated_event.eb_end_date).to be_nil
+      end
+
+      it 'clears unique identifiers' do
+        expect(duplicated_event.online_cohort_codename).to be_nil
+      end
+
+      it 'preserves other attributes' do
+        expect(duplicated_event.place).to eq(original_event.place)
+        expect(duplicated_event.city).to eq(original_event.city)
+        expect(duplicated_event.capacity).to eq(original_event.capacity)
+        expect(duplicated_event.event_type_id).to eq(original_event.event_type_id)
+        expect(duplicated_event.trainer_id).to eq(original_event.trainer_id)
+        expect(duplicated_event.country_id).to eq(original_event.country_id)
+      end
+
+      it 'is valid when required fields are set' do
+        duplicated_event.date = Date.current
+        expect(duplicated_event).to be_valid
+      end
+    end
+  end
 end
