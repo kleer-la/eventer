@@ -170,8 +170,10 @@ describe EventMailer do
     expect(@email.from).to eq ['entrenamos@kleer.la']
     expect(@email.to).to eq [@participant.email]
     expect(@email.cc).to eq hr_emails
-    expect(@email.body.to_s).to include(hr_message)
-    expect(@email.body.to_s).to include('Mensaje de RR.HH.')
+    expect(@email.html_part.body.to_s).to include(hr_message)
+    expect(@email.html_part.body.to_s).to include('Mensaje de RR.HH.')
+    expect(@email.text_part.body.to_s).to include(hr_message)
+    expect(@email.text_part.body.to_s).to include('Mensaje de RR.HH.')
   end
 
   it 'send certificate with HR notification without CC when no HR emails provided' do
