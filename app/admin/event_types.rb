@@ -34,6 +34,10 @@ ActiveAdmin.register EventType do
     link_to 'Certificate Preview', certificate_preview_admin_event_type_path(resource), class: 'button'
   end
 
+  action_item :participants, only: :show do
+    link_to 'All Participants', participants_admin_event_type_path(resource), class: 'button'
+  end
+
   member_action :certificate_preview, method: :get do
     respond_to do |format|
       format.html do
@@ -61,6 +65,34 @@ ActiveAdmin.register EventType do
           @certificate_store = result.data[:certificate_store] # PDF view expects @certificate_store
           @page_size = 'LETTER' # PDF view expects @page_size
           render 'event_types/certificate_preview'
+        else
+          redirect_to admin_event_types_path, alert: result.message
+        end
+      end
+    end
+  end
+
+  member_action :participants, method: :get do
+    respond_to do |format|
+      format.html do
+        result = EventTypeParticipantsService.participants(resource)
+
+        if result.success?
+          @participants = result.data[:participants]
+          @total_count = result.data[:total_count]
+          render 'admin/event_types/participants'
+        else
+          redirect_to admin_event_types_path, alert: result.message
+        end
+      end
+
+      format.csv do
+        result = EventTypeParticipantsService.generate_csv(resource)
+
+        if result.success?
+          send_data result.data[:csv_data],
+                    filename: result.data[:filename],
+                    type: 'text/csv'
         else
           redirect_to admin_event_types_path, alert: result.message
         end

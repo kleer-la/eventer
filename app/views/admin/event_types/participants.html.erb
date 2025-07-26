@@ -1,0 +1,44 @@
+<div class="panel">
+  <h3>Participantes de <%= resource.name %></h3>
+  
+  <div class="panel_contents">
+    <div class="attributes_table participants">
+      <table border="0" cellspacing="0" cellpadding="0" class="index_table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @participants.each do |participant| %>
+            <tr class="<%= cycle('odd', 'even') %>">
+              <td>
+                <%= link_to participant.event.date, 
+                    admin_event_participants_path(participant.event), 
+                    class: "member_link" %>
+              </td>
+              <td><%= participant.fname %></td>
+              <td><%= participant.lname %></td>
+              <td><%= participant.human_status %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="table_tools">
+      <div class="download_links">
+        <%= link_to "Download CSV", 
+            participants_admin_event_type_path(resource, format: :csv), 
+            class: "download_link" %>
+      </div>
+    </div>
+    
+    <div class="pagination_information">
+      <b><%= @total_count %></b> participants found
+    </div>
+  </div>
+</div>
