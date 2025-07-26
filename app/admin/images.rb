@@ -176,11 +176,11 @@ ActiveAdmin.register_page 'Images' do
     begin
       @public_url = store.upload(file.tempfile, img_name, @image_bucket)
       flash[:notice] = 'Image successfully uploaded'
+      redirect_to admin_images_show_path(bucket: @image_bucket, key: img_name)
     rescue StandardError => e
       flash[:error] = "Error uploading image: #{e.message}"
+      redirect_to admin_images_path
     end
-
-    redirect_to admin_images_path
   end
 
   page_action :show, method: :get do
