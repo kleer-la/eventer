@@ -31,7 +31,7 @@ RSpec.describe EventTypeParticipantsService do
 
       it 'returns empty array when event type has no events' do
         empty_event_type = create(:event_type, name: 'Empty Course')
-        result = described_class.get_participants(empty_event_type)
+        result = described_class.participants(empty_event_type)
 
         expect(result).to be_success
         expect(result.data[:participants]).to be_empty
