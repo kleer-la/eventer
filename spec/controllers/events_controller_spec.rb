@@ -163,8 +163,11 @@ describe EventsController do
   end
 
   describe 'GET send_certificate' do
-    before { WebMock.allow_net_connect! }
-    after { WebMock.disable_net_connect!(allow_localhost: true) }
+    before do
+      # Use NullInfra pattern to avoid AWS dependencies
+      allow(FileStoreService).to receive(:create_s3).and_return(FileStoreService.create_null(exists: {}))
+      allow(ParticipantsHelper).to receive(:upload_certificate).and_return('https://example.com/cert.pdf')
+    end
     login_admin
     it 'one present' do
       participant = FactoryBot.create(:participant)
