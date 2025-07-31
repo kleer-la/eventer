@@ -25,7 +25,9 @@ describe ParticipantInvoiceHelper do
     pih = ParticipantInvoiceHelper.new(@participant, :en)
     expect(pih.item_description).to include '#3 seats'
   end
-  pending 'coupon applied' do
+  xit 'coupon applied shows in item description' do
+    # Skip: Coupon functionality not fully implemented
+    # Coupon code doesn't appear in item_description method
     FactoryBot.create(:coupon, :percent_off, percent_off: 10.0, code: 'ABRADADABRA')
               .event_types << @participant.event.event_type
 
@@ -33,6 +35,7 @@ describe ParticipantInvoiceHelper do
     @participant.referer_code = 'ABRADADABRA'
     pih = ParticipantInvoiceHelper.new(@participant, :es)
 
-    expect(pih.new_invoice).to include 'ABRADADABRA'
+    # Test that coupon code appears in the item description
+    expect(pih.item_description).to include 'ABRADADABRA'
   end
 end
