@@ -50,7 +50,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
     # Update contact with both PDF URL and HTML content
     contact.update(
-      assessment_report_url: public_url, 
+      assessment_report_url: public_url,
       assessment_report_html: html_content,
       status: :completed
     )
@@ -129,7 +129,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     assessment_title = contact.assessment.title
     assessment_language = contact.assessment.language || 'es'
     assessment_date = contact.created_at.strftime('%B %d, %Y')
-    
+
     # Get questions and answers
     questions_and_answers = get_questions_and_answers(contact)
 
@@ -168,6 +168,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
           .assessment-report h2 {
             color: #007BFF;
+            font-size: 1.4em;
             margin-top: 20px;
             margin-bottom: 15px;
           }
@@ -239,7 +240,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
               style="max-width: 200px; margin-bottom: 10px;">
             <h1>#{assessment_title}</h1>
             <p>Participante: #{name}</p>
-            #{company.present? ? "<p>Empresa: #{company}</p>" : ""}
+            #{company.present? ? "<p>Empresa: #{company}</p>" : ''}
             <p>Fecha de la Evaluación: #{assessment_date}</p>
           </header>
 
@@ -287,19 +288,19 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     questions_html = ''
     contact.responses.includes(:question, :answer).each do |response|
       question_text = response.question.name || response.question.text || "Pregunta #{response.question.id}"
-      
+
       answer_text = case response.question.question_type
-                   when 'linear_scale', 'radio_button'
-                     if response.answer.present?
-                       response.answer.text.presence || "Opción #{response.answer.position}"
-                     else
-                       'Sin respuesta'
-                     end
-                   when 'short_text', 'long_text'
-                     response.text_response.presence || 'Sin respuesta'
-                   else
-                     'Tipo de pregunta no reconocido'
-                   end
+                    when 'linear_scale', 'radio_button'
+                      if response.answer.present?
+                        response.answer.text.presence || "Opción #{response.answer.position}"
+                      else
+                        'Sin respuesta'
+                      end
+                    when 'short_text', 'long_text'
+                      response.text_response.presence || 'Sin respuesta'
+                    else
+                      'Tipo de pregunta no reconocido'
+                    end
 
       questions_html += "<dt>Pregunta: #{question_text}</dt>\n"
       questions_html += "<dd>Respuesta: #{answer_text}</dd>\n"
@@ -309,50 +310,105 @@ class GenerateAssessmentResultJob < ActiveJob::Base
   end
 
   def generate_pdf_from_html(html_content, contact)
-    # Using Prawn to generate PDF from HTML-like content
+    # Generate professional PDF that matches HTML structure and styling
     require 'prawn'
 
-    name = contact.form_data&.dig('name') || 'Participant'
+    # Extract data
+    name = contact.form_data&.dig('name') || 'Participante'
+    company = contact.form_data&.dig('company')
     assessment_title = contact.assessment.title
+    assessment_date = contact.created_at.strftime('%B %d, %Y')
     diagnostics = contact.assessment.evaluate_rules_for_contact(contact)
 
-    pdf = Prawn::Document.new
+    # Create PDF with proper margins
+    pdf = Prawn::Document.new(page_size: 'A4', margin: 40)
 
-    # Register custom fonts to avoid missing font file issues
-    if File.exist?(Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf'))
+    # Use Raleway fonts from vendor/assets/fonts
+    raleway_regular = Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf')
+    raleway_bold = Rails.root.join('vendor/assets/fonts/Raleway-Bold.ttf')
+    raleway_italic = Rails.root.join('vendor/assets/fonts/Raleway-Italic.ttf')
+    
+    if File.exist?(raleway_regular) && File.exist?(raleway_bold)
       pdf.font_families.update(
         'Raleway' => {
-          normal: Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf'),
-          regular: Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf')
+          normal: raleway_regular,
+          bold: raleway_bold,
+          italic: raleway_italic
         }
       )
+      pdf.font 'Raleway'
+    else
+      # Use default font (no explicit font setting needed)
+      # Prawn will use its default built-in font
     end
 
-    # Use Raleway if available, otherwise use default
-    font_name = pdf.font_families['Raleway'] ? 'Raleway' : nil
-    pdf.font font_name if font_name
+    # === HEADER SECTION ===
+    # Title (h1 equivalent: 18pt)
+    pdf.text assessment_title, size: 18, style: :bold, align: :center, color: '007BFF'
+    pdf.move_down 10
 
-    # Title
-    pdf.text assessment_title, size: 24, align: :center
-    pdf.move_down 20
-
-    # Participant name
-    pdf.text "Participant: #{name}", size: 18, align: :center
+    # Participant info
+    pdf.text "Participante: #{name}", size: 12, align: :center
+    pdf.text "Empresa: #{company}", size: 12, align: :center if company.present?
+    pdf.text "Fecha de la Evaluación: #{assessment_date}", size: 12, align: :center
     pdf.move_down 30
 
-    # Results section
-    pdf.text 'Assessment Results', size: 16
+    # === QUESTIONS AND ANSWERS SECTION ===
+    pdf.text 'Datos de la Evaluación: Preguntas y Respuestas', size: 14, style: :bold, color: '007BFF'
+    pdf.move_down 15
+
+    # Add questions and answers
+    if contact.responses.any?
+      contact.responses.includes(:question, :answer).each do |response|
+        question_text = response.question.name || response.question.text || "Pregunta #{response.question.id}"
+
+        # Question text (bold)
+        pdf.text question_text, size: 11, style: :bold
+        pdf.move_down 5
+
+        # Answer text (indented)
+        answer_text = case response.question.question_type
+                      when 'linear_scale', 'radio_button'
+                        if response.answer.present?
+                          response.answer.text.presence || "Opción #{response.answer.position}"
+                        else
+                          'Sin respuesta'
+                        end
+                      when 'short_text', 'paragraph_text'
+                        response.text_response.presence || 'Sin respuesta'
+                      else
+                        'Sin respuesta'
+                      end
+
+        pdf.text answer_text, size: 10, indent_paragraphs: 20
+        pdf.move_down 10
+      end
+    else
+      pdf.text 'No hay respuestas registradas.', size: 10, style: :italic
+    end
+
+    pdf.move_down 20
+
+    # === DIAGNOSTIC RESULTS SECTION ===
+    pdf.text 'Diagnóstico', size: 14, style: :bold, color: '007BFF'
     pdf.move_down 15
 
     if diagnostics.any?
       diagnostics.each do |diagnostic|
-        pdf.text diagnostic, indent_paragraphs: 20
-        pdf.move_down 15
+        # Add bullet point for each diagnostic
+        pdf.text "• #{diagnostic}", size: 11, indent_paragraphs: 10
+        pdf.move_down 8
       end
     else
-      pdf.text 'No specific diagnostics were triggered based on your responses.',
-               align: :center
+      pdf.text 'No se activaron diagnósticos específicos basados en tus respuestas.',
+               size: 11, style: :italic, align: :center
     end
+
+    pdf.move_down 30
+
+    # === FOOTER ===
+    pdf.text 'Este reporte se basa en datos auto-reportados y reglas generales; no constituye consejo profesional. Datos de contacto: info@kleer.la',
+             size: 9, style: :italic, color: '666666'
 
     pdf.render
   end

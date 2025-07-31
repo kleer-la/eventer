@@ -292,9 +292,9 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       job.send(:generate_pdf_from_html, 'html', contact)
 
-      expect(pdf_mock).to have_received(:text).with('PDF Test', size: 24, align: :center)
-      expect(pdf_mock).to have_received(:text).with('Participant: PDF User', size: 18, align: :center)
-      expect(pdf_mock).to have_received(:text).with('Diagnostic text', indent_paragraphs: 20)
+      expect(pdf_mock).to have_received(:text).with('PDF Test', size: 18, style: :bold, align: :center, color: '007BFF')
+      expect(pdf_mock).to have_received(:text).with('Participante: PDF User', size: 12, align: :center)
+      expect(pdf_mock).to have_received(:text).with('• Diagnostic text', size: 11, indent_paragraphs: 10)
     end
   end
 
