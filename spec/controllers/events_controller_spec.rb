@@ -22,7 +22,7 @@ describe EventsController do
       it 'assigns all events as @events' do
         event = FactoryBot.create(:event)
         get :index
-        expect(assigns(:events)).to eq [event]
+        expect(assigns(:events).to_a).to eq [event]
       end
     end
 

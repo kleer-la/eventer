@@ -4,6 +4,10 @@ require 'rails_helper'
 
 describe HomeController do
   describe "GET 'index' (/api/events.<format>)" do
+    before(:each) do
+      # Ensure clean state for each test
+      Event.destroy_all
+    end
     it 'returns http success' do
       get :index, params: { format: 'json' }
       expect(response).to be_successful
