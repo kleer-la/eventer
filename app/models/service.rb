@@ -62,6 +62,7 @@ class Service < ApplicationRecord
       .merge('subtitle' => subtitle.gsub('<h1>', '').gsub('</h1>', ''))
       .merge('cover' => side_image)
       .merge('lang' => area_lang)
+      .merge('is_training_program' => service_area&.is_training_program || false)
   end
 
   private
