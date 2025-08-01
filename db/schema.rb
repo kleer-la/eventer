@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_24_134230) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_01_000000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -102,36 +102,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_24_134230) do
     t.index ["resource_id", "trainer_id"], name: "index_authorships_on_resource_id_and_trainer_id", unique: true
     t.index ["resource_id"], name: "index_authorships_on_resource_id"
     t.index ["trainer_id"], name: "index_authorships_on_trainer_id"
-  end
-
-  create_table "campaign_sources", force: :cascade do |t|
-    t.string "codename"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.index ["codename"], name: "index_campaign_sources_on_codename"
-  end
-
-  create_table "campaign_views", force: :cascade do |t|
-    t.integer "campaign_id"
-    t.integer "event_id"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.integer "campaign_source_id"
-    t.string "element_viewed"
-    t.integer "event_type_id"
-    t.index ["campaign_id"], name: "index_campaign_views_on_campaign_id"
-    t.index ["campaign_source_id"], name: "index_campaign_views_on_campaign_source_id"
-    t.index ["element_viewed"], name: "index_campaign_views_on_element_viewed"
-    t.index ["event_id"], name: "index_campaign_views_on_event_id"
-    t.index ["event_type_id"], name: "index_campaign_views_on_event_type_id"
-  end
-
-  create_table "campaigns", force: :cascade do |t|
-    t.string "codename"
-    t.text "description"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.index ["codename"], name: "index_campaigns_on_codename"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -476,8 +446,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_24_134230) do
     t.decimal "xero_invoice_amount", precision: 10, scale: 2
     t.boolean "is_payed", default: false
     t.string "payment_type"
-    t.integer "campaign_id"
-    t.integer "campaign_source_id"
     t.string "konline_po_number"
     t.string "id_number"
     t.string "address"

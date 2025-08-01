@@ -39,8 +39,6 @@ class ApiController < ApplicationController
                            cohort_codename).first
       unless @event.nil?
 
-        source = CampaignSource.where(codename: utm_source).first_or_create
-        campaign = Campaign.where(codename: utm_campaign).first_or_create
 
         @participant = @event.participants.where('email = ?', participant_email).last
 
@@ -48,10 +46,8 @@ class ApiController < ApplicationController
           iz = InfluenceZone.where('zone_name = ? AND tag_name = ?', 'Capital Federal',
                                    'ZI-AMS-AR-BUE (Buenos Aires)').first
           @participant = @event.participants.create(email: participant_email, fname: participant_fname,
-                                                    lname: participant_lname, influence_zone: iz, phone: 'N/A', notes:, campaign:, campaign_source: source)
+                                                    lname: participant_lname, influence_zone: iz, phone: 'N/A', notes:)
         else
-          @participant.campaign = campaign
-          @participant.campaign_source = source
           @participant.notes = "#{notes}\n#{@participant.notes}"
         end
 

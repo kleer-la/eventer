@@ -48,7 +48,7 @@ describe ParticipantsController do
     describe 'POST create' do
       before(:each) do
         @participant_attr = @participant.attributes.reject do |k, _v|
-          %w[id created_at updated_at verification_code campaign_id campaign_source_id konline_po_number
+          %w[id created_at updated_at verification_code konline_po_number
              pay_notes].include? k
         end
       end
@@ -117,7 +117,7 @@ describe ParticipantsController do
     describe 'PUT update' do
       before(:each) do
         @participant_attr = @participant.attributes.reject do |k, _v|
-          %w[id created_at updated_at verification_code campaign_id campaign_source_id konline_po_number
+          %w[id created_at updated_at verification_code konline_po_number
              pay_notes].include? k
         end
       end

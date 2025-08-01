@@ -13,7 +13,6 @@ class Event < ApplicationRecord
   has_many :participants
   has_many :categories, through: :event_type
 
-  has_many :campaign_views
 
   scope :visible, -> { where(cancelled: false).where('date >= ?', DateTime.now - 1) }
   scope :past_visible, -> { where(cancelled: false).where('date <= ?', DateTime.now) }

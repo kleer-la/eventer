@@ -3,13 +3,6 @@
 require 'factory_bot'
 
 FactoryBot.define do
-  factory :campaign_source do
-    codename { 'source1' }
-  end
-
-  factory :campaign do
-    codename { 'campaña1' }
-  end
 
   factory :country do
     name { 'Argentina' }

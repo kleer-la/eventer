@@ -128,14 +128,6 @@ Rails.application.routes.draw do
 
   get 'participants/search' => 'participants#search'
   get 'participants/followup' => 'participants#followup'
-
-  get 'marketing' => 'marketing#index'
-  get 'marketing/:time_segment' => 'marketing#index'
-  get 'marketing/campaigns/:id' => 'marketing#campaign'
-  get 'marketing/campaigns/:id/:time_segment' => 'marketing#campaign'
-  get 'events/:id/viewed' => 'marketing#viewed'
-  #   resources :products
-
   get 'oauth_tokens/' => 'oauth_tokens#index'
   get 'oauth_tokens/new' => 'oauth_tokens#new'
   get 'oauth_tokens/callback' => 'oauth_tokens#callback'

@@ -86,25 +86,6 @@ class ParticipantsController < ApplicationController
   #   end
   # end
 
-  def campaign_new
-    utm_campaign = params[:utm_campaign]
-    utm_source = params[:utm_source]
-    utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
-    utm_source = utm_source.downcase unless utm_source.nil?
-
-    return if @event.nil?
-
-    source = CampaignSource.where(codename: utm_source).first_or_create
-    campaign = Campaign.where(codename: utm_campaign).first_or_create
-
-    begin
-      CampaignView.create(campaign:, campaign_source: source, event: @event, event_type: @event.event_type,
-                          element_viewed: 'registration_form')
-    rescue StandardError
-      puts 'Sometimes a DB locked error: we can skip this record'
-    end
-  end
-
   # GET /participants/new
   # GET /participants/new.json
   def new
@@ -126,7 +107,6 @@ class ParticipantsController < ApplicationController
     I18n.locale = (:es if params[:lang].nil? || params[:lang].downcase == 'es') || :en
     @quantities = quantities_list
     @savings = savings_list
-    campaign_new
     respond_to do |format|
       format.html { render layout: 'empty_layout' }
       format.json { render json: @participant }
@@ -173,17 +153,6 @@ class ParticipantsController < ApplicationController
     @status_valuekey = STATUS_LIST
   end
 
-  def pre_campaign(params)
-    utm_campaign = params[:utm_campaign]
-    utm_source = params[:utm_source]
-    utm_campaign = utm_campaign.downcase unless utm_campaign.nil?
-    utm_source = utm_source.downcase unless utm_source.nil?
-    source = CampaignSource.where(codename: utm_source).first_or_create
-    campaign = Campaign.where(codename: utm_campaign).first_or_create
-
-    [source, campaign]
-  end
-
   def create_mails
     invoice = ParticipantInvoiceHelper.new(@participant).new_invoice
     EventMailer.delay.welcome_new_event_participant(@participant) if @event.should_welcome_email && !invoice.nil?
@@ -211,12 +180,8 @@ class ParticipantsController < ApplicationController
     @nakedform = !params[:nakedform].nil?
     @participant.confirm! if @event.list_price > 0.0
 
-    source, campaign = pre_campaign(params)
-
     respond_to do |format|
       if @participant.save
-        @participant.update_attribute(:campaign_source, source)
-        @participant.update_attribute(:campaign, campaign)
         if @event.list_price > 0.0
           @participant.contact!
           @participant.save
@@ -364,6 +329,6 @@ class ParticipantsController < ApplicationController
                   :status, :notes, :influence_zone_id, :influence_zone, :quantity,
                   :referer_code, :promoter_score, :event_rating, :trainer_rating, :trainer2_rating, :testimony, :selected,
                   :xero_invoice_number, :invoice_id, :is_payed, :photo_url, :profile_url,
-                  :campaign_source, :campaign, :accept_terms, :company_name, :id_number, :address
+                  :accept_terms, :company_name, :id_number, :address
   end
 end

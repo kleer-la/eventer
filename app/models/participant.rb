@@ -8,8 +8,6 @@ class Participant < ApplicationRecord
 
   belongs_to :event, touch: true # Event's updated_at is updated -> so cache is invalidated
   belongs_to :influence_zone, optional: true
-  belongs_to :campaign, optional: true
-  belongs_to :campaign_source, optional: true
 
   before_create do
     self.fname = fname.strip
@@ -123,10 +121,6 @@ class Participant < ApplicationRecord
 
   after_initialize :initialize_defaults
 
-  after_create do |participant|
-    participant.campaign&.touch
-    participant.campaign_source&.touch
-  end
 
   comma do
     lname 'Apellido'
@@ -330,11 +324,11 @@ class Participant < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[address campaign_id campaign_source_id company_name created_at email event_id event_rating
+    %w[address company_name created_at email event_id event_rating
        fname id id_number id_value influence_zone_id invoice_id is_payed konline_po_number lname notes online_invoice_url pay_notes payment_type phone photo_url profile_url promoter_score quantity referer_code selected status testimony trainer2_rating trainer_rating updated_at verification_code xero_invoice_amount xero_invoice_number xero_invoice_reference]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    %w[campaign campaign_source event influence_zone]
+    %w[event influence_zone]
   end
 end

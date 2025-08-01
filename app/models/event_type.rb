@@ -12,7 +12,6 @@ class EventType < ApplicationRecord
   has_and_belongs_to_many :categories
   has_many :events
   has_many :participants, through: :events
-  has_many :campaign_views
   has_many :clons, class_name: 'EventType', foreign_key: 'canonical_id'
   has_and_belongs_to_many :coupons
 
@@ -124,7 +123,7 @@ class EventType < ApplicationRecord
   end
 
   def self.ransackable_associations(auth_object = nil)
-    %w[campaign_views canonical categories clons coupons events participants recommended_contents
+    %w[canonical categories clons coupons events participants recommended_contents
        recommended_items trainers]
   end
 

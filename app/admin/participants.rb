@@ -9,7 +9,7 @@ ActiveAdmin.register Participant do
     def scoped_collection
       participant_columns = %w[
         id created_at fname lname email phone address quantity status notes
-        influence_zone_id event_id campaign_id campaign_source_id
+        influence_zone_id event_id
         company_name id_number invoice_id xero_invoice_number is_payed
         selected testimony photo_url profile_url
         promoter_score event_rating trainer_rating trainer2_rating
@@ -57,7 +57,7 @@ ActiveAdmin.register Participant do
                 :company_name, :id_number, :invoice_id, :xero_invoice_number,
                 :is_payed, :selected, :testimony, :photo_url, :profile_url,
                 :accept_terms, :promoter_score, :event_rating, :trainer_rating,
-                :trainer2_rating, :campaign_source, :campaign
+                :trainer2_rating
 
   member_action :copy, method: :post do
     original_participant = resource
