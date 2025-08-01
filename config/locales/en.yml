@@ -393,6 +393,15 @@ en:
         <br><br>----------
         <br>%{context}
         <br>%{name}<%{email}> from %{company}
+      body_text: >-
+        %{message}
+
+
+        ----------
+
+        %{context}
+
+        %{name}<%{email}> from %{company}
     invoice:
       item_one: >-
         %{course} -

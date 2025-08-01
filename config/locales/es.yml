@@ -410,6 +410,15 @@ es:
         <br><br>----------
         <br>%{context}
         <br>%{name}<%{email}> de %{company}
+      body_text: >-
+        %{message}
+
+
+        ----------
+
+        %{context}
+
+        %{name}<%{email}> de %{company}
     invoice:
       item_one: >-
         %{course} -
