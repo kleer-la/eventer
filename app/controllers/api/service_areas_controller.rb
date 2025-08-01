@@ -89,6 +89,7 @@ module Api
         value_proposition: service_area.value_proposition.body.to_s,
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
+        is_training_program: service_area.is_training_program,
         services: services2json(services, service_chg, req_slug, lang)
       }
     end
