@@ -16,7 +16,8 @@ module Api
         questions: assessment.questions.where(question_group_id: nil).as_json(
           only: %i[id name description position question_type],
           include: { answers: { only: %i[id text position] } }
-        )
+        ),
+        rule_based: assessment.rule_based
       }
     end
   end

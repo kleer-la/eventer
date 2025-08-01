@@ -463,3 +463,19 @@ es:
     finish_date: Finalizado
     length: Dedicación
     code: 'Código de verificación de la certificación: %{code}'
+  assessment:
+    pdf:
+      participant: "Participante:"
+      company: "Empresa:"
+      assessment_date: "Fecha de la Evaluación:"
+      questions_and_answers: "Datos de la Evaluación: Preguntas y Respuestas"
+      diagnosis: "Diagnóstico"
+      footer_disclaimer: "Este reporte ha sido generado automáticamente basado en las respuestas proporcionadas y las reglas de evaluación configuradas."
+      participant_default: "Participante"
+  question: "Pregunta"
+  answer: "Respuesta"
+  option: "Opción"
+  no_response: "Sin respuesta"
+  no_responses_recorded: "No hay respuestas registradas."
+  no_specific_diagnostics: "No se activaron diagnósticos específicos basados en tus respuestas."
+  question_type_not_recognized: "Tipo de pregunta no reconocido"

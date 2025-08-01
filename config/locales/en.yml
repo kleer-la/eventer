@@ -446,3 +446,19 @@ en:
     finish_date: Finished
     length: Duration
     code: 'Certification code: %{code}'
+  assessment:
+    pdf:
+      participant: "Participant:"
+      company: "Company:"
+      assessment_date: "Assessment Date:"
+      questions_and_answers: "Assessment Data: Questions and Answers"
+      diagnosis: "Diagnosis"
+      footer_disclaimer: "This report has been automatically generated based on the provided responses and the configured assessment rules."
+      participant_default: "Participant"
+  question: "Question"
+  answer: "Answer"
+  option: "Option"
+  no_response: "No response"
+  no_responses_recorded: "No responses recorded."
+  no_specific_diagnostics: "No specific diagnostics were activated based on your responses."
+  question_type_not_recognized: "Question type not recognized"

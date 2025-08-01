@@ -22,7 +22,7 @@ class Resource < ApplicationRecord
   has_many  :translators, through: :translations, source: :trainer
   has_many :illustrations
   has_many :illustrators, through: :illustrations, source: :trainer
-  has_one  :assessment, dependent: :nullify
+  has_many :assessments, dependent: :nullify
 
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }

@@ -362,7 +362,11 @@ RSpec.describe Api::ContactsController, type: :controller do
     let(:question) { create(:question, id: 1) }
     let(:answer) { create(:answer, id: 5) }
     let(:assessment) { create(:assessment) }
-    let(:assessment_resources) { create(:resource, slug: 'un-assessment', title_es: 'Un Assessment', assessment:) }
+    let(:assessment_resources) do
+      resource = create(:resource, slug: 'un-assessment', title_es: 'Un Assessment')
+      assessment.update!(resource: resource)
+      resource
+    end
     let(:valid_assessment_params) do
       valid_contact_params.merge({ resource_slug: 'un-assessment',
                                    resource_title_es: 'Un Assessment',
@@ -648,7 +652,11 @@ RSpec.describe Api::ContactsController, type: :controller do
     let(:short_text_question) { create(:question, :short_text, assessment: assessment, id: 10) }
     let(:long_text_question) { create(:question, :long_text, assessment: assessment, id: 11) }
     let(:assessment) { create(:assessment) }
-    let(:assessment_resources) { create(:resource, slug: 'text-assessment', title_es: 'Text Assessment', assessment:) }
+    let(:assessment_resources) do
+      resource = create(:resource, slug: 'text-assessment', title_es: 'Text Assessment')
+      assessment.update!(resource: resource)
+      resource
+    end
     let(:valid_text_assessment_params) do
       valid_contact_params.merge({
         resource_slug: 'text-assessment',
@@ -718,7 +726,11 @@ RSpec.describe Api::ContactsController, type: :controller do
     let(:linear_answer) { create(:answer, question: linear_question, id: 50) }
     let(:radio_answer) { create(:answer, question: radio_question, id: 51) }
     let(:assessment) { create(:assessment) }
-    let(:assessment_resources) { create(:resource, slug: 'mixed-assessment', title_es: 'Mixed Assessment', assessment:) }
+    let(:assessment_resources) do
+      resource = create(:resource, slug: 'mixed-assessment', title_es: 'Mixed Assessment')
+      assessment.update!(resource: resource)
+      resource
+    end
     let(:valid_mixed_assessment_params) do
       valid_contact_params.merge({
         resource_slug: 'mixed-assessment',

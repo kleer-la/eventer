@@ -11,7 +11,7 @@ module Api
     end
 
     def resources_with_associations
-      Resource.includes(:authors, :translators, :illustrators)
+      Resource.includes(:authors, :translators, :illustrators, :assessments)
     end
 
     public
@@ -34,18 +34,32 @@ module Api
       return render json: { error: 'Invalid language' }, status: :bad_request unless %w[es en].include?(lang)
 
       resource = resources_with_associations.friendly.find(params[:id].downcase)
-      render(
-        json: resource.as_json(
-          methods: %i[category_name downloadable],
-          include: {
-            authors: { only: trainer_show_fields },
-            translators: { only: trainer_show_fields },
-            illustrators: { only: trainer_show_fields },
-            assessment: { only: :id }
-          }
-        ).merge(
-          recommended: resource.recommended(lang:)
-        )
+
+      # Find the assessment for the correct language
+      assessment_data = resource.assessments.find_by(language: lang)
+
+      resource_json = resource.as_json(
+        methods: %i[category_name downloadable],
+        include: {
+          authors: { only: trainer_show_fields },
+          translators: { only: trainer_show_fields },
+          illustrators: { only: trainer_show_fields }
+        }
+      )
+
+      # Add the localized assessment data if it exists
+      if assessment_data
+        resource_json['assessment'] = {
+          id: assessment_data.id,
+          title: assessment_data.title,
+          description: assessment_data.description,
+          rule_based: assessment_data.rule_based,
+          language: assessment_data.language
+        }
+      end
+
+      render json: resource_json.merge(
+        recommended: resource.recommended(lang:)
       )
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Resource not found' }, status: :not_found
