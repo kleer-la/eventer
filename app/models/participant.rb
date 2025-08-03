@@ -266,6 +266,14 @@ class Participant < ApplicationRecord
     event.price(quantity, created_at, referer_code)
   end
 
+  def applied_coupon
+    return nil unless referer_code.present?
+
+    event.event_type.active_coupons(created_at)
+                   .where(code: referer_code.strip.upcase)
+                   .first
+  end
+
   def self.parse_line(participant_data_line)
     attributes = participant_data_line.split("\t")
     attributes = participant_data_line.split(',') if attributes.size == 1

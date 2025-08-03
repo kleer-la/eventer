@@ -409,6 +409,7 @@ en:
       item_more: >-
         %{course} -
         %{place} - %{date} - #%{qty} seats
+      coupon_applied: "Coupon applied: %{coupon_code}"
     welcome:
       hello: Hello, %{name}
       purpose: You are receiving this email because you started a purchase process on the Kleer site.

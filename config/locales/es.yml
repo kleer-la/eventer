@@ -426,6 +426,7 @@ es:
       item_more: >-
         %{course} -
         %{place} - %{date} - por %{qty} vacantes
+      coupon_applied: "Cupón aplicado: %{coupon_code}"
     welcome:
       hello: Hola, %{name}
       purpose: Recibes este correo porque iniciaste un proceso de compra en el sitio de Kleer.
