@@ -16,7 +16,7 @@ ActiveAdmin.register_page 'Dashboard' do
           event_type_project_code_alert
         end
       end
-      column do # left column
+      column do # right column
         panel 'Próximos cursos' do
           grouped_events.each do |period, events|
             h4 period, class: 'period-group'
@@ -35,6 +35,79 @@ ActiveAdmin.register_page 'Dashboard' do
                   class_name = "status-#{color}"
                   div class: class_name do
                     "#{(confirmed_rate * 100).round}% (#{event.confirmed_quantity}/#{event.capacity}) "
+                  end
+                end
+              end
+            end
+          end
+        end
+        panel 'Precios Próximos Eventos' do
+          pricing_events.each do |event|
+            table_for [event], class: 'no-table-headings pricing-table' do
+              column :fecha do |e|
+                span e.human_date, class: 'event-date'
+              end
+              column :evento do |e|
+                div do
+                  div do
+                    link_to e.event_type&.name || 'Sin Tipo', admin_event_path(e), class: 'event-name'
+                  end
+                  div do
+                    span e.city, class: 'event-city'
+                  end
+                end
+              end
+              column 'Precios Individuales' do |e|
+                div class: 'individual-pricing' do
+                  if e.list_price&.positive?
+                    div class: 'price-item' do
+                      span 'Lista: ', class: 'price-label'
+                      span "#{currency_symbol_for(e.currency_iso_code)}#{format('%.2f', e.list_price)} (#{e.currency_iso_code})",
+                           class: 'price-value'
+                    end
+                    if e.eb_price&.positive?
+                      div class: 'price-item' do
+                        span 'EB: ', class: 'price-label'
+                        span "#{currency_symbol_for(e.currency_iso_code)}#{format('%.2f', e.eb_price)}",
+                             class: 'price-value'
+                        br
+                        span "hasta #{e.eb_end_date&.strftime('%d/%m')}", class: 'price-date'
+                      end
+                    end
+                    if e.couples_eb_price&.positive?
+                      div class: 'price-item' do
+                        span 'EB Parejas: ', class: 'price-label'
+                        span "#{currency_symbol_for(e.currency_iso_code)}#{format('%.2f', e.couples_eb_price)}",
+                             class: 'price-value'
+                        br
+                        span "hasta #{e.eb_end_date&.strftime('%d/%m')}", class: 'price-date'
+                      end
+                    end
+                  else
+                    span 'Gratuito', class: 'free-event'
+                  end
+                end
+              end
+              column 'Precios Grupales' do |e|
+                div class: 'group-pricing' do
+                  if e.business_price&.positive?
+                    div class: 'price-item' do
+                      span 'Business: ', class: 'price-label'
+                      span "#{currency_symbol_for(e.currency_iso_code)}#{format('%.2f', e.business_price)}",
+                           class: 'price-value'
+                    end
+                  end
+                  if e.business_eb_price&.positive?
+                    div class: 'price-item' do
+                      span 'Business EB: ', class: 'price-label'
+                      span "#{currency_symbol_for(e.currency_iso_code)}#{format('%.2f', e.business_eb_price)}",
+                           class: 'price-value'
+                      br
+                      span "hasta #{e.eb_end_date&.strftime('%d/%m')}", class: 'price-date'
+                    end
+                  end
+                  if !e.business_price&.positive? && !e.business_eb_price&.positive?
+                    span '-', class: 'no-group-pricing'
                   end
                 end
               end
@@ -96,4 +169,30 @@ def grouped_events
     '4-6 Weeks' => events.select { |ev| dweek(ev.date).between?(5, 6) },
     '6+ Weeks' => events.select { |ev| dweek(ev.date) > 6 }
   }
+end
+
+def pricing_events
+  Event.public_commercial_visible.order(:date)
+       .where.not(event_type_id: nil)
+       .where(registration_link: '')
+       .limit(10) # Show only next 10 events for dashboard
+end
+
+def currency_symbol_for(currency_code)
+  case currency_code
+  when 'USD'
+    '$'
+  when 'EUR'
+    '€'
+  when 'ARS'
+    '$'
+  when 'COP'
+    '$'
+  when 'PEN'
+    'S/'
+  when 'BOB'
+    'Bs'
+  else
+    currency_code
+  end
 end
