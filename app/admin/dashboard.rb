@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-MAX_DAYS_WO_PUBLIC_EVENTS = 180 unless defined?(MAX_DAYS_WO_PUBLIC_EVENTS)
-
 ActiveAdmin.register_page 'Dashboard' do
   menu priority: 1, label: 'Dashboard'
 
@@ -16,9 +14,6 @@ ActiveAdmin.register_page 'Dashboard' do
           cover_alert
           brochure_alert
           event_type_project_code_alert
-        end
-        panel 'Alertas Actividad' do
-          event_type_next_date_alert
         end
       end
       column do # left column
@@ -48,24 +43,6 @@ ActiveAdmin.register_page 'Dashboard' do
         end
       end
     end
-
-    # columns do
-    #   column do
-    #     panel "Recent Posts" do
-    #       ul do
-    #         Post.recent(5).map do |post|
-    #           li link_to(post.title, admin_post_path(post))
-    #         end
-    #       end
-    #     end
-    #   end
-
-    #   column do
-    #     panel "Info" do
-    #       para "Welcome to ActiveAdmin."
-    #     end
-    #   end
-    # end
   end
 end
 
@@ -91,25 +68,6 @@ def event_type_project_code_alert
     'Event Type sin código projecto',
     EventType.where(include_in_catalog: true, tag_name: [nil, ''], platform: :keventer)
   )
-end
-
-def event_type_next_date_alert
-  alerts = []
-
-  EventType.where(include_in_catalog: true, platform: :keventer).each do |event_type|
-    last_event = event_type.events.public_events.maximum(:date)
-    days_since_last_event = last_event ? (Date.today - last_event.to_date).to_i : nil
-
-    if days_since_last_event && days_since_last_event > MAX_DAYS_WO_PUBLIC_EVENTS
-      alerts << [days_since_last_event, event_type]
-    end
-  end
-
-  h4 'Tipos Eventos con más de 180 días sin abiertos' unless alerts.empty?
-  alerts.sort_by { |alert| -alert[0] }.each do |days_since_last_event, event_type|
-    ul "#{link_to(event_type.name, admin_event_type_path(event_type))} " \
-        "- Dias desde último abierto: #{days_since_last_event}".html_safe
-  end
 end
 
 def event_type_alert(message, error_list)
