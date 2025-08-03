@@ -15,6 +15,7 @@ services:
 
     ports:
       - "3000:3000"
+      - "2222:22"
     volumes:
       - ..:/app:cached
 
@@ -26,8 +27,8 @@ services:
     #   - SECRET=02c9391f4ebec3260ae083966737c20df87a23708c8c996a
 
     # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
-    
+    #command: sleep infinity
+    command: /bin/bash -c "/usr/sbin/sshd -D & sleep infinity"
     networks:
       - local-kleer-network
 
