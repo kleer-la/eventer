@@ -152,7 +152,13 @@ class HomeController < ApplicationController
   def show
     @event = Event.public_and_visible.find(params[:id])
     respond_to do |format|
-      format.json { render json: @event.to_json(include: event_data_to_include, methods: [:human_date]) }
+      format.json do
+        # Support language parameter for proper date formatting (default to Spanish)
+        locale = %w[en es].include?(params[:lang]) ? params[:lang].to_sym : :es
+        I18n.with_locale(locale) do
+          render json: @event.to_json(include: event_data_to_include, methods: [:human_date])
+        end
+      end
     end
   end
 

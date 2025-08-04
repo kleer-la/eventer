@@ -257,10 +257,18 @@ describe Event do
       end
     end
 
+    it "should have a human date in English that returns 'Oct 1-2' for same month range" do
+      @event.date = '01/10/2015'
+      @event.duration = 2
+      I18n.with_locale(:en) do
+        expect(@event.human_date).to eq 'Oct 1-2'
+      end
+    end
+
     it "should have a human date in English that returns '15 Ene' if finish date is '15 Ene'" do
       @event.finish_date = '01/02/2015'
       I18n.with_locale(:en) do
-        expect(@event.human_date).to eq 'Jan 15-Feb 01'
+        expect(@event.human_date).to eq 'Jan 15-Feb 1'
       end
     end
   end

@@ -361,8 +361,8 @@ class Event < ApplicationRecord
 
   def humanize_date(date)
     human_date = I18n.l date, format: :short
-    human_date = human_date[-5, 5] if human_date[0] == '0'
-    human_date
+    # Remove leading zeros from day numbers (works for both "01 Ene" and "Oct 01" formats)
+    human_date.gsub(/\b0(\d)\b/, '\1')
   end
 
   def event_is_within_the_same_day(start_date, end_date)
@@ -370,11 +370,33 @@ class Event < ApplicationRecord
   end
 
   def event_is_within_the_same_month(start_date, end_date)
-    start_date[-3, 3] == end_date[-3, 3]
+    start_parts = start_date.split(' ')
+    end_parts = end_date.split(' ')
+    
+    # Check if it's English format (month first) or Spanish format (day first)
+    if start_parts[0].match?(/^[A-Za-z]/) # English: "Oct 1"
+      start_parts[0] == end_parts[0] # Compare months
+    else # Spanish: "1 Oct"
+      start_parts[1] == end_parts[1] # Compare months
+    end
   end
 
   def merge_dates_in_same_month(start_date, end_date)
-    "#{start_date.split(' ')[0]}-#{end_date.split(' ')[0]} #{start_date[-3, 3]}"
+    start_parts = start_date.split(' ')
+    end_parts = end_date.split(' ')
+    
+    # Check if it's English format (month first) or Spanish format (day first)
+    if start_parts[0].match?(/^[A-Za-z]/) # English: "Oct 1"
+      month = start_parts[0]
+      start_day = start_parts[1]
+      end_day = end_parts[1]
+      "#{month} #{start_day}-#{end_day}"
+    else # Spanish: "1 Oct"
+      start_day = start_parts[0]
+      end_day = end_parts[0]
+      month = start_parts[1]
+      "#{start_day}-#{end_day} #{month}"
+    end
   end
 
   def validate_trainer_order
