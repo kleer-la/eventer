@@ -35,7 +35,7 @@ describe Certificate do
       @e.date = Date.new(2021, 12, 31)
       I18n.with_locale(:en) do
         cert = Certificate.new(@participant)
-        expect(cert.date).to eq 'Dec 31 2021-Jan 01 2022'
+        expect(cert.date).to eq 'Dec 31 2021-Jan 1 2022'
       end
     end
     it 'DoD' do
