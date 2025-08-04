@@ -3,7 +3,9 @@
     "allow": [
       "Bash(find:*)",
       "Bash(rm:*)",
-      "Bash(ssh:*)"
+      "Bash(ssh:*)",
+      "Bash(docker exec:*)",
+      "Bash(bundle exec rspec:*)"
     ],
     "deny": []
   }
