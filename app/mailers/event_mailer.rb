@@ -26,7 +26,7 @@ class EventMailer < ApplicationMailer
     @pih = ParticipantInvoiceHelper.new(participant, @lang)
 
     # to: @participant.email
-    edit_registration_link = "http://eventos.kleer.la/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
+    edit_registration_link = "http://eventos.kleer.la/admin/events/#{@participant.event.id}/participants/#{@participant.id}/edit"
 
     mail(to: ADMIN_MAIL, cc: ALERT_MAIL,
          subject: "[Keventer] Invoice voided #{@participant.event.event_type.name}: #{participant.company_name}",
