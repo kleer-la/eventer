@@ -409,7 +409,7 @@ es:
         %{message}
         <br><br>----------
         <br>%{context}
-        <br>%{name}<%{email}> de %{company}
+        <br>%{name}&lt;%{email}&gt; de %{company}
       body_text: >-
         %{message}
 
@@ -418,7 +418,7 @@ es:
 
         %{context}
 
-        %{name}<%{email}> de %{company}
+        %{name} <%{email}> de %{company}
     invoice:
       item_one: >-
         %{course} -
