@@ -30,6 +30,11 @@ bundle exec rake slow_tests       # Run slow tests only
 bundle exec rake spec             # Run all RSpec tests
 bundle exec rake spec SPEC=<path> # Run specific test file
 # Note: Cucumber features are currently broken
+
+# Run tests inside Docker container (when using devcontainer)
+docker exec eventer_devcontainer-app-1 bundle exec rake ci
+docker exec eventer_devcontainer-app-1 bundle exec rake spec
+docker exec eventer_devcontainer-app-1 bundle exec rake spec SPEC=spec/system/admin/participants_spec.rb
 ```
 
 ### Development Server
