@@ -25,6 +25,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v3 do
       post 'participants/interest'
+      post 'events/:event_id/participants/register', to: 'participants#register'
+      get 'events/:event_id/participants/pricing_info', to: 'participants#pricing_info'
       resources :podcasts, only: [:index]
     end
     resources :service_areas, only: %i[index show] do
