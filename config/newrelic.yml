@@ -12,17 +12,26 @@
 
 common: &default_settings
   # Required license key associated with your New Relic account.
-  license_key: 8d6428150448790531f224da4a0ffc7416bc29ed
+  license_key: <%= ENV['NEW_RELIC_LICENSE_KEY'] || '8d6428150448790531f224da4a0ffc7416bc29ed' %>
 
   # Your application name. Renaming here affects where data displays in New
   # Relic.  For more details, see https://docs.newrelic.com/docs/apm/new-relic-apm/maintenance/renaming-applications
-  app_name: Keventer
+  app_name: <%= ENV['NEW_RELIC_APP_NAME'] || 'Keventer' %>
 
   # To disable the agent regardless of other settings, uncomment the following:
   # agent_enabled: false
+  
+  # Allow environment variable to control agent enabled status (useful for Heroku)
+  agent_enabled: <%= ENV['NEW_RELIC_AGENT_ENABLED'] != 'false' %>
 
   # Logging level for log/newrelic_agent.log
   log_level: info
+  
+  # Error collection settings
+  error_collector:
+    enabled: true
+    capture_source: true
+    ignore_status_codes: ""
 
 
 # Environment-specific settings are in this section.
