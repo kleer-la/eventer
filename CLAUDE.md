@@ -158,6 +158,28 @@ The application manages a complex event ecosystem with the following key compone
 - **Null Infrastructure**: Use test doubles and mocks to isolate business logic from external dependencies
 - **Focus on Behavior**: Test what the system does, not how it does it
 
+## Frontend Asset Management (website17)
+
+### Sass/SCSS Compilation
+website17 uses Sass for CSS preprocessing. Current setup uses deprecated Ruby Sass.
+
+**Current Build Process:**
+```bash
+# In website17 directory
+./sass.sh    # Compiles SCSS files in public/app/scss/ to CSS
+```
+
+**Migration Plan (Recommended):**
+1. **Current**: Ruby Sass (deprecated March 2019) - working but unsupported
+2. **Target**: Dart Sass (current official implementation)
+3. **Installation**: `npm install -g sass` or use standalone binary
+4. **Command**: Same syntax - `sass --watch scss/index.scss:css/index.css --style compressed`
+
+### Dependency Updates Completed
+- ✅ **oauth gem removed** (unused dependency)
+- ✅ **Ruby version aligned** to 3.3.9 across all environments
+- 🔄 **Sass migration planned** (Ruby Sass → Dart Sass)
+
 ## Important Notes
 
 - The application uses ActiveRecord with sophisticated associations and concerns
