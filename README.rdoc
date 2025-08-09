@@ -34,6 +34,12 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
 
     RAILS_ENV=test rails db:migrate
 
+- Poblar base de datos de desarrollo con referencias de imágenes para testing:
+    bundle exec rake dev:populate_image_usage
+    # Esto añade una imagen de prueba (Encontrar-tus-ritmos-organizandote-mejor.webp)
+    # a varios modelos para poder testear la página de uso de imágenes en:
+    # /admin/images/usage?bucket=image&key=Encontrar-tus-ritmos-organizandote-mejor.webp
+
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
     #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
     #export AWS_REGION="us-east-1"

@@ -78,4 +78,18 @@ panel "Image Usage - #{image_key}" do
       end
     end
   end
+  
+  panel 'Important Note', class: 'disclaimer' do
+    div class: 'disclaimer-content', style: 'background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 4px;' do
+      h4 'Image Reference Detection Limitations', style: 'margin-top: 0; color: #856404;'
+      para 'We make our best effort to detect all internal references to this image within the application database. However, please consider the following limitations:', style: 'color: #856404; margin-bottom: 10px;'
+      ul style: 'color: #856404; margin: 0; padding-left: 20px;' do
+        li 'External references (links from other websites) are not detected'
+        li 'Static usage in website templates, CSS files, or hardcoded HTML is not tracked'
+        li 'References in cached content or external systems may not be visible'
+        li 'ActionText (rich text) content may contain additional image references'
+      end
+      para 'Always verify manually before deleting important images, especially if they are used in public-facing content.', style: 'color: #856404; margin-top: 10px; font-weight: bold;'
+    end
+  end
 end
