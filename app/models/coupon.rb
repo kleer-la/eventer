@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Coupon < ApplicationRecord
+  include ImageReference
+  references_images_in :icon
   enum :coupon_type, { codeless: 0, percent_off: 1, amount_off: 2 }
   before_validation :downcase_code
 

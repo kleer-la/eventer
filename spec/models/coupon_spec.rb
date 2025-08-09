@@ -33,4 +33,27 @@ RSpec.describe Coupon, type: :model do
     coupon = FactoryBot.create(:coupon, code: ' abacaxi ')
     expect(coupon.code).to eq 'ABACAXI'
   end
+
+  describe 'ImageReference behavior' do
+    let(:icon_url) { 'https://kleer-images.s3.sa-east-1.amazonaws.com/coupon-icon.png' }
+
+    describe '#image_references' do
+      let(:coupon) { create(:coupon, icon: icon_url) }
+
+      it 'finds direct references in icon field' do
+        references = coupon.image_references(icon_url)
+        expect(references).to include(
+          hash_including(
+            field: :icon,
+            type: 'direct'
+          )
+        )
+      end
+
+      it 'returns empty array when URL not found' do
+        references = coupon.image_references('https://not-found.com/missing.png')
+        expect(references).to be_empty
+      end
+    end
+  end
 end

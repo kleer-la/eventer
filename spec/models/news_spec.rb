@@ -114,26 +114,63 @@ RSpec.describe News, type: :model do
     end
   end
 
-  describe 'ImageReference concern' do
-    it 'includes ImageReference concern' do
-      expect(News.included_modules).to include(ImageReference)
-    end
+  describe 'ImageReference behavior' do
+    let(:image_url) { 'https://kleer-images.s3.sa-east-1.amazonaws.com/test-image.jpg' }
+    let(:video_url) { 'https://youtube.com/embed/test-video' }
+    let(:audio_url) { 'https://podcast.example.com/episode.mp3' }
 
-    it 'references images in url field' do
-      news = create(:news, url: 'https://example.com/article.html')
-      expect(news.url).to eq('https://example.com/article.html')
-    end
+    describe '#image_references' do
+      let(:news) do
+        create(:news, 
+               img: image_url,
+               video: video_url, 
+               audio: audio_url,
+               description: "Check out this image: #{image_url} embedded in text")
+      end
 
-    it 'references images in img field' do
-      news = create(:news, img: 'https://example.com/image.jpg')
-      expect(news.img).to eq('https://example.com/image.jpg')
-    end
+      it 'finds direct references in img field' do
+        references = news.image_references(image_url)
+        expect(references).to include(
+          hash_including(
+            field: :img,
+            type: 'direct'
+          )
+        )
+      end
 
-    it 'references images in text fields like description' do
-      description_with_image = 'Check out this image: https://example.com/embedded.jpg'
-      news = create(:news, description: description_with_image)
+      it 'finds direct references in video field' do
+        references = news.image_references(video_url)
+        expect(references).to include(
+          hash_including(
+            field: :video,
+            type: 'direct'
+          )
+        )
+      end
 
-      expect(news.description).to include('https://example.com/embedded.jpg')
+      it 'finds direct references in audio field' do
+        references = news.image_references(audio_url)
+        expect(references).to include(
+          hash_including(
+            field: :audio,
+            type: 'direct'
+          )
+        )
+      end
+
+      it 'finds embedded references in description text field' do
+        references = news.image_references(image_url)
+        embedded_ref = references.find { |ref| ref[:type] == 'embedded' }
+        expect(embedded_ref).to include(
+          field: :description,
+          type: 'embedded'
+        )
+      end
+
+      it 'returns empty array when URL not found' do
+        references = news.image_references('https://not-found.com/missing.jpg')
+        expect(references).to be_empty
+      end
     end
   end
 

@@ -8,16 +8,8 @@ RSpec.describe ImageUsageService do
   end
 
   before do
-    # Clear registered models before each test
-    described_class.instance_variable_set(:@registered_models, Set.new)
-
-    # Register models with ImageReference
-    [Article, EventType].each do |model|
-      model.include ImageReference unless model.included_modules.include?(ImageReference)
-    end
-    Article.references_images_in :cover, text_fields: %i[body description]
-    EventType.references_images_in :brochure, :cover, :kleer_cert_seal_image, :side_image,
-                                   text_fields: %i[description program recipients faq]
+    # Ensure models are loaded and registered
+    Rails.application.eager_load!
   end
 
   describe '.find_usage' do
@@ -109,8 +101,19 @@ RSpec.describe ImageUsageService do
       end
     end
 
+    let(:original_models) { described_class.registered_models.dup }
+
     before do
+      # Save original state
+      @original_models = described_class.registered_models.dup
+      # Clear for isolated testing
       described_class.instance_variable_set(:@registered_models, Set.new)
+    end
+
+    after do
+      # Restore original state, filtering out any anonymous test classes
+      clean_models = @original_models.select { |model| model.name.present? }
+      described_class.instance_variable_set(:@registered_models, Set.new(clean_models))
     end
 
     it 'adds model to registered_models' do
@@ -125,21 +128,9 @@ RSpec.describe ImageUsageService do
   end
 
   describe 'with ImageReference concern' do
-    before do
-      # Clear any existing registrations
-      described_class.instance_variable_set(:@registered_models, Set.new)
-
-      # Include and configure ImageReference in test models
-      Article.include ImageReference
-      Article.references_images_in :cover, text_fields: %i[body description]
-
-      EventType.include ImageReference
-      EventType.references_images_in :brochure, :cover, :kleer_cert_seal_image, :side_image,
-                                     text_fields: %i[description program recipients faq]
-    end
-
-    it 'automatically registers models using ImageReference' do
-      expect(described_class.registered_models).to include(Article, EventType)
+    before(:all) do
+      # Ensure all models are loaded and registered
+      Rails.application.eager_load!
     end
 
     it 'finds references based on configured fields' do
@@ -165,6 +156,90 @@ RSpec.describe ImageUsageService do
           field: :side_image
         )
       )
+    end
+
+    describe 'comprehensive model testing' do
+      before do
+        # Ensure ImageUsageService has all models registered for these tests
+        Rails.application.eager_load!
+      end
+      it 'finds usage in News model' do
+        create(:news, img: image_url, description: "Text with #{image_url}")
+
+        result = described_class.find_usage(image_url)
+
+        expect(result[:news]).to include(
+          hash_including(field: :img, type: 'direct'),
+          hash_including(field: :description, type: 'embedded')
+        )
+      end
+
+      it 'finds usage in Coupon model' do
+        create(:coupon, icon: image_url)
+
+        result = described_class.find_usage(image_url)
+
+        expect(result[:coupon]).to include(
+          hash_including(field: :icon, type: 'direct')
+        )
+      end
+
+      it 'finds usage in Assessment model' do
+        create(:assessment, description: "Assessment with #{image_url}")
+
+        result = described_class.find_usage(image_url)
+
+        expect(result[:assessment]).to include(
+          hash_including(field: :description, type: 'embedded')
+        )
+      end
+
+      it 'finds usage in Question model' do
+        create(:question, description: "Question with #{image_url}")
+
+        result = described_class.find_usage(image_url)
+
+        expect(result[:question]).to include(
+          hash_including(field: :description, type: 'embedded')
+        )
+      end
+
+      it 'finds usage in Answer model' do
+        create(:answer, text: "Answer with #{image_url}")
+
+        result = described_class.find_usage(image_url)
+
+        expect(result[:answer]).to include(
+          hash_including(field: :text, type: 'embedded')
+        )
+      end
+
+      it 'finds usage in QuestionGroup model' do
+        create(:question_group, description: "Group with #{image_url}")
+
+        result = described_class.find_usage(image_url)
+
+        expect(result[:question_group]).to include(
+          hash_including(field: :description, type: 'embedded')
+        )
+      end
+
+      it 'finds usage across all registered models simultaneously' do
+        # Create records with the same image URL in different models
+        create(:article, cover: image_url)
+        create(:news, video: image_url)
+        create(:coupon, icon: image_url)
+        create(:assessment, description: "Assessment with #{image_url}")
+
+        result = described_class.find_usage(image_url)
+
+        # Should find usage in all models
+        expect(result.keys).to include(:article, :news, :coupon, :assessment)
+        expect(result[:article]).to include(hash_including(field: :cover, type: 'direct'))
+        expect(result[:news]).to include(hash_including(field: :video, type: 'direct'))
+        expect(result[:coupon]).to include(hash_including(field: :icon, type: 'direct'))
+        expect(result[:assessment]).to include(hash_including(field: :description, type: 'embedded'))
+      end
     end
   end
 end

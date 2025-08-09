@@ -9,6 +9,15 @@ RSpec.describe 'Admin Images', type: :system do
   before do
     driven_by(:rack_test)
     sign_in admin_user
+    
+    # Mock AWS S3 client creation to prevent real AWS calls
+    mock_client = double('Aws::S3::Client')
+    mock_resource = double('Aws::S3::Resource') 
+    mock_bucket = double('Aws::S3::Bucket')
+    
+    allow(Aws::S3::Client).to receive(:new).and_return(mock_client)
+    allow(Aws::S3::Resource).to receive(:new).and_return(mock_resource)
+    allow(mock_resource).to receive(:bucket).and_return(mock_bucket)
   end
 
   describe 'index page' do
@@ -134,4 +143,63 @@ RSpec.describe 'Admin Images', type: :system do
   #     end
   #   end
   # end
+
+  describe 'usage page with new models' do
+    let(:image_with_models) { 'https://kleer-images.s3.sa-east-1.amazonaws.com/multi-model-image.jpg' }
+    let!(:news) { create(:news, img: image_with_models) }
+    let!(:coupon) { create(:coupon, icon: image_with_models) }
+    let!(:assessment) { create(:assessment, description: "Assessment with #{image_with_models}") }
+    let!(:question) { create(:question, assessment: assessment, description: "Question with #{image_with_models}") }
+    let!(:answer) { create(:answer, question: question, text: "Answer with #{image_with_models}") }
+    let!(:question_group) do
+      create(:question_group, assessment: assessment, description: "Group with #{image_with_models}")
+    end
+
+    before do
+      allow(FileStoreService).to receive(:image_url).and_return(image_with_models)
+      visit admin_images_usage_path(bucket: 'image', key: 'multi-model-image.jpg')
+    end
+
+    it 'shows usage across all registered models' do
+      # Should show that image is in use
+      expect(page).not_to have_content('This image is not currently in use')
+      expect(page).not_to have_button('Delete Image')
+
+      # Should show all model types that have this image
+      expect(page).to have_content('News')
+      expect(page).to have_content('Coupon')
+      expect(page).to have_content('Assessment')
+      expect(page).to have_content('Question')
+      expect(page).to have_content('Answer')
+      expect(page).to have_content('Question Group')
+    end
+
+    it 'provides appropriate links for models with admin resources' do
+      # Models with admin resources should have direct links
+      expect(page).to have_link('View news')
+      expect(page).to have_link('View coupon')
+      expect(page).to have_link('View assessment')
+    end
+
+    it 'provides fallback links for models without admin resources' do
+      # Question, Answer, QuestionGroup should link to their parent Assessment
+      # Since they don't have their own admin resources
+      expect(page).to have_link('View Assessment').at_least(3) # For question, answer, question_group
+    end
+
+    it 'shows field and type information for all usage instances' do
+      # Check that all instances show proper field and type information
+      # News: direct reference in img field
+      expect(page).to have_content('img')
+      expect(page).to have_content('direct')
+
+      # Coupon: direct reference in icon field
+      expect(page).to have_content('icon')
+
+      # Assessment, Question, Answer, QuestionGroup: embedded references in text fields
+      expect(page).to have_content('description')
+      expect(page).to have_content('text')
+      expect(page).to have_content('embedded')
+    end
+  end
 end

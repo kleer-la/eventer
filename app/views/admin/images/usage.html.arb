@@ -35,11 +35,40 @@ panel "Image Usage - #{image_key}" do
               column :field
               column :type
               column 'Link' do |instance|
-                # Assuming you have a route helper for each model
+                # Try to create admin link, fallback to ID if no admin resource exists
 
                 link_to "View #{model}", send("admin_#{model}_path", instance[:id])
               rescue StandardError
-                "ID: #{instance[:id]}"
+                # Check if this model has an associated assessment or other parent
+                case model.to_s
+                when 'question', 'question_group', 'answer'
+                  if instance[:id] && defined?(Question) && model.to_s == 'question'
+                    question = Question.find_by(id: instance[:id])
+                    if question&.assessment_id
+                      link_to 'View Assessment', admin_assessment_path(question.assessment_id)
+                    else
+                      "Question ID: #{instance[:id]}"
+                    end
+                  elsif instance[:id] && defined?(QuestionGroup) && model.to_s == 'question_group'
+                    group = QuestionGroup.find_by(id: instance[:id])
+                    if group&.assessment_id
+                      link_to 'View Assessment', admin_assessment_path(group.assessment_id)
+                    else
+                      "Question Group ID: #{instance[:id]}"
+                    end
+                  elsif instance[:id] && defined?(Answer) && model.to_s == 'answer'
+                    answer = Answer.find_by(id: instance[:id])
+                    if answer&.question&.assessment_id
+                      link_to 'View Assessment', admin_assessment_path(answer.question.assessment_id)
+                    else
+                      "Answer ID: #{instance[:id]}"
+                    end
+                  else
+                    "#{model.to_s.titleize} ID: #{instance[:id]}"
+                  end
+                else
+                  "#{model.to_s.titleize} ID: #{instance[:id]}"
+                end
               end
             end
           end

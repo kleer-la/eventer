@@ -13,6 +13,9 @@ class ImageUsageService
       usage = {}
 
       registered_models.each do |model|
+        # Skip models without names (e.g., anonymous test classes)
+        next unless model.name.present?
+
         model_usage = model.where(build_query(model, image_url))
                            .map { |record| record.image_references(image_url) }
                            .flatten

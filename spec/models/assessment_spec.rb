@@ -203,4 +203,29 @@ RSpec.describe Assessment, type: :model do
       expect(diagnostics).to eq(["First", "Second", "Third"])
     end
   end
+
+  describe 'ImageReference behavior' do
+    let(:image_url) { 'https://kleer-images.s3.sa-east-1.amazonaws.com/assessment-diagram.png' }
+
+    describe '#image_references' do
+      let(:assessment) do
+        create(:assessment, description: "Check this diagram: #{image_url} for details")
+      end
+
+      it 'finds embedded references in description text field' do
+        references = assessment.image_references(image_url)
+        expect(references).to include(
+          hash_including(
+            field: :description,
+            type: 'embedded'
+          )
+        )
+      end
+
+      it 'returns empty array when URL not found' do
+        references = assessment.image_references('https://not-found.com/missing.png')
+        expect(references).to be_empty
+      end
+    end
+  end
 end

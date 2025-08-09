@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class QuestionGroup < ApplicationRecord
+  include ImageReference
+  references_images_in text_fields: [:description]
   belongs_to :assessment
   has_many :questions, dependent: :destroy
   accepts_nested_attributes_for :questions, allow_destroy: true

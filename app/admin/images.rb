@@ -120,7 +120,7 @@ ActiveAdmin.register_page 'Images' do
     end
     panel image_bucket do
       grouped_images = images.group_by { |image| File.basename(image.key, '.*') }
-      table_for grouped_images.keys.sort do |base_key|
+      table_for grouped_images.keys.sort do |_base_key|
         column 'Name' do |base_key|
           base_key
         end
@@ -198,8 +198,10 @@ ActiveAdmin.register_page 'Images' do
     @image_key = params[:key]
     @image_url = FileStoreService.image_url(@image_key, @image_bucket)
 
-    # Check if image is in use
+    # Check if image is in use (try both URL formats)
     usage = ImageUsageService.find_usage(@image_url)
+    @image_url_with_spaces = @image_url&.gsub('+', ' ')
+    usage.merge!(ImageUsageService.find_usage(@image_url_with_spaces)) if @image_url_with_spaces != @image_url
 
     if usage.any?
       flash[:error] = 'Cannot delete image as it is in use. Please remove all references first.'
@@ -224,7 +226,12 @@ ActiveAdmin.register_page 'Images' do
 
     @image_url = FileStoreService.image_url(@image_key, @image_bucket)
 
+    # Also try with spaces instead of plus signs for the usage search
+    # since database might store URLs with spaces while admin interface uses plus signs
+    @image_url_with_spaces = @image_url&.gsub('+', ' ')
+
     @usage = ImageUsageService.find_usage(@image_url)
+    @usage.merge!(ImageUsageService.find_usage(@image_url_with_spaces)) if @image_url_with_spaces != @image_url
 
     render 'usage'
   end

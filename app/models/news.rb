@@ -2,7 +2,7 @@
 
 class News < ApplicationRecord
   include ImageReference
-  references_images_in :url,
+  references_images_in :img, :video, :audio,
                        text_fields: [:description]
 
   has_and_belongs_to_many :trainers

@@ -73,4 +73,29 @@ RSpec.describe Question, type: :model do
       expect(question.linear_scale?).to be false
     end
   end
+
+  describe 'ImageReference behavior' do
+    let(:image_url) { 'https://kleer-images.s3.sa-east-1.amazonaws.com/question-chart.png' }
+
+    describe '#image_references' do
+      let(:question) do
+        create(:question, description: "Refer to this chart: #{image_url} when answering")
+      end
+
+      it 'finds embedded references in description text field' do
+        references = question.image_references(image_url)
+        expect(references).to include(
+          hash_including(
+            field: :description,
+            type: 'embedded'
+          )
+        )
+      end
+
+      it 'returns empty array when URL not found' do
+        references = question.image_references('https://not-found.com/missing.png')
+        expect(references).to be_empty
+      end
+    end
+  end
 end
