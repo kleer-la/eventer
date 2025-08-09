@@ -40,6 +40,12 @@ Una vez clonado el repositorio e instalados los componentes no-ruby, ejecutá lo
     # a varios modelos para poder testear la página de uso de imágenes en:
     # /admin/images/usage?bucket=image&key=Encontrar-tus-ritmos-organizandote-mejor.webp
 
+- Monitoreo de enlaces rotos en imágenes:
+    bundle exec rake monitoring:check_image_links
+    # Verifica todos los enlaces de imágenes en la base de datos y genera reporte
+    # de enlaces rotos en tmp/broken_links_report_TIMESTAMP.json
+    # Recomendado ejecutar semanalmente para monitoreo continuo
+
     #export KEVENTER_AWS_ACCESS_KEY_ID="..."
     #export KEVENTER_AWS_SECRET_ACCESS_KEY:="..."
     #export AWS_REGION="us-east-1"

@@ -3,6 +3,38 @@
 require 'rails_helper'
 
 describe FileStoreService do
+  describe '.image_url' do
+    context 'when image_name contains special characters' do
+      it 'properly encodes accents and spaces for image type' do
+        image_name = 'Guía para mejora Lean.webp'
+        
+        result = FileStoreService.image_url(image_name, 'image')
+        
+        expect(result).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/Gu%C3%ADa+para+mejora+Lean.webp')
+      end
+      
+      it 'properly encodes special characters for certificate type' do
+        image_name = 'Diseño de la Agilidad.pdf'
+        
+        result = FileStoreService.image_url(image_name, 'certificate')
+        
+        expect(result).to eq('https://s3.amazonaws.com/Keventer/certificate-images/Dise%C3%B1o+de+la+Agilidad.pdf')
+      end
+      
+      it 'handles nil image_name gracefully' do
+        result = FileStoreService.image_url(nil, 'image')
+        
+        expect(result).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/')
+      end
+      
+      it 'handles empty image_name' do
+        result = FileStoreService.image_url('', 'image')
+        
+        expect(result).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/')
+      end
+    end
+  end
+
   describe 'Nullable' do
     it 'write to a Nullable store' do
       store = FileStoreService.create_null

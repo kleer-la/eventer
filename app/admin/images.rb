@@ -151,6 +151,11 @@ ActiveAdmin.register_page 'Images' do
 
               item "Usage #{File.extname(image.key)}",
                    admin_images_usage_path(bucket: image_bucket, key: image.key)
+              
+              item "Copy #{File.extname(image.key)}",
+                   admin_images_copy_path(bucket: image_bucket, key: image.key),
+                   method: :post,
+                   confirm: 'This will create a copy with a cleaned filename. Continue?'
             end
           end
         end
@@ -234,5 +239,64 @@ ActiveAdmin.register_page 'Images' do
     @usage.merge!(ImageUsageService.find_usage(@image_url_with_spaces)) if @image_url_with_spaces != @image_url
 
     render 'usage'
+  end
+
+  page_action :copy, method: :post do
+    @image_bucket = params[:bucket] || session[:image_bucket] || 'image'
+    @image_key = params[:key]
+    
+    store = FileStoreService.current
+    
+    begin
+      # Generate cleaned filename
+      original_name = File.basename(@image_key, '.*')
+      extension = File.extname(@image_key)
+      
+      # Clean the filename by removing/replacing problematic characters
+      cleaned_name = original_name
+                      .gsub(/[áàâäãåā]/, 'a')
+                      .gsub(/[éèêë]/, 'e')
+                      .gsub(/[íìîï]/, 'i')
+                      .gsub(/[óòôöõø]/, 'o')
+                      .gsub(/[úùûü]/, 'u')
+                      .gsub(/[ñ]/, 'n')
+                      .gsub(/[ç]/, 'c')
+                      .gsub(/[ÁÀÂÄÃÅĀ]/, 'A')
+                      .gsub(/[ÉÈÊË]/, 'E')
+                      .gsub(/[ÍÌÎÏ]/, 'I')
+                      .gsub(/[ÓÒÔÖÕØ]/, 'O')
+                      .gsub(/[ÚÙÛÜ]/, 'U')
+                      .gsub(/[Ñ]/, 'N')
+                      .gsub(/[Ç]/, 'C')
+                      .gsub(/\s+/, '-')        # Replace spaces with hyphens
+                      .gsub(/[^a-zA-Z0-9._-]/, '') # Remove other special characters
+                      .gsub(/-+/, '-')         # Replace multiple hyphens with single
+                      .gsub(/^-|-$/, '')       # Remove leading/trailing hyphens
+      
+      new_key = "#{cleaned_name}#{extension}"
+      
+      # Check if target already exists
+      if store.exists?(new_key, @image_bucket)
+        # Add timestamp to make it unique
+        timestamp = Time.current.strftime('%Y%m%d_%H%M%S')
+        base_name = File.basename(cleaned_name, '.*')
+        new_key = "#{base_name}_#{timestamp}#{extension}"
+      end
+      
+      # Copy the image
+      success = store.copy(@image_key, new_key, @image_bucket)
+      
+      if success
+        flash[:notice] = "Image copied successfully as '#{new_key}'. Original: '#{@image_key}'"
+        flash[:alert] = "⚠️ Remember to update any references to use the new filename: #{new_key}"
+      else
+        flash[:error] = 'Failed to copy image'
+      end
+      
+    rescue StandardError => e
+      flash[:error] = "Error copying image: #{e.message}"
+    end
+    
+    redirect_to admin_images_path(bucket: @image_bucket)
   end
 end

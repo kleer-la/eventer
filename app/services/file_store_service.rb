@@ -31,14 +31,14 @@ class FileStoreService
   end
 
   def self.image_url(image_name, image_type)
-    return "https://kleer-images.s3.sa-east-1.amazonaws.com/#{image_name&.gsub(' ', '+')}" if image_type == 'image'
+    return "https://kleer-images.s3.sa-east-1.amazonaws.com/#{URI.encode_www_form_component(image_name)}" if image_type == 'image'
 
     bucket = 'Keventer'
     folder = {
       'certificate' => 'certificate-images/',
       'signature' => 'certificate-signatures/'
     }[image_type]
-    file_name = image_name&.gsub(' ', '+')&.gsub(folder.to_s, '')
+    file_name = URI.encode_www_form_component(image_name&.gsub(folder.to_s, ''))
     "https://s3.amazonaws.com/#{bucket}/#{folder}#{file_name}"
   end
 
@@ -115,6 +115,20 @@ class FileStoreService
     object = @store.objects(file_path, bucket)
     object.delete
   end
+
+  def copy(source_key, target_key, image_bucket = 'image')
+    bucket, folder = self.class.image_location(image_bucket)
+    source_path = folder.to_s + source_key
+    target_path = folder.to_s + target_key
+    @store.copy(source_path, target_path, bucket)
+  end
+
+  def exists?(key, image_bucket = 'image')
+    bucket, folder = self.class.image_location(image_bucket)
+    file_path = folder.to_s + key
+    object = @store.objects(file_path, bucket)
+    object.exists?
+  end
 end
 
 class NullFileStore
@@ -134,6 +148,11 @@ class NullFileStore
 
   def delete(key, bucket_name = nil)
     # No-op for testing
+  end
+
+  def copy(source_key, target_key, bucket_name = nil)
+    # No-op for testing
+    true
   end
 end
 
@@ -184,5 +203,18 @@ class S3FileStore
 
   def list_objects(bucket:)
     @client.list_objects(bucket:)
+  end
+
+  def copy(source_key, target_key, bucket_name)
+    bucket = @resource.bucket(bucket_name)
+    source_object = bucket.object(source_key)
+    target_object = bucket.object(target_key)
+    
+    target_object.copy_from(source_object)
+    target_object.acl.put(acl: 'public-read')
+    true
+  rescue StandardError => e
+    Rails.logger.error "S3 copy failed: #{e.message}"
+    false
   end
 end
