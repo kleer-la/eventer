@@ -31,12 +31,12 @@ X use status color from model
   X app/admin/logs.rb (clean)
   X app/admin/roles.rb (clean)
   X app/admin/settings.rb (clean)
-  - app/admin/testimonies.rb (N+1: :service in index)
-  - app/admin/users.rb (N+1: :roles in index)
-  - app/admin/podcasts.rb (N+1: :episodes in show)
-  - app/admin/episodes.rb (N+1: :podcast in index)
-  - app/admin/coupons.rb (N+1: :event_types in show)
-  - app/admin/services.rb (N+1: :service_area in index)
+  X app/admin/testimonies.rb (fixed: :service in index)
+  X app/admin/users.rb (fixed: :roles in index)
+  X app/admin/podcasts.rb (fixed: :episodes in show)
+  X app/admin/episodes.rb (fixed: :podcast in index)
+  X app/admin/coupons.rb (fixed: :event_types in show)
+  X app/admin/services.rb (fixed: :service_area in index)
   - app/admin/news.rb
   - app/admin/oauth_tokens.rb
   - app/admin/mail_templates.rb

@@ -3,8 +3,14 @@
 ActiveAdmin.register Podcast do
   menu parent: 'We Publish'
 
-  permit_params :title, :description, :youtube_url, :spotify_url, :thumbnail_url,
-                episodes_attributes: %i[id season episode title description youtube_url spotify_url thumbnail_url published_at _destroy]
+  permit_params :title, :description, :youtube_url, :spotify_url, :thumbnail_url
+
+  controller do
+    def show
+      @podcast = scoped_collection.includes(:episodes).find(params[:id])
+      show!
+    end
+  end
 
   index do
     selectable_column
@@ -26,19 +32,6 @@ ActiveAdmin.register Podcast do
       f.input :youtube_url
       f.input :spotify_url
       f.input :thumbnail_url
-    end
-
-    f.inputs do
-      f.has_many :episodes, allow_destroy: true, new_record: true do |e|
-        e.input :season
-        e.input :episode
-        e.input :title
-        e.input :description, as: :rich_text_area
-        e.input :youtube_url
-        e.input :spotify_url
-        e.input :thumbnail_url
-        e.input :published_at, as: :datepicker
-      end
     end
 
     f.actions

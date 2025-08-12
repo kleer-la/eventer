@@ -6,6 +6,12 @@ ActiveAdmin.register Episode do
   permit_params :podcast_id, :season, :episode, :title, :description, :youtube_url, :spotify_url,
                 :thumbnail_url, :published_at
 
+  controller do
+    def scoped_collection
+      super.includes(:podcast)
+    end
+  end
+
   index do
     selectable_column
     id_column

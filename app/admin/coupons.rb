@@ -50,6 +50,13 @@ ActiveAdmin.register Coupon do
     f.actions
   end
 
+  controller do
+    def show
+      @coupon = scoped_collection.includes(:event_types).find(params[:id])
+      show!
+    end
+  end
+
   show do
     attributes_table do
       row :coupon_type do |coupon|

@@ -7,6 +7,12 @@ ActiveAdmin.register User do
 
   permit_params :email, :password, :password_confirmation, role_ids: []
 
+  controller do
+    def scoped_collection
+      super.includes(:roles)
+    end
+  end
+
   filter :email
 
   index do

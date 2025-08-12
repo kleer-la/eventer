@@ -5,6 +5,12 @@ ActiveAdmin.register Testimony do
 
   permit_params :first_name, :last_name, :profile_url, :photo_url, :service_id, :stared, :testimony
 
+  controller do
+    def scoped_collection
+      super.includes(:service)
+    end
+  end
+
   index do
     selectable_column
     id_column

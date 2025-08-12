@@ -8,6 +8,10 @@ ActiveAdmin.register Service do
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   controller do
+    def scoped_collection
+      super.includes(:service_area)
+    end
+
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
     end
