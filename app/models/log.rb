@@ -13,4 +13,8 @@ class Log < ApplicationRecord
   def self.ransackable_attributes(_auth_object = nil)
     %w[area created_at details id id_value level message updated_at]
   end
+
+  def self.ransackable_associations(_auth_object = nil)
+    []
+  end
 end

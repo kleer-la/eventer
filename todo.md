@@ -27,7 +27,7 @@ X List of participants (index action) - fixed admin route
 ## Participants
 X use status color from model
 
-## Gral
+# Gral
 X Revisar ActiveAdmin actuales para evitar N+1 queries:
   X app/admin/categories.rb (clean)
   X app/admin/logs.rb (clean)
@@ -65,7 +65,7 @@ X borrar imágenes
 X Limpiar nombre
 
 # Task as of ago 12
-- Bug: Area Filter in Log doesn't work
+X Bug: Area Filter in Log doesn't work (fixed enum filter collections)
 
 ## News
 - backend: visible flag (db / admin / api)
