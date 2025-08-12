@@ -68,9 +68,9 @@ X Limpiar nombre
 X Bug: Area Filter in Log doesn't work (fixed enum filter collections)
 
 ## News
-- backend: visible flag (db / admin / api)
-- frontend: dont show non visible in normal view
-- add a preview: show all news
+X backend: visible flag (db / admin / api) - completed
+X frontend: dont show non visible in normal view - API updated, frontend will automatically hide
+X add a preview: show all news - /api/news/preview endpoint added
 - preview: new look (one new per line / modern cards, like podcast)
 
 ## Assessent
@@ -85,6 +85,10 @@ X Bug: Area Filter in Log doesn't work (fixed enum filter collections)
 
 ## Rules
 - delete test rule button (not implemented)
+
+# Website17
+## Clean up
+- remove participants_synch
 
 # Ideas
 - Category index: visible tag edition in place, could it be replicateded in participants?
