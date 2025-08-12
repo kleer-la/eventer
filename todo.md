@@ -19,10 +19,10 @@ X carga dinámica de trainers x tipo evento
 X carga dinámica de política de cancelación x tipo evento
 
 ## event Type
-- Preview certificados (index action) - its Ok in view
-- List of events (index action)
-- List of testimonies (index action)
-- List of participants (index action) - its Ok in view
+X Preview certificados (index action) - fixed admin route
+X List of events (index action) - fixed admin route and filter parameter
+X List of testimonies (index action) - fixed admin route and filter parameter
+X List of participants (index action) - fixed admin route
 
 ## Participants
 X use status color from model
@@ -85,3 +85,6 @@ X Limpiar nombre
 
 ## Rules
 - delete test rule button (not implemented)
+
+# Ideas
+- Category index: visible tag edition in place, could it be replicateded in participants?

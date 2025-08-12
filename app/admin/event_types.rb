@@ -119,10 +119,10 @@ ActiveAdmin.register EventType do
     actions do |event_type|
       span class: 'table_actions' do
         dropdown_menu '...' do
-          item 'Preview', certificate_preview_event_type_path(event_type), title: 'Certificate Preview'
-          item 'Events', "/event_types/#{event_type.id}/events", title: 'Event list'
-          item 'Testimonies', "/event_types/#{event_type.id}/testimonies", title: 'Testimonies'
-          item 'Participants', participants_event_type_path(event_type), title: 'Participants'
+          item 'Preview', certificate_preview_admin_event_type_path(event_type), title: 'Certificate Preview'
+          item 'Events', admin_events_path(q: { event_type_id_eq: event_type.id }), title: 'Event list'
+          item 'Testimonies', admin_testimonies_path(q: { service_id_eq: event_type.id }), title: 'Testimonies'
+          item 'Participants', participants_admin_event_type_path(event_type), title: 'Participants'
         end
       end
     end

@@ -331,6 +331,10 @@ class Event < ApplicationRecord
        cancellation_policy cancelled capacity city country_id couples_eb_price created_at currency_iso_code custom_prices_email_text date draft duration eb_end_date eb_price embedded_player enable_online_payment end_time enterprise_11plus_price enterprise_6plus_price event_type_id extra_script finish_date id id_value is_sold_out list_price mailchimp_workflow mailchimp_workflow_call mailchimp_workflow_for_warmup mailchimp_workflow_for_warmup_call mode monitor_email net_promoter_score notify_webinar_start online_cohort_codename online_course_codename place registration_ends registration_link sepyme_enabled should_ask_for_referer_code should_welcome_email show_pricing specific_conditions specific_subtitle start_time time_zone_name trainer2_id trainer3_id trainer_id twitter_embedded_search updated_at visibility_type webinar_started]
   end
 
+  def self.ransackable_associations(_auth_object = nil)
+    %w[categories country event_type participants trainer trainer2 trainer3]
+  end
+
   def duplicate
     dup.tap do |duplicated_event|
       duplicated_event.date = nil
