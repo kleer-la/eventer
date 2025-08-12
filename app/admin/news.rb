@@ -5,6 +5,13 @@ ActiveAdmin.register News do
   permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date,
                 trainer_ids: []
 
+  controller do
+    def show
+      @news = scoped_collection.includes(:trainers).find(params[:id])
+      show!
+    end
+  end
+
   action_item :view_old_version, only: :index do
     link_to 'Old News View', news_index_path, class: 'button'
   end

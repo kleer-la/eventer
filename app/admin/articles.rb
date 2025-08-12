@@ -27,6 +27,10 @@ ActiveAdmin.register Article do
   end
 
   controller do
+    def scoped_collection
+      super.includes(:category, :trainers)
+    end
+
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
     end

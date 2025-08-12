@@ -37,12 +37,12 @@ X use status color from model
   X app/admin/episodes.rb (fixed: :podcast in index)
   X app/admin/coupons.rb (fixed: :event_types in show)
   X app/admin/services.rb (fixed: :service_area in index)
-  - app/admin/news.rb
-  - app/admin/oauth_tokens.rb
-  - app/admin/mail_templates.rb
-  - app/admin/trainers.rb
-  - app/admin/articles.rb
-  - app/admin/resource.rb
+  X app/admin/news.rb (fixed: :trainers in show)
+  X app/admin/oauth_tokens.rb (clean)
+  X app/admin/mail_templates.rb (clean)
+  X app/admin/trainers.rb (fixed: :country, :event_types, :articles, :authorships, :translators, :news in show)
+  X app/admin/articles.rb (fixed: :category, :trainers in index/show)
+  X app/admin/resource.rb (fixed: :category, :authors, :translators, :illustrators in index/show)
   - app/admin/service_area.rb
   - app/admin/pages.rb
   - app/admin/short_urls.rb

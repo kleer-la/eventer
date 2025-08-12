@@ -11,6 +11,13 @@ ActiveAdmin.register Trainer do
 
   actions :index, :show, :edit, :update, :new, :create # , :destroy
 
+  controller do
+    def show
+      @trainer = scoped_collection.includes(:country, :event_types, :articles, :authorships, :translators, :news).find(params[:id])
+      show!
+    end
+  end
+
   scope :all, default: false
   scope :active, default: true
   scope :deleted

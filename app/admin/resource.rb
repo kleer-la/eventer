@@ -19,6 +19,10 @@ ActiveAdmin.register Resource do
   end
   
   controller do
+    def scoped_collection
+      super.includes(:category, :authors, :translators, :illustrators)
+    end
+
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
     end
