@@ -1,11 +1,26 @@
 ActiveAdmin.register Assessment do
   menu parent: 'We Publish'
-  permit_params :title, :description, :resource_id, :language, :rule_based, # Added language and rule_based
-                question_groups_attributes: [:id, :name, :description, :position, :_destroy, # Added :description, :_destroy, removed :resource_id
+  permit_params :title, :description, :resource_id, :language, :rule_based,
+                question_groups_attributes: [:id, :name, :description, :position, :_destroy,
                                              { questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
                                                                       { answers_attributes: %i[id text position _destroy] }] }],
                 questions_attributes: [:id, :name, :description, :position, :question_type, :_destroy,
                                        { answers_attributes: %i[id text position _destroy] }]
+
+  controller do
+    def scoped_collection
+      super.includes(:resource, :question_groups, :questions, :rules)
+    end
+
+    def show
+      @assessment = scoped_collection.includes(
+        question_groups: { questions: :answers },
+        questions: :answers,
+        rules: []
+      ).find(params[:id])
+      show!
+    end
+  end
 
   index do
     selectable_column

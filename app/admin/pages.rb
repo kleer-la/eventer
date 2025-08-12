@@ -11,6 +11,10 @@ ActiveAdmin.register Page do
   filter :lang, as: :select, collection: Page.langs
 
   controller do
+    def scoped_collection
+      super.includes(:sections)
+    end
+
     def find_resource
       scoped_collection.find_by_param!(params[:id])
     end

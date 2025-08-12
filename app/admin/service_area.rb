@@ -10,8 +10,17 @@ ActiveAdmin.register ServiceArea do
   filter :name
 
   controller do
+    def scoped_collection
+      super.includes(:services)
+    end
+
     def find_resource
       scoped_collection.friendly.find(params[:id].strip)
+    end
+
+    def show
+      @service_area = scoped_collection.includes(:services).friendly.find(params[:id].strip)
+      show!
     end
   end
 

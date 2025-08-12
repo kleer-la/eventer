@@ -43,13 +43,13 @@ X use status color from model
   X app/admin/trainers.rb (fixed: :country, :event_types, :articles, :authorships, :translators, :news in show)
   X app/admin/articles.rb (fixed: :category, :trainers in index/show)
   X app/admin/resource.rb (fixed: :category, :authors, :translators, :illustrators in index/show)
-  - app/admin/service_area.rb
-  - app/admin/pages.rb
-  - app/admin/short_urls.rb
-  - app/admin/webhooks.rb
-  - app/admin/recommended_content.rb
-  - app/admin/assessments.rb
-  - app/admin/rules.rb
+  X app/admin/service_area.rb (fixed: :services, :testimonies in show)
+  X app/admin/pages.rb (fixed: :sections in show)
+  X app/admin/short_urls.rb (clean)
+  X app/admin/webhooks.rb (clean)
+  X app/admin/recommended_content.rb (already optimized: :source, :target)
+  X app/admin/assessments.rb (fixed: :resource, :question_groups, :questions, :rules in index/show)
+  X app/admin/rules.rb (fixed: :assessment, pre-loaded questions in show)
   - app/admin/contacts.rb
   - app/admin/events.rb
   - app/admin/event_types.rb
@@ -81,3 +81,6 @@ X Limpiar nombre
 ## webhook
 - add responsable (trainer, mandatory) - add it to the index view
 - add comment (text)
+
+## Rules
+- delete test rule button (not implemented)

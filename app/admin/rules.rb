@@ -5,12 +5,14 @@ ActiveAdmin.register Rule do
   # Scope by assessment when assessment_id is provided
   controller do
     def scoped_collection
+      collection = super.includes(:assessment)
       if params[:assessment_id].present?
-        end_of_association_chain.where(assessment_id: params[:assessment_id])
+        collection.where(assessment_id: params[:assessment_id])
       else
-        end_of_association_chain
+        collection
       end
     end
+
 
     def new
       @rule = Rule.new
@@ -52,6 +54,8 @@ ActiveAdmin.register Rule do
 
     panel 'Rule Conditions Breakdown' do
       rule_conditions = rule.parsed_conditions
+      questions = Question.where(assessment: rule.assessment).includes(:answers).index_by(&:id) if rule_conditions.any?
+      
       if rule_conditions.any?
         table do
           thead do
@@ -66,7 +70,7 @@ ActiveAdmin.register Rule do
               tr do
                 td do
                   question_id = question_id_str.to_i
-                  question = Question.find_by(id: question_id)
+                  question = questions[question_id]
                   if question
                     "#{question_id} - #{question.name}"
                   else
@@ -103,9 +107,10 @@ ActiveAdmin.register Rule do
     panel 'Rule Testing' do
       div do
         para "This rule will match responses where:"
+        questions = Question.where(assessment: rule.assessment).includes(:answers).index_by(&:id)
         ul do
           rule.parsed_conditions.each do |question_id_str, condition|
-            question = Question.find_by(id: question_id_str.to_i)
+            question = questions[question_id_str.to_i]
             question_name = question ? question.name : "Question #{question_id_str}"
             
             if condition.nil?
