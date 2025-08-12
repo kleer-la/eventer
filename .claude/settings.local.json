@@ -5,7 +5,8 @@
       "Bash(rm:*)",
       "Bash(ssh:*)",
       "Bash(docker exec:*)",
-      "Bash(bundle exec rspec:*)"
+      "Bash(bundle exec rspec:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }
