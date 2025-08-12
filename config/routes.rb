@@ -45,7 +45,11 @@ Rails.application.routes.draw do
     post 'contact_us', to: 'contacts#contact_us' # TODO: remove, duplicated with api/contacts/contact_us
 
     resources :assessments, only: [:show]
-    get 'news'
+    resources :news, only: [:index] do
+      collection do
+        get :preview
+      end
+    end
     get 'event_types', to: 'event_types#index'
     get 'event_types/:id' => 'event_types#show'
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'

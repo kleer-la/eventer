@@ -9,6 +9,7 @@ FactoryBot.define do
     url { 'https://example.com/news/agile-training-revolution' }
     img { 'https://example.com/images/news-image.jpg' }
     event_date { 1.week.from_now.to_date }
+    visible { true }
 
     trait :english do
       lang { 'en' }
@@ -42,6 +43,10 @@ FactoryBot.define do
 
     trait :future_event do
       event_date { 1.month.from_now.to_date }
+    end
+
+    trait :hidden do
+      visible { false }
     end
   end
 end

@@ -2,7 +2,7 @@
 
 ActiveAdmin.register News do
   menu parent: 'We Publish'
-  permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date,
+  permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date, :visible,
                 trainer_ids: []
 
   controller do
@@ -11,6 +11,10 @@ ActiveAdmin.register News do
       show!
     end
   end
+
+  scope :all, default: true
+  scope :visible
+  scope :hidden, -> { where(visible: false) }
 
   action_item :view_old_version, only: :index do
     link_to 'Old News View', news_index_path, class: 'button'
@@ -22,6 +26,10 @@ ActiveAdmin.register News do
     column :lang
     column :title
     column :where
+    column :visible do |news|
+      status_tag news.visible ? 'Yes' : 'No', 
+                 class: news.visible ? 'ok' : 'error'
+    end
     column :event_date
     column :created_at
     actions
@@ -30,6 +38,7 @@ ActiveAdmin.register News do
   filter :lang
   filter :title
   filter :where
+  filter :visible
   filter :event_date
   filter :created_at
 
@@ -44,6 +53,7 @@ ActiveAdmin.register News do
       f.input :video
       f.input :audio
       f.input :event_date, as: :datepicker
+      f.input :visible
       f.input :trainers, as: :check_boxes, collection: Trainer.sorted
     end
     f.actions
@@ -84,6 +94,10 @@ ActiveAdmin.register News do
         end
       end
       row :event_date
+      row :visible do |news|
+        status_tag news.visible ? 'Yes' : 'No', 
+                   class: news.visible ? 'ok' : 'error'
+      end
 
       panel 'Trainers' do
         table_for resource.trainers do

@@ -23,6 +23,7 @@ RSpec.describe News, type: :model do
       expect(news).to respond_to(:video)
       expect(news).to respond_to(:audio)
       expect(news).to respond_to(:event_date)
+      expect(news).to respond_to(:visible)
     end
 
     it 'stores attributes correctly' do
@@ -217,10 +218,41 @@ RSpec.describe News, type: :model do
     end
   end
 
+  describe 'visibility' do
+    it 'defaults to visible' do
+      news = build(:news)
+      expect(news.visible).to be true
+    end
+
+    it 'can be set to hidden' do
+      news = build(:news, :hidden)
+      expect(news.visible).to be false
+    end
+
+    describe 'scopes' do
+      before do
+        @visible_news = create(:news, visible: true)
+        @hidden_news = create(:news, :hidden)
+      end
+
+      it 'visible scope returns only visible news' do
+        visible_items = News.visible
+        expect(visible_items).to include(@visible_news)
+        expect(visible_items).not_to include(@hidden_news)
+      end
+
+      it 'hidden scope returns only hidden news' do
+        hidden_items = News.hidden
+        expect(hidden_items).to include(@hidden_news)
+        expect(hidden_items).not_to include(@visible_news)
+      end
+    end
+  end
+
   describe 'Ransack functionality' do
     it 'returns expected searchable attributes' do
       expected_attributes = %w[audio created_at description event_date id id_value img lang
-                               title updated_at url video where]
+                               title updated_at url video visible where]
 
       expect(News.ransackable_attributes).to match_array(expected_attributes)
     end
