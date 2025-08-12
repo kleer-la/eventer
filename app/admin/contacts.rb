@@ -252,8 +252,12 @@ ActiveAdmin.register Contact do
                              .pluck('MIN(id) as id')
         Contact.where(id: grouped_ids).reorder(created_at: :desc)
       else
-        super
+        super.includes(:assessment, responses: [:question, :answer])
       end
+    end
+
+    def find_resource
+      Contact.includes(:assessment, responses: [:question, :answer]).find(params[:id])
     end
   end
 end

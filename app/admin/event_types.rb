@@ -212,6 +212,16 @@ ActiveAdmin.register EventType do
     end
   end
 
+  controller do
+    def scoped_collection
+      super.includes(:trainers, :categories)
+    end
+
+    def find_resource
+      EventType.includes(:trainers, :categories, :canonical, recommended_contents: :target).find(params[:id])
+    end
+  end
+
   form do |f|
     bkgd_imgs = FileStoreService.current.background_list
     f.inputs 'Event Type Details' do

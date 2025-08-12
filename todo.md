@@ -19,14 +19,16 @@ X carga dinámica de trainers x tipo evento
 X carga dinámica de política de cancelación x tipo evento
 
 ## event Type
-- Probar certificados
-- ???
+- Preview certificados (index action) - its Ok in view
+- List of events (index action)
+- List of testimonies (index action)
+- List of participants (index action) - its Ok in view
 
 ## Participants
 X use status color from model
 
 ## Gral
-- Revisar ActiveAdmin actuales para evitar N+1 queries:
+X Revisar ActiveAdmin actuales para evitar N+1 queries:
   X app/admin/categories.rb (clean)
   X app/admin/logs.rb (clean)
   X app/admin/roles.rb (clean)
@@ -50,17 +52,16 @@ X use status color from model
   X app/admin/recommended_content.rb (already optimized: :source, :target)
   X app/admin/assessments.rb (fixed: :resource, :question_groups, :questions, :rules in index/show)
   X app/admin/rules.rb (fixed: :assessment, pre-loaded questions in show)
-  - app/admin/contacts.rb
-  - app/admin/events.rb
-  - app/admin/event_types.rb
-  - app/admin/participants.rb
-  - app/admin/dashboard.rb
-  - app/admin/images.rb
+  X app/admin/contacts.rb (fixed: :assessment, responses: [:question, :answer] in index/show)
+  X app/admin/events.rb (clean - already optimized)
+  X app/admin/event_types.rb (fixed: :trainers, :categories, :canonical, recommended_contents: :target in index/show)
+  X app/admin/participants.rb (clean - already optimized)
+  X app/admin/dashboard.rb (fixed: :event_type, :trainers in grouped_events and pricing_events)
+  X app/admin/images.rb (clean - register_page, no ActiveRecord queries)
 
 ## imagenes
 X mostrar pdf en vez de bajarlos
 X borrar imágenes
-? filtro
 X Limpiar nombre
 
 # Task as of ago 12

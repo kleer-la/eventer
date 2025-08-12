@@ -106,9 +106,7 @@ ActiveAdmin.register_page 'Dashboard' do
                       span "hasta #{e.eb_end_date&.strftime('%d/%m')}", class: 'price-date'
                     end
                   end
-                  if !e.business_price&.positive? && !e.business_eb_price&.positive?
-                    span '-', class: 'no-group-pricing'
-                  end
+                  span '-', class: 'no-group-pricing' if !e.business_price&.positive? && !e.business_eb_price&.positive?
                 end
               end
             end
@@ -159,9 +157,11 @@ def dweek(d)
 end
 
 def grouped_events
-  events = Event.public_and_visible.order('date').select do |ev|
-    !ev.event_type.nil? && ev.registration_link == ''
-  end
+  events = Event.public_and_visible
+                .includes(:event_type, :trainer, :trainer2, :trainer3)
+                .order('date')
+                .where.not(event_type_id: nil)
+                .where(registration_link: '')
 
   {
     'Up to 2 Weeks' => events.select { |ev| dweek(ev.date) <= 2 },
@@ -172,7 +172,9 @@ def grouped_events
 end
 
 def pricing_events
-  Event.public_commercial_visible.order(:date)
+  Event.public_commercial_visible
+       .includes(:event_type)
+       .order(:date)
        .where.not(event_type_id: nil)
        .where(registration_link: '')
        .limit(10) # Show only next 10 events for dashboard
