@@ -79,10 +79,11 @@
 - ~~frontend Answers: show ordered by position - implemented at model level (backend)~~ ✓
 - ~~frontend Question, answers text: convert from markdown to html~~ ✓
 - ~~backend report generation: render markdown in HTML and PDF reports~~ ✓
+- pdf report has date in English for a Spanish report
 
 ## webhook
-- add responsable (trainer, mandatory) - add it to the index view
-- add comment (text)
+- ~~add responsable (trainer, mandatory) - add it to the index view~~ ✓
+- ~~add comment (text)~~ ✓
 
 ## Rules
 - delete test rule button (not implemented)

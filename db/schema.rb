@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_12_202720) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_13_114155) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -730,6 +730,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_12_202720) do
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "responsible_id"
+    t.text "comment"
+    t.index ["responsible_id"], name: "index_webhooks_on_responsible_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -757,4 +760,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_12_202720) do
   add_foreign_key "testimonies", "services"
   add_foreign_key "translations", "resources"
   add_foreign_key "translations", "trainers"
+  add_foreign_key "webhooks", "trainers", column: "responsible_id"
 end
