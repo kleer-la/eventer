@@ -65,7 +65,6 @@ Rails.application.routes.draw do
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
 
-  get 'api/2/participants/synch' => 'api#participants_synch'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
