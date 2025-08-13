@@ -102,7 +102,9 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     Prawn::Document.generate(pdf_path) do |pdf|
       # Add Kleer logo in the upper right corner
       logo_path = Rails.root.join('app/assets/images/black_logo.png')
-      pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80 if File.exist?(logo_path)
+      if File.exist?(logo_path)
+        pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80
+      end
 
       pdf.text 'Agile Coach Competency Framework Assessment', size: 24, style: :bold, align: :center
       pdf.text "Name: #{name}", size: 18, align: :center
@@ -348,7 +350,9 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
       # Add Kleer logo in the upper right corner
       logo_path = Rails.root.join('app/assets/images/black_logo.png')
-      pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80 if File.exist?(logo_path)
+      if File.exist?(logo_path)
+        pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80
+      end
 
       # Use Raleway fonts from vendor/assets/fonts
       raleway_regular = Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf')
