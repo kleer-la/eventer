@@ -43,7 +43,11 @@ ActiveAdmin.register Assessment do
       row :language
       row :rule_based
       row :resource do |assessment|
-        assessment.resource&.title_es
+        if assessment.resource
+          link_to assessment.resource.title_es, admin_resource_path(assessment.resource)
+        else
+          'None'
+        end
       end
       row :created_at
     end
