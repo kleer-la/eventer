@@ -1,4 +1,32 @@
+# Task as of ago 12
+
+## Rules
+- delete test rule button (not implemented)
+
+## Improve News
+- explain meaning of fields. I.e. url: more info / image: to show in the news page
+- do we need to add an audio field?
+- move visible as 2nd field in the show/edit form
+- make visible default to false
+- website17: buttons for audio / video / external site (akin of podcast card)
+
+## Improve Assessment
+- header/footer image
+- Show only Question / anwser
+- change color palette to teal/dark green
+
 # Migración a ActiveAdmin
+
+## Remove unused event_type visibility functionallity
+- review public_event functionallity, do we want to keep it?
+  - Remove Event model scopes: public_events, public_commercial, public_community_events, public_commercial_visible, public_community_visible, public_and_visible, public_and_past_visible, public_courses
+  - Remove visibility_type field from Event model and database
+  - Update controllers: home_controller.rb, participants_controller.rb, dashboard_controller.rb, api/event_types_controller.rb
+  - Update admin/events.rb - remove visibility_type from forms and displays
+  - Remove visibility_type from views: events/_form.html.haml, events/index.html.haml, events/show.html.haml, event_types/events.html.haml
+  - Update tests: event_spec.rb, factories.rb, cucumber steps
+  - Remove translations for visibility_type from locale files
+  - Create migration to remove visibility_type column
 
 ## Participantes
 - ~~participant copy -> qty <-1~~ ✓
@@ -85,22 +113,9 @@
 - ~~add responsable (trainer, mandatory) - add it to the index view~~ ✓
 - ~~add comment (text)~~ ✓
 
-## Rules
-- delete test rule button (not implemented)
-
-# Website17
-## Clean up
-- make layout default
-
 # Ideas
 - Category index: visible tag edition in place, could it be replicateded in participants?
 - ~~remove participants_synch~~ ✓
-- remove public_event functionallity
-  - Remove Event model scopes: public_events, public_commercial, public_community_events, public_commercial_visible, public_community_visible, public_and_visible, public_and_past_visible, public_courses
-  - Remove visibility_type field from Event model and database
-  - Update controllers: home_controller.rb, participants_controller.rb, dashboard_controller.rb, api/event_types_controller.rb
-  - Update admin/events.rb - remove visibility_type from forms and displays
-  - Remove visibility_type from views: events/_form.html.haml, events/index.html.haml, events/show.html.haml, event_types/events.html.haml
-  - Update tests: event_spec.rb, factories.rb, cucumber steps
-  - Remove translations for visibility_type from locale files
-  - Create migration to remove visibility_type column
+
+## Website17
+- Clean up: make layout default

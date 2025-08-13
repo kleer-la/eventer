@@ -27,7 +27,7 @@ ActiveAdmin.register News do
     column :title
     column :where
     column :visible do |news|
-      status_tag news.visible ? 'Yes' : 'No', 
+      status_tag news.visible ? 'Yes' : 'No',
                  class: news.visible ? 'ok' : 'error'
     end
     column :event_date
@@ -46,14 +46,14 @@ ActiveAdmin.register News do
     f.inputs do
       f.input :lang, as: :select, collection: News.langs.keys
       f.input :title
+      f.input :visible
       f.input :where
       f.input :description
-      f.input :url
-      f.input :img
+      f.input :url, hint: 'Link to more information or external article'
+      f.input :img, hint: 'Image URL to display on the news page'
       f.input :video
       f.input :audio
       f.input :event_date, as: :datepicker
-      f.input :visible
       f.input :trainers, as: :check_boxes, collection: Trainer.sorted
     end
     f.actions
@@ -64,6 +64,11 @@ ActiveAdmin.register News do
       row :id
       row :lang
       row :title
+      row :visible do |news|
+        status_tag news.visible ? 'Yes' : 'No',
+                   class: news.visible ? 'ok' : 'error'
+      end
+
       row :where
       row :description
       row :url do |news|
@@ -94,10 +99,6 @@ ActiveAdmin.register News do
         end
       end
       row :event_date
-      row :visible do |news|
-        status_tag news.visible ? 'Yes' : 'No', 
-                   class: news.visible ? 'ok' : 'error'
-      end
 
       panel 'Trainers' do
         table_for resource.trainers do
