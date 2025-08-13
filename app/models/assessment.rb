@@ -4,8 +4,8 @@ class Assessment < ApplicationRecord
   include ImageReference
   references_images_in text_fields: [:description]
   belongs_to :resource, optional: true
-  has_many :question_groups, dependent: :destroy
-  has_many :questions, dependent: :destroy
+  has_many :question_groups, -> { order(:position) }, dependent: :destroy
+  has_many :questions, -> { order(:position) }, dependent: :destroy
   has_many :contacts, dependent: :destroy
   has_many :rules, dependent: :destroy
 

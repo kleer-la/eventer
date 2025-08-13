@@ -71,12 +71,12 @@ X Bug: Area Filter in Log doesn't work (fixed enum filter collections)
 X backend: visible flag (db / admin / api) - completed
 X frontend: dont show non visible in normal view - API updated, frontend will automatically hide
 X add a preview: show all news - /api/news/preview endpoint added
-- preview: new look (one new per line / modern cards, like podcast)
+X preview: new look (one new per line / modern cards, like podcast)
 
 ## Assessent
-- backend Assessment view: show answers one in each line and with position at the start of the line
-- frontend Questions: show ordered by position
-- frontend Answers: show ordered by position
+X backend Assessment view: show answers one in each line and with position at the start of the line
+X frontend Questions: show ordered by position - implemented at model level (backend)
+X frontend Answers: show ordered by position - implemented at model level (backend)
 - frontend Question, answers text: convert from markdown to html
 
 ## webhook

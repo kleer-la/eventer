@@ -49,13 +49,22 @@ ActiveAdmin.register Assessment do
     end
 
     panel 'Question Groups' do
-      table_for assessment.question_groups.order(:position) do
+      table_for assessment.question_groups do
         column :name
         column :position
         column 'Questions' do |group|
           ul do
-            group.questions.order(:position).each do |question|
-              li "#{question.name} [#{question.question_type.humanize}] (#{question.answers.pluck(:text).join(', ')})"
+            group.questions.each do |question|
+              li do
+                div "#{question.position}. #{question.name} [#{question.question_type.humanize}]"
+                if question.answers.any?
+                  div style: 'margin-left: 20px; margin-top: 5px;' do
+                    question.answers.each do |answer|
+                      div "#{answer.position}. #{answer.text}", style: 'margin-bottom: 2px;'
+                    end
+                  end
+                end
+              end
             end
           end
         end
@@ -63,14 +72,22 @@ ActiveAdmin.register Assessment do
     end
 
     panel 'Standalone Questions' do
-      table_for assessment.questions.where(question_group_id: nil).order(:position) do
+      table_for assessment.questions.where(question_group_id: nil) do
+        column :position
         column :name
         column :question_type do |question|
           question.question_type.humanize
         end
-        column :position
         column 'Answers' do |question|
-          question.answers.pluck(:text).join(', ')
+          if question.answers.any?
+            div do
+              question.answers.each do |answer|
+                div "#{answer.position}. #{answer.text}", style: 'margin-bottom: 2px;'
+              end
+            end
+          else
+            span 'No answers defined', style: 'color: #888; font-style: italic;'
+          end
         end
       end
     end
@@ -109,7 +126,8 @@ ActiveAdmin.register Assessment do
   form do |f|
     f.inputs 'Details' do
       f.input :title
-      f.input :description
+      f.input :description, as: :text, input_html: { rows: 4 }, 
+              hint: raw('Supports <strong>Markdown</strong>. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Cheat Sheet ↗</a>')
       f.input :language, as: :select, collection: [['English', 'en'], ['Spanish', 'es']], include_blank: false
       f.input :rule_based, as: :boolean
       f.input :resource, as: :select, collection: Resource.all.pluck(:title_es, :id), include_blank: true
@@ -117,11 +135,13 @@ ActiveAdmin.register Assessment do
 
     f.has_many :question_groups, heading: 'Question Groups', allow_destroy: true, new_record: true do |qg|
       qg.input :name
-      qg.input :description
+      qg.input :description, as: :text, input_html: { rows: 3 }, 
+               hint: raw('Supports <strong>Markdown</strong>. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Cheat Sheet ↗</a>')
       qg.input :position
       qg.has_many :questions, heading: 'Questions in Group', allow_destroy: true, new_record: true do |q|
         q.input :name
-        q.input :description
+        q.input :description, as: :text, input_html: { rows: 3 }, 
+                hint: raw('Supports <strong>Markdown</strong>. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Cheat Sheet ↗</a>')
         q.input :position
         q.input :question_type, as: :select, collection: [
           ['Linear Scale', 'linear_scale'],
@@ -130,7 +150,7 @@ ActiveAdmin.register Assessment do
           ['Long Text', 'long_text']
         ], include_blank: false
         q.has_many :answers, heading: 'Answers', allow_destroy: true, new_record: true do |a|
-          a.input :text
+          a.input :text, hint: raw('Supports <strong>Markdown</strong>. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Cheat Sheet ↗</a>')
           a.input :position
         end
       end
@@ -138,7 +158,8 @@ ActiveAdmin.register Assessment do
 
     f.has_many :questions, heading: 'Standalone Questions', allow_destroy: true, new_record: true do |q|
       q.input :name
-      q.input :description
+      q.input :description, as: :text, input_html: { rows: 3 }, 
+              hint: raw('Supports <strong>Markdown</strong>. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Cheat Sheet ↗</a>')
       q.input :position
       q.input :question_type, as: :select, collection: [
         ['Linear Scale', 'linear_scale'],
@@ -147,7 +168,7 @@ ActiveAdmin.register Assessment do
         ['Long Text', 'long_text']
       ], include_blank: false
       q.has_many :answers, heading: 'Answers', allow_destroy: true, new_record: true do |a|
-        a.input :text
+        a.input :text, hint: raw('Supports <strong>Markdown</strong>. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Cheat Sheet ↗</a>')
         a.input :position
       end
     end

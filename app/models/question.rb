@@ -5,8 +5,10 @@ class Question < ApplicationRecord
   references_images_in text_fields: [:description]
   belongs_to :assessment
   belongs_to :question_group, optional: true
-  has_many :answers, dependent: :destroy
+  has_many :answers, -> { order(:position) }, dependent: :destroy
   accepts_nested_attributes_for :answers, allow_destroy: true
+
+  scope :ordered, -> { order(:position) }
   before_validation :set_assessment_from_group, if: :question_group_id?
 
   enum :question_type, {
