@@ -21,8 +21,8 @@ ActiveAdmin.register Event do
     filter attribute.to_sym
   end
 
-  scope :all, default: false
-  scope 'Current', :visible, default: true
+  scope :all, default: true
+  scope 'Current', :visible, default: false
 
   action_item :view_old_version, only: :index do
     link_to 'Old version', events_path, class: 'button'
