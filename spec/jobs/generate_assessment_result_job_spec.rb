@@ -71,34 +71,34 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       it 'renders markdown in diagnostic text and questions/answers' do
         # Create questions with markdown content
-        question_markdown = create(:question, assessment: assessment, 
-                                   question_type: 'radio_button',
-                                   name: '**Bold question** with *italic* text')
-        answer_markdown = create(:answer, question: question_markdown, 
-                                text: 'Answer with `code` formatting')
-        
+        question_markdown = create(:question, assessment: assessment,
+                                              question_type: 'radio_button',
+                                              name: '**Bold question** with *italic* text')
+        answer_markdown = create(:answer, question: question_markdown,
+                                          text: 'Answer with `code` formatting')
+
         # Create rule with markdown diagnostic text
-        rule_markdown = create(:rule, assessment: assessment,
-                              position: 3,
-                              diagnostic_text: 'Diagnostic with **bold** and *italic* markdown.',
-                              conditions: { question_markdown.id => { 'range' => [1, 4] } }.to_json)
-        
+        create(:rule, assessment: assessment,
+                      position: 3,
+                      diagnostic_text: 'Diagnostic with **bold** and *italic* markdown.',
+                      conditions: { question_markdown.id => { 'range' => [1, 4] } }.to_json)
+
         # Create response
         create(:response, contact: contact, question: question_markdown, answer: answer_markdown)
-        
+
         GenerateAssessmentResultJob.perform_now(contact.id)
         contact.reload
 
         # Check that markdown was rendered to HTML
         html_content = contact.assessment_report_html
-        
+
         # Question markdown should be rendered
         expect(html_content).to include('<strong>Bold question</strong>')
         expect(html_content).to include('<em>italic</em>')
-        
+
         # Answer markdown should be rendered
         expect(html_content).to include('<code>code</code>')
-        
+
         # Diagnostic markdown should be rendered
         expect(html_content).to include('Diagnostic with <strong>bold</strong> and <em>italic</em> markdown')
       end
@@ -194,7 +194,6 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         expect(chart_mock).to have_received(:data).with('leadership_skills', 3)
         expect(store_service).to have_received(:upload).twice # Chart PNG + PDF
       end
-
     end
 
     context 'when job fails' do
@@ -275,7 +274,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       question1 = create(:question, assessment: assessment, name: 'Nivel de Agilidad', question_type: 'radio_button')
       question2 = create(:question, assessment: assessment, name: '¿Qué más dirías?', question_type: 'short_text')
       answer1 = create(:answer, question: question1, text: 'Escalando', position: 2)
-      
+
       create(:response, contact: contact, question: question1, answer: answer1)
       create(:response, contact: contact, question: question2, text_response: 'Somos una startup')
 
@@ -342,9 +341,8 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       expect(pdf_mock).to have_received(:text).with('PDF Test', size: 18, style: :bold, align: :center, color: '007BFF')
       expect(pdf_mock).to have_received(:text).with('Participante: PDF User', size: 12, align: :center)
-      expect(pdf_mock).to have_received(:text).with("• Diagnostic text", size: 11, indent_paragraphs: 10)
+      expect(pdf_mock).to have_received(:text).with('• Diagnostic text', size: 11, indent_paragraphs: 10)
     end
-
 
     it 'handles long_text question types correctly in PDF' do
       # Create questions with different types including long_text
@@ -355,7 +353,8 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       # Create responses
       create(:response, contact: contact, question: question1, text_response: 'Short answer')
-      create(:response, contact: contact, question: question2, text_response: 'This is a longer response with multiple sentences. It should appear in the PDF.')
+      create(:response, contact: contact, question: question2,
+                        text_response: 'This is a longer response with multiple sentences. It should appear in the PDF.')
       create(:response, contact: contact, question: question3, answer: answer3)
 
       allow(assessment).to receive(:evaluate_rules_for_contact).and_return(['Test diagnostic'])
@@ -364,11 +363,11 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       pdf_mock = instance_double('Prawn::Document')
       font_families_mock = {}
       text_calls = []
-      
+
       allow(Prawn::Document).to receive(:new).and_return(pdf_mock)
       allow(pdf_mock).to receive(:font_families).and_return(font_families_mock)
       allow(pdf_mock).to receive(:font)
-      allow(pdf_mock).to receive(:text) do |text, *args|
+      allow(pdf_mock).to receive(:text) do |text, *_args|
         text_calls << text
       end
       allow(pdf_mock).to receive(:move_down)
