@@ -1,5 +1,6 @@
 # app/jobs/generate_assessment_result_job.rb
 class GenerateAssessmentResultJob < ActiveJob::Base
+  include ApplicationHelper
   queue_as :default
 
   def perform(contact_id)
@@ -28,6 +29,14 @@ class GenerateAssessmentResultJob < ActiveJob::Base
   end
 
   private
+
+  def markdown_to_text(text)
+    # Convert markdown to HTML then strip HTML tags for plain text
+    return '' if text.nil?
+
+    html = markdown(text)
+    ActionView::Base.full_sanitizer.sanitize(html).strip
+  end
 
   def generate_rule_based_report(contact, store, file_name)
     assessment = contact.assessment
@@ -82,7 +91,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     g.write(chart_path)
 
     # Upload radar chart PNG to the certificate bucket
-    chart_public_url = store.upload(chart_path, "#{file_name}.png", 'certificate')
+    store.upload(chart_path, "#{file_name}.png", 'certificate')
 
     # Generate PDF using Prawn
     require 'prawn'
@@ -91,6 +100,10 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
     name = contact.form_data&.dig('name')
     Prawn::Document.generate(pdf_path) do |pdf|
+      # Add Kleer logo in the upper right corner
+      logo_path = Rails.root.join('app/assets/images/black_logo.png')
+      pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80 if File.exist?(logo_path)
+
       pdf.text 'Agile Coach Competency Framework Assessment', size: 24, style: :bold, align: :center
       pdf.text "Name: #{name}", size: 18, align: :center
 
@@ -263,7 +276,7 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
       if diagnostics.any?
         diagnostics.each do |diagnostic|
-          html += "<div class=\"diagnostic-item\">#{diagnostic}</div>\n"
+          html += "<div class=\"diagnostic-item\">#{markdown(diagnostic)}</div>\n"
         end
       else
         html += "<div class=\"no-diagnostics\">#{I18n.t('no_specific_diagnostics',
@@ -309,14 +322,14 @@ class GenerateAssessmentResultJob < ActiveJob::Base
                       I18n.t('question_type_not_recognized', default: 'Tipo de pregunta no reconocido')
                     end
 
-      questions_html += "<dt>#{I18n.t('question', default: 'Pregunta')}: #{question_text}</dt>\n"
-      questions_html += "<dd>#{I18n.t('answer', default: 'Respuesta')}: #{answer_text}</dd>\n"
+      questions_html += "<dt>#{I18n.t('question', default: 'Pregunta')}: #{markdown(question_text)}</dt>\n"
+      questions_html += "<dd>#{I18n.t('answer', default: 'Respuesta')}: #{markdown(answer_text)}</dd>\n"
     end
 
     questions_html
   end
 
-  def generate_pdf_from_html(html_content, contact)
+  def generate_pdf_from_html(_html_content, contact)
     # Generate professional PDF that matches HTML structure and styling
     require 'prawn'
 
@@ -332,6 +345,10 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
       # Create PDF with proper margins
       pdf = Prawn::Document.new(page_size: 'A4', margin: 40)
+
+      # Add Kleer logo in the upper right corner
+      logo_path = Rails.root.join('app/assets/images/black_logo.png')
+      pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80 if File.exist?(logo_path)
 
       # Use Raleway fonts from vendor/assets/fonts
       raleway_regular = Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf')
@@ -373,8 +390,8 @@ class GenerateAssessmentResultJob < ActiveJob::Base
           question_text = response.question.name || response.question.text || "#{I18n.t('question',
                                                                                         default: 'Pregunta')} #{response.question.id}"
 
-          # Question text (bold)
-          pdf.text question_text, size: 11, style: :bold
+          # Question text (bold) - convert markdown to plain text for PDF
+          pdf.text markdown_to_text(question_text), size: 11, style: :bold
           pdf.move_down 5
 
           # Answer text (indented)
@@ -386,13 +403,13 @@ class GenerateAssessmentResultJob < ActiveJob::Base
                           else
                             I18n.t('no_response', default: 'Sin respuesta')
                           end
-                        when 'short_text', 'paragraph_text'
+                        when 'short_text', 'long_text'
                           response.text_response.presence || I18n.t('no_response', default: 'Sin respuesta')
                         else
                           I18n.t('no_response', default: 'Sin respuesta')
                         end
 
-          pdf.text answer_text, size: 10, indent_paragraphs: 20
+          pdf.text markdown_to_text(answer_text), size: 10, indent_paragraphs: 20
           pdf.move_down 10
         end
       else
@@ -407,8 +424,8 @@ class GenerateAssessmentResultJob < ActiveJob::Base
 
       if diagnostics.any?
         diagnostics.each do |diagnostic|
-          # Add bullet point for each diagnostic
-          pdf.text "• #{diagnostic}", size: 11, indent_paragraphs: 10
+          # Add bullet point for each diagnostic - convert markdown to plain text for PDF
+          pdf.text "• #{markdown_to_text(diagnostic)}", size: 11, indent_paragraphs: 10
           pdf.move_down 8
         end
       else

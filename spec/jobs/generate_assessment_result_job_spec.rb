@@ -66,6 +66,40 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         expect(contact.assessment_report_html).to include('Kleer Logo')
       end
 
+      it 'renders markdown in diagnostic text and questions/answers' do
+        # Create questions with markdown content
+        question_markdown = create(:question, assessment: assessment, 
+                                   question_type: 'radio_button',
+                                   name: '**Bold question** with *italic* text')
+        answer_markdown = create(:answer, question: question_markdown, 
+                                text: 'Answer with `code` formatting')
+        
+        # Create rule with markdown diagnostic text
+        rule_markdown = create(:rule, assessment: assessment,
+                              position: 3,
+                              diagnostic_text: 'Diagnostic with **bold** and *italic* markdown.',
+                              conditions: { question_markdown.id => { 'range' => [1, 4] } }.to_json)
+        
+        # Create response
+        create(:response, contact: contact, question: question_markdown, answer: answer_markdown)
+        
+        GenerateAssessmentResultJob.perform_now(contact.id)
+        contact.reload
+
+        # Check that markdown was rendered to HTML
+        html_content = contact.assessment_report_html
+        
+        # Question markdown should be rendered
+        expect(html_content).to include('<strong>Bold question</strong>')
+        expect(html_content).to include('<em>italic</em>')
+        
+        # Answer markdown should be rendered
+        expect(html_content).to include('<code>code</code>')
+        
+        # Diagnostic markdown should be rendered
+        expect(html_content).to include('Diagnostic with <strong>bold</strong> and <em>italic</em> markdown')
+      end
+
       it 'evaluates rules and includes matching diagnostics in PDF' do
         job = GenerateAssessmentResultJob.new
 
@@ -155,6 +189,52 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         expect(chart_mock).to have_received(:data).with('leadership_skills', 3)
         expect(store_service).to have_received(:upload).twice # Chart PNG + PDF
       end
+
+      it 'includes Kleer logo in competency-based PDF' do
+        # Create a temporary logo file for testing
+        logo_path = Rails.root.join('app/assets/images/black_logo.png')
+        logo_dir = File.dirname(logo_path)
+        FileUtils.mkdir_p(logo_dir) unless Dir.exist?(logo_dir)
+        
+        # Create a minimal PNG file if it doesn't exist
+        unless File.exist?(logo_path)
+          png_data = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+                      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+                      0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
+                      0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+                      0x42, 0x60, 0x82].pack('C*')
+          File.binwrite(logo_path, png_data)
+        end
+
+        # Mock Prawn::Document::generate to capture PDF creation
+        pdf_content = nil
+        original_generate = Prawn::Document.method(:generate)
+        
+        allow(Prawn::Document).to receive(:generate) do |*args, &block|
+          # Create a mock PDF document
+          pdf_mock = instance_double('Prawn::Document')
+          bounds_mock = double(width: 500, height: 700)
+          
+          allow(pdf_mock).to receive(:text)
+          allow(pdf_mock).to receive(:image)
+          allow(pdf_mock).to receive(:move_down)
+          allow(pdf_mock).to receive(:bounds).and_return(bounds_mock)
+          
+          # Execute the block with our mock
+          block.call(pdf_mock) if block
+          
+          # Verify the logo image call
+          expect(pdf_mock).to have_received(:image).with(logo_path, at: [400, 700], width: 80)
+          
+          # Return dummy PDF content
+          '%PDF dummy content'
+        end
+
+        GenerateAssessmentResultJob.perform_now(contact.id)
+        
+        # Clean up test file
+        File.delete(logo_path) if File.exist?(logo_path)
+      end
     end
 
     context 'when job fails' do
@@ -241,10 +321,10 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       html = job.send(:generate_html_report, contact, ['Test diagnostic'])
 
-      expect(html).to include('Pregunta: Nivel de Agilidad')
-      expect(html).to include('Respuesta: Escalando')
-      expect(html).to include('Pregunta: ¿Qué más dirías?')
-      expect(html).to include('Respuesta: Somos una startup')
+      expect(html).to include('Pregunta: <p>Nivel de Agilidad</p>')
+      expect(html).to include('Respuesta: <p>Escalando</p>')
+      expect(html).to include('Pregunta: <p>¿Qué más dirías?</p>')
+      expect(html).to include('Respuesta: <p>Somos una startup</p>')
       expect(html).to include('<dt>')
       expect(html).to include('<dd>')
     end
@@ -258,6 +338,8 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
     before do
       contact.form_data = { 'name' => 'PDF User' }
       contact.save
+      # Set up null file store to avoid S3 dependency
+      FileStoreService.create_null
     end
 
     it 'generates PDF with assessment content' do
@@ -294,7 +376,91 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
       expect(pdf_mock).to have_received(:text).with('PDF Test', size: 18, style: :bold, align: :center, color: '007BFF')
       expect(pdf_mock).to have_received(:text).with('Participante: PDF User', size: 12, align: :center)
-      expect(pdf_mock).to have_received(:text).with('• Diagnostic text', size: 11, indent_paragraphs: 10)
+      expect(pdf_mock).to have_received(:text).with("• Diagnostic text", size: 11, indent_paragraphs: 10)
+    end
+
+    it 'includes Kleer logo in PDF' do
+      # Create a temporary logo file for testing
+      logo_path = Rails.root.join('app/assets/images/black_logo.png')
+      logo_dir = File.dirname(logo_path)
+      FileUtils.mkdir_p(logo_dir) unless Dir.exist?(logo_dir)
+      
+      # Create a minimal PNG file if it doesn't exist
+      unless File.exist?(logo_path)
+        png_data = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+                    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+                    0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
+                    0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+                    0x42, 0x60, 0x82].pack('C*')
+        File.binwrite(logo_path, png_data)
+      end
+
+      allow(assessment).to receive(:evaluate_rules_for_contact).and_return(['Test diagnostic'])
+
+      # Mock Prawn::Document to capture image calls
+      pdf_mock = instance_double('Prawn::Document')
+      font_families_mock = {}
+      allow(Prawn::Document).to receive(:new).and_return(pdf_mock)
+      allow(pdf_mock).to receive(:font_families).and_return(font_families_mock)
+      allow(pdf_mock).to receive(:font)
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:move_down)
+      allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:render).and_return('mocked pdf content')
+      allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
+
+      job.send(:generate_pdf_from_html, 'html', contact)
+
+      # Verify logo image was added to PDF
+      expect(pdf_mock).to have_received(:image).with(
+        logo_path,
+        at: [400, 700], # width - 100, height
+        width: 80
+      )
+      
+      # Clean up test file
+      File.delete(logo_path) if File.exist?(logo_path)
+    end
+
+    it 'handles long_text question types correctly in PDF' do
+      # Create questions with different types including long_text
+      question1 = create(:question, assessment: assessment, name: 'Short question', question_type: 'short_text')
+      question2 = create(:question, assessment: assessment, name: '¿Qué más dirías?', question_type: 'long_text')
+      question3 = create(:question, assessment: assessment, name: 'Scale question', question_type: 'linear_scale')
+      answer3 = create(:answer, question: question3, text: 'High', position: 4)
+
+      # Create responses
+      create(:response, contact: contact, question: question1, text_response: 'Short answer')
+      create(:response, contact: contact, question: question2, text_response: 'This is a longer response with multiple sentences. It should appear in the PDF.')
+      create(:response, contact: contact, question: question3, answer: answer3)
+
+      allow(assessment).to receive(:evaluate_rules_for_contact).and_return(['Test diagnostic'])
+
+      # Mock Prawn::Document to capture text calls
+      pdf_mock = instance_double('Prawn::Document')
+      font_families_mock = {}
+      text_calls = []
+      
+      allow(Prawn::Document).to receive(:new).and_return(pdf_mock)
+      allow(pdf_mock).to receive(:font_families).and_return(font_families_mock)
+      allow(pdf_mock).to receive(:font)
+      allow(pdf_mock).to receive(:text) do |text, *args|
+        text_calls << text
+      end
+      allow(pdf_mock).to receive(:move_down)
+      allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:render).and_return('mocked pdf content')
+      allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
+
+      job.send(:generate_pdf_from_html, 'html', contact)
+
+      # Verify all question types are handled correctly
+      expect(text_calls).to include('Short question')
+      expect(text_calls).to include('Short answer')
+      expect(text_calls).to include('¿Qué más dirías?')
+      expect(text_calls).to include('This is a longer response with multiple sentences. It should appear in the PDF.')
+      expect(text_calls).to include('Scale question')
+      expect(text_calls).to include('High')
     end
   end
 
