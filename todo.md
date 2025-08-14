@@ -14,8 +14,8 @@
 - ~~header/footer image~~ ✓
 - ~~Show only Question / anwser~~ ✓
 - ~~change color palette to teal/dark green~~ ✓
-- keep/improve html reporting
-- restore a working competency assessment html report
+- ~~keep/improve html reporting~~ ✓
+- ~~restore a working competency assessment html report~~ ✓
 
 # Migración a ActiveAdmin
 
