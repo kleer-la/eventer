@@ -22,7 +22,7 @@ ActiveAdmin.register Contact do
   scope :completed
   scope :failed
   scope :with_html_reports, lambda {
-    joins(:assessment).where(assessments: { rule_based: true }).where.not(assessment_report_html: [nil, ''])
+    joins(:assessment).where.not(assessment_report_html: [nil, ''])
   }
 
   action_item :toggle_view, only: :index do
@@ -60,7 +60,7 @@ ActiveAdmin.register Contact do
   end
 
   action_item :view_html_report, only: :show do
-    if contact.assessment&.rule_based? && contact.assessment_report_html.present?
+    if contact.assessment && contact.assessment_report_html.present?
       link_to 'View HTML Report', html_report_admin_contact_path(contact),
               target: '_blank',
               class: 'button'
@@ -93,7 +93,7 @@ ActiveAdmin.register Contact do
   end
 
   member_action :html_report, method: :get do
-    if resource.assessment&.rule_based? && resource.assessment_report_html.present?
+    if resource.assessment && resource.assessment_report_html.present?
       render html: resource.assessment_report_html.html_safe, layout: false
     else
       render plain: 'HTML report not available', status: :not_found
@@ -178,7 +178,7 @@ ActiveAdmin.register Contact do
         end
       end
       row :assessment_report_url
-      if contact.assessment&.rule_based?
+      if contact.assessment
         row :assessment_report_html do |contact|
           if contact.assessment_report_html.present?
             content_tag :div, 'HTML content available', class: 'status_tag'
@@ -189,12 +189,12 @@ ActiveAdmin.register Contact do
       end
       if contact.assessment_report_url.present?
         row 'Assessment report' do
-          if contact.assessment&.rule_based? && contact.assessment_report_html.present?
-            # Display HTML content for rule-based assessments
+          if contact.assessment_report_html.present?
+            # Display HTML content for both rule-based and competency assessments
             content_tag :div, contact.assessment_report_html.html_safe,
                         style: 'max-width: 600px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; background: white; border-radius: 4px;'
           else
-            # Display PNG image for competency-based assessments
+            # Fallback: Display PNG image if HTML not available
             image_tag contact.assessment_report_url.sub('.pdf', '.png'), style: 'max-width: 500px; max-height: 500px;'
           end
         end

@@ -521,8 +521,8 @@ RSpec.describe Api::ContactsController, type: :controller do
 
       # Verify that the chart was created with at least 3 data points
       # (the job should add a placeholder to meet the minimum requirement)
-      expect(CustomSpider).to have_received(:new).with(5)
-      expect(chart_mock).to have_received(:data).at_least(3).times
+      expect(CustomSpider).to have_received(:new).with(5).twice # Called for both PDF and HTML generation
+      expect(chart_mock).to have_received(:data).at_least(6).times # At least 3 data points x 2 charts
     end
 
     it 'processes competencies correctly with sufficient data' do
@@ -584,8 +584,8 @@ RSpec.describe Api::ContactsController, type: :controller do
       expect(contact.assessment_report_url).to eq('https://example.com/test.pdf')
 
       # Verify that the chart was created with exactly 3 data points (no placeholders needed)
-      expect(CustomSpider).to have_received(:new).with(5)
-      expect(chart_mock).to have_received(:data).exactly(3).times
+      expect(CustomSpider).to have_received(:new).with(5).twice # Called for both PDF and HTML generation
+      expect(chart_mock).to have_received(:data).exactly(6).times # 3 data points x 2 charts
     end
 
     it 'sets contact status to failed when job encounters an error' do

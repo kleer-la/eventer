@@ -113,7 +113,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         allow(File).to receive(:binwrite)
         allow(File).to receive(:delete)
         allow(File).to receive(:exist?).and_return(true)
-        
+
         # Mock HTML generation to capture content
         allow(job).to receive(:generate_html_report) do |contact_param, diagnostics|
           expect(contact_param).to eq(contact)
@@ -181,6 +181,18 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
           .to change { contact.reload.status }.to('completed')
       end
 
+      it 'generates HTML content for competency assessment' do
+        GenerateAssessmentResultJob.perform_now(contact.id)
+        contact.reload
+
+        expect(contact.assessment_report_html).to be_present
+        expect(contact.assessment_report_html).to include('<!DOCTYPE html>')
+        expect(contact.assessment_report_html).to include('Agile Coach Competency Framework Assessment')
+        expect(contact.assessment_report_html).to include('Gráfico de Competencias')
+        expect(contact.assessment_report_html).to include('Niveles de Competencia')
+        expect(contact.assessment_report_html).to include('Leadership skills')
+      end
+
       it 'creates and uploads radar chart' do
         chart_mock = instance_double('CustomSpider')
         allow(CustomSpider).to receive(:new).and_return(chart_mock)
@@ -198,8 +210,8 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
         GenerateAssessmentResultJob.perform_now(contact.id)
 
-        expect(chart_mock).to have_received(:data).with('leadership_skills', 3)
-        expect(store_service).to have_received(:upload).once # PDF only (chart is embedded)
+        expect(chart_mock).to have_received(:data).with('leadership_skills', 3).at_least(1).times
+        expect(store_service).to have_received(:upload).twice # PDF and chart for competency HTML reports
       end
     end
 
@@ -316,9 +328,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       allow(assessment).to receive(:evaluate_rules_for_contact)
         .with(contact)
         .and_return(['Test diagnostic for PDF'])
-
-      html_content = '<html><body>Test content</body></html>'
-      pdf_content = job.send(:generate_pdf_from_html, html_content, contact)
+      pdf_content = job.send(:generate_pdf, contact)
 
       expect(pdf_content).to be_a(String)
       expect(pdf_content.length).to be > 0
@@ -346,7 +356,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       allow(pdf_mock).to receive(:draw_text)
       allow(pdf_mock).to receive(:render).and_return('mocked pdf content')
 
-      job.send(:generate_pdf_from_html, 'html', contact)
+      job.send(:generate_pdf, contact)
 
       # Check for the new PDF structure
       expect(pdf_mock).to have_received(:text).with('Participante: PDF User', size: 12, align: :center, color: '333333')
@@ -386,13 +396,13 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       allow(pdf_mock).to receive(:render).and_return('mocked pdf content')
       allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
 
-      job.send(:generate_pdf_from_html, 'html', contact)
+      job.send(:generate_pdf, contact)
 
       # Verify all question types are handled correctly - check for answer text formatted with arrows
       expect(text_calls).to include('→ Short answer')
       expect(text_calls).to include('→ This is a longer response with multiple sentences. It should appear in the PDF.')
       expect(text_calls).to include('→ High')
-      
+
       # Verify section headers are present
       expect(text_calls).to include('Datos de la Evaluación: Preguntas y Respuestas')
       expect(text_calls).to include('Diagnóstico')

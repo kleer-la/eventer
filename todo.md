@@ -11,9 +11,11 @@
 - ~~website17: buttons for audio / video / external site (akin of podcast card)~~ ✓
 
 ## Improve Assessment
-- header/footer image
-- Show only Question / anwser
-- change color palette to teal/dark green
+- ~~header/footer image~~ ✓
+- ~~Show only Question / anwser~~ ✓
+- ~~change color palette to teal/dark green~~ ✓
+- keep/improve html reporting
+- restore a working competency assessment html report
 
 # Migración a ActiveAdmin
 
