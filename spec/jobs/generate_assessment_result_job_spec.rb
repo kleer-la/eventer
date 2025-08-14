@@ -106,21 +106,28 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       it 'evaluates rules and includes matching diagnostics in PDF' do
         job = GenerateAssessmentResultJob.new
 
-        # Mock PDF generation to capture content
-        pdf_content = instance_double('PDF Content')
-        allow(job).to receive(:generate_pdf_from_html).and_return(pdf_content)
-        allow(File).to receive(:write)
+        # Mock the PDF generator and file operations
+        generator_mock = instance_double('RuleBasedAssessmentPdfGenerator')
+        allow(RuleBasedAssessmentPdfGenerator).to receive(:new).and_return(generator_mock)
+        allow(generator_mock).to receive(:generate_pdf).and_return('pdf content')
+        allow(File).to receive(:binwrite)
         allow(File).to receive(:delete)
         allow(File).to receive(:exist?).and_return(true)
+        
+        # Mock HTML generation to capture content
+        allow(job).to receive(:generate_html_report) do |contact_param, diagnostics|
+          expect(contact_param).to eq(contact)
+          # The HTML should contain both diagnostic texts since both rules match
+          html_content = diagnostics.join(' ')
+          expect(html_content).to include('You show strong leadership potential.')
+          expect(html_content).to include('Your communication style is collaborative.')
+          html_content
+        end
 
         job.perform(contact.id)
 
-        expect(job).to have_received(:generate_pdf_from_html) do |html_content, contact_param|
-          expect(contact_param).to eq(contact)
-          # The HTML should contain both diagnostic texts since both rules match
-          expect(html_content).to include('You show strong leadership potential.')
-          expect(html_content).to include('Your communication style is collaborative.')
-        end
+        expect(generator_mock).to have_received(:generate_pdf)
+        expect(job).to have_received(:generate_html_report)
       end
 
       it 'creates temporary files and cleans them up' do
@@ -192,7 +199,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         GenerateAssessmentResultJob.perform_now(contact.id)
 
         expect(chart_mock).to have_received(:data).with('leadership_skills', 3)
-        expect(store_service).to have_received(:upload).twice # Chart PNG + PDF
+        expect(store_service).to have_received(:upload).once # PDF only (chart is embedded)
       end
     end
 
@@ -335,13 +342,15 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       allow(pdf_mock).to receive(:move_down)
       allow(pdf_mock).to receive(:image)
       allow(pdf_mock).to receive(:bounds).and_return(bounds_mock)
+      allow(pdf_mock).to receive(:fill_color)
+      allow(pdf_mock).to receive(:draw_text)
       allow(pdf_mock).to receive(:render).and_return('mocked pdf content')
 
       job.send(:generate_pdf_from_html, 'html', contact)
 
-      expect(pdf_mock).to have_received(:text).with('PDF Test', size: 18, style: :bold, align: :center, color: '007BFF')
-      expect(pdf_mock).to have_received(:text).with('Participante: PDF User', size: 12, align: :center)
-      expect(pdf_mock).to have_received(:text).with('• Diagnostic text', size: 11, indent_paragraphs: 10)
+      # Check for the new PDF structure
+      expect(pdf_mock).to have_received(:text).with('Participante: PDF User', size: 12, align: :center, color: '333333')
+      expect(pdf_mock).to have_received(:text).with('Diagnostic text', size: 12, color: '333333', leading: 4)
     end
 
     it 'handles long_text question types correctly in PDF' do
@@ -372,18 +381,21 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       end
       allow(pdf_mock).to receive(:move_down)
       allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:fill_color)
+      allow(pdf_mock).to receive(:draw_text)
       allow(pdf_mock).to receive(:render).and_return('mocked pdf content')
       allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
 
       job.send(:generate_pdf_from_html, 'html', contact)
 
-      # Verify all question types are handled correctly
-      expect(text_calls).to include('Short question')
-      expect(text_calls).to include('Short answer')
-      expect(text_calls).to include('¿Qué más dirías?')
-      expect(text_calls).to include('This is a longer response with multiple sentences. It should appear in the PDF.')
-      expect(text_calls).to include('Scale question')
-      expect(text_calls).to include('High')
+      # Verify all question types are handled correctly - check for answer text formatted with arrows
+      expect(text_calls).to include('→ Short answer')
+      expect(text_calls).to include('→ This is a longer response with multiple sentences. It should appear in the PDF.')
+      expect(text_calls).to include('→ High')
+      
+      # Verify section headers are present
+      expect(text_calls).to include('Datos de la Evaluación: Preguntas y Respuestas')
+      expect(text_calls).to include('Diagnóstico')
     end
   end
 

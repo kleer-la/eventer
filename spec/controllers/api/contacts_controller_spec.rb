@@ -448,11 +448,10 @@ RSpec.describe Api::ContactsController, type: :controller do
     let(:answer2) { create(:answer, question: question2, position: 2) }
     let(:assessment) { create(:assessment) }
     let(:contact) do
-      create(:contact, 
-        trigger_type: 'assessment_submission', 
-        assessment_id: assessment.id,
-        status: 'pending'
-      )
+      create(:contact,
+             trigger_type: 'assessment_submission',
+             assessment_id: assessment.id,
+             status: 'pending')
     end
 
     before do
@@ -461,7 +460,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       answer1
       answer2
       assessment
-      
+
       # Create responses for the contact
       contact.responses.create!(question: question1, answer: answer1)
       contact.responses.create!(question: question2, answer: answer2)
@@ -472,24 +471,44 @@ RSpec.describe Api::ContactsController, type: :controller do
       allow(FileStoreService).to receive(:current).and_return(
         double(upload: 'https://example.com/test.pdf')
       )
-      
+
       # Mock file operations
-      allow(File).to receive(:write)
-      allow(Rails.root).to receive(:join).and_return('/tmp/test_path')
-      
+      allow(File).to receive(:binwrite)
+      allow(File).to receive(:delete)
+      allow(File).to receive(:exist?).and_return(true)
+
+      # Mock chart path generation
+      chart_path = Rails.root.join('tmp', 'test_chart.png')
+      allow(Rails.root).to receive(:join).with('tmp', anything).and_return(chart_path)
+      allow(Rails.root).to receive(:join).with('app/assets/images/kleer_compass_header.png').and_call_original
+      allow(Rails.root).to receive(:join).with('app/assets/images/kleer_compas_footer.png').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Regular.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Bold.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Italic.ttf').and_call_original
+
       # Mock Gruff chart generation
       chart_mock = double('CustomSpider')
       allow(CustomSpider).to receive(:new).and_return(chart_mock)
       allow(chart_mock).to receive(:data)
       allow(chart_mock).to receive(:theme=)
-      allow(chart_mock).to receive(:write)
-      
+      allow(chart_mock).to receive(:write) do |path|
+        # Create a minimal valid PNG file for testing
+        png_data = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A].pack('C*')
+        File.binwrite(path, png_data)
+      end
+
       # Mock Prawn PDF generation
       pdf_mock = double('Prawn::Document')
-      allow(Prawn::Document).to receive(:generate).and_yield(pdf_mock)
-      allow(pdf_mock).to receive(:text)
+      allow(Prawn::Document).to receive(:new).and_return(pdf_mock)
+      allow(pdf_mock).to receive(:font_families).and_return(double(update: nil))
+      allow(pdf_mock).to receive(:font)
+      allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
       allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:fill_color)
+      allow(pdf_mock).to receive(:draw_text)
       allow(pdf_mock).to receive(:move_down)
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:render).and_return('pdf content')
 
       # Execute the job
       job = GenerateAssessmentResultJob.new
@@ -499,7 +518,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       contact.reload
       expect(contact.status).to eq('completed')
       expect(contact.assessment_report_url).to eq('https://example.com/test.pdf')
-      
+
       # Verify that the chart was created with at least 3 data points
       # (the job should add a placeholder to meet the minimum requirement)
       expect(CustomSpider).to have_received(:new).with(5)
@@ -511,29 +530,49 @@ RSpec.describe Api::ContactsController, type: :controller do
       question3 = create(:question, name: 'facilitacion')
       answer3 = create(:answer, question: question3, position: 3)
       contact.responses.create!(question: question3, answer: answer3)
-      
+
       # Mock the file store service
       allow(FileStoreService).to receive(:current).and_return(
         double(upload: 'https://example.com/test.pdf')
       )
-      
+
       # Mock file operations
-      allow(File).to receive(:write)
-      allow(Rails.root).to receive(:join).and_return('/tmp/test_path')
-      
+      allow(File).to receive(:binwrite)
+      allow(File).to receive(:delete)
+      allow(File).to receive(:exist?).and_return(true)
+
+      # Mock chart path generation
+      chart_path = Rails.root.join('tmp', 'test_chart.png')
+      allow(Rails.root).to receive(:join).with('tmp', anything).and_return(chart_path)
+      allow(Rails.root).to receive(:join).with('app/assets/images/kleer_compass_header.png').and_call_original
+      allow(Rails.root).to receive(:join).with('app/assets/images/kleer_compas_footer.png').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Regular.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Bold.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Italic.ttf').and_call_original
+
       # Mock Gruff chart generation
       chart_mock = double('CustomSpider')
       allow(CustomSpider).to receive(:new).and_return(chart_mock)
       allow(chart_mock).to receive(:data)
       allow(chart_mock).to receive(:theme=)
-      allow(chart_mock).to receive(:write)
-      
+      allow(chart_mock).to receive(:write) do |path|
+        # Create a minimal valid PNG file for testing
+        png_data = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A].pack('C*')
+        File.binwrite(path, png_data)
+      end
+
       # Mock Prawn PDF generation
       pdf_mock = double('Prawn::Document')
-      allow(Prawn::Document).to receive(:generate).and_yield(pdf_mock)
-      allow(pdf_mock).to receive(:text)
+      allow(Prawn::Document).to receive(:new).and_return(pdf_mock)
+      allow(pdf_mock).to receive(:font_families).and_return(double(update: nil))
+      allow(pdf_mock).to receive(:font)
+      allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
       allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:fill_color)
+      allow(pdf_mock).to receive(:draw_text)
       allow(pdf_mock).to receive(:move_down)
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:render).and_return('pdf content')
 
       # Execute the job
       job = GenerateAssessmentResultJob.new
@@ -543,7 +582,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       contact.reload
       expect(contact.status).to eq('completed')
       expect(contact.assessment_report_url).to eq('https://example.com/test.pdf')
-      
+
       # Verify that the chart was created with exactly 3 data points (no placeholders needed)
       expect(CustomSpider).to have_received(:new).with(5)
       expect(chart_mock).to have_received(:data).exactly(3).times
@@ -553,33 +592,53 @@ RSpec.describe Api::ContactsController, type: :controller do
       # Mock the file store service to return a valid store initially
       store_mock = double('FileStoreService')
       allow(FileStoreService).to receive(:current).and_return(store_mock)
-      
+
       # Mock file operations
-      allow(File).to receive(:write)
-      allow(Rails.root).to receive(:join).and_return('/tmp/test_path')
-      
+      allow(File).to receive(:binwrite)
+      allow(File).to receive(:delete)
+      allow(File).to receive(:exist?).and_return(true)
+
+      # Mock chart path generation
+      chart_path = Rails.root.join('tmp', 'test_chart.png')
+      allow(Rails.root).to receive(:join).with('tmp', anything).and_return(chart_path)
+      allow(Rails.root).to receive(:join).with('app/assets/images/kleer_compass_header.png').and_call_original
+      allow(Rails.root).to receive(:join).with('app/assets/images/kleer_compas_footer.png').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Regular.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Bold.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Italic.ttf').and_call_original
+
       # Mock Gruff chart generation to work initially
       chart_mock = double('CustomSpider')
       allow(CustomSpider).to receive(:new).and_return(chart_mock)
       allow(chart_mock).to receive(:data)
       allow(chart_mock).to receive(:theme=)
-      allow(chart_mock).to receive(:write)
-      
+      allow(chart_mock).to receive(:write) do |path|
+        # Create a minimal valid PNG file for testing
+        png_data = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A].pack('C*')
+        File.binwrite(path, png_data)
+      end
+
       # Mock Prawn PDF generation
       pdf_mock = double('Prawn::Document')
-      allow(Prawn::Document).to receive(:generate).and_yield(pdf_mock)
-      allow(pdf_mock).to receive(:text)
+      allow(Prawn::Document).to receive(:new).and_return(pdf_mock)
+      allow(pdf_mock).to receive(:font_families).and_return(double(update: nil))
+      allow(pdf_mock).to receive(:font)
+      allow(pdf_mock).to receive(:bounds).and_return(double(width: 500, height: 700))
       allow(pdf_mock).to receive(:image)
+      allow(pdf_mock).to receive(:fill_color)
+      allow(pdf_mock).to receive(:draw_text)
       allow(pdf_mock).to receive(:move_down)
-      
+      allow(pdf_mock).to receive(:text)
+      allow(pdf_mock).to receive(:render).and_return('pdf content')
+
       # Make the upload operation fail (this happens after in_progress is set)
       allow(store_mock).to receive(:upload).and_raise(StandardError.new('S3 upload failed'))
-      
+
       # Execute the job and expect it to handle the error
       job = GenerateAssessmentResultJob.new
-      expect {
+      expect do
         job.perform(contact.id)
-      }.to raise_error(StandardError, 'S3 upload failed')
+      end.to raise_error(StandardError, 'S3 upload failed')
 
       # Verify the contact status was set to failed
       contact.reload
@@ -659,14 +718,14 @@ RSpec.describe Api::ContactsController, type: :controller do
     end
     let(:valid_text_assessment_params) do
       valid_contact_params.merge({
-        resource_slug: 'text-assessment',
-        resource_title_es: 'Text Assessment',
-        assessment_id: assessment.id.to_s,
-        assessment_results: {
-          '10' => 'This is my short answer',
-          '11' => 'This is my much longer and more detailed answer that spans multiple sentences and provides comprehensive information.'
-        }
-      })
+                                   resource_slug: 'text-assessment',
+                                   resource_title_es: 'Text Assessment',
+                                   assessment_id: assessment.id.to_s,
+                                   assessment_results: {
+                                     '10' => 'This is my short answer',
+                                     '11' => 'This is my much longer and more detailed answer that spans multiple sentences and provides comprehensive information.'
+                                   }
+                                 })
     end
     let(:contact) { Contact.last }
 
@@ -694,13 +753,13 @@ RSpec.describe Api::ContactsController, type: :controller do
 
       expect(response).to have_http_status(:created)
       expect(contact.responses.count).to eq(2)
-      
+
       short_response = contact.responses.find_by(question: short_text_question)
       long_response = contact.responses.find_by(question: long_text_question)
-      
+
       expect(short_response.text_response).to eq('This is my short answer')
       expect(short_response.answer).to be_nil
-      
+
       expect(long_response.text_response).to eq('This is my much longer and more detailed answer that spans multiple sentences and provides comprehensive information.')
       expect(long_response.answer).to be_nil
     end
@@ -733,15 +792,15 @@ RSpec.describe Api::ContactsController, type: :controller do
     end
     let(:valid_mixed_assessment_params) do
       valid_contact_params.merge({
-        resource_slug: 'mixed-assessment',
-        resource_title_es: 'Mixed Assessment',
-        assessment_id: assessment.id.to_s,
-        assessment_results: {
-          '20' => '50',  # linear_scale answer_id
-          '21' => 'My text response',  # short_text response
-          '22' => '51'   # radio_button answer_id
-        }
-      })
+                                   resource_slug: 'mixed-assessment',
+                                   resource_title_es: 'Mixed Assessment',
+                                   assessment_id: assessment.id.to_s,
+                                   assessment_results: {
+                                     '20' => '50', # linear_scale answer_id
+                                     '21' => 'My text response', # short_text response
+                                     '22' => '51' # radio_button answer_id
+                                   }
+                                 })
     end
     let(:contact) { Contact.last }
 
@@ -759,17 +818,17 @@ RSpec.describe Api::ContactsController, type: :controller do
 
       expect(response).to have_http_status(:created)
       expect(contact.responses.count).to eq(3)
-      
+
       linear_response = contact.responses.find_by(question: linear_question)
       text_response = contact.responses.find_by(question: short_text_question)
       radio_response = contact.responses.find_by(question: radio_question)
-      
+
       expect(linear_response.answer_id).to eq(50)
       expect(linear_response.text_response).to be_nil
-      
+
       expect(text_response.text_response).to eq('My text response')
       expect(text_response.answer).to be_nil
-      
+
       expect(radio_response.answer_id).to eq(51)
       expect(radio_response.text_response).to be_nil
     end

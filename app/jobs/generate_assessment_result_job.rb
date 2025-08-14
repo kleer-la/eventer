@@ -17,7 +17,6 @@ class GenerateAssessmentResultJob < ActiveJob::Base
       else
         generate_competency_report(contact, store, file_name)
       end
-
       Log.log(:assessment, :info, "PDF generated for contact #{contact_id}",
               { public_url: contact.assessment_report_url })
     rescue StandardError => e
@@ -39,16 +38,14 @@ class GenerateAssessmentResultJob < ActiveJob::Base
   end
 
   def generate_rule_based_report(contact, store, file_name)
+    # Generate PDF using shared generator
+    generator = RuleBasedAssessmentPdfGenerator.new(contact)
+    pdf_content = generator.generate_pdf
+
+    # Generate HTML content for compatibility
     assessment = contact.assessment
-
-    # Evaluate rules and get matching diagnostics
     diagnostics = assessment.evaluate_rules_for_contact(contact)
-
-    # Generate HTML content
     html_content = generate_html_report(contact, diagnostics)
-
-    # Generate PDF from HTML
-    pdf_content = generate_pdf_from_html(html_content, contact)
 
     # Save PDF to temporary file and upload
     pdf_file_name = "#{file_name}.pdf"
@@ -69,72 +66,20 @@ class GenerateAssessmentResultJob < ActiveJob::Base
   end
 
   def generate_competency_report(contact, store, file_name)
-    # Original competency-based report logic
-    competencies = fetch_key_value_from_responses(contact)
+    # Generate PDF using shared generator
+    generator = CompetencyAssessmentPdfGenerator.new(contact)
+    pdf_content = generator.generate_pdf
 
-    # Ensure we have at least 3 data points for the spider chart
-    competencies["placeholder_#{competencies.size}"] = 0 while competencies.size < 3 if competencies.size < 3
-
-    # Generate the radar chart using Gruff
-    g = CustomSpider.new(5)
-    competencies.each do |key, value|
-      g.data(key, value)
-    end
-    g.theme = {
-      colors: %w[white white white white white white white],
-      marker_color: 'pink',
-      font_color: 'black',
-      background_colors: %w[white white]
-    }
-
-    chart_path = Rails.root.join('tmp', "radar_chart_#{contact.id}.png")
-    g.write(chart_path)
-
-    # Upload radar chart PNG to the certificate bucket
-    store.upload(chart_path, "#{file_name}.png", 'certificate')
-
-    # Generate PDF using Prawn
-    require 'prawn'
+    # Save PDF to temporary file and upload
     pdf_file_name = "#{file_name}.pdf"
     pdf_path = Rails.root.join('tmp', pdf_file_name)
 
-    name = contact.form_data&.dig('name')
-    Prawn::Document.generate(pdf_path) do |pdf|
-      # Add Kleer logo in the upper right corner
-      logo_path = Rails.root.join('app/assets/images/black_logo.png')
-      if File.exist?(logo_path)
-        pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80
-      end
-
-      pdf.text 'Agile Coach Competency Framework Assessment', size: 24, style: :bold, align: :center
-      pdf.text "Name: #{name}", size: 18, align: :center
-
-      # Add the radar chart
-      pdf.image chart_path, width: 400, align: :center
-
-      # Add competency levels as a list (excluding placeholder entries)
-      pdf.move_down 20
-      pdf.text 'Competency Levels:', size: 16, style: :bold
-      competencies.each do |key, value|
-        next if key.to_s.start_with?('placeholder_')
-
-        level = case value
-                when 0 then 'Novato'
-                when 1 then 'Principiante'
-                when 2 then 'Intermedio'
-                when 3 then 'Avanzado'
-                when 4 then 'Experto'
-                else 'Novato'
-                end
-        pdf.text "#{key.to_s.humanize}: #{level}", indent_paragraphs: 20
-      end
-    end
-
+    File.binwrite(pdf_path, pdf_content)
     public_url = store.upload(pdf_path, pdf_file_name, 'certificate')
+    
     contact.update(assessment_report_url: public_url, status: :completed)
 
     # Clean up temporary files
-    File.delete(chart_path) if File.exist?(chart_path)
     File.delete(pdf_path) if File.exist?(pdf_path)
   end
 
@@ -331,156 +276,9 @@ class GenerateAssessmentResultJob < ActiveJob::Base
     questions_html
   end
 
-  def generate_pdf_from_html(_html_content, contact)
-    # Generate professional PDF that matches HTML structure and styling
-    require 'prawn'
-
-    # Set locale for this PDF generation
-    locale = contact.assessment.language || contact.form_data&.dig('language') || 'es'
-    I18n.with_locale(locale) do
-      # Extract data
-      name = contact.form_data&.dig('name') || I18n.t('assessment.pdf.participant_default', default: 'Participante')
-      company = contact.form_data&.dig('company')
-      assessment_title = contact.assessment.title
-      assessment_date = contact.created_at.strftime('%B %d, %Y')
-      diagnostics = contact.assessment.evaluate_rules_for_contact(contact)
-
-      # Create PDF with proper margins
-      pdf = Prawn::Document.new(page_size: 'A4', margin: 40)
-
-      # Add Kleer logo in the upper right corner
-      logo_path = Rails.root.join('app/assets/images/black_logo.png')
-      if File.exist?(logo_path)
-        pdf.image logo_path, at: [pdf.bounds.width - 100, pdf.bounds.height], width: 80
-      end
-
-      # Use Raleway fonts from vendor/assets/fonts
-      raleway_regular = Rails.root.join('vendor/assets/fonts/Raleway-Regular.ttf')
-      raleway_bold = Rails.root.join('vendor/assets/fonts/Raleway-Bold.ttf')
-      raleway_italic = Rails.root.join('vendor/assets/fonts/Raleway-Italic.ttf')
-
-      if File.exist?(raleway_regular) && File.exist?(raleway_bold)
-        pdf.font_families.update(
-          'Raleway' => {
-            normal: raleway_regular,
-            bold: raleway_bold,
-            italic: raleway_italic
-          }
-        )
-        pdf.font 'Raleway'
-      else
-        # Use default font (no explicit font setting needed)
-        # Prawn will use its default built-in font
-      end
-
-      # === HEADER SECTION ===
-      # Title (h1 equivalent: 18pt)
-      pdf.text assessment_title, size: 18, style: :bold, align: :center, color: '007BFF'
-      pdf.move_down 10
-
-      # Participant info
-      pdf.text "#{I18n.t('assessment.pdf.participant')} #{name}", size: 12, align: :center
-      pdf.text "#{I18n.t('assessment.pdf.company')} #{company}", size: 12, align: :center if company.present?
-      pdf.text "#{I18n.t('assessment.pdf.assessment_date')} #{assessment_date}", size: 12, align: :center
-      pdf.move_down 30
-
-      # === QUESTIONS AND ANSWERS SECTION ===
-      pdf.text I18n.t('assessment.pdf.questions_and_answers'), size: 14, style: :bold, color: '007BFF'
-      pdf.move_down 15
-
-      # Add questions and answers
-      if contact.responses.any?
-        contact.responses.includes(:question, :answer).each do |response|
-          question_text = response.question.name || response.question.text || "#{I18n.t('question',
-                                                                                        default: 'Pregunta')} #{response.question.id}"
-
-          # Question text (bold) - convert markdown to plain text for PDF
-          pdf.text markdown_to_text(question_text), size: 11, style: :bold
-          pdf.move_down 5
-
-          # Answer text (indented)
-          answer_text = case response.question.question_type
-                        when 'linear_scale', 'radio_button'
-                          if response.answer.present?
-                            response.answer.text.presence || "#{I18n.t('option',
-                                                                       default: 'Opción')} #{response.answer.position}"
-                          else
-                            I18n.t('no_response', default: 'Sin respuesta')
-                          end
-                        when 'short_text', 'long_text'
-                          response.text_response.presence || I18n.t('no_response', default: 'Sin respuesta')
-                        else
-                          I18n.t('no_response', default: 'Sin respuesta')
-                        end
-
-          pdf.text markdown_to_text(answer_text), size: 10, indent_paragraphs: 20
-          pdf.move_down 10
-        end
-      else
-        pdf.text I18n.t('no_responses_recorded', default: 'No hay respuestas registradas.'), size: 10, style: :italic
-      end
-
-      pdf.move_down 20
-
-      # === DIAGNOSTIC RESULTS SECTION ===
-      pdf.text I18n.t('assessment.pdf.diagnosis'), size: 14, style: :bold, color: '007BFF'
-      pdf.move_down 15
-
-      if diagnostics.any?
-        diagnostics.each do |diagnostic|
-          # Add bullet point for each diagnostic - convert markdown to plain text for PDF
-          pdf.text "• #{markdown_to_text(diagnostic)}", size: 11, indent_paragraphs: 10
-          pdf.move_down 8
-        end
-      else
-        pdf.text I18n.t('no_specific_diagnostics', default: 'No se activaron diagnósticos específicos basados en tus respuestas.'),
-                 size: 11, style: :italic, align: :center
-      end
-
-      pdf.move_down 30
-
-      # === FOOTER ===
-      pdf.text I18n.t('assessment.pdf.footer_disclaimer'),
-               size: 9, style: :italic, color: '666666'
-
-      pdf.render
-    end
-  end
-
-  def fetch_key_value_from_responses(contact)
-    # Initialize a hash for competencies with default value 0
-    # competencies = {
-    #   'coaching_professional' => 0,
-    #   'mentoring' => 0,
-    #   'training' => 0,
-    #   'lean_agile' => 0,
-    #   'facilitacion' => 0,
-    #   'maestria_transformacional' => 0,
-    #   'maestria_negocios' => 0,
-    #   'maestria_tecnica' => 0
-    # }
-
-    contact.responses.includes(:question, :answer).reduce({}) do |ac, response|
-      question_name = response.question.name.downcase.gsub(/\s+/, '_')
-
-      case response.question.question_type
-      when 'linear_scale', 'radio_button'
-        if response.answer.present?
-          position = (response.answer.position || 0).to_i
-          # For radio buttons, position represents the competency level (0-4 scale expected)
-          normalized_score = position
-          ac.merge(question_name => normalized_score)
-        else
-          ac # Skip if no answer
-        end
-      when 'short_text', 'long_text'
-        # For text responses, we could analyze sentiment, length, keyword matching, etc.
-        # For now, let's assign a placeholder score or skip them from radar charts
-        # ac.merge(question_name + '_text' => response.text_response)
-        ac # Skip text responses from radar chart for now
-      else
-        ac # Skip unknown question types
-      end
-    end
+  # Legacy method for test compatibility
+  def generate_pdf_from_html(html_content, contact)
+    generator = RuleBasedAssessmentPdfGenerator.new(contact)
+    generator.generate_pdf
   end
 end

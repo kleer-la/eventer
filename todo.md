@@ -4,11 +4,11 @@
 - delete test rule button (not implemented)
 
 ## Improve News
-- explain meaning of fields. I.e. url: more info / image: to show in the news page
-- do we need to add an audio field?
-- move visible as 2nd field in the show/edit form
-- make visible default to false
-- website17: buttons for audio / video / external site (akin of podcast card)
+- ~~explain meaning of fields. I.e. url: more info / image: to show in the news page~~ ✓
+- ~~do we need to add an audio field?~~ ✓
+- ~~move visible as 2nd field in the show/edit form~~ ✓
+- ~~make visible default to false~~ ✓
+- ~~website17: buttons for audio / video / external site (akin of podcast card)~~ ✓
 
 ## Improve Assessment
 - header/footer image
