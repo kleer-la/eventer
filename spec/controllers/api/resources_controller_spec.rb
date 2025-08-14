@@ -142,4 +142,68 @@ describe Api::ResourcesController do
       expect(json_response['preview_en']).to eq('https://example.com/preview-en.png')
     end
   end
+
+  describe 'GET #preview' do
+    before do
+      @published_resource = create(:resource, title_es: 'Published Resource', published: true)
+      @unpublished_resource = create(:resource, title_es: 'Unpublished Resource', published: false)
+    end
+
+    it 'returns all resources including unpublished ones in JSON format' do
+      get :preview, params: { format: 'json' }
+
+      expect(response).to have_http_status(:success)
+      json_response = JSON.parse(response.body)
+
+      resource_titles = json_response.map { |item| item['title_es'] }
+      expect(resource_titles).to include('Published Resource')
+      expect(resource_titles).to include('Unpublished Resource')
+    end
+
+    it 'orders resources by created_at descending' do
+      # Clean up any existing resources first
+      Resource.delete_all
+      
+      old_unpublished = create(:resource,
+                              title_es: 'Old Unpublished Resource',
+                              created_at: 1.month.ago,
+                              published: false)
+      new_published = create(:resource,
+                            title_es: 'New Published Resource',
+                            created_at: 1.day.ago,
+                            published: true)
+
+      get :preview, params: { format: 'json' }
+
+      expect(response).to have_http_status(:success)
+      json_response = JSON.parse(response.body)
+      
+      # Should be ordered by created_at desc (newest first)
+      expect(json_response.first['title_es']).to eq('New Published Resource')
+      expect(json_response.last['title_es']).to eq('Old Unpublished Resource')
+    end
+
+    it 'includes the same fields and associations as index' do
+      category = create(:category, name: 'Preview Category')
+      author = create(:trainer, name: 'Preview Author')
+      resource = create(:resource, 
+                       title_es: 'Preview Resource Test', 
+                       published: false,
+                       category: category)
+      create(:authorship, resource:, trainer: author)
+
+      get :preview, params: { format: 'json' }
+
+      expect(response).to have_http_status(:success)
+      json_response = JSON.parse(response.body)
+      preview_resource = json_response.find { |r| r['title_es'] == 'Preview Resource Test' }
+
+      expect(preview_resource).to be_present
+      expect(preview_resource['category_name']).to eq('Preview Category')
+      expect(preview_resource['authors']).to be_an(Array)
+      expect(preview_resource['authors'].first['name']).to eq('Preview Author')
+      expect(preview_resource['translators']).to be_an(Array)
+      expect(preview_resource['illustrators']).to be_an(Array)
+    end
+  end
 end

@@ -36,7 +36,11 @@ Rails.application.routes.draw do
       end
     end
     resources :articles, only: %i[index show]
-    resources :resources, only: %i[index show]
+    resources :resources, only: %i[index show] do
+      collection do
+        get :preview
+      end
+    end
     resources :pages, only: %i[show]
     resources :contacts, only: %i[create show] do
       get ':contact_id/status', on: :collection, to: 'contacts#status'

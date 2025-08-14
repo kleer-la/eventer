@@ -29,6 +29,19 @@ module Api
       )
     end
 
+    def preview
+      resources = resources_with_associations.order(created_at: :desc)
+      render(
+        json: resources,
+        methods: %i[category_name],
+        include: {
+          authors: { only: trainer_index_fields },
+          translators: { only: trainer_index_fields },
+          illustrators: { only: trainer_index_fields }
+        }
+      )
+    end
+
     def show
       lang = params[:lang] || 'es'
       return render json: { error: 'Invalid language' }, status: :bad_request unless %w[es en].include?(lang)
