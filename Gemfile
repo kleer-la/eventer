@@ -105,5 +105,6 @@ gem 'activeadmin'
 gem 'activeadmin_addons'
 
 gem 'aws-sdk-s3', '~> 1.0'
+gem 'mini_magick'
 
 gem 'addressable', '~> 2.8'

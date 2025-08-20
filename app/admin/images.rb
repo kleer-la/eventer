@@ -71,6 +71,9 @@ ActiveAdmin.register_page 'Images' do
         f.inputs do
           f.input :file, as: :file, input_html: { id: 'image_file' }
           f.input :path, input_html: { placeholder: 'Image path', id: 'image_path' }
+          f.input :convert_to_webp, as: :boolean, 
+                  label: 'Convert to WebP (for PNG/JPEG/JPG files)',
+                  input_html: { id: 'convert_to_webp', checked: true }
           f.input :image_bucket, input_html: { value: image_bucket }, as: :hidden
         end
         f.actions do
@@ -100,11 +103,27 @@ ActiveAdmin.register_page 'Images' do
             return cleaned + extension.toLowerCase();
           }
 
+          function toggleWebpOption(filename) {
+            var extension = filename.split('.').pop().toLowerCase();
+            var webpOption = $('#convert_to_webp').closest('.input');
+            
+            if (['png', 'jpg', 'jpeg'].includes(extension)) {
+              webpOption.show();
+            } else {
+              webpOption.hide();
+              $('#convert_to_webp').prop('checked', false);
+            }
+          }
+
           $('#image_file').change(function() {
             var fileName = $(this).val().split('\\\\').pop();
             var cleanedFilename = cleanFilename(fileName);
             $('#image_path').val(cleanedFilename);
+            toggleWebpOption(fileName);
           });
+
+          // Hide WebP option by default
+          $('#convert_to_webp').closest('.input').hide();
         });
       JS
     end
@@ -177,10 +196,40 @@ ActiveAdmin.register_page 'Images' do
     store = FileStoreService.current
     file = params[:image][:file]
     img_name = params[:image][:path]
+    convert_to_webp = params[:image][:convert_to_webp] == '1'
 
     begin
+      # Upload original image
       @public_url = store.upload(file.tempfile, img_name, @image_bucket)
-      flash[:notice] = 'Image successfully uploaded'
+      uploaded_files = [img_name]
+      
+      # Convert and upload WebP version if requested and supported
+      if convert_to_webp && ImageConversionService.supported_for_webp?(img_name)
+        begin
+          # Convert to WebP
+          webp_path = ImageConversionService.convert_to_webp(file.tempfile.path)
+          webp_filename = ImageConversionService.webp_filename(img_name)
+          
+          # Upload WebP file
+          webp_file = File.open(webp_path, 'rb')
+          store.upload(webp_file, webp_filename, @image_bucket)
+          uploaded_files << webp_filename
+          
+          # Clean up temporary WebP file
+          webp_file.close
+          File.delete(webp_path) if File.exist?(webp_path)
+        rescue StandardError => e
+          Rails.logger.warn "WebP conversion failed for #{img_name}: #{e.message}"
+          # Continue with original upload even if WebP conversion fails
+        end
+      end
+
+      if uploaded_files.size > 1
+        flash[:notice] = "Images successfully uploaded: #{uploaded_files.join(', ')}"
+      else
+        flash[:notice] = 'Image successfully uploaded'
+      end
+      
       redirect_to admin_images_show_path(bucket: @image_bucket, key: img_name)
     rescue StandardError => e
       flash[:error] = "Error uploading image: #{e.message}"
