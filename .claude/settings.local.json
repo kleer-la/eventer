@@ -8,6 +8,9 @@
       "Bash(bundle exec rspec:*)",
       "Bash(grep:*)"
     ],
-    "deny": []
+    "deny": [],
+    "additionalDirectories": [
+      "/home/juan/dev/website17"
+    ]
   }
 }

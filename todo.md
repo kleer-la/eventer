@@ -24,3 +24,28 @@
 
 ## Website17
 - Clean up: make layout default
+
+
+## Website17 - change cdn
+
+ Ruby Controllers (3 files):
+  - controllers/helper.rb - comment only
+  - controllers/assessments_controller.rb - 2 references
+  - controllers/services_controller.rb - 1 reference
+
+  JSON Data Files (3 files):
+  - spec/catalog.json - 6 references
+  - lib/storage/podcasts.json - 8 references
+  - lib/academy_storage.json - 1 reference
+
+  Ruby Service Files (1 file):
+  - lib/services/file_store_service.rb - 1 reference (generates S3 URLs)
+
+  Test Files (2 files):
+  - features/step_definitions/services_steps.rb - 1 reference
+  - features/step_definitions/resources_steps.rb - 1 reference
+
+  Replace in objects
+  - news.img
+
+  - Check and remove home.services.* in locales files
