@@ -485,6 +485,8 @@ RSpec.describe Api::ContactsController, type: :controller do
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Regular.ttf').and_call_original
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Bold.ttf').and_call_original
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Italic.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('public/images/kleer_compass_header.png').and_call_original
+      allow(Rails.root).to receive(:join).with('public/images/kleer_compas_footer.png').and_call_original
 
       # Mock Gruff chart generation
       chart_mock = double('CustomSpider')
@@ -549,6 +551,8 @@ RSpec.describe Api::ContactsController, type: :controller do
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Regular.ttf').and_call_original
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Bold.ttf').and_call_original
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Italic.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('public/images/kleer_compass_header.png').and_call_original
+      allow(Rails.root).to receive(:join).with('public/images/kleer_compas_footer.png').and_call_original
 
       # Mock Gruff chart generation
       chart_mock = double('CustomSpider')
@@ -606,6 +610,8 @@ RSpec.describe Api::ContactsController, type: :controller do
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Regular.ttf').and_call_original
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Bold.ttf').and_call_original
       allow(Rails.root).to receive(:join).with('vendor/assets/fonts/Raleway-Italic.ttf').and_call_original
+      allow(Rails.root).to receive(:join).with('public/images/kleer_compass_header.png').and_call_original
+      allow(Rails.root).to receive(:join).with('public/images/kleer_compas_footer.png').and_call_original
 
       # Mock Gruff chart generation to work initially
       chart_mock = double('CustomSpider')

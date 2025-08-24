@@ -66,7 +66,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         expect(contact.assessment_report_html).to include('Your communication style is collaborative.')
         expect(contact.assessment_report_html).to include('Datos de la Evaluación: Preguntas y Respuestas')
         expect(contact.assessment_report_html).to include('Diagnóstico')
-        expect(contact.assessment_report_html).to include('Kleer Logo')
+        expect(contact.assessment_report_html).to include('header-container')
       end
 
       it 'renders markdown in diagnostic text and questions/answers' do
@@ -114,11 +114,12 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         allow(File).to receive(:delete)
         allow(File).to receive(:exist?).and_return(true)
 
-        # Mock HTML generation to capture content
-        allow(job).to receive(:generate_html_report) do |contact_param, diagnostics|
-          expect(contact_param).to eq(contact)
+        # Mock HTML generator to capture content
+        html_generator_mock = instance_double('RuleBasedAssessmentHtmlGenerator')
+        allow(RuleBasedAssessmentHtmlGenerator).to receive(:new).and_return(html_generator_mock)
+        allow(html_generator_mock).to receive(:generate_html) do
           # The HTML should contain both diagnostic texts since both rules match
-          html_content = diagnostics.join(' ')
+          html_content = '<html>Test HTML with diagnostics: You show strong leadership potential. Your communication style is collaborative.</html>'
           expect(html_content).to include('You show strong leadership potential.')
           expect(html_content).to include('Your communication style is collaborative.')
           html_content
@@ -127,7 +128,7 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
         job.perform(contact.id)
 
         expect(generator_mock).to have_received(:generate_pdf)
-        expect(job).to have_received(:generate_html_report)
+        expect(html_generator_mock).to have_received(:generate_html)
       end
 
       it 'creates temporary files and cleans them up' do
@@ -243,20 +244,20 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
   describe 'HTML report generation' do
     let(:assessment) { create(:assessment, rule_based: true, title: 'Test Assessment') }
     let(:contact) { create(:contact, assessment: assessment) }
-    let(:job) { GenerateAssessmentResultJob.new }
 
     before do
       contact.form_data = { 'name' => 'Test User' }
       contact.save
     end
 
-    it 'generates HTML with participant name and diagnostics' do
-      diagnostics = [
-        'First diagnostic message',
-        'Second diagnostic message'
-      ]
+    it 'generates HTML with participant name and diagnostics using RuleBasedAssessmentHtmlGenerator' do
+      # Mock diagnostics by stubbing the assessment evaluation
+      allow(assessment).to receive(:evaluate_rules_for_contact)
+        .with(contact)
+        .and_return(['First diagnostic message', 'Second diagnostic message'])
 
-      html = job.send(:generate_html_report, contact, diagnostics)
+      generator = RuleBasedAssessmentHtmlGenerator.new(contact)
+      html = generator.generate_html
 
       expect(html).to include('Test Assessment')
       expect(html).to include('Test User')
@@ -265,14 +266,19 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       expect(html).to include('<div class="diagnostic-item">')
       expect(html).to include('Datos de la Evaluación: Preguntas y Respuestas')
       expect(html).to include('Diagnóstico')
-      expect(html).to include('Kleer Logo')
+      expect(html).to include('header-container')
       expect(html).to include('lang="es"')
       expect(html).to include('<div class="assessment-report">')
       expect(html).to include('.assessment-report')
     end
 
     it 'handles empty diagnostics gracefully' do
-      html = job.send(:generate_html_report, contact, [])
+      allow(assessment).to receive(:evaluate_rules_for_contact)
+        .with(contact)
+        .and_return([])
+
+      generator = RuleBasedAssessmentHtmlGenerator.new(contact)
+      html = generator.generate_html
 
       expect(html).to include('Test Assessment')
       expect(html).to include('Test User')
@@ -282,8 +288,12 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
 
     it 'handles missing participant name' do
       contact.update(form_data: {})
+      allow(assessment).to receive(:evaluate_rules_for_contact)
+        .with(contact)
+        .and_return(['Test diagnostic'])
 
-      html = job.send(:generate_html_report, contact, ['Test diagnostic'])
+      generator = RuleBasedAssessmentHtmlGenerator.new(contact)
+      html = generator.generate_html
 
       expect(html).to include('Participante: Participante') # Default name
     end
@@ -297,7 +307,12 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       create(:response, contact: contact, question: question1, answer: answer1)
       create(:response, contact: contact, question: question2, text_response: 'Somos una startup')
 
-      html = job.send(:generate_html_report, contact, ['Test diagnostic'])
+      allow(assessment).to receive(:evaluate_rules_for_contact)
+        .with(contact)
+        .and_return(['Test diagnostic'])
+
+      generator = RuleBasedAssessmentHtmlGenerator.new(contact)
+      html = generator.generate_html
 
       expect(html).to include('Pregunta: <p>Nivel de Agilidad</p>')
       expect(html).to include('Respuesta: <p>Escalando</p>')

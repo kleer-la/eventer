@@ -145,8 +145,13 @@ RSpec.describe 'Rule-based Assessment Integration', type: :feature do
       end
 
       it 'generates report with "no diagnostics" message' do
-        job = GenerateAssessmentResultJob.new
-        html = job.send(:generate_html_report, contact, [])
+        # Mock assessment to return empty diagnostics
+        allow(assessment).to receive(:evaluate_rules_for_contact)
+          .with(contact)
+          .and_return([])
+
+        generator = RuleBasedAssessmentHtmlGenerator.new(contact)
+        html = generator.generate_html
 
         expect(html).to include('No se activaron diagnósticos específicos basados en tus respuestas')
       end
