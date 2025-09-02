@@ -12,7 +12,7 @@ class RuleBasedAssessmentHtmlGenerator < AssessmentHtmlGenerator
 
   def add_content
     add_questions_and_answers_section +
-    add_diagnostic_section
+      add_diagnostic_section
   end
 
   def add_diagnostic_section
@@ -34,7 +34,8 @@ class RuleBasedAssessmentHtmlGenerator < AssessmentHtmlGenerator
       end
       diagnostic_html
     else
-      "<div class=\"no-diagnostics\">#{I18n.t('no_specific_diagnostics', default: 'No se activaron diagnósticos específicos basados en tus respuestas.')}</div>\n"
+      "<div class=\"no-diagnostics\">#{I18n.t('no_specific_diagnostics',
+                                              default: 'No se activaron diagnósticos específicos basados en tus respuestas.')}</div>\n"
     end
   end
 

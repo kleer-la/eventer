@@ -326,8 +326,8 @@ class AssessmentHtmlGenerator
                       I18n.t('question_type_not_recognized', default: 'Tipo de pregunta no reconocido')
                     end
 
-      questions_html += "<dt>#{I18n.t('question', default: 'Pregunta')}: #{markdown(question_text)}</dt>\n"
-      questions_html += "<dd>#{I18n.t('answer', default: 'Respuesta')}: #{markdown(answer_text)}</dd>\n"
+      questions_html += "<dt>#{markdown(question_text)}</dt>\n"
+      questions_html += "<dd>#{markdown(answer_text)}</dd>\n"
     end
 
     questions_html
