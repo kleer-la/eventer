@@ -21,6 +21,8 @@ class Article < ApplicationRecord
   # validates :published, presence: true
   validates :description, presence: true, length: { maximum: 160 }
 
+  before_save :update_substantive_change_at
+
   enum :industry, {
     finantial: 0,
     technology: 1,
@@ -58,10 +60,18 @@ class Article < ApplicationRecord
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[body category_id cover created_at description id lang published selected slug tabtitle title updated_at industry]
+    %w[body category_id cover created_at description id lang published selected slug tabtitle title updated_at industry substantive_change_at]
   end
 
   def self.ransackable_associations(_auth_object = nil)
     %w[category recommended_contents recommended_items slugs trainers]
+  end
+
+  private
+
+  def update_substantive_change_at
+    if new_record?
+      self.substantive_change_at = Time.current
+    end
   end
 end

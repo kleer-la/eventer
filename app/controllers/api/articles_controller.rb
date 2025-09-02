@@ -4,10 +4,10 @@ module Api
   class ArticlesController < ApplicationController
     # GET /articles
     def index
-      @articles = Article.order(selected: :desc, created_at: :desc)
+      @articles = Article.order(selected: :desc, substantive_change_at: :desc)
       respond_to do |format|
         format.json do
-          render json: @articles.order(created_at: :desc),
+          render json: @articles,
                  except: [:body],
                  methods: %i[abstract category_name],
                  include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username

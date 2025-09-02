@@ -4,7 +4,7 @@ ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
   permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :body,
-                :industry, :noindex,
+                :industry, :noindex, :substantive_change_at,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   scope :all
@@ -28,7 +28,7 @@ ActiveAdmin.register Article do
 
   controller do
     def scoped_collection
-      super.includes(:category, :trainers)
+      super.includes(:category, :trainers).order(selected: :desc, substantive_change_at: :desc)
     end
 
     def find_resource
@@ -57,6 +57,7 @@ ActiveAdmin.register Article do
     column :category do |article|
       article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
     end
+    column :substantive_change_at
     column :created_at
 
     actions defaults: false do |article|
@@ -100,6 +101,7 @@ ActiveAdmin.register Article do
         markdown resource.body
       end
 
+      row :substantive_change_at
       row :created_at
       row :updated_at
     end
@@ -145,6 +147,7 @@ ActiveAdmin.register Article do
       f.input :slug
       f.input :cover
       f.input :body, input_html: { rows: 20 }
+      f.input :substantive_change_at, as: :datetime_picker, hint: 'Update if name, slug, images, structure or large amount of text is changing'
       f.input :trainers, as: :check_boxes, collection: Trainer.sorted
     end
     f.inputs 'Recommended Contents' do

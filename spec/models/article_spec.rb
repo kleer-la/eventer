@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Article, type: :model do
+  include ActiveSupport::Testing::TimeHelpers
+
   before(:each) do
     @article = FactoryBot.build(:article)
   end
@@ -88,6 +90,36 @@ RSpec.describe Article, type: :model do
       expect(recommended.last['slug']).to eq(recommended_article.slug)
       expect(recommended.last['cover']).to eq(recommended_article.cover)
       expect(recommended.last['subtitle']).to eq(recommended_article.description)
+    end
+  end
+
+  describe 'substantive_change_at' do
+    context 'when creating a new article' do
+      it 'automatically sets substantive_change_at to current time' do
+        travel_to Time.zone.parse('2025-01-01 10:00:00') do
+          article = FactoryBot.create(:article)
+          expect(article.substantive_change_at).to eq(Time.current)
+        end
+      end
+    end
+
+    context 'when updating an existing article' do
+      let(:article) { FactoryBot.create(:article) }
+
+      it 'does not automatically update substantive_change_at' do
+        original_time = article.substantive_change_at
+        
+        travel_to Time.zone.parse('2025-01-02 10:00:00') do
+          article.update!(title: 'Updated title')
+          expect(article.substantive_change_at).to eq(original_time)
+        end
+      end
+
+      it 'allows manual update of substantive_change_at' do
+        new_time = Time.zone.parse('2025-01-02 15:30:00')
+        article.update!(substantive_change_at: new_time)
+        expect(article.substantive_change_at).to eq(new_time)
+      end
     end
   end
 end
