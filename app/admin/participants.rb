@@ -9,27 +9,19 @@ ActiveAdmin.register Participant do
     def scoped_collection
       participant_columns = %w[
         id created_at fname lname email phone address quantity status notes
-        influence_zone_id event_id
-        company_name id_number invoice_id xero_invoice_number is_payed
+        event_id company_name id_number invoice_id xero_invoice_number is_payed
         selected testimony photo_url profile_url
         promoter_score event_rating trainer_rating trainer2_rating
         referer_code verification_code
       ].map { |col| "participants.#{col}" }
 
       super.includes(
-        :influence_zone,
-        { influence_zone: :country },
         { event: [:event_type] }
       ).select(participant_columns + [
-        'influence_zones.zone_name',
-        'influence_zones.tag_name',
-        'countries.name as country_name',
         'events.date as event_date',
         'event_types.name as event_type_name'
       ]).joins(
-        'LEFT JOIN influence_zones ON influence_zones.id = participants.influence_zone_id
-         LEFT JOIN countries ON countries.id = influence_zones.country_id
-         LEFT JOIN events ON events.id = participants.event_id
+        'LEFT JOIN events ON events.id = participants.event_id
          LEFT JOIN event_types ON event_types.id = events.event_type_id'
       ).distinct
     end
@@ -45,7 +37,8 @@ ActiveAdmin.register Participant do
          .pluck('events.date', 'event_types.name', 'events.id')
          .map do |date, name, id|
       event_type_name = name || 'No Event Type'
-      ["#{date.strftime('%Y-%m-%d')} - #{event_type_name}", id]
+      date_str = date&.strftime('%Y-%m-%d') || 'No Date'
+      ["#{date_str} - #{event_type_name}", id]
     end
   }
   filter :status, as: :select, collection: Participant.status_collection_for_select
@@ -89,7 +82,8 @@ ActiveAdmin.register Participant do
     column 'Event' do |participant|
       if participant.event
         event_type_name = participant.event.event_type&.name || 'No Event Type'
-        link_to "#{participant.event.date.strftime('%Y-%m-%d')} - #{event_type_name}",
+        date_str = participant.event.date&.strftime('%Y-%m-%d') || 'No Date'
+        link_to "#{date_str} - #{event_type_name}",
                 admin_event_path(participant.event)
       else
         'No Event'
@@ -108,12 +102,6 @@ ActiveAdmin.register Participant do
     column 'Contact Info' do |participant|
       div do
         icon_span('phone-sign', participant.phone)
-      end
-      div do
-        icon_span('globe', participant.influence_zone&.display_name)
-      end
-      div do
-        icon_span('tag', participant.influence_zone&.tag_name || 'N/A')
       end
       div do
         icon_span('home', participant.address)
@@ -174,7 +162,8 @@ ActiveAdmin.register Participant do
           f.input :id_number
           f.input :status, as: :select, collection: Participant.status_collection_for_select
           f.input :event, collection: events.map { |e|
-            ["#{e.date.strftime('%Y-%m-%d')} - #{e.event_type.name}", e.id]
+            date_str = e.date&.strftime('%Y-%m-%d') || 'No Date'
+            ["#{date_str} - #{e.event_type.name}", e.id]
           },
                           include_blank: 'Selecciona uno...',
                           input_html: { style: 'width:500px' }
