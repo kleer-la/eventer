@@ -314,10 +314,10 @@ RSpec.describe GenerateAssessmentResultJob, type: :job do
       generator = RuleBasedAssessmentHtmlGenerator.new(contact)
       html = generator.generate_html
 
-      expect(html).to include('Pregunta: <p>Nivel de Agilidad</p>')
-      expect(html).to include('Respuesta: <p>Escalando</p>')
-      expect(html).to include('Pregunta: <p>¿Qué más dirías?</p>')
-      expect(html).to include('Respuesta: <p>Somos una startup</p>')
+      expect(html).to include('<dt><p>Nivel de Agilidad</p>')
+      expect(html).to include('<dd><p>Escalando</p>')
+      expect(html).to include('<dt><p>¿Qué más dirías?</p>')
+      expect(html).to include('<dd><p>Somos una startup</p>')
       expect(html).to include('<dt>')
       expect(html).to include('<dd>')
     end
