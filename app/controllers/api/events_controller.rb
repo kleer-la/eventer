@@ -6,7 +6,7 @@ module Api
 
     # GET /api/events/:id.json
     def show
-      @event = Event.public_and_visible.find(params[:id])
+      @event = Event.find(params[:id])
       render json: { id: @event.id, event_type_id: @event.event_type_id }
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Event not found' }, status: :not_found
