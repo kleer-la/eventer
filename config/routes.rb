@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     get 'event_types/:id' => 'event_types#show'
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
     resources :short_urls, only: [:show], param: :short_code
+    resources :events, only: [:show]
   end
 
   get 'api/events' => 'home#index'
