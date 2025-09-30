@@ -5,7 +5,7 @@ ActiveAdmin.register Page do
 
   permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :cover,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy],
-                sections_attributes: %i[id title content position slug cta_text _destroy]
+                sections_attributes: %i[id title content position slug cta_text cta_url _destroy]
 
   filter :name
   filter :lang, as: :select, collection: Page.langs
@@ -85,6 +85,7 @@ ActiveAdmin.register Page do
           truncate(section.content, length: 100) # Shorten long content
         end
         column :cta_text
+        column :cta_url
         column :position
       end
     end
@@ -126,6 +127,7 @@ ActiveAdmin.register Page do
           s.input :slug, hint: 'Generated from title if left blank'
           s.input :content, as: :text, input_html: { rows: 5 }
           s.input :cta_text
+          s.input :cta_url
           s.input :position, hint: 'Order of appearance (lower numbers first)'
         end
       end

@@ -129,4 +129,50 @@ RSpec.describe Section, type: :model do
       expect(section.cta_text).to be_nil
     end
   end
+
+  describe 'cta_url' do
+    it 'can save and retrieve cta_url' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_url: 'https://example.com'
+      )
+      expect(section.reload.cta_url).to eq('https://example.com')
+    end
+
+    it 'allows cta_url to be blank' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_url: ''
+      )
+      expect(section).to be_valid
+      expect(section.cta_url).to eq('')
+    end
+
+    it 'allows cta_url to be nil' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_url: nil
+      )
+      expect(section).to be_valid
+      expect(section.cta_url).to be_nil
+    end
+
+    it 'can save both cta_text and cta_url together' do
+      section = Section.create!(
+        page:,
+        title: 'Recommended Content',
+        content: 'Lorem ipsum...',
+        cta_text: 'Learn More',
+        cta_url: 'https://example.com/learn'
+      )
+      expect(section.reload.cta_text).to eq('Learn More')
+      expect(section.reload.cta_url).to eq('https://example.com/learn')
+    end
+  end
 end
