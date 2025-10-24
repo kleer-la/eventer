@@ -1,0 +1,144 @@
+<div id="title_bar">
+  <div id="titlebar_left">
+    <span class="breadcrumb">
+      <%= link_to "Admin", admin_root_path %>
+      <span class="breadcrumb_sep">/</span>
+    </span>
+    <span class="breadcrumb">
+      <%= link_to "Coupons", admin_coupons_path %>
+      <span class="breadcrumb_sep">/</span>
+    </span>
+    <h2 id="page_title">Coupon Usage Report</h2>
+  </div>
+  <div id="titlebar_right">
+    <%= link_to "Back to Coupons", admin_coupons_path, class: "button" %>
+  </div>
+</div>
+
+<div class="attributes_table">
+  <% if @coupons_with_usage.empty? %>
+    <div class="blank_slate_container">
+      <span class="blank_slate">
+        No coupons have been used yet.
+      </span>
+    </div>
+  <% else %>
+    <div class="panel">
+      <h3>Summary</h3>
+      <table class="index_table">
+        <thead>
+          <tr>
+            <th>Coupon Code</th>
+            <th>Internal Name</th>
+            <th>Type</th>
+            <th>Discount</th>
+            <th>Total Uses</th>
+            <th>New</th>
+            <th>Contacted</th>
+            <th>Confirmed</th>
+            <th>Attended</th>
+            <th>Certified</th>
+            <th>Cancelled</th>
+            <th>Revenue Impact</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @coupons_with_usage.each do |data| %>
+            <% coupon = data[:coupon] %>
+            <% status_counts = data[:by_status] %>
+            <tr>
+              <td><strong><%= coupon.code %></strong></td>
+              <td><%= coupon.internal_name %></td>
+              <td><%= coupon.coupon_type.humanize %></td>
+              <td>
+                <% if coupon.percent_off? %>
+                  <%= coupon.percent_off %>%
+                <% elsif coupon.amount_off? %>
+                  $<%= number_with_precision(coupon.amount_off, precision: 2) %>
+                <% else %>
+                  Codeless
+                <% end %>
+              </td>
+              <td><strong><%= data[:total_uses] %></strong></td>
+              <td><%= status_counts['N'] || 0 %></td>
+              <td><%= status_counts['T'] || 0 %></td>
+              <td><%= status_counts['C'] || 0 %></td>
+              <td><%= status_counts['A'] || 0 %></td>
+              <td><%= status_counts['K'] || 0 %></td>
+              <td><%= status_counts['X'] || 0 %></td>
+              <td>$<%= number_with_precision(data[:revenue_impact], precision: 2) %></td>
+              <td>
+                <% if coupon.active %>
+                  <span class="status_tag yes">Active</span>
+                <% else %>
+                  <span class="status_tag no">Inactive</span>
+                <% end %>
+                <% if coupon.expires_on && coupon.expires_on < Date.today %>
+                  <span class="status_tag no">Expired</span>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to "View Coupon", admin_coupon_path(coupon), class: "button" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% @coupons_with_usage.each do |data| %>
+      <% coupon = data[:coupon] %>
+      <% if data[:recent_uses].any? %>
+        <div class="panel">
+          <h3>Recent Uses: <%= coupon.code %> (<%= coupon.internal_name %>)</h3>
+          <table class="index_table">
+            <thead>
+              <tr>
+                <th>Participant</th>
+                <th>Email</th>
+                <th>Event</th>
+                <th>Status</th>
+                <th>Quantity</th>
+                <th>Invoice Amount</th>
+                <th>Registration Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data[:recent_uses].each do |participant| %>
+                <tr>
+                  <td><%= participant.fname %> <%= participant.lname %></td>
+                  <td><%= participant.email %></td>
+                  <td>
+                    <% if participant.event %>
+                      <%= link_to participant.event.event_type&.name, admin_event_path(participant.event) %>
+                      (<%= participant.event.date %>)
+                    <% end %>
+                  </td>
+                  <td><%= participant.human_status %></td>
+                  <td><%= participant.quantity %></td>
+                  <td>
+                    <% if participant.xero_invoice_amount %>
+                      $<%= number_with_precision(participant.xero_invoice_amount, precision: 2) %>
+                    <% else %>
+                      -
+                    <% end %>
+                  </td>
+                  <td><%= participant.created_at.strftime('%Y-%m-%d') %></td>
+                  <td><%= link_to "View", admin_participant_path(participant), class: "button" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+          <% if data[:total_uses] > 5 %>
+            <p style="margin-top: 10px;">
+              <em>Showing 5 most recent uses out of <%= data[:total_uses] %> total.</em>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

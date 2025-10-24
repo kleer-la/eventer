@@ -6,6 +6,27 @@ ActiveAdmin.register Coupon do
   permit_params :coupon_type, :code, :internal_name, :icon, :expires_on, :display, :active,
                 :percent_off, :amount_off, event_type_ids: []
 
+  collection_action :usage_report, method: :get do
+    @coupons_with_usage = Coupon.all.map do |coupon|
+      participants = Participant.where('UPPER(referer_code) = ?', coupon.code.to_s.upcase)
+
+      {
+        coupon: coupon,
+        total_uses: participants.count,
+        by_status: participants.group(:status).count,
+        revenue_impact: participants.sum(:xero_invoice_amount) || 0,
+        recent_uses: participants.order(created_at: :desc).limit(5)
+      }
+    end.select { |data| data[:total_uses] > 0 }
+       .sort_by { |data| -data[:total_uses] }
+
+    render 'admin/coupons/usage_report'
+  end
+
+  action_item :view_usage_report, only: :index do
+    link_to 'View Usage Report', usage_report_admin_coupons_path
+  end
+
   index do
     selectable_column
     id_column
