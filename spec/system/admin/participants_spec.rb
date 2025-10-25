@@ -118,7 +118,10 @@ RSpec.describe 'Admin Participants Index', type: :system do
              fname: 'Jane',
              lname: 'Smith',
              email: 'jane@example.com',
-             influence_zone:)
+             influence_zone:,
+             xero_invoice_number: 'INV-9999',
+             xero_invoice_reference: 'TEST-REF-123',
+             xero_invoice_amount: 250.75)
     end
 
     before do
@@ -133,6 +136,13 @@ RSpec.describe 'Admin Participants Index', type: :system do
 
     it 'displays influence zone information' do
       expect(page).to have_content('Buenos Aires')
+    end
+
+    it 'displays Xero invoice fields in Payment tab' do
+      click_link 'Payment'
+      expect(page).to have_content('INV-9999')
+      expect(page).to have_content('TEST-REF-123')
+      expect(page).to have_content('250.75')
     end
   end
 end

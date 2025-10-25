@@ -9,7 +9,8 @@ ActiveAdmin.register Participant do
     def scoped_collection
       participant_columns = %w[
         id created_at fname lname email phone address quantity status notes
-        event_id influence_zone_id company_name id_number invoice_id xero_invoice_number is_payed
+        event_id influence_zone_id company_name id_number invoice_id
+        xero_invoice_number xero_invoice_reference xero_invoice_amount is_payed
         selected testimony photo_url profile_url
         promoter_score event_rating trainer_rating trainer2_rating
         referer_code verification_code
@@ -48,6 +49,7 @@ ActiveAdmin.register Participant do
   permit_params :email, :fname, :lname, :phone, :event_id, :status, :notes,
                 :influence_zone_id, :quantity, :referer_code, :address,
                 :company_name, :id_number, :invoice_id, :xero_invoice_number,
+                :xero_invoice_reference, :xero_invoice_amount,
                 :is_payed, :selected, :testimony, :photo_url, :profile_url,
                 :accept_terms, :promoter_score, :event_rating, :trainer_rating,
                 :trainer2_rating
@@ -179,7 +181,9 @@ ActiveAdmin.register Participant do
       tab 'Payment' do
         f.inputs do
           f.input :invoice_id, placeholder: '3cae5630-2189-4489-8464-b415e201da7d'
-          f.input :xero_invoice_number, placeholder: 'FC-00000'
+          f.input :xero_invoice_number, placeholder: 'INV-0001'
+          f.input :xero_invoice_reference, placeholder: 'CSM230101'
+          f.input :xero_invoice_amount, placeholder: '100.50'
           f.input :is_payed
         end
       end
@@ -241,6 +245,8 @@ ActiveAdmin.register Participant do
         attributes_table do
           row :invoice_id
           row :xero_invoice_number
+          row :xero_invoice_reference
+          row :xero_invoice_amount
           row :is_payed
         end
       end
