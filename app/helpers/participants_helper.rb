@@ -457,12 +457,24 @@ module ParticipantsHelper
   end
 
   def self.upload_certificate(certificate_filename, access_key_id: nil, secret_access_key: nil)
-    resource = s3_resource(access_key_id, secret_access_key)
+    client = Aws::S3::Client.new(
+      access_key_id: access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
+      secret_access_key: secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY']
+    )
     key = File.basename(certificate_filename)
-    bucket = resource.bucket('Keventer')
-    object = bucket.object("certificates/#{key}")
-    object.upload_file(certificate_filename)
-    object.acl.put({ acl: 'public-read' })
+    bucket_name = 'Keventer'
+    object_key = "certificates/#{key}"
+
+    # Use TransferManager instead of deprecated upload_file
+    transfer_manager = Aws::S3::TransferManager.new(client: client)
+    transfer_manager.upload_file(certificate_filename, bucket: bucket_name, key: object_key)
+
+    # Set ACL to public-read
+    client.put_object_acl({
+      bucket: bucket_name,
+      key: object_key,
+      acl: 'public-read'
+    })
 
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end

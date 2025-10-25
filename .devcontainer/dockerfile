@@ -1,4 +1,4 @@
-FROM ruby:3.3.9
+FROM ruby:3.4.7
 
 # Update args in docker-compose.yaml to set the UID/GID of the "vscode" user.
 ARG USER_NAME=vscode
@@ -9,11 +9,12 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then groupmod --g
 
 # derived from https://nander.cc/using-selenium-within-a-docker-container
 
-# Adding trusting keys to apt for repositories
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+# Adding trusting keys to apt for repositories (modern method for Debian 11+)
+RUN apt-get update && apt-get install -y wget gnupg
+RUN wget -q -O /usr/share/keyrings/google-chrome.gpg https://dl-ssl.google.com/linux/linux_signing_key.pub
 
 # Adding Google Chrome to the repositories
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+RUN sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
 # Updating apt to see and install Google Chrome
 RUN apt-get -y update

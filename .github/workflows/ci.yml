@@ -22,7 +22,7 @@ jobs:
         # automatic versioning https://github.com/ruby/setup-ruby#versioning):
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.9
+          ruby-version: 3.4.7
       - name: Install dependencies
         run: bundle install
       - name: Run tests
