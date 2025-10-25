@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-KEventer is a comprehensive event management and training platform built with Rails 7.2.2 and Ruby 3.3.6. It serves as the backend for Kleer's public website, managing courses, calendars, registrations, and educational content delivery. The platform supports both online and classroom-based training with robust participant management, content delivery, and business intelligence capabilities.
+KEventer is a comprehensive event management and training platform built with Rails 7.2.2 and Ruby 3.4.7. It serves as the backend for Kleer's public website, managing courses, calendars, registrations, and educational content delivery. The platform supports both online and classroom-based training with robust participant management, content delivery, and business intelligence capabilities.
 
 ## Development Environment Setup
 
