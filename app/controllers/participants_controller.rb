@@ -16,6 +16,14 @@ class ParticipantsController < ApplicationController
     participant = Participant.search_by_invoice invoice_id
     return if participant.nil? || participant.paid?
 
+    # Get invoice details from Xero
+    invoice = xero.get_invoice(invoice_id)
+
+    # Update invoice fields
+    participant.xero_invoice_number = invoice.invoice_number
+    participant.xero_invoice_reference = invoice.reference
+    participant.xero_invoice_amount = invoice.total
+
     if xero.invoice_paid?(invoice_id)
       EventMailer.delay.participant_paid(participant)
       participant.notes << "\n#{DateTime.now.localtime} - Pagado"

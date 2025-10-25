@@ -137,12 +137,14 @@ module XeroClientService
   end
 
   class NullInvoice
-    attr_reader :invoice_number, :invoice_id, :amount_paid
+    attr_reader :invoice_number, :invoice_id, :amount_paid, :reference, :total
 
     def initialize
       @invoice_number = 'INV-0100'
       @invoice_id = 'a12346' * 6 # 36 char
       @amount_paid = 720.0
+      @reference = 'TEST-REF'
+      @total = 720.0
     end
   end
 

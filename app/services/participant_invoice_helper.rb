@@ -36,6 +36,8 @@ class ParticipantInvoiceHelper
     participant = @participant
 
     participant.xero_invoice_number = invoice.invoice_number
+    participant.xero_invoice_reference = invoice.reference
+    participant.xero_invoice_amount = invoice.total
     participant.invoice_id = invoice.invoice_id
     participant.save!
   end

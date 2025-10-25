@@ -334,5 +334,99 @@ describe ParticipantsController do
         expect(assigns(:participants).count).to eq 0
       end
     end
+
+    describe '.update_payment_status' do
+      let(:invoice_id) { 'test-invoice-123' }
+      let(:xero_invoice) do
+        double('XeroInvoice',
+               invoice_number: 'INV-0001',
+               reference: 'CSM230101',
+               total: 100.50,
+               amount_paid: 100.50,
+               status: 'PAID')
+      end
+      let(:xero_api) do
+        double('XeroApi',
+               invoice_paid?: true,
+               invoice_void?: false,
+               get_invoice: xero_invoice)
+      end
+      let(:xero_service) do
+        double('XeroService',
+               get_invoice: xero_invoice)
+      end
+
+      before do
+        @participant.invoice_id = invoice_id
+        @participant.notes = 'Test notes'
+        @participant.save!
+        allow(XeroClientService::XeroApi).to receive(:new).and_return(xero_api)
+      end
+
+      context 'when invoice is paid' do
+        it 'updates participant status to paid' do
+          ParticipantsController.update_payment_status(invoice_id, xero_service)
+          @participant.reload
+          expect(@participant.paid?).to be true
+        end
+
+        it 'updates xero_invoice_amount' do
+          ParticipantsController.update_payment_status(invoice_id, xero_service)
+          @participant.reload
+          expect(@participant.xero_invoice_amount).to eq(100.50)
+        end
+
+        it 'updates xero_invoice_reference' do
+          ParticipantsController.update_payment_status(invoice_id, xero_service)
+          @participant.reload
+          expect(@participant.xero_invoice_reference).to eq('CSM230101')
+        end
+
+        it 'updates xero_invoice_number' do
+          ParticipantsController.update_payment_status(invoice_id, xero_service)
+          @participant.reload
+          expect(@participant.xero_invoice_number).to eq('INV-0001')
+        end
+      end
+
+      context 'when invoice is voided' do
+        let(:voided_invoice) do
+          double('XeroInvoice',
+                 invoice_number: 'INV-0002',
+                 reference: 'CSM230102',
+                 total: 200.00,
+                 amount_paid: 0,
+                 status: 'VOIDED')
+        end
+        let(:xero_api_voided) do
+          double('XeroApi',
+                 invoice_paid?: false,
+                 invoice_void?: true,
+                 get_invoice: voided_invoice)
+        end
+        let(:xero_service_voided) do
+          double('XeroService',
+                 get_invoice: voided_invoice)
+        end
+
+        before do
+          allow(XeroClientService::XeroApi).to receive(:new).and_return(xero_api_voided)
+        end
+
+        it 'updates participant status to cancelled' do
+          ParticipantsController.update_payment_status(invoice_id, xero_service_voided)
+          @participant.reload
+          expect(@participant.cancelled?).to be true
+        end
+
+        it 'updates xero invoice fields even when voided' do
+          ParticipantsController.update_payment_status(invoice_id, xero_service_voided)
+          @participant.reload
+          expect(@participant.xero_invoice_amount).to eq(200.00)
+          expect(@participant.xero_invoice_reference).to eq('CSM230102')
+          expect(@participant.xero_invoice_number).to eq('INV-0002')
+        end
+      end
+    end
   end
 end
