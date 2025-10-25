@@ -107,4 +107,32 @@ RSpec.describe 'Admin Participants Index', type: :system do
       expect(page).to have_content('Displaying Participants 1 - 25 of 30')
     end
   end
+
+  context 'viewing participant details' do
+    let!(:event_type) { create(:event_type, name: 'Test Event') }
+    let!(:event) { create(:event, date: Date.new(2024, 1, 1), event_type:) }
+    let!(:influence_zone) { create(:influence_zone, zone_name: 'Buenos Aires') }
+    let!(:participant) do
+      create(:participant,
+             event:,
+             fname: 'Jane',
+             lname: 'Smith',
+             email: 'jane@example.com',
+             influence_zone:)
+    end
+
+    before do
+      visit admin_participant_path(participant)
+    end
+
+    it 'displays participant details without errors' do
+      expect(page).to have_content('Jane')
+      expect(page).to have_content('Smith')
+      expect(page).to have_content('jane@example.com')
+    end
+
+    it 'displays influence zone information' do
+      expect(page).to have_content('Buenos Aires')
+    end
+  end
 end

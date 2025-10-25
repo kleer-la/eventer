@@ -9,7 +9,7 @@ ActiveAdmin.register Participant do
     def scoped_collection
       participant_columns = %w[
         id created_at fname lname email phone address quantity status notes
-        event_id company_name id_number invoice_id xero_invoice_number is_payed
+        event_id influence_zone_id company_name id_number invoice_id xero_invoice_number is_payed
         selected testimony photo_url profile_url
         promoter_score event_rating trainer_rating trainer2_rating
         referer_code verification_code
