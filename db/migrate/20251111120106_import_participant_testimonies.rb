@@ -14,7 +14,7 @@ class ImportParticipantTestimonies < ActiveRecord::Migration[7.2]
 
   class MigrationTestimony < ActiveRecord::Base
     self.table_name = 'testimonies'
-    has_rich_text :testimony
+    # Don't use has_rich_text here - we'll handle it manually
   end
 
   def up
@@ -35,11 +35,10 @@ class ImportParticipantTestimonies < ActiveRecord::Migration[7.2]
       say "Found #{participants.count} participant testimonies to import", true
 
       participants.find_each do |participant|
-        # Create testimony using ActiveRecord to properly handle ActionText
-        MigrationTestimony.create!(
+        # Create testimony record WITHOUT the testimony field (it's ActionText)
+        testimony_record = MigrationTestimony.create!(
           first_name: participant.fname,
           last_name: participant.lname,
-          testimony: participant.testimony, # ActionText will handle this properly
           photo_url: participant.photo_url,
           profile_url: participant.profile_url,
           stared: true,
@@ -48,6 +47,21 @@ class ImportParticipantTestimonies < ActiveRecord::Migration[7.2]
           created_at: participant.created_at,
           updated_at: participant.updated_at
         )
+
+        # Manually insert into action_text_rich_texts table for the testimony content
+        connection.execute(<<-SQL.squish)
+          INSERT INTO action_text_rich_texts
+            (name, body, record_type, record_id, created_at, updated_at)
+          VALUES (
+            'testimony',
+            #{connection.quote(participant.testimony)},
+            'Testimony',
+            #{testimony_record.id},
+            #{connection.quote(participant.created_at)},
+            #{connection.quote(participant.updated_at)}
+          )
+        SQL
+
         count += 1
 
         # Progress indicator for large datasets
