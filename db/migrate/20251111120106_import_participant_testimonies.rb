@@ -2,28 +2,27 @@ class ImportParticipantTestimonies < ActiveRecord::Migration[7.2]
   # Disable transactions for this migration to allow for better progress reporting
   disable_ddl_transaction!
 
+  # Define minimal models within migration to avoid dependencies on app code
+  class MigrationParticipant < ActiveRecord::Base
+    self.table_name = 'participants'
+    belongs_to :event, class_name: 'ImportParticipantTestimonies::MigrationEvent', foreign_key: 'event_id'
+  end
+
+  class MigrationEvent < ActiveRecord::Base
+    self.table_name = 'events'
+  end
+
+  class MigrationTestimony < ActiveRecord::Base
+    self.table_name = 'testimonies'
+    has_rich_text :testimony
+  end
+
   def up
     # This migration imports participant testimonies into the new Testimony model
     # It only imports "selected" testimonies that are meant to be displayed publicly
 
     say_with_time "Importing participant testimonies to Testimony model" do
       count = 0
-
-      # Use ActiveRecord models to properly handle ActionText rich text
-      # Define minimal models within migration to avoid dependencies on app code
-      class MigrationParticipant < ActiveRecord::Base
-        self.table_name = 'participants'
-        belongs_to :event, class_name: 'ImportParticipantTestimonies::MigrationEvent', foreign_key: 'event_id'
-      end
-
-      class MigrationEvent < ActiveRecord::Base
-        self.table_name = 'events'
-      end
-
-      class MigrationTestimony < ActiveRecord::Base
-        self.table_name = 'testimonies'
-        has_rich_text :testimony
-      end
 
       # Query participants with testimonies
       participants = MigrationParticipant
