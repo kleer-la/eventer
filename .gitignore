@@ -36,3 +36,6 @@ eventer.env
 # env variable
 .env
 website17_link
+
+# Claude Code local settings
+.claude/settings.local.json
