@@ -110,7 +110,7 @@ RSpec.describe Api::ContactsController, type: :controller do
 
       it 'returns error status' do
         post :create, params: valid_contact_params
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'logs the error' do
@@ -188,13 +188,13 @@ RSpec.describe Api::ContactsController, type: :controller do
     context 'with invalid params' do
       it 'returns validation error for missing required fields' do
         post :create, params: { email: 'invalid' }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)).to have_key('error')
       end
 
       it 'returns error when resource_slug is invalid' do
         post :create, params: valid_contact_params.merge(resource_slug: 'non-existent')
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)['error']).to eq('Resource not found')
       end
     end

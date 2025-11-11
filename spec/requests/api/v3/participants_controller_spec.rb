@@ -57,8 +57,8 @@ RSpec.describe 'Api::V3::ParticipantsController', type: :request do
 
       it 'returns error for cancelled event' do
         post "/api/v3/events/#{event.id}/participants/register", params: valid_params
-        
-        expect(response).to have_http_status(:unprocessable_entity)
+
+        expect(response).to have_http_status(:unprocessable_content)
         json_response = JSON.parse(response.body)
         expect(json_response['error']).to eq('Event is cancelled or draft')
       end
