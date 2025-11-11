@@ -101,34 +101,34 @@ describe EventType do
     end
   end
 
-  context 'Testimonies' do
+  context 'Participant Testimonies (Legacy)' do
     it 'no event no testimony' do
-      expect(@event_type.testimonies.count).to eq 0
+      expect(@event_type.participant_testimonies.count).to eq 0
     end
     it 'no participant no testimony' do
       create(:event, event_type: @event_type)
-      expect(@event_type.testimonies.count).to eq 0
+      expect(@event_type.participant_testimonies.count).to eq 0
     end
     it 'no participant no testimony' do
       create(:event, event_type: @event_type)
-      expect(@event_type.testimonies.count).to eq 0
+      expect(@event_type.participant_testimonies.count).to eq 0
     end
     it 'participant wo/ testimony' do
       ev = create(:event, event_type: @event_type)
       create(:participant, event: ev)
-      expect(@event_type.testimonies.count).to eq 0
+      expect(@event_type.participant_testimonies.count).to eq 0
     end
     it 'participant w/ testimony' do
       ev = create(:event, event_type: @event_type)
       create(:participant, event: ev, testimony: 'Hello, Joe')
-      expect(@event_type.testimonies.count).to eq 1
+      expect(@event_type.participant_testimonies.count).to eq 1
     end
     it 'participant w/2 testimones one selected' do
       ev = create(:event, event_type: @event_type)
       create(:participant, event: ev, testimony: 'Hello, Joe')
       create(:participant, event: ev, testimony: 'Yeah', selected: true)
       create(:participant, event: ev, testimony: 'Hello, Joe')
-      testimonies = @event_type.testimonies
+      testimonies = @event_type.participant_testimonies
       expect(testimonies.count).to eq 3
       expect(testimonies[0].testimony).to eq 'Yeah'
     end
@@ -136,6 +136,35 @@ describe EventType do
       et = create(:event_type)
       ev = create(:event, event_type: et)
       create(:participant, event: ev, testimony: 'Hello, Joe')
+      expect(@event_type.participant_testimonies.count).to eq 0
+    end
+  end
+
+  context 'Testimonies (New Polymorphic Model)' do
+    it 'can have testimonies associated' do
+      testimony = create(:testimony, :for_event_type, testimonial: @event_type)
+      expect(@event_type.testimonies).to include(testimony)
+      expect(@event_type.testimonies.count).to eq 1
+    end
+
+    it 'can have multiple testimonies' do
+      testimony1 = create(:testimony, :for_event_type, testimonial: @event_type, first_name: 'John')
+      testimony2 = create(:testimony, :for_event_type, testimonial: @event_type, first_name: 'Jane')
+
+      expect(@event_type.testimonies.count).to eq 2
+      expect(@event_type.testimonies).to include(testimony1, testimony2)
+    end
+
+    it 'destroys testimonies when event_type is destroyed' do
+      create(:testimony, :for_event_type, testimonial: @event_type)
+      expect { @event_type.destroy! }.to change { Testimony.count }.by(-1)
+    end
+
+    it "doesn't include testimonies from other event types" do
+      other_event_type = create(:event_type)
+      other_testimony = create(:testimony, :for_event_type, testimonial: other_event_type)
+
+      expect(@event_type.testimonies).not_to include(other_testimony)
       expect(@event_type.testimonies.count).to eq 0
     end
   end

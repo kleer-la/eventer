@@ -196,9 +196,8 @@ class HomeController < ApplicationController
                                                     is_sold_out duration start_time end_time time_zone_name currency_iso_code address finish_date
                                                   ], methods: :trainers } }]
     )
-    "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
-      only: %i[fname lname testimony profile_url photo_url]
-    )}}"
+    testimonies_json = format_testimonies_for_api(event_type.api_testimonies.first(10)).to_json
+    "#{et[0..-2]},\"testimonies\":#{testimonies_json}}"
   end
 
   private
@@ -212,5 +211,30 @@ class HomeController < ApplicationController
       trainers: {},
       categories: {}
     }
+  end
+
+  # Formats testimonies for API response, handling both Testimony model and Participant model
+  def format_testimonies_for_api(testimonies)
+    testimonies.map do |testimony|
+      if testimony.is_a?(Testimony)
+        # New Testimony model - map first_name/last_name to fname/lname for API compatibility
+        {
+          fname: testimony.first_name,
+          lname: testimony.last_name,
+          testimony: testimony.testimony.to_plain_text,
+          profile_url: testimony.profile_url,
+          photo_url: testimony.photo_url
+        }
+      else
+        # Legacy Participant model - use existing fields
+        {
+          fname: testimony.fname,
+          lname: testimony.lname,
+          testimony: testimony.testimony,
+          profile_url: testimony.profile_url,
+          photo_url: testimony.photo_url
+        }
+      end
+    end
   end
 end

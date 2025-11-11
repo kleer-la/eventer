@@ -35,10 +35,10 @@ module Api
 
     def show_event_type_testimonies
       event_type = EventType.find(params[:id])
-      participants = event_type.testimonies
+      testimonies = event_type.api_testimonies
 
       respond_to do |format|
-        format.json { render json: participants.first(10) }
+        format.json { render json: format_testimonies_for_api(testimonies.first(10)) }
       end
     end
 
@@ -58,9 +58,8 @@ module Api
                                                                   methods: %i[trainers coupons]
                                                                 } }]
       )
-      "#{et[0..-2]},\"testimonies\":#{event_type.testimonies.where(selected: true).first(10).to_json(
-        only: %i[fname lname testimony profile_url photo_url]
-      )}}"
+      testimonies_json = format_testimonies_for_api(event_type.api_testimonies.first(10)).to_json
+      "#{et[0..-2]},\"testimonies\":#{testimonies_json}}"
     end
 
     private
@@ -74,6 +73,31 @@ module Api
         trainers: {},
         categories: {}
       }
+    end
+
+    # Formats testimonies for API response, handling both Testimony model and Participant model
+    def format_testimonies_for_api(testimonies)
+      testimonies.map do |testimony|
+        if testimony.is_a?(Testimony)
+          # New Testimony model - map first_name/last_name to fname/lname for API compatibility
+          {
+            fname: testimony.first_name,
+            lname: testimony.last_name,
+            testimony: testimony.testimony.to_plain_text,
+            profile_url: testimony.profile_url,
+            photo_url: testimony.photo_url
+          }
+        else
+          # Legacy Participant model - use existing fields
+          {
+            fname: testimony.fname,
+            lname: testimony.lname,
+            testimony: testimony.testimony,
+            profile_url: testimony.profile_url,
+            photo_url: testimony.photo_url
+          }
+        end
+      end
     end
   end
 end

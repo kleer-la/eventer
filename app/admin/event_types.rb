@@ -121,7 +121,7 @@ ActiveAdmin.register EventType do
         dropdown_menu '...' do
           item 'Preview', certificate_preview_admin_event_type_path(event_type), title: 'Certificate Preview'
           item 'Events', admin_events_path(q: { event_type_id_eq: event_type.id }), title: 'Event list'
-          item 'Testimonies', admin_testimonies_path(q: { service_id_eq: event_type.id }), title: 'Testimonies'
+          item 'Testimonies', admin_testimonies_path(q: { testimonial_type_eq: 'EventType', testimonial_id_eq: event_type.id }), title: 'Testimonies'
           item 'Participants', participants_admin_event_type_path(event_type), title: 'Participants'
         end
       end

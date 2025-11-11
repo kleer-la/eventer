@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_30_182903) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_11_120106) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -672,7 +672,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_30_182903) do
     t.boolean "stared"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "testimonial_type"
+    t.integer "testimonial_id"
     t.index ["service_id"], name: "index_testimonies_on_service_id"
+    t.index ["testimonial_type", "testimonial_id"], name: "index_testimonies_on_testimonial_type_and_testimonial_id"
   end
 
   create_table "trainers", force: :cascade do |t|

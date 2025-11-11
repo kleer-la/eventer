@@ -10,7 +10,9 @@ class Service < ApplicationRecord
   references_images_in :brochure, :side_image
 
   belongs_to :service_area
-  has_many :testimonies
+
+  # Polymorphic association for Testimony model
+  has_many :testimonies, as: :testimonial, dependent: :destroy
 
   has_rich_text :value_proposition
   has_rich_text :outcomes

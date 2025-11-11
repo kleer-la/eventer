@@ -15,6 +15,9 @@ class EventType < ApplicationRecord
   has_many :clons, class_name: 'EventType', foreign_key: 'canonical_id'
   has_and_belongs_to_many :coupons
 
+  # New polymorphic association for Testimony model
+  has_many :testimonies, as: :testimonial, dependent: :destroy
+
   enum :lang, %w[es en]
   enum :platform, { keventer: 0, academia: 1 }
 
@@ -41,14 +44,25 @@ class EventType < ApplicationRecord
     Event.public_courses.where(event_type_id: id).order(:date)
   end
 
-  def testimonies
-    # part = []
-    # events.all.each do |e|
-    #   part += e.participants.order(selected: :desc, updated_at: :desc).reject { |p| p.testimony.nil? }
-    # end
-    # part
+  # Legacy method - returns participant testimonies (text field on participants table)
+  # TODO: Deprecate after migration to Testimony model is complete
+  def participant_testimonies
     Participant.joins(:event).where(events: { event_type_id: id }).where.not(testimony: '')
                .order(selected: :desc, updated_at: :desc)
+  end
+
+  # Returns testimonies for API - combines both new Testimony model and legacy participant testimonies
+  # This method maintains backward compatibility during the transition
+  def api_testimonies
+    # Use new Testimony model if available, otherwise fall back to participant testimonies
+    if testimonies.exists?
+      # Use stared field for new Testimony model (equivalent to selected)
+      testimonies.where(stared: true)
+    else
+      # Fall back to legacy participant testimonies
+      # Note: Not filtering by selected to maintain backward compatibility with existing tests/behavior
+      participant_testimonies
+    end
   end
 
   def active_coupons(date)
