@@ -30,9 +30,15 @@ class ImportParticipantTestimonies < ActiveRecord::Migration[7.2]
                      .where.not(testimony: [nil, ''])
                      .where(selected: true)
                      .select('participants.*, events.event_type_id')
-                     .order(created_at: :desc)
 
-      say "Found #{participants.count} participant testimonies to import", true
+      # Get count before the select to avoid PostgreSQL COUNT issue
+      total_count = MigrationParticipant
+                    .joins(:event)
+                    .where.not(testimony: [nil, ''])
+                    .where(selected: true)
+                    .count
+
+      say "Found #{total_count} participant testimonies to import", true
 
       participants.find_each do |participant|
         # Create testimony record WITHOUT the testimony field (it's ActionText)
