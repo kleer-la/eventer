@@ -15,6 +15,14 @@ FactoryBot.define do
     name { :comercial }
   end
 
+  factory :marketing_role, class: Role do
+    name { :marketing }
+  end
+
+  factory :content_role, class: Role do
+    name { :content }
+  end
+
   factory :administrator, class: User do
     email { 'admin@user.com' }
     password { 'please' }
@@ -27,6 +35,20 @@ FactoryBot.define do
     password { 'please' }
     password_confirmation { 'please' }
     roles { [FactoryBot.create(:comercial_role)] }
+  end
+
+  factory :marketing_user, class: User do
+    email { 'marketing@user.com' }
+    password { 'please' }
+    password_confirmation { 'please' }
+    roles { [FactoryBot.create(:marketing_role)] }
+  end
+
+  factory :content_user, class: User do
+    email { 'content@user.com' }
+    password { 'please' }
+    password_confirmation { 'please' }
+    roles { [FactoryBot.create(:content_role)] }
   end
   factory :admin_user, class: User do
     email { Faker::Internet.email }

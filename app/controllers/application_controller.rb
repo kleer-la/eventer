@@ -6,11 +6,16 @@ class ApplicationController < ActionController::Base
 
   # active admin authentication
   def authenticate_admin_user!
-    redirect_to new_user_session_path unless current_user&.role? :administrator
+    redirect_to new_user_session_path unless current_user&.roles&.any?
   end
 
   # cancancan authorization
   def access_denied(exception)
-    redirect_to admin_dashboard_path, alert: exception.message
+    message = if exception.action == :destroy
+                'Only administrators can delete records.'
+              else
+                exception.message
+              end
+    redirect_back fallback_location: admin_dashboard_path, alert: message
   end
 end

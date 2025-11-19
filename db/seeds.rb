@@ -11,9 +11,9 @@
 # Creación del primer usuario. es necesario cambiar el password tan pronto como se haga el rake db:seed
 @admin_role = Role.create(name: :administrator)
 
-Role.create(
-  name: :comercial
-)
+Role.create(name: :comercial)
+Role.create(name: :marketing)
+Role.create(name: :content)
 
 User.create do |u|
   u.email = 'ejemplo@eventer.heroku.com'
