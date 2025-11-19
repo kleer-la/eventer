@@ -28,8 +28,11 @@ describe User do
 
     it { expect(@comercial).not_to be_able_to(:manage, Role.new) }
     it { expect(@comercial).not_to be_able_to(:manage, User.new) }
-    it { expect(@comercial).to be_able_to(:manage, Event.new) }
-    it { expect(@comercial).not_to be_able_to(:manage, EventType.new) }
+    it { expect(@comercial).to be_able_to(:read, Event.new) }
+    it { expect(@comercial).not_to be_able_to(:create, Event.new) }
+    it { expect(@comercial).not_to be_able_to(:update, Event.new) }
+    it { expect(@comercial).not_to be_able_to(:destroy, Event.new) }
+    it { expect(@comercial).to be_able_to(:read, EventType.new) }
     it { expect(@comercial).not_to be_able_to(:manage, Category.new) }
     it { expect(@comercial).not_to be_able_to(:manage, Trainer.new) }
   end

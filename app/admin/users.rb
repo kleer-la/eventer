@@ -27,6 +27,25 @@ ActiveAdmin.register User do
     end
   end
 
+  sidebar 'Role Permissions Summary', only: :index do
+    table_for [
+      { role: 'comercial', permissions: 'Read only' },
+      { role: 'content', permissions: 'Read + Create/Update Content*' },
+      { role: 'publisher', permissions: 'Content + Set Publishing Fields' },
+      { role: 'marketing', permissions: 'Read + Create/Update All' },
+      { role: 'administrator', permissions: 'Full access (including Delete)' }
+    ] do
+      column('Role') { |r| r[:role] }
+      column('Permissions') { |r| r[:permissions] }
+    end
+    para do
+      text_node '*Content: Event, EventType, Participant, Coupon, Article, Resource, Podcast, Episode, Assessment, News, Testimony'
+    end
+    para do
+      text_node 'Publishing fields: include_in_catalog, published'
+    end
+  end
+
   show do |user|
     panel 'Información de usuario' do
       attributes_table_for user do

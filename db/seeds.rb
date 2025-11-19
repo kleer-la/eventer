@@ -14,6 +14,7 @@
 Role.create(name: :comercial)
 Role.create(name: :marketing)
 Role.create(name: :content)
+Role.create(name: :publisher)
 
 User.create do |u|
   u.email = 'ejemplo@eventer.heroku.com'

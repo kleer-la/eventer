@@ -230,7 +230,12 @@ ActiveAdmin.register EventType do
       f.input :duration # , label: I18n.t('formtastic.labels.event_type.duration')
       f.input :trainers, as: :check_boxes, collection: Trainer.all
       f.input :categories, as: :check_boxes, collection: Category.all
-      f.input :include_in_catalog
+      if current_user.ability.can?(:set_include_in_catalog, EventType)
+        f.input :include_in_catalog
+      else
+        f.input :include_in_catalog, input_html: { disabled: true },
+                                     hint: 'Only publishers can modify this field'
+      end
       f.input :lang, as: :radio
       f.input :platform, as: :radio
       f.input :external_id, label: 'Academia ID'

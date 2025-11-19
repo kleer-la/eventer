@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   # active admin authentication
   def authenticate_admin_user!
-    redirect_to new_user_session_path unless current_user&.roles&.any?
+    redirect_to new_user_session_path unless current_user
   end
 
   # cancancan authorization

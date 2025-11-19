@@ -8,14 +8,17 @@ describe UsersController do
     login_comercial
 
     describe 'GET index' do
-      it 'should raise CanCan::AccessDenied' do
-        expect { get :index }.to raise_error CanCan::AccessDenied
+      it 'can read users' do
+        get :index
+        expect(response).to have_http_status(:success)
       end
     end
 
     describe 'GET show' do
-      it 'should raise CanCan::AccessDenied' do
-        expect { get :show, params: { id: 1 } }.to raise_error CanCan::AccessDenied
+      it 'can read a user' do
+        user = FactoryBot.create(:user)
+        get :show, params: { id: user.id }
+        expect(response).to have_http_status(:success)
       end
     end
 

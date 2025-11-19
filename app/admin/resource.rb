@@ -82,7 +82,12 @@ ActiveAdmin.register Resource do
       f.input :format
       f.input :category, as: :select, collection: Category.all
       f.input :slug, hint: 'Empty -> automatic from "title es" (slug an id for human readable links)'
-      f.input :published
+      if current_user.ability.can?(:set_published, Resource)
+        f.input :published
+      else
+        f.input :published, input_html: { disabled: true },
+                            hint: 'Only publishers can modify this field'
+      end
       f.input :tabtitle_es
       f.input :seo_description_es
       f.input :landing_es

@@ -33,6 +33,10 @@ describe EventsController do
         expect(assigns(:event)).to eq event
       end
     end
+  end
+
+  context 'the user is a marketing' do
+    login_marketing
 
     describe 'GET new' do
       it 'assigns a new event as @event' do
@@ -144,6 +148,11 @@ describe EventsController do
         end
       end
     end
+
+  end
+
+  context 'the user is an admin (for destroy)' do
+    login_admin
 
     describe 'DELETE destroy' do
       before(:each) do

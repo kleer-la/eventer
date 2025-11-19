@@ -23,6 +23,10 @@ FactoryBot.define do
     name { :content }
   end
 
+  factory :publisher_role, class: Role do
+    name { :publisher }
+  end
+
   factory :administrator, class: User do
     email { 'admin@user.com' }
     password { 'please' }
@@ -49,6 +53,13 @@ FactoryBot.define do
     password { 'please' }
     password_confirmation { 'please' }
     roles { [FactoryBot.create(:content_role)] }
+  end
+
+  factory :publisher_user, class: User do
+    email { 'publisher@user.com' }
+    password { 'please' }
+    password_confirmation { 'please' }
+    roles { [FactoryBot.create(:publisher_role)] }
   end
   factory :admin_user, class: User do
     email { Faker::Internet.email }

@@ -134,7 +134,12 @@ ActiveAdmin.register Article do
   form do |f|
     f.inputs do
       f.input :lang, as: :radio
-      f.input :published
+      if current_user.ability.can?(:set_published, Article)
+        f.input :published
+      else
+        f.input :published, input_html: { disabled: true },
+                            hint: 'Only publishers can modify this field'
+      end
       f.input :selected
       f.input :noindex
       f.input :industry, as: :select, hint: 'Tiene industria solo si es un caso de estudio', collection: Article.industries.keys.map { |industry|

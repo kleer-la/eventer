@@ -121,14 +121,16 @@ describe RolesController do
       @role = FactoryBot.create(:comercial_role)
     end
     describe 'GET index' do
-      it 'should raise CanCan::AccessDenied' do
-        expect { get :index }.to raise_error CanCan::AccessDenied
+      it 'can read roles' do
+        get :index
+        expect(response).to have_http_status(:success)
       end
     end
 
     describe 'GET show' do
-      it 'should raise CanCan::AccessDenied' do
-        expect { get :show, params: { id: @role.to_param } }.to raise_error CanCan::AccessDenied
+      it 'can read a role' do
+        get :show, params: { id: @role.to_param }
+        expect(response).to have_http_status(:success)
       end
     end
 
