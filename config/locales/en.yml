@@ -36,6 +36,9 @@ en:
         signed_out: "Gracias por utilizar Eventer. Hasta la próxima!"
 
   activerecord:
+      attributes:
+        event_type:
+          elevator_pitch: "SEO Description"
       errors:
         template:
           header:

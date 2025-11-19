@@ -119,6 +119,10 @@ class EventType < ApplicationRecord
     name
   end
 
+  def effective_seo_title
+    seo_title.presence || name
+  end
+
   def as_recommendation(lang: 'es')
     super
       .merge('title' => name) # is a method, not an attribute
@@ -133,7 +137,7 @@ class EventType < ApplicationRecord
        csd_eligible deleted description duration elevator_pitch external_id external_site_url
        extra_script faq goal id id_value include_in_catalog is_kleer_certification kleer_cert_seal_image
        lang learnings materials name net_promoter_score new_version noindex platform program
-       promoter_count recipients side_image subtitle surveyed_count tag_name takeaways updated_at]
+       promoter_count recipients seo_title side_image subtitle surveyed_count tag_name takeaways updated_at]
   end
 
   def self.ransackable_associations(auth_object = nil)

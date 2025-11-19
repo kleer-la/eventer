@@ -215,6 +215,19 @@ describe EventType do
       expect(et.brochure).to eq 'beta'
     end
   end
+
+  context 'SEO fields' do
+    it 'can have a seo_title' do
+      et = create(:event_type, seo_title: 'Best Agile Training Course')
+      expect(et.seo_title).to eq 'Best Agile Training Course'
+    end
+
+    it 'seo_title is optional' do
+      et = create(:event_type)
+      expect(et.seo_title).to be_nil
+      expect(et.valid?).to be true
+    end
+  end
   context 'coupons' do
     it 'has a valid many-to-many relation with EventTypes' do
       event_type = create(:event_type)

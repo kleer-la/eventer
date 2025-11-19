@@ -8,7 +8,7 @@ ActiveAdmin.register EventType do
                 :is_kleer_certification, :csd_eligible, :cover, :side_image, :kleer_cert_seal_image,
                 :subtitle, :elevator_pitch, :description, :recipients, :program, :learnings,
                 :takeaways, :faq, :materials, :cancellation_policy, :brochure, :external_site_url,
-                :extra_script, :canonical_id, :deleted, :noindex, :new_version,
+                :extra_script, :canonical_id, :deleted, :noindex, :new_version, :seo_title,
                 trainer_ids: [], category_ids: [],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
@@ -149,6 +149,7 @@ ActiveAdmin.register EventType do
       row :side_image
       row :kleer_cert_seal_image
       row :subtitle
+      row :seo_title
       row :elevator_pitch
       row :description do |event_type|
         simple_format event_type.description
@@ -241,8 +242,9 @@ ActiveAdmin.register EventType do
       f.input :kleer_cert_seal_image, as: :select, collection: bkgd_imgs,
                                       input_html: { data: { allow_clear: true, placeholder: 'Select an image' } }
       f.input :subtitle
+      f.input :seo_title, hint: 'Custom title for SEO purposes. If blank, the name will be used.'
       f.input :elevator_pitch, as: :text, input_html: { rows: 4, maxlength: 160 },
-                               hint: 'No more than 160 characters. Plain text, no HTML or Markdown.'
+      hint: 'No more than 160 characters. Plain text, no HTML or Markdown.'
       f.input :description, as: :text, input_html: { rows: 8 }
       f.input :recipients, as: :text, input_html: { rows: 8 }
       f.input :program, as: :text, input_html: { rows: 8 }

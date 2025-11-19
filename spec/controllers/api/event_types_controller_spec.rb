@@ -108,5 +108,37 @@ describe Api::EventTypesController do
       expect(json_response['recommended']).to be_an(Array)
       expect(json_response['recommended']).to be_empty
     end
+
+    context 'seo_title' do
+      it 'returns seo_title when set' do
+        event_type = create(:event_type, seo_title: 'Custom SEO Title')
+
+        get :show, params: { id: event_type.id, format: 'json' }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response['seo_title']).to eq('Custom SEO Title')
+      end
+
+      it 'returns name as seo_title when seo_title is blank' do
+        event_type = create(:event_type, name: 'My Event Name', seo_title: nil)
+
+        get :show, params: { id: event_type.id, format: 'json' }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response['seo_title']).to eq('My Event Name')
+      end
+
+      it 'returns name as seo_title when seo_title is empty string' do
+        event_type = create(:event_type, name: 'My Event Name', seo_title: '')
+
+        get :show, params: { id: event_type.id, format: 'json' }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response['seo_title']).to eq('My Event Name')
+      end
+    end
   end
 end

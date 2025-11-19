@@ -44,11 +44,11 @@ module Api
 
     # json used in v2022 landing
     def event_type_to_json(event_type)
-      et = event_type.to_json(
+      et = event_type.as_json(
         only: %i[id name description recipients program created_at updated_at goal
                  duration faq elevator_pitch learnings takeaways subtitle csd_eligible is_kleer_certification
                  external_site_url deleted noindex lang cover side_image brochure new_version extra_script],
-        methods: %i[slug canonical_slug recommended], include: [:categories,
+        methods: %i[slug canonical_slug recommended effective_seo_title], include: [:categories,
                                                                 { next_events: {
                                                                   only: %i[
                                                                     id date place city country_id list_price eb_price eb_end_date registration_link mode
@@ -58,8 +58,9 @@ module Api
                                                                   methods: %i[trainers coupons]
                                                                 } }]
       )
-      testimonies_json = format_testimonies_for_api(event_type.api_testimonies.first(10)).to_json
-      "#{et[0..-2]},\"testimonies\":#{testimonies_json}}"
+      et['seo_title'] = et.delete('effective_seo_title')
+      et['testimonies'] = format_testimonies_for_api(event_type.api_testimonies.first(10))
+      et.to_json
     end
 
     private
