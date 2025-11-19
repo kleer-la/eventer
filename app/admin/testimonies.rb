@@ -16,7 +16,12 @@ ActiveAdmin.register Testimony do
   filter :last_name
   filter :stared
   filter :testimonial_type, as: :select, collection: %w[EventType Service]
-  filter :testimonial_id
+  filter :testimonial_of_EventType_type_id, as: :select,
+         collection: -> { EventType.order(:name).pluck(:name, :id) },
+         label: 'Event Type'
+  filter :testimonial_of_Service_type_id, as: :select,
+         collection: -> { Service.order(:name).pluck(:name, :id) },
+         label: 'Service'
   filter :created_at
 
   index do

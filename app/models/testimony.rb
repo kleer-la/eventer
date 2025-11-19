@@ -29,4 +29,13 @@ class Testimony < ApplicationRecord
   def self.ransackable_associations(_auth_object = nil)
     %w[rich_text_testimony service testimonial]
   end
+
+  # Custom ransackers for filtering by polymorphic association
+  ransacker :testimonial_of_EventType_type_id do
+    Arel.sql("CASE WHEN testimonial_type = 'EventType' THEN testimonial_id END")
+  end
+
+  ransacker :testimonial_of_Service_type_id do
+    Arel.sql("CASE WHEN testimonial_type = 'Service' THEN testimonial_id END")
+  end
 end
