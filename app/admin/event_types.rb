@@ -214,12 +214,23 @@ ActiveAdmin.register EventType do
   end
 
   controller do
+    after_action :notify_cache_info, only: %i[create update]
+
     def scoped_collection
       super.includes(:trainers, :categories)
     end
 
     def find_resource
       EventType.includes(:trainers, :categories, :canonical, recommended_contents: :target).find(params[:id])
+    end
+
+    private
+
+    def notify_cache_info
+      return unless resource.persisted? && resource.errors.empty?
+
+      flash[:html_alert] = 'Schedule & Catalog are cached in the website. ' \
+                           "Wait or Assets/Website Cache reset"
     end
   end
 
