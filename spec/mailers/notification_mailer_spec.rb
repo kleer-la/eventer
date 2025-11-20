@@ -21,6 +21,26 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the content' do
       expect(mail.body.encoded).to match('Hello John!')
     end
+
+    context 'with multiline content' do
+      let(:template) do
+        create(:mail_template,
+               subject: 'Welcome {{name}}',
+               content: "Line 1\nLine 2\nLine 3",
+               to: '{{email}}',
+               cc: 'manager@example.com')
+      end
+
+      it 'converts newlines to <br> tags in HTML part' do
+        html_part = mail.html_part.body.decoded
+        expect(html_part).to include("Line 1<br>\nLine 2<br>\nLine 3")
+      end
+
+      it 'preserves newlines in text part' do
+        text_part = mail.text_part.body.decoded
+        expect(text_part).to include("Line 1\nLine 2\nLine 3")
+      end
+    end
   end
 
   describe '#daily_digest' do
