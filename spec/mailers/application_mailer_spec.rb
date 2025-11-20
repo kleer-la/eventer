@@ -49,5 +49,26 @@ describe ApplicationMailer do
         expect(plain_body).to include(expected_text)
       end
     end
+
+    context 'with multiline message' do
+      let(:message) { "Line 1\nLine 2\nLine 3" }
+      let(:context) { '/test' }
+
+      it 'converts newlines to <br> tags in HTML email' do
+        mail = described_class.contact_us(name, email, company, 'es', context, subject_text, message)
+        html_body = mail.parts.find { |p| p.content_type.match(/html/) }.body.encoded
+
+        expect(html_body).to include('Line 1<br>')
+        expect(html_body).to include('Line 2<br>')
+        expect(html_body).to include('Line 3')
+      end
+
+      it 'preserves newlines in text email' do
+        mail = described_class.contact_us(name, email, company, 'es', context, subject_text, message)
+        text_body = mail.parts.find { |p| p.content_type.match(/plain/) }.body.encoded.gsub(/\r\n/, "\n")
+
+        expect(text_body).to include("Line 1\nLine 2\nLine 3")
+      end
+    end
   end
 end

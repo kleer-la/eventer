@@ -22,7 +22,7 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(mail.body.encoded).to match('Hello John!')
     end
 
-    context 'with multiline content' do
+    context 'with multiline content in template' do
       let(:template) do
         create(:mail_template,
                subject: 'Welcome {{name}}',
@@ -39,6 +39,34 @@ RSpec.describe NotificationMailer, type: :mailer do
       it 'preserves newlines in text part' do
         text_part = mail.text_part.body.decoded
         expect(text_part).to include("Line 1\nLine 2\nLine 3")
+      end
+    end
+
+    context 'with multiline content in form data' do
+      let(:contact) do
+        create(:contact, form_data: {
+                 email: 'user@example.com',
+                 name: 'John',
+                 message: "First line\nSecond line\nThird line"
+               })
+      end
+      let(:template) do
+        create(:mail_template,
+               subject: 'Contact from {{name}}',
+               content: "Name: {{name}}\nMessage:\n{{message}}",
+               to: 'admin@example.com')
+      end
+
+      it 'converts newlines in interpolated variables to <br> tags in HTML part' do
+        html_part = mail.html_part.body.decoded
+        expect(html_part).to include('First line<br>')
+        expect(html_part).to include('Second line<br>')
+        expect(html_part).to include('Third line')
+      end
+
+      it 'preserves newlines in text part' do
+        text_part = mail.text_part.body.decoded
+        expect(text_part).to include("First line\nSecond line\nThird line")
       end
     end
   end

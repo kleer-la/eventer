@@ -32,6 +32,8 @@ class NotificationMailer < ApplicationMailer
   private
 
   def simple_format_for_html(text)
-    text.gsub("\n", "<br>\n")
+    # Handle both actual newlines and escaped newlines
+    # Also handle Windows-style line endings
+    text.gsub(/\r\n|\r|\n/, "<br>\n")
   end
 end
