@@ -27,6 +27,28 @@ ActiveAdmin.register User do
     end
   end
 
+  batch_action :add_role, form: -> { { role_id: Role.pluck(:name, :id) } } do |ids, inputs|
+    role = Role.find(inputs['role_id'])
+    users = User.where(id: ids)
+
+    users.each do |user|
+      user.roles << role unless user.roles.include?(role)
+    end
+
+    redirect_to collection_path, notice: "Role '#{role.name}' added to #{users.count} user(s)"
+  end
+
+  batch_action :remove_role, form: -> { { role_id: Role.pluck(:name, :id) } } do |ids, inputs|
+    role = Role.find(inputs['role_id'])
+    users = User.where(id: ids)
+
+    users.each do |user|
+      user.roles.delete(role) if user.roles.include?(role)
+    end
+
+    redirect_to collection_path, notice: "Role '#{role.name}' removed from #{users.count} user(s)"
+  end
+
   sidebar 'Role Permissions Summary', only: :index do
     table_for [
       { role: 'comercial', permissions: 'Read only' },
