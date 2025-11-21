@@ -23,7 +23,7 @@ describe User do
 
       user.roles << admin_role
 
-      expect(user.roles.first.name).to eq('admin')
+      expect(user.roles.first.name).to eq('administrator')
     end
   end
 

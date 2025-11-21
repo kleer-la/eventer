@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Admin
-  class CurrentUserController < AdminController
+  class CurrentUserController < ApplicationController
+    before_action :authenticate_user!
+
     def roles
       render json: {
         email: current_user.email,
