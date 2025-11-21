@@ -16,6 +16,18 @@ class User < ApplicationRecord
     @ability ||= Ability.new(self)
   end
 
+  def display_name
+    email
+  end
+
+  def display_name_with_roles
+    roles_html = roles.map do |role|
+      "<span class='role-badge role-badge-#{role.name.to_s.parameterize}'>#{role.name}</span>"
+    end.join(' ')
+
+    "#{email} #{roles_html}".html_safe
+  end
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at current_sign_in_at current_sign_in_ip email encrypted_password id id_value
        last_sign_in_at last_sign_in_ip remember_created_at reset_password_sent_at reset_password_token sign_in_count updated_at]

@@ -347,4 +347,18 @@ ActiveAdmin.setup do |config|
   # You can switch to using Webpacker here.
   #
   # config.use_webpacker = true
+
+  # Customize the utility navigation to show roles
+  config.namespace :admin do |admin|
+    admin.build_menu :utility_navigation do |menu|
+      menu.add label: proc {
+        current_user.display_name_with_roles
+      },
+               url: proc { admin_root_path },
+               id: 'current_user',
+               priority: 10,
+               html_options: { class: 'user-with-roles' }
+      admin.add_logout_button_to_menu menu
+    end
+  end
 end

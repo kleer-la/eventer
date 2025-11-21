@@ -4,6 +4,29 @@ require 'rails_helper'
 require 'cancan/matchers'
 
 describe User do
+  context 'Role association' do
+    it 'can have multiple roles' do
+      user = FactoryBot.create(:user)
+      admin_role = FactoryBot.create(:admin_role)
+      trainer_role = FactoryBot.create(:trainer_role)
+
+      user.roles << admin_role
+      user.roles << trainer_role
+
+      expect(user.roles.count).to eq(2)
+      expect(user.roles).to include(admin_role, trainer_role)
+    end
+
+    it 'returns role names correctly' do
+      user = FactoryBot.create(:user)
+      admin_role = FactoryBot.create(:admin_role)
+
+      user.roles << admin_role
+
+      expect(user.roles.first.name).to eq('admin')
+    end
+  end
+
   context "If it's an administrator" do
     before(:each) do
       user = FactoryBot.create(:user)

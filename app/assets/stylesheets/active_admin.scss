@@ -93,11 +93,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  
+
   .title-section {
     flex: 1;
   }
-  
+
   .action-section {
     margin-left: 15px;
   }
@@ -117,9 +117,56 @@
     padding: 7px 16px 6px;
     text-decoration: none;
     text-shadow: 0 1px 0 black;
-    
+
     &:hover {
       background: #484e53;
     }
+  }
+}
+
+// Role badges in utility navigation
+.role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-left: 5px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  background: #5c6bc0;
+
+  // Default role styles
+  &.role-badge-admin,
+  &.role-badge-administrator {
+    background: #f34541;
+  }
+
+  &.role-badge-trainer {
+    background: #49bf67;
+  }
+
+  &.role-badge-editor {
+    background: #00acec;
+  }
+
+  &.role-badge-marketing {
+    background: #f8a326;
+  }
+
+  &.role-badge-moderator {
+    background: #9c27b0;
+  }
+
+  &.role-badge-comercial {
+    background: #3f51b5;
+  }
+
+  &.role-badge-content {
+    background: #00bcd4;
+  }
+
+  &.role-badge-publisher {
+    background: #4caf50;
   }
 }

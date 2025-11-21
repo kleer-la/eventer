@@ -3,3 +3,4 @@
 
 //= require active_admin_kleer
 //= require trix
+//= require user_roles_badges

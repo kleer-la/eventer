@@ -27,6 +27,10 @@ FactoryBot.define do
     name { :publisher }
   end
 
+  factory :trainer_role, class: Role do
+    name { :trainer }
+  end
+
   factory :administrator, class: User do
     email { 'admin@user.com' }
     password { 'please' }

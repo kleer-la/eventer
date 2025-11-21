@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   resources :service_areas
   ActiveAdmin.routes(self)
 
+  # Custom admin routes
+  namespace :admin do
+    get 'current_user_roles', to: 'current_user#roles'
+  end
+
   get 'images/filter/:bucket' => 'images#index'
   get 'images' => 'images#index'
   get 'images/new'
