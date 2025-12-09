@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_19_175609) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_09_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -259,6 +259,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_19_175609) do
     t.integer "platform", default: 0
     t.integer "external_id"
     t.string "seo_title"
+    t.integer "ordering", default: 100
     t.index ["canonical_id"], name: "index_event_types_on_canonical_id"
   end
 

@@ -4,7 +4,7 @@ ActiveAdmin.register EventType do
   menu parent: 'Courses Mgnt'
 
   # You might want to permit these parameters in a controller action
-  permit_params :name, :duration, :include_in_catalog, :lang, :platform, :external_id, :tag_name,
+  permit_params :name, :duration, :include_in_catalog, :ordering, :lang, :platform, :external_id, :tag_name,
                 :is_kleer_certification, :csd_eligible, :cover, :side_image, :kleer_cert_seal_image,
                 :subtitle, :elevator_pitch, :description, :recipients, :program, :learnings,
                 :takeaways, :faq, :materials, :cancellation_policy, :brochure, :external_site_url,
@@ -100,8 +100,9 @@ ActiveAdmin.register EventType do
     end
   end
 
-  config.sort_order = 'name_asc'
+  config.sort_order = 'ordering_asc'
   index do
+    column :ordering
     column :name
     column :platform
     column :lang
@@ -139,6 +140,7 @@ ActiveAdmin.register EventType do
         event_type.categories.map(&:name).join(', ')
       end
       row :include_in_catalog
+      row :ordering
       row :lang
       row :platform
       row :external_id
@@ -247,6 +249,7 @@ ActiveAdmin.register EventType do
         f.input :include_in_catalog, input_html: { disabled: true },
                                      hint: 'Only publishers can modify this field'
       end
+      f.input :ordering, hint: 'Lower values appear first in catalog. Default is 100.'
       f.input :lang, as: :radio
       f.input :platform, as: :radio
       f.input :external_id, label: 'Academia ID'

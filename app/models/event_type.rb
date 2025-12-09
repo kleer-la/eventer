@@ -22,6 +22,7 @@ class EventType < ApplicationRecord
   enum :platform, { keventer: 0, academia: 1 }
 
   scope :included_in_catalog, -> { where(include_in_catalog: true, deleted: false) }
+  scope :ordered, -> { order(:ordering) }
 
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
   validates :elevator_pitch, length: { maximum: 160,
@@ -136,7 +137,7 @@ class EventType < ApplicationRecord
     %w[average_rating brochure cancellation_policy canonical_id cover created_at
        csd_eligible deleted description duration elevator_pitch external_id external_site_url
        extra_script faq goal id id_value include_in_catalog is_kleer_certification kleer_cert_seal_image
-       lang learnings materials name net_promoter_score new_version noindex platform program
+       lang learnings materials name net_promoter_score new_version noindex ordering platform program
        promoter_count recipients seo_title side_image subtitle surveyed_count tag_name takeaways updated_at]
   end
 

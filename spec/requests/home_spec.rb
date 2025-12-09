@@ -58,6 +58,31 @@ describe 'GET catalog', type: :request do
     json = JSON.parse(response.body)
     expect(json[0]['percent_off']).to eq '20.0'
   end
+
+  it 'returns courses sorted by ordering field' do
+    et_last = FactoryBot.create(:event_type, include_in_catalog: true, ordering: 100, name: 'Last Course')
+    et_first = FactoryBot.create(:event_type, include_in_catalog: true, ordering: 10, name: 'First Course')
+    et_middle = FactoryBot.create(:event_type, include_in_catalog: true, ordering: 50, name: 'Middle Course')
+
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json.size).to eq 3
+    expect(json[0]['event_type_id']).to eq et_first.id
+    expect(json[1]['event_type_id']).to eq et_middle.id
+    expect(json[2]['event_type_id']).to eq et_last.id
+  end
+
+  it 'includes ordering field in response' do
+    FactoryBot.create(:event_type, include_in_catalog: true, ordering: 25)
+
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json[0]['ordering']).to eq 25
+  end
 end
 describe 'GET api/event_type/1.json', type: :request do
   it 'no event one event_type' do

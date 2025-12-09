@@ -104,7 +104,8 @@ class HomeController < ApplicationController
       external_site_url: et.external_site_url,
       platform: et.platform,
       percent_off: codeless_coupon&.percent_off,
-      coupon_icon: codeless_coupon&.icon
+      coupon_icon: codeless_coupon&.icon,
+      ordering: et.ordering
     }
   end
 
@@ -120,7 +121,8 @@ class HomeController < ApplicationController
       list << event_to_h(nil).merge(event_type_to_h(et))
     end
 
-    render json: open.to_a + incompany.to_a
+    all_courses = (open.to_a + incompany.to_a).sort_by { |course| course[:ordering] || 100 }
+    render json: all_courses
   end
 
   def index
