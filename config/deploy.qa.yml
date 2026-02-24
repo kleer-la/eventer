@@ -1,0 +1,14 @@
+proxy:
+  hosts:
+    - qa.eventos.kleer.la
+  ssl: true
+  app_port: 3000
+  healthcheck:
+    path: /up
+    interval: 3
+
+env:
+  clear:
+    RAILS_ENV: production
+    RAILS_LOG_LEVEL: info
+    WEB_CONCURRENCY: 1

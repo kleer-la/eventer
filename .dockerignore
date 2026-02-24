@@ -1,0 +1,17 @@
+.git
+.github
+.devcontainer
+.docker
+.vscode
+.kamal
+spec
+features
+tmp
+log
+db/*.sqlite3
+node_modules
+*.md
+*.env
+*.env.*
+.dockerignore
+docker-compose.yml

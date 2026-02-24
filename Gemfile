@@ -42,9 +42,6 @@ group :assets do
   gem 'sassc-rails'
   gem 'uglifier', '>= 1.3.0'
 end
-group :production do
-  gem 'rails_12factor'
-end
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer'

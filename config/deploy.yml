@@ -1,0 +1,65 @@
+service: eventer
+
+image: jgabardini/eventer
+
+servers:
+  web:
+    hosts:
+      - <%= ENV['SERVER_IP'] %>
+  job:
+    hosts:
+      - <%= ENV['SERVER_IP'] %>
+    cmd: bundle exec rake jobs:work
+
+proxy:
+  hosts:
+    - eventos.kleer.la
+  ssl: true
+  app_port: 3000
+  healthcheck:
+    path: /up
+    interval: 3
+
+registry:
+  server: docker.io
+  username: jgabardini
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  remote: ssh://appuser@5.78.92.152
+
+env:
+  clear:
+    RAILS_ENV: production
+    RAILS_LOG_LEVEL: info
+    WEB_CONCURRENCY: 2
+    RAILS_SERVE_STATIC_FILES: true
+  secret:
+    - SECRET_KEY_BASE
+    - DATABASE_URL
+    - RECAPTCHA_SITE_KEY
+    - RECAPTCHA_SECRET_KEY
+    - XERO_CLIENT_ID
+    - XERO_CLIENT_SECRET
+    - XERO_REDIRECT_URI
+    - XERO_SCOPES
+    - XERO_WEBHOOK_KEY
+    - KEVENTER_SMTP_ADDRESS
+    - KEVENTER_SMTP_PORT
+    - KEVENTER_SMTP_USERNAME
+    - KEVENTER_SMTP_PASSWORD
+    - KEVENTER_AWS_ACCESS_KEY_ID
+    - KEVENTER_AWS_SECRET_ACCESS_KEY
+    - CONTACT_US_SECRET
+    - NEW_RELIC_LICENSE_KEY
+    - CACHE_RESET_TOKEN
+
+ssh:
+  user: appuser
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
