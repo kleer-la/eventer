@@ -3,7 +3,7 @@
 ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
-  permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :body,
+  permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :header, :body,
                 :industry, :noindex, :substantive_change_at,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
@@ -97,6 +97,7 @@ ActiveAdmin.register Article do
       end
       row :slug
       row :cover
+      row :header
       row :body do
         markdown resource.body
       end
@@ -151,6 +152,7 @@ ActiveAdmin.register Article do
       f.input :description
       f.input :slug
       f.input :cover
+      f.input :header, hint: 'Image displayed at the top of the article page (cover is used for thumbnails in listings)'
       f.input :body, input_html: { rows: 20 }
       f.input :substantive_change_at, as: :datetime_picker, hint: 'Update if name, slug, images, structure or large amount of text is changing'
       f.input :trainers, as: :check_boxes, collection: Trainer.sorted

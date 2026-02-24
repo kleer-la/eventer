@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_09_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_24_122528) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -74,6 +74,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_09_120000) do
     t.integer "industry"
     t.boolean "noindex", default: false, null: false
     t.datetime "substantive_change_at"
+    t.string "header"
     t.index ["category_id"], name: "index_articles_on_category_id"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
     t.index ["substantive_change_at"], name: "index_articles_on_substantive_change_at"

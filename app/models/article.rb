@@ -6,7 +6,7 @@ class Article < ApplicationRecord
   friendly_id :title, use: %i[slugged history]
 
   include ImageReference
-  references_images_in :cover,
+  references_images_in :cover, :header,
                        text_fields: %i[body description]
 
   has_and_belongs_to_many :trainers
@@ -21,6 +21,7 @@ class Article < ApplicationRecord
   # validates :published, presence: true
   validates :description, presence: true, length: { maximum: 160 }
 
+  before_save :strip_image_urls
   before_save :update_substantive_change_at
 
   enum :industry, {
@@ -60,7 +61,7 @@ class Article < ApplicationRecord
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[body category_id cover created_at description id lang published selected slug tabtitle title updated_at industry substantive_change_at]
+    %w[body category_id cover header created_at description id lang published selected slug tabtitle title updated_at industry substantive_change_at]
   end
 
   def self.ransackable_associations(_auth_object = nil)
@@ -68,6 +69,11 @@ class Article < ApplicationRecord
   end
 
   private
+
+  def strip_image_urls
+    self.cover = cover&.strip
+    self.header = header&.strip
+  end
 
   def update_substantive_change_at
     if new_record?

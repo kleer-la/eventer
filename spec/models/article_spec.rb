@@ -93,6 +93,20 @@ RSpec.describe Article, type: :model do
     end
   end
 
+  describe 'strip_image_urls' do
+    it 'strips whitespace from cover and header on save' do
+      article = FactoryBot.create(:article, cover: '  https://example.com/cover.jpg ', header: 'https://example.com/header.jpg  ')
+      expect(article.cover).to eq('https://example.com/cover.jpg')
+      expect(article.header).to eq('https://example.com/header.jpg')
+    end
+
+    it 'handles nil cover and header' do
+      article = FactoryBot.create(:article, cover: nil, header: nil)
+      expect(article.cover).to be_nil
+      expect(article.header).to be_nil
+    end
+  end
+
   describe 'substantive_change_at' do
     context 'when creating a new article' do
       it 'automatically sets substantive_change_at to current time' do
