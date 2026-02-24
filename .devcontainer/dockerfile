@@ -27,22 +27,17 @@ RUN apt-get install -y google-chrome-stable
 # Installing Unzip
 RUN apt-get install -yqq unzip
 
-# Download the Chrome Driver
-#RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_linux64.zip
-#RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
-
-# Unzip the Chrome Driver into /usr/local/bin directory
-#RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
-
-# [Option] Install Node.js
-# ARG INSTALL_NODE="true"
-# ARG NODE_VERSION="lts/*"
-# RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
+# Install Node.js
 RUN apt-get install -y ca-certificates curl gnupg
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 RUN apt-get update
 RUN apt-get install nodejs -y
+
+# Install Docker CLI + buildx (for Kamal deployments)
+RUN curl -fsSL https://get.docker.com | sh && \
+    groupadd -g 999 docker || true && \
+    usermod -aG docker $USER_NAME
 
 # Set display port as an environment variable
 ENV DISPLAY=:99

@@ -6,6 +6,7 @@ ruby '~> 3.4.7'
 gem 'rails', '~> 7.2.2' # ~>
 
 group :development do
+  gem 'kamal', '~> 2.0'
   gem 'brakeman'
   gem 'debug', '>= 1.0.0'
   gem 'derailed_benchmarks'

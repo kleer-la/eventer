@@ -6,27 +6,28 @@ services:
       context: ..
       dockerfile: .devcontainer/dockerfile
       args:
-        # [Choice] Install Node.js
-        INSTALL_NODE: "false"
-        NODE_VERSION: "lts/*"
         # On Linux, you may need to update USER_UID and USER_GID below if not your local UID is not 1000.
         USER_UID: 1000
         USER_GID: 1000
+    group_add:
+      - "${DOCKER_GID:-1001}"
+    env_file:
+      - ../eventer.env
 
     ports:
       - "3000:3000"
       - "2222:22"
     volumes:
       - ..:/app:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/home/vscode/.ssh
+      - ${SSH_AUTH_SOCK:-/dev/null}:/ssh-agent
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
 
     # Uncomment the next line to use a non-root user for all processes.
     user: vscode
 
-    # environment:
-    #   - DATABASE_URL=postgresql://postgres:postgres@db/postgres
-    #   - SECRET=02c9391f4ebec3260ae083966737c20df87a23708c8c996a
-
-    # Overrides default command so things don't shut down after the process ends.
     #command: sleep infinity
     command: /bin/bash -c "/usr/sbin/sshd -D & sleep infinity"
     networks:

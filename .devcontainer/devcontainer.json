@@ -15,27 +15,6 @@
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
 	"workspaceFolder": "/app",
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [3000],
-
-	// Uncomment the next line if you want start specific services in your Docker Compose config.
-	// "runServices": [],
-
-	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
-	// "shutdownAction": "none",
-
-	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "cat /etc/os-release",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "devcontainer"
-
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {
 		"vscode": {
@@ -49,18 +28,17 @@
 			},
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
-				"castwide.solargraph", 			// solargraph
-				"rebornix.Ruby", 						// ruby
-				"misogi.ruby-rubocop", 			// rubocop
-				"KoichiSasada.vscode-rdbg",	// ruby debug
+				"castwide.solargraph",
+				"rebornix.Ruby",
+				"misogi.ruby-rubocop",
+				"KoichiSasada.vscode-rdbg",
 				"eamodio.gitlens"
 			]
 		}
 	},
 
-	"postCreateCommand": "bundle install",
-  "runArgs": [
-    "--network=local-kleer-network"
-  ]
+	"postCreateCommand": "bundle install && echo '\n# Auto-source eventer.env for Kamal deployments\nif [ -f /app/eventer.env ]; then\n  set -a; source /app/eventer.env; set +a\nfi' >> ~/.bashrc",
+	"runArgs": [
+		"--network=local-kleer-network"
+	]
 }
-
