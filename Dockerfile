@@ -5,7 +5,7 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       build-essential \
       libpq-dev \
-      libmagickwand-dev \
+      libmagickwand-7.q16-dev \
       libcurl4-openssl-dev \
       libyaml-dev \
       git \
@@ -33,7 +33,7 @@ FROM ruby:3.4.7-slim
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       libpq5 \
-      libmagickwand-7.q16hdri-10 \
+      libmagickwand-7.q16-10 \
       libcurl4 \
       nodejs && \
     rm -rf /var/lib/apt/lists/*
