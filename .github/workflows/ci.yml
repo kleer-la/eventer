@@ -1,13 +1,11 @@
 on:
   push:
     branches: [ '*']
-  #pull_request:
-  #  branches: [ develop, master]
 
 jobs:
   CI:
     runs-on: ubuntu-latest
-    environment: keventer 
+    environment: keventer
     env:
       KEVENTER_AWS_ACCESS_KEY_ID: ${{ secrets.KEVENTER_AWS_ACCESS_KEY_ID }}
       KEVENTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.KEVENTER_AWS_SECRET_ACCESS_KEY }}
@@ -17,9 +15,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libmagickwand-dev
-
       - name: Set up Ruby
-        # automatic versioning https://github.com/ruby/setup-ruby#versioning):
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.4.7
@@ -27,38 +23,3 @@ jobs:
         run: bundle install
       - name: Run tests
         run: rails db:test:prepare ci
-      #- name: Run acceptance tests
-      #  run: cucumber
-
-      # - name: Coveralls
-      #   uses: coverallsapp/github-action@master
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-
-#    - name: Check rubycritic
-#      run: rubycritic -f html --no-browser
-    # - name: update index
-    #   run: |
-    #     cat > tmp/rubycritic/index.md <<EOL
-    #     ---
-    #       permalink: /overview.html
-    #     ---
-    #     EOL
-    # - name: Deploy to Heroku
-    #   if: success()
-    #   uses: crazy-max/ghaction-github-pages@v2
-    #   with:
-    #     target_branch: gh-pages
-    #     build_dir: tmp/rubycritic/
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#     - name: Discord notification
-#       if: ${{ success() }}
-#       uses: Ilshidur/action-discord@759f6ea4dc493b8bd1bb35ae7fbd7ae10fcea129
-#       with:
-#         args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} looks ok!!.'
-#     - name: The job has failed
-#       if: ${{ failure() }}
-#       uses: Ilshidur/action-discord@759f6ea4dc493b8bd1bb35ae7fbd7ae10fcea129
-#       with:
-#         args: 'UPS something fails in {{ EVENT_PAYLOAD.repository.full_name }}, please check the IC flow!.'
