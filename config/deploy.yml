@@ -54,6 +54,7 @@ env:
     - KEVENTER_AWS_SECRET_ACCESS_KEY
     - CONTACT_US_SECRET
     - CACHE_RESET_TOKEN
+    - WEBSITE_URL
 
 ssh:
   user: appuser

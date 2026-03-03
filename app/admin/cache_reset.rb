@@ -52,7 +52,14 @@ ActiveAdmin.register_page 'Cache Reset' do
     end
 
     begin
-      url = "https://www.kleer.la/cache-reset?token=#{token}"
+      website_url = ENV.fetch('WEBSITE_URL', nil)
+      if website_url.blank?
+        flash[:error] = 'WEBSITE_URL environment variable is not configured'
+        redirect_to admin_cache_reset_path
+        return
+      end
+
+      url = "#{website_url}/cache-reset?token=#{token}"
       uri = URI.parse(url)
 
       response = Net::HTTP.get_response(uri)
