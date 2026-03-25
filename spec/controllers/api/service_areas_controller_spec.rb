@@ -77,6 +77,27 @@ describe Api::ServiceAreasController do
         expect(service_ids).to include(invisible_service.id)
       end
     end
+    describe 'SEO fields' do
+      it 'includes seo_title and seo_description for services' do
+        service = FactoryBot.create(:service, service_area:, visible: true,
+                                              seo_title: 'Service SEO Title',
+                                              seo_description: 'Service SEO Description')
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        svc = json_response['services'].find { |s| s['id'] == service.id }
+        expect(svc['seo_title']).to eq('Service SEO Title')
+        expect(svc['seo_description']).to eq('Service SEO Description')
+      end
+
+      it 'returns nil seo fields when not set' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        svc = json_response['services'].find { |s| s['id'] == visible_service.id }
+        expect(svc['seo_title']).to be_nil
+        expect(svc['seo_description']).to be_nil
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)

@@ -14,6 +14,20 @@ RSpec.describe Service, type: :model do
     service.save
     expect(service.slug).to eq('test-slug')
   end
+  describe 'seo fields' do
+    it 'can have seo_title and seo_description' do
+      service = FactoryBot.create(:service, seo_title: 'SEO Title', seo_description: 'SEO Description')
+      expect(service.seo_title).to eq('SEO Title')
+      expect(service.seo_description).to eq('SEO Description')
+    end
+
+    it 'seo fields are optional' do
+      service = FactoryBot.create(:service)
+      expect(service.seo_title).to be_nil
+      expect(service.seo_description).to be_nil
+    end
+  end
+
   describe '#program_list' do
     it 'returns a list of strings with basic HTML styling' do
       service = Service.new
