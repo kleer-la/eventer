@@ -47,4 +47,5 @@ RUN mkdir -p tmp/pids
 
 EXPOSE 3000
 
+ENTRYPOINT ["bin/docker-entrypoint"]
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
