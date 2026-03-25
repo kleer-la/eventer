@@ -4,7 +4,8 @@ ActiveAdmin.register Service do
   menu parent: 'Services Mgnt'
 
   permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
-                   outcomes program target faq definitions pricing brochure side_image ordering visible],
+                   outcomes program target faq definitions pricing brochure side_image ordering visible
+                   seo_title seo_description],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   controller do
@@ -47,6 +48,8 @@ ActiveAdmin.register Service do
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :ordering
       f.input :visible
+      f.input :seo_title
+      f.input :seo_description
       f.input :subtitle, as: :rich_text_area
       f.input :value_proposition, as: :rich_text_area
       f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
@@ -87,6 +90,8 @@ ActiveAdmin.register Service do
       row :slug
       row :ordering
       row :visible
+      row :seo_title
+      row :seo_description
       row :subtitle
       row :side_image
       row :pricing

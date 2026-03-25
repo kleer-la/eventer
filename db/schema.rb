@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_24_122528) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_25_184731) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -646,6 +646,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_24_122528) do
     t.string "side_image"
     t.integer "ordering"
     t.boolean "visible", default: false, null: false
+    t.string "seo_title"
+    t.text "seo_description"
     t.index ["service_area_id"], name: "index_services_on_service_area_id"
     t.index ["slug"], name: "index_services_on_slug", unique: true
   end

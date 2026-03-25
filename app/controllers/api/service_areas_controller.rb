@@ -104,6 +104,8 @@ module Api
           slug: service.slug,
           slug_old: service_chg.nil? || service.slug != service_chg ? nil : req_slug,
           name: service.name,
+          seo_title: service.seo_title,
+          seo_description: service.seo_description,
           subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
           value_proposition: service.value_proposition.body.to_s,
           outcomes: service.outcomes_list,
