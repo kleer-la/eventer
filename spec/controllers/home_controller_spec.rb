@@ -73,7 +73,7 @@ describe HomeController do
       ['Papa', 'e@ma.il', '/', '', 'hi there']
     ].each do |(name, email, context, subject, message)|
       it "Contact is valid (#{name},#{email},#{context},#{subject},#{message},)" do
-        expect(HomeController.valid_contact_us(name, email, context, subject, message, nil, '')).to be nil
+        expect(HomeController.valid_contact_us(name, email, context, subject, message, ENV['CONTACT_US_SECRET'], '')).to be nil
       end
     end
     [
@@ -87,7 +87,7 @@ describe HomeController do
       ['Papa', 'e@ma.il', '/', 'oops', 'hi there', '', 'subject honeypot']
     ].each do |(name, email, context, subject, message, filter, error)|
       it "Contact is invalid (#{name},#{email},#{context},#{subject},#{message},). Reason: #{error} " do
-        expect(HomeController.valid_contact_us(name, email, context, subject, message, nil, filter)).to eq error
+        expect(HomeController.valid_contact_us(name, email, context, subject, message, ENV['CONTACT_US_SECRET'], filter)).to eq error
       end
     end
   end

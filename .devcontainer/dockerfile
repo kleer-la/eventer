@@ -7,42 +7,25 @@ ARG USER_GID=$USER_UID
 RUN addgroup --gid $USER_GID $USER_NAME && adduser --disabled-password --gecos '' --uid $USER_UID --gid $USER_GID $USER_NAME
 RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then groupmod --gid $USER_GID $USER_NAME && usermod --uid $USER_UID --gid $USER_GID $USER_NAME; fi
 
-# derived from https://nander.cc/using-selenium-within-a-docker-container
-
-# Adding trusting keys to apt for repositories (modern method for Debian 11+)
-RUN apt-get update && apt-get install -y wget gnupg
-RUN wget -q -O /usr/share/keyrings/google-chrome.gpg https://dl-ssl.google.com/linux/linux_signing_key.pub
-
-# Adding Google Chrome to the repositories
-RUN sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-
-# Updating apt to see and install Google Chrome
-RUN apt-get -y update
-
-RUN apt-get install -y curl
-
-# Magic happens
-RUN apt-get install -y google-chrome-stable
-
-# Installing Unzip
-RUN apt-get install -yqq unzip
-
-# Install Node.js
-RUN apt-get install -y ca-certificates curl gnupg
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-RUN apt-get update
-RUN apt-get install nodejs -y
-
-# Install Docker CLI + buildx (for Kamal deployments)
-RUN curl -fsSL https://get.docker.com | sh && \
+# Install Chrome, Node.js, Docker CLI, and system dependencies in a single layer
+RUN apt-get update && apt-get install -y wget gnupg ca-certificates curl unzip openssh-server \
+    libjemalloc2 && \
+    wget -q -O /usr/share/keyrings/google-chrome.gpg https://dl-ssl.google.com/linux/linux_signing_key.pub && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable nodejs && \
+    curl -fsSL https://get.docker.com | sh && \
     groupadd -g 999 docker || true && \
-    usermod -aG docker $USER_NAME
+    usermod -aG docker $USER_NAME && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# jemalloc to reduce memory fragmentation
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+ENV MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
 
 # Set display port as an environment variable
 ENV DISPLAY=:99
 
 WORKDIR /app
-COPY . /app
-
-# RUN bundle install

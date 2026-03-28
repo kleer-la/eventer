@@ -15,7 +15,7 @@ RSpec.describe Api::ContactsController, type: :controller do
       context: '/recursos',
       message: 'Test message',
       language: 'es',
-      secret: 'valid_secret',
+      secret: ENV['CONTACT_US_SECRET'],
       initial_slug: 'original-page'
     }
   end
