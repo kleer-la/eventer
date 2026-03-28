@@ -78,9 +78,6 @@ gem 'valid_email'
 # from git to solve ActionView::Base.new parameters
 gem 'best_in_place', git: 'https://github.com/bernat/best_in_place' # for editing participants
 
-# App Monitoring Heroku Plug-In
-gem 'newrelic_rpm'
-
 gem 'recaptcha', require: 'recaptcha/rails' # , :github => "ambethia/recaptcha"
 
 ## Gemfile for Rails 3+, Sinatra, and Merb

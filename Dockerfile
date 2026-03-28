@@ -8,6 +8,7 @@ RUN apt-get update -qq && \
       libmagickwand-7.q16-dev \
       libcurl4-openssl-dev \
       libyaml-dev \
+      libjemalloc-dev \
       git \
       pkg-config \
       nodejs && \
@@ -35,8 +36,12 @@ RUN apt-get update -qq && \
       libpq5 \
       libmagickwand-7.q16-10 \
       libcurl4 \
+      libjemalloc2 \
       nodejs && \
     rm -rf /var/lib/apt/lists/*
+
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+ENV MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
 
 WORKDIR /app
 
