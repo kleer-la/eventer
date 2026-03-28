@@ -28,8 +28,7 @@
 			},
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
-				"castwide.solargraph",
-				"rebornix.Ruby",
+				"Shopify.ruby-lsp",
 				"misogi.ruby-rubocop",
 				"KoichiSasada.vscode-rdbg",
 				"eamodio.gitlens"

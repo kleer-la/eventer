@@ -14,7 +14,6 @@ services:
 
     ports:
       - "3000:3000"
-      - "2222:22"
     volumes:
       - ..:/app:cached
       - /var/run/docker.sock:/var/run/docker.sock
@@ -26,8 +25,7 @@ services:
     # Uncomment the next line to use a non-root user for all processes.
     user: vscode
 
-    #command: sleep infinity
-    command: /bin/bash -c "/usr/sbin/sshd -D & sleep infinity"
+    command: sleep infinity
     networks:
       - local-kleer-network
 

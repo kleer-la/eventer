@@ -8,7 +8,7 @@ RUN addgroup --gid $USER_GID $USER_NAME && adduser --disabled-password --gecos '
 RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then groupmod --gid $USER_GID $USER_NAME && usermod --uid $USER_UID --gid $USER_GID $USER_NAME; fi
 
 # Install Chrome, Node.js, Docker CLI, and system dependencies in a single layer
-RUN apt-get update && apt-get install -y wget gnupg ca-certificates curl unzip openssh-server \
+RUN apt-get update && apt-get install -y wget gnupg ca-certificates curl unzip \
     libjemalloc2 && \
     wget -q -O /usr/share/keyrings/google-chrome.gpg https://dl-ssl.google.com/linux/linux_signing_key.pub && \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
