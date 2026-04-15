@@ -6,6 +6,7 @@ class Trainer < ApplicationRecord
 
   belongs_to :country, optional: true
   has_and_belongs_to_many :event_types
+  has_and_belongs_to_many :service_areas
 
   has_many :events
   has_many :cotrained_events, class_name: 'Event', foreign_key: 'trainer2_id'
@@ -22,8 +23,10 @@ class Trainer < ApplicationRecord
   has_many :illustrators, through: :illustrations, source: :resource
 
   has_and_belongs_to_many :news
+  has_many :bookings
 
   scope :kleerer, -> { where(is_kleerer: true) }
+  scope :booking_enabled, -> { where(booking_enabled: true) }
   scope :active, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :sorted, -> { where(deleted: false).order('name asc') } # Trainer.find(:all).sort{|p1,p2| p1.name <=> p2.name}

@@ -82,4 +82,24 @@ describe Trainer do
 
     expect(t.valid?).to be true
   end
+
+  describe 'booking_enabled scope' do
+    it 'returns only trainers with booking_enabled true' do
+      bookable = FactoryBot.create(:trainer, name: 'Bookable', booking_enabled: true)
+      FactoryBot.create(:trainer, name: 'Not Bookable', booking_enabled: false)
+
+      expect(Trainer.booking_enabled).to eq([bookable])
+    end
+  end
+
+  describe 'service_areas association' do
+    it 'can be associated with service areas' do
+      trainer = FactoryBot.create(:trainer)
+      service_area = FactoryBot.create(:service_area)
+
+      trainer.service_areas << service_area
+
+      expect(trainer.service_areas).to include(service_area)
+    end
+  end
 end

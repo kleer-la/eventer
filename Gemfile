@@ -103,3 +103,6 @@ gem 'aws-sdk-s3', '~> 1.0'
 gem 'mini_magick'
 
 gem 'addressable', '~> 2.8'
+
+# Google Calendar API for consultant booking
+gem 'google-apis-calendar_v3'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_25_184731) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_15_203157) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -105,6 +105,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_25_184731) do
     t.index ["resource_id", "trainer_id"], name: "index_authorships_on_resource_id_and_trainer_id", unique: true
     t.index ["resource_id"], name: "index_authorships_on_resource_id"
     t.index ["trainer_id"], name: "index_authorships_on_trainer_id"
+  end
+
+  create_table "bookings", force: :cascade do |t|
+    t.integer "trainer_id", null: false
+    t.integer "service_area_id"
+    t.string "visitor_name", null: false
+    t.string "visitor_email", null: false
+    t.string "visitor_company"
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.string "google_event_id"
+    t.string "status", default: "confirmed"
+    t.text "notes"
+    t.json "qualifying_answers"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_area_id"], name: "index_bookings_on_service_area_id"
+    t.index ["trainer_id"], name: "index_bookings_on_trainer_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -633,6 +651,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_25_184731) do
     t.index ["slug"], name: "index_service_areas_on_slug", unique: true
   end
 
+  create_table "service_areas_trainers", id: false, force: :cascade do |t|
+    t.integer "service_area_id"
+    t.integer "trainer_id"
+  end
+
   create_table "services", force: :cascade do |t|
     t.string "name"
     t.text "card_description"
@@ -705,6 +728,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_25_184731) do
     t.string "landing"
     t.text "long_bio"
     t.text "long_bio_en"
+    t.string "google_uid"
+    t.text "google_access_token"
+    t.text "google_refresh_token"
+    t.datetime "google_token_expires_at"
+    t.boolean "google_calendar_connected", default: false
+    t.boolean "booking_enabled", default: false
   end
 
   create_table "translations", force: :cascade do |t|
@@ -753,6 +782,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_25_184731) do
   add_foreign_key "assessments", "resources"
   add_foreign_key "authorships", "resources"
   add_foreign_key "authorships", "trainers"
+  add_foreign_key "bookings", "service_areas"
+  add_foreign_key "bookings", "trainers"
   add_foreign_key "contacts", "assessments"
   add_foreign_key "episodes", "podcasts"
   add_foreign_key "event_types", "event_types", column: "canonical_id"

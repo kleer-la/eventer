@@ -24,7 +24,7 @@ ActiveAdmin.register Trainer do
 
   permit_params :name, :bio, :bio_en, :gravatar_email, :landing, :twitter_username, :linkedin_url, :tag_name,
                 :signature_image, :signature_credentials, :is_kleerer, :deleted, :country_id,
-                :long_bio, :long_bio_en
+                :long_bio, :long_bio_en, :booking_enabled, service_area_ids: []
 
   # Remove default action items for destroy
   config.remove_action_item(:destroy)
@@ -39,6 +39,15 @@ ActiveAdmin.register Trainer do
            class: 'action_item_disabled'
     end
   end
+  action_item :connect_google, only: :show do
+    if resource.google_calendar_connected?
+      span 'Google Calendar Connected', class: 'action_item_disabled'
+    else
+      link_to 'Connect Google Calendar',
+              admin_google_oauth_authorize_path(trainer_id: resource.id)
+    end
+  end
+
   member_action :destroy, method: :delete do
     resource.update(deleted: true)
     redirect_to admin_trainers_path, notice: 'Trainer was successfully deleted'
@@ -94,6 +103,10 @@ ActiveAdmin.register Trainer do
                                                     }, include_blank: 'Select One...'
       f.input :deleted, as: :boolean
     end
+    f.inputs 'Booking / Consulting' do
+      f.input :booking_enabled, as: :boolean
+      f.input :service_areas, as: :check_boxes, collection: ServiceArea.order(:name)
+    end
     f.actions do
       f.action :submit, as: :button, label: 'Save', button_html: { class: 'btn btn-primary btn-large' }
       f.cancel_link(collection_path, class: 'btn btn-large')
@@ -134,10 +147,26 @@ ActiveAdmin.register Trainer do
           row :signature_credentials
           row :is_kleerer
           row :deleted
+          row :booking_enabled
+          row :google_calendar_connected do |trainer|
+            status_tag trainer.google_calendar_connected? ? 'Connected' : 'Not Connected',
+                       class: trainer.google_calendar_connected? ? 'ok' : 'error'
+          end
         end
       end
 
       column do
+        panel 'Booking - Service Areas' do
+          if trainer.service_areas.any?
+            ul do
+              trainer.service_areas.order(:name).each do |sa|
+                li link_to(sa.name, admin_service_area_path(sa))
+              end
+            end
+          else
+            para 'No service areas assigned'
+          end
+        end
         if trainer.event_types.included_in_catalog.count.positive?
           panel 'Event Types' do
             ul do

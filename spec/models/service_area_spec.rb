@@ -14,4 +14,15 @@ RSpec.describe ServiceArea, type: :model do
     service_area.save
     expect(service_area.slug).to eq('test-slug')
   end
+
+  describe 'trainers association' do
+    it 'can be associated with trainers' do
+      service_area = FactoryBot.create(:service_area)
+      trainer = FactoryBot.create(:trainer)
+
+      service_area.trainers << trainer
+
+      expect(service_area.trainers).to include(trainer)
+    end
+  end
 end

@@ -158,6 +158,23 @@ ActiveAdmin.register ServiceArea do
         column :ordering
       end
     end
+    panel 'Consultants (Booking)' do
+      trainers = service_area.trainers.active
+      if trainers.any?
+        table_for trainers.order(:name) do
+          column :name do |trainer|
+            link_to trainer.name, admin_trainer_path(trainer)
+          end
+          column :booking_enabled
+          column :google_calendar_connected do |trainer|
+            status_tag trainer.google_calendar_connected? ? 'Connected' : 'Not Connected',
+                       class: trainer.google_calendar_connected? ? 'ok' : 'error'
+          end
+        end
+      else
+        para 'No consultants assigned to this service area'
+      end
+    end
     panel 'Testimonies' do
       table_for service_area.testimonies do
         column :first_name

@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   # Custom admin routes
   namespace :admin do
     get 'current_user_roles', to: 'current_user#roles'
+    get 'google_oauth/authorize', to: 'google_oauth#authorize', as: :google_oauth_authorize
+    get 'google_oauth/callback', to: 'google_oauth#callback', as: :google_oauth_callback
   end
 
   get 'images/filter/:bucket' => 'images#index'
@@ -66,6 +68,11 @@ Rails.application.routes.draw do
     get 'event_types/:id/testimonies' => 'event_types#show_event_type_testimonies'
     resources :short_urls, only: [:show], param: :short_code
     resources :events, only: [:show]
+
+    # Consultant booking endpoints
+    get 'service_areas/:slug/consultants', to: 'consultants#index'
+    get 'consultants/:id/availability', to: 'consultants#availability'
+    post 'consultants/:id/bookings', to: 'consultants#create_booking'
   end
 
   get 'api/events' => 'home#index'

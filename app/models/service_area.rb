@@ -10,6 +10,7 @@ class ServiceArea < ApplicationRecord
 
   enum :lang, { es: 0, en: 1 }
   has_many :services, dependent: :destroy
+  has_and_belongs_to_many :trainers
 
   has_rich_text :summary
   has_rich_text :slogan
@@ -39,7 +40,7 @@ class ServiceArea < ApplicationRecord
   end
 
   def self.ransackable_associations(_auth_object = nil)
-    %w[services]
+    %w[services trainers]
   end
 
   private
