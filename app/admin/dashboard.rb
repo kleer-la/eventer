@@ -147,7 +147,7 @@ def event_type_alert(message, error_list)
   h4 "#{message} (#{error_list.count})"
   ul do
     error_list.each do |et|
-      li link_to(et.name, edit_event_type_path(et))
+      li link_to(et.name, edit_admin_event_type_path(et))
     end
   end
 end

@@ -172,7 +172,7 @@ ActiveAdmin.register Trainer do
           panel 'Event Types' do
             ul do
               trainer.event_types.included_in_catalog.order(:name).each do |et|
-                li link_to(et.name, edit_event_type_path(et))
+                li link_to(et.name, edit_admin_event_type_path(et))
               end
             end
           end
@@ -181,7 +181,7 @@ ActiveAdmin.register Trainer do
           panel 'Articles' do
             ul do
               trainer.articles.order(:title).each do |el|
-                li link_to(el.title, edit_article_path(el))
+                li link_to(el.title, edit_admin_article_path(el))
               end
             end
           end
@@ -206,7 +206,7 @@ ActiveAdmin.register Trainer do
           panel 'News' do
             ul do
               trainer.news.each do |el|
-                li link_to(el.title, edit_news_path(el))
+                li link_to(el.title, edit_admin_news_path(el))
               end
             end
           end
