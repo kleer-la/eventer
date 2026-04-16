@@ -42,12 +42,6 @@ RSpec.describe Testimony, type: :model do
       expect(event_type.testimonies).to include(testimony)
     end
 
-    it 'supports backward compatibility with service association' do
-      service = create(:service)
-      testimony = create(:testimony, service: service)
-
-      expect(testimony.service).to eq(service)
-    end
   end
 
   describe 'attributes' do
@@ -103,7 +97,7 @@ RSpec.describe Testimony, type: :model do
     describe '.ransackable_attributes' do
       it 'returns expected searchable attributes' do
         expected_attributes = %w[created_at first_name id id_value last_name photo_url
-                                 profile_url service_id stared testimonial_id testimonial_type updated_at]
+                                 profile_url stared testimonial_id testimonial_type updated_at]
 
         expect(Testimony.ransackable_attributes).to match_array(expected_attributes)
       end
@@ -111,7 +105,7 @@ RSpec.describe Testimony, type: :model do
 
     describe '.ransackable_associations' do
       it 'returns expected searchable associations' do
-        expected_associations = %w[rich_text_testimony service testimonial]
+        expected_associations = %w[rich_text_testimony testimonial]
 
         expect(Testimony.ransackable_associations).to match_array(expected_associations)
       end

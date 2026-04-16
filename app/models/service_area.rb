@@ -31,8 +31,7 @@ class ServiceArea < ApplicationRecord
   end
 
   def testimonies
-    Testimony.joins(:service)
-             .where(services: { service_area_id: id })
+    Testimony.where(testimonial_type: 'Service', testimonial_id: service_ids)
   end
 
   def self.ransackable_attributes(_auth_object = nil)

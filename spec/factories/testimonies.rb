@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :testimony do
-    # Polymorphic association - defaults to Service for backward compatibility
     association :testimonial, factory: :service
 
     first_name { 'John' }
@@ -11,18 +10,6 @@ FactoryBot.define do
     photo_url { 'https://example.com/photos/johndoe.jpg' }
     stared { false }
     testimony { 'This service was absolutely fantastic! It exceeded all my expectations and provided tremendous value.' }
-
-    # Backward compatibility: set service_id for existing tests
-    transient do
-      service { nil }
-    end
-
-    after(:build) do |testimony, evaluator|
-      if evaluator.service.present?
-        testimony.service = evaluator.service
-        testimony.testimonial = evaluator.service
-      end
-    end
 
     trait :starred do
       stared { true }

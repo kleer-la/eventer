@@ -3,7 +3,7 @@
 ActiveAdmin.register Testimony do
   menu parent: 'Services Mgnt'
 
-  permit_params :first_name, :last_name, :profile_url, :photo_url, :service_id, :stared, :testimony,
+  permit_params :first_name, :last_name, :profile_url, :photo_url, :stared, :testimony,
                 :testimonial_type, :testimonial_id
 
   controller do

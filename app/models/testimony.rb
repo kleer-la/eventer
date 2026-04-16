@@ -7,9 +7,6 @@ class Testimony < ApplicationRecord
   # Polymorphic association - can belong to Service or EventType
   belongs_to :testimonial, polymorphic: true
 
-  # Backward compatibility: keep service association for existing queries
-  belongs_to :service, optional: true
-
   has_rich_text :testimony
 
   # Validations
@@ -22,12 +19,12 @@ class Testimony < ApplicationRecord
   scope :for_service, ->(service_id) { where(testimonial_type: 'Service', testimonial_id: service_id) }
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[created_at first_name id id_value last_name photo_url profile_url service_id stared
+    %w[created_at first_name id id_value last_name photo_url profile_url stared
        testimonial_id testimonial_type updated_at]
   end
 
   def self.ransackable_associations(_auth_object = nil)
-    %w[rich_text_testimony service testimonial]
+    %w[rich_text_testimony testimonial]
   end
 
   # Custom ransackers for filtering by polymorphic association

@@ -41,7 +41,7 @@ module Api
               last_name: testimony.last_name,
               profile_url: testimony.profile_url,
               photo_url: testimony.photo_url,
-              service: testimony.service.name,
+              service: testimony.testimonial.name,
               testimony: testimony.testimony.body.to_s
             }
           end
