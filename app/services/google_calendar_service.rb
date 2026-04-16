@@ -139,7 +139,7 @@ class GoogleCalendarService
   end
 
   def compute_available_slots(start_date, end_date, timezone)
-    tz = ActiveSupport::TimeZone[timezone] || ActiveSupport::TimeZone['UTC']
+    tz = resolve_timezone(timezone)
     end_date = [end_date, start_date + MAX_DAYS_AHEAD.days].min
 
     # Generate all candidate 30-min slots on weekdays
@@ -180,6 +180,20 @@ class GoogleCalendarService
 
   private
 
+  def resolve_timezone(timezone)
+    # Direct match (canonical IANA identifiers like America/Argentina/Buenos_Aires)
+    tz = ActiveSupport::TimeZone[timezone]
+    return tz if tz
+
+    # Try ActiveSupport friendly names (e.g., "Buenos Aires")
+    friendly = timezone.split('/').last.tr('_', ' ')
+    tz = ActiveSupport::TimeZone[friendly]
+    return tz if tz
+
+    Rails.logger.warn "[GoogleCalendar] Unknown timezone '#{timezone}', falling back to UTC"
+    ActiveSupport::TimeZone['UTC']
+  end
+
   def fetch_calendar_ids
     uri = URI('https://www.googleapis.com/calendar/v3/users/me/calendarList')
     http = Net::HTTP.new(uri.host, uri.port)
@@ -191,9 +205,14 @@ class GoogleCalendarService
     response = http.request(req)
     body = JSON.parse(response.body)
 
-    own_calendars = (body['items'] || []).select { |cal| cal['accessRole'].in?(%w[owner writer]) }
+    all_items = body['items'] || []
+    own_calendars = all_items.select do |cal|
+      # Include primary calendar and group calendars owned by the user
+      # Exclude other people's calendars (even if shared with writer access)
+      cal['primary'] || (cal['accessRole'] == 'owner' && cal['id'].include?('@group.calendar.google.com'))
+    end
     ids = own_calendars.map { |cal| cal['id'] }
-    Rails.logger.info "[GoogleCalendar] CalendarList returned #{ids.size} own calendars: #{ids.inspect}"
+    Rails.logger.info "[GoogleCalendar] CalendarList selected #{ids.size} of #{all_items.size} calendars: #{ids.inspect}"
     ids.presence || ['primary']
   rescue StandardError => e
     Rails.logger.warn "[GoogleCalendar] CalendarList failed (#{e.message}), falling back to primary"

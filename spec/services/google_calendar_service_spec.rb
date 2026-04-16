@@ -220,6 +220,36 @@ RSpec.describe GoogleCalendarService do
       expect(result.data[:available_slots]).to be_empty
     end
 
+    it 'resolves deprecated IANA timezone aliases' do
+      result = service.compute_available_slots(monday, monday, 'America/Buenos_Aires')
+      expect(result).to be_success
+      slots = result.data[:available_slots]
+
+      # Slots should be in Argentina time (UTC-3), starting at 9:00 local = 12:00 UTC
+      first_slot = slots.first
+      expect(first_slot[:start].utc.hour).to eq(12)
+    end
+
+    it 'generates slots in the requested timezone, not UTC' do
+      result = service.compute_available_slots(monday, monday, timezone)
+      expect(result).to be_success
+      slots = result.data[:available_slots]
+
+      # Argentina is UTC-3, so 9:00 local = 12:00 UTC
+      expect(slots.first[:start].utc.hour).to eq(12)
+      # Last slot starts at 17:30 local = 20:30 UTC
+      expect(slots.last[:start].utc.hour).to eq(20)
+    end
+
+    it 'falls back to UTC for completely unknown timezones' do
+      result = service.compute_available_slots(monday, monday, 'Invalid/Timezone')
+      expect(result).to be_success
+      slots = result.data[:available_slots]
+
+      # UTC: first slot at 9:00 UTC
+      expect(slots.first[:start].utc.hour).to eq(9)
+    end
+
     it 'caps the range at MAX_DAYS_AHEAD' do
       far_end = monday + 30.days
 
