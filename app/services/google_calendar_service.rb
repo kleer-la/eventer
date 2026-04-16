@@ -19,8 +19,7 @@ class GoogleCalendarService
   end
 
   SCOPES = [
-    'https://www.googleapis.com/auth/calendar.freebusy',
-    'https://www.googleapis.com/auth/calendar.events',
+    'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/userinfo.email'
   ].freeze
 
@@ -77,6 +76,9 @@ class GoogleCalendarService
     response = http.request(req)
     body = JSON.parse(response.body)
 
+    Rails.logger.info "[GoogleCalendar] FreeBusy queried calendars: #{calendar_ids.inspect}"
+    Rails.logger.info "[GoogleCalendar] FreeBusy response keys: #{body['calendars']&.keys&.inspect}"
+
     # Merge busy periods from all calendars
     all_busy = []
     (body['calendars'] || {}).each_value do |cal_data|
@@ -84,6 +86,8 @@ class GoogleCalendarService
         all_busy << { start: Time.parse(period['start']), end: Time.parse(period['end']) }
       end
     end
+
+    Rails.logger.info "[GoogleCalendar] Total busy periods found: #{all_busy.size}"
 
     success_result(data: { busy_periods: all_busy })
   rescue StandardError => e
@@ -182,8 +186,11 @@ class GoogleCalendarService
     response = http.request(req)
     body = JSON.parse(response.body)
 
-    (body['items'] || []).map { |cal| cal['id'] }
-  rescue StandardError
+    ids = (body['items'] || []).map { |cal| cal['id'] }
+    Rails.logger.info "[GoogleCalendar] CalendarList returned #{ids.size} calendars: #{ids.inspect}"
+    ids.presence || ['primary']
+  rescue StandardError => e
+    Rails.logger.warn "[GoogleCalendar] CalendarList failed (#{e.message}), falling back to primary"
     ['primary']
   end
 
