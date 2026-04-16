@@ -65,8 +65,8 @@ module Api
         return render json: { error: refresh_result.message }, status: :unprocessable_entity
       end
 
-      starts_at = Time.parse(params[:starts_at])
-      ends_at = Time.parse(params[:ends_at])
+      starts_at = Time.parse(params[:start])
+      ends_at = Time.parse(params[:end])
 
       # Re-check availability via FreeBusy
       freebusy_result = service.fetch_freebusy(starts_at, ends_at)
@@ -81,7 +81,7 @@ module Api
       # Create Google Calendar event
       booking = Booking.new(
         trainer: trainer,
-        service_area: params[:service_area_slug].present? ? ServiceArea.friendly.find_by(slug: params[:service_area_slug]) : nil,
+        service_area: params[:service_area_slug].present? ? ServiceArea.friendly.find(params[:service_area_slug]) : nil,
         visitor_name: params[:visitor_name],
         visitor_email: params[:visitor_email],
         visitor_company: params[:visitor_company],

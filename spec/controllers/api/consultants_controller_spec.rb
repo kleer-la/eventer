@@ -144,8 +144,8 @@ RSpec.describe Api::ConsultantsController, type: :controller do
         visitor_name: 'María García',
         visitor_email: 'maria@example.com',
         visitor_company: 'Acme Corp',
-        starts_at: '2026-04-20T10:00:00-03:00',
-        ends_at: '2026-04-20T10:30:00-03:00',
+        start: '2026-04-20T10:00:00-03:00',
+        end: '2026-04-20T10:30:00-03:00',
         notes: 'Interested in agile coaching'
       }
     end
