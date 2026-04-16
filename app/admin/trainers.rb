@@ -190,13 +190,13 @@ ActiveAdmin.register Trainer do
             # h3 'Author'
             ul do
               trainer.authorships.each do |el|
-                li link_to(el.resource.title_es, edit_resource_path(el))
+                li link_to(el.resource.title_es, admin_resource_path(el.resource))
               end
             end
             # h3 'Translator'
             ul do
               trainer.translators.each do |el|
-                li link_to(el.resource.title_es, edit_resource_path(el))
+                li link_to(el.title_es, admin_resource_path(el))
               end
             end
           end
