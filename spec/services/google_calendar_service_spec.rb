@@ -14,6 +14,15 @@ RSpec.describe GoogleCalendarService do
 
   let(:service) { described_class.new(trainer) }
 
+  before do
+    stub_request(:get, 'https://www.googleapis.com/calendar/v3/users/me/calendarList')
+      .to_return(
+        status: 200,
+        body: { items: [{ id: 'primary' }] }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      )
+  end
+
   describe '#refresh_token_if_needed!' do
     context 'when token is still fresh' do
       it 'does not call Google token endpoint' do
@@ -86,6 +95,35 @@ RSpec.describe GoogleCalendarService do
     end
 
     it 'returns busy periods from Google Calendar' do
+      result = service.fetch_freebusy(start_time, end_time)
+      expect(result).to be_success
+      expect(result.data[:busy_periods].length).to eq(2)
+    end
+
+    it 'merges busy periods from multiple calendars' do
+      stub_request(:get, 'https://www.googleapis.com/calendar/v3/users/me/calendarList')
+        .to_return(
+          status: 200,
+          body: { items: [{ id: 'primary' }, { id: 'secondary@group.calendar.google.com' }] }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+
+      stub_request(:post, 'https://www.googleapis.com/calendar/v3/freeBusy')
+        .to_return(
+          status: 200,
+          body: {
+            calendars: {
+              'primary' => {
+                busy: [{ start: '2026-04-20T10:00:00Z', end: '2026-04-20T11:00:00Z' }]
+              },
+              'secondary@group.calendar.google.com' => {
+                busy: [{ start: '2026-04-20T15:00:00Z', end: '2026-04-20T16:00:00Z' }]
+              }
+            }
+          }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+
       result = service.fetch_freebusy(start_time, end_time)
       expect(result).to be_success
       expect(result.data[:busy_periods].length).to eq(2)

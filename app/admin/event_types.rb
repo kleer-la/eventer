@@ -26,9 +26,6 @@ ActiveAdmin.register EventType do
   scope :all, default: false
   scope 'Catalog', :included_in_catalog, default: true
 
-  action_item :view_old_version, only: :index do
-    link_to 'Old version', event_types_path, class: 'button'
-  end
 
   action_item :certificate_preview, only: :show do
     link_to 'Certificate Preview', certificate_preview_admin_event_type_path(resource), class: 'button'

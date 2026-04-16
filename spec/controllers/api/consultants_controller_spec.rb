@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Api::ConsultantsController, type: :controller do
+  before do
+    stub_request(:get, 'https://www.googleapis.com/calendar/v3/users/me/calendarList')
+      .to_return(
+        status: 200,
+        body: { items: [{ id: 'primary' }] }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      )
+  end
+
   describe 'GET #index (consultants for service area)' do
     let(:service_area) { FactoryBot.create(:service_area, visible: true) }
 

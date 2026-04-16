@@ -58,10 +58,11 @@ class GoogleCalendarService
   end
 
   def fetch_freebusy(start_time, end_time)
+    calendar_ids = fetch_calendar_ids
     request_body = {
       timeMin: start_time.iso8601,
       timeMax: end_time.iso8601,
-      items: [{ id: 'primary' }]
+      items: calendar_ids.map { |id| { id: id } }
     }
 
     uri = URI('https://www.googleapis.com/calendar/v3/freeBusy')
@@ -76,12 +77,15 @@ class GoogleCalendarService
     response = http.request(req)
     body = JSON.parse(response.body)
 
-    busy_periods = body.dig('calendars', 'primary', 'busy') || []
-    parsed_periods = busy_periods.map do |period|
-      { start: Time.parse(period['start']), end: Time.parse(period['end']) }
+    # Merge busy periods from all calendars
+    all_busy = []
+    (body['calendars'] || {}).each_value do |cal_data|
+      (cal_data['busy'] || []).each do |period|
+        all_busy << { start: Time.parse(period['start']), end: Time.parse(period['end']) }
+      end
     end
 
-    success_result(data: { busy_periods: parsed_periods })
+    success_result(data: { busy_periods: all_busy })
   rescue StandardError => e
     failure_result("FreeBusy error: #{e.message}")
   end
@@ -166,6 +170,22 @@ class GoogleCalendarService
   end
 
   private
+
+  def fetch_calendar_ids
+    uri = URI('https://www.googleapis.com/calendar/v3/users/me/calendarList')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    req = Net::HTTP::Get.new(uri)
+    req['Authorization'] = "Bearer #{@trainer.google_access_token}"
+
+    response = http.request(req)
+    body = JSON.parse(response.body)
+
+    (body['items'] || []).map { |cal| cal['id'] }
+  rescue StandardError
+    ['primary']
+  end
 
   def success_result(message: nil, data: {})
     Result.new(success: true, message: message, data: data)

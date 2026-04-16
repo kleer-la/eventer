@@ -24,9 +24,7 @@ ActiveAdmin.register Event do
   scope :all, default: true
   scope 'Current', :visible, default: false
 
-  action_item :view_old_version, only: :index do
-    link_to 'Old version', events_path, class: 'button'
-  end
+
   member_action :trainers, method: :get do
     @event_type = EventType.find_by(id: params[:event_type_id])
     trainers = @event_type ? @event_type.trainers : []

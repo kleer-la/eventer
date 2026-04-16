@@ -18,9 +18,7 @@ ActiveAdmin.register_page 'Images' do
   action_item :signatures do
     link_to 'Signatures', admin_images_path(bucket: 'signature')
   end
-  action_item :view_old_version, only: :index do
-    link_to 'Old version', '/images', class: 'button'
-  end
+
 
   sidebar 'Filters', only: :index do
     active_admin_form_for 'filter', method: :get do |f|

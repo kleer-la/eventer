@@ -22,9 +22,6 @@ ActiveAdmin.register Article do
   filter :industry, as: :select, collection: Article.industries
   filter :body
 
-  action_item :view_old_version, only: :index do
-    link_to 'Old version', articles_path, class: 'button'
-  end
 
   controller do
     def scoped_collection
