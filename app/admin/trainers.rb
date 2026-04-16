@@ -54,6 +54,7 @@ ActiveAdmin.register Trainer do
   end
   # config.clear_sidebar_sections!
   filter :name
+  filter :is_kleerer
   filter :bio_present, as: :boolean, label: 'Has Bio'
   filter :bio_en_present, as: :boolean, label: 'Has English Bio'
   filter :long_bio_present, as: :boolean, label: 'Has Long Bio'
