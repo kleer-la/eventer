@@ -41,7 +41,8 @@ ActiveAdmin.register Trainer do
   end
   action_item :connect_google, only: :show do
     if resource.google_calendar_connected?
-      span 'Google Calendar Connected', class: 'action_item_disabled'
+      link_to 'Reconnect Google Calendar',
+              admin_google_oauth_authorize_path(trainer_id: resource.id)
     else
       link_to 'Connect Google Calendar',
               admin_google_oauth_authorize_path(trainer_id: resource.id)
