@@ -186,8 +186,9 @@ class GoogleCalendarService
     response = http.request(req)
     body = JSON.parse(response.body)
 
-    ids = (body['items'] || []).map { |cal| cal['id'] }
-    Rails.logger.info "[GoogleCalendar] CalendarList returned #{ids.size} calendars: #{ids.inspect}"
+    own_calendars = (body['items'] || []).select { |cal| cal['accessRole'].in?(%w[owner writer]) }
+    ids = own_calendars.map { |cal| cal['id'] }
+    Rails.logger.info "[GoogleCalendar] CalendarList returned #{ids.size} own calendars: #{ids.inspect}"
     ids.presence || ['primary']
   rescue StandardError => e
     Rails.logger.warn "[GoogleCalendar] CalendarList failed (#{e.message}), falling back to primary"
