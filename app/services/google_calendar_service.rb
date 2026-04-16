@@ -87,6 +87,11 @@ class GoogleCalendarService
       end
     end
 
+    # Log busy periods per calendar for debugging
+    (body['calendars'] || {}).each do |cal_id, cal_data|
+      periods = cal_data['busy'] || []
+      Rails.logger.info "[GoogleCalendar] #{cal_id}: #{periods.size} busy periods#{periods.any? ? " — #{periods.inspect}" : ''}"
+    end
     Rails.logger.info "[GoogleCalendar] Total busy periods found: #{all_busy.size}"
 
     success_result(data: { busy_periods: all_busy })
