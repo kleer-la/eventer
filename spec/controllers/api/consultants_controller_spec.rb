@@ -136,6 +136,7 @@ RSpec.describe Api::ConsultantsController, type: :controller do
   end
 
   describe 'POST #create_booking' do
+    let(:test_secret) { 'test-booking-secret' }
     let(:trainer) do
       FactoryBot.create(:trainer,
                         name: 'Consultant',
@@ -149,7 +150,7 @@ RSpec.describe Api::ConsultantsController, type: :controller do
     let(:valid_params) do
       {
         id: trainer.id,
-        secret: ENV['CONTACT_US_SECRET'],
+        secret: test_secret,
         visitor_name: 'María García',
         visitor_email: 'maria@example.com',
         visitor_company: 'Acme Corp',
@@ -157,6 +158,12 @@ RSpec.describe Api::ConsultantsController, type: :controller do
         end: '2026-04-20T10:30:00-03:00',
         notes: 'Interested in agile coaching'
       }
+    end
+
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('CONTACT_US_SECRET').and_return(test_secret)
     end
 
     before do
