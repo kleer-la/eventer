@@ -13,11 +13,8 @@ panel 'Participants List' do
     column :quantity
 
     column :status do |p|
-      div style: "background-color: #{p.status_color}; color: white; padding: 3px 6px; border-radius: 3px;" do
-        best_in_place p, :status,
-                      as: :select,
-                      url: "/events/#{p.event.id}/participants/#{p.id}",
-                      collection: Participant::STATUS_OPTIONS
+      div style: "background-color: #{p.status_color}; color: white; padding: 3px 6px; border-radius: 3px; display: inline-block;" do
+        p.status_label
       end
     end
 

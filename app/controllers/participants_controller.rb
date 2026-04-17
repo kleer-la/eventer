@@ -229,7 +229,7 @@ class ParticipantsController < ApplicationController
         format.html { render action: 'edit' }
         # format.json { render json: @participant.errors, status: :unprocessable_entity }
       end
-      format.json { respond_with_bip(@participant) }
+      format.json { render json: @participant }
     end
   end
 
