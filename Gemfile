@@ -39,7 +39,7 @@ group :test, :production do
   gem 'pg', '~> 1.00'
 end
 group :assets do
-  gem 'sassc-rails'
+  gem 'dartsass-sprockets'
 end
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
