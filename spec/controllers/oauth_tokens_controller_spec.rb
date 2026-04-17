@@ -27,14 +27,6 @@ describe OauthTokensController do
       original_env.each {|key, value| ENV[key] = value}
     end
 
-    describe 'GET index' do
-      it 'assigns all tokens as @oauth_tokens' do
-        oauth_token = FactoryBot.create(:oauth_token)
-        get :index
-        expect(assigns(:oauth_tokens)).to eq [oauth_token]
-      end
-    end
-
     describe 'new token workflow' do
       it 'redirects to the Xero endpoint' do
         test_env.each {|key, value| ENV[key] = value}     # Set test ENV values

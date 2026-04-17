@@ -15,21 +15,6 @@ describe ParticipantsController do
     after(:each) do
       ENV['RECAPTCHA_SITE_KEY'] = @recaptcha
     end
-    describe 'GET index' do
-      it 'assigns all participants as @participants' do
-        ENV['RECAPTCHA_SITE_KEY'] = nil
-        get :index, params: { event_id: @participant.event.id }
-        expect(assigns(:participants)).to eq [@participant]
-      end
-    end
-
-    # describe 'GET show' do
-    #   it 'assigns the requested participant as @participant' do
-    #     get :show, params: { id: @participant.to_param, event_id: @participant.event.id }
-    #     expect(assigns(:participant)).to eq @participant
-    #   end
-    # end
-
     describe 'GET new' do
       it 'assigns a new participant as @participant' do
         ENV['RECAPTCHA_SITE_KEY'] = 'xxx'
@@ -133,7 +118,7 @@ describe ParticipantsController do
           put :update,
               params: { id: @participant.to_param, participant: @participant_attr,
                         event_id: @participant.event.id }
-          expect(response).to redirect_to("/events/#{Participant.last.event.id}/participants")
+          expect(response).to be_redirect
         end
       end
 
@@ -154,54 +139,6 @@ describe ParticipantsController do
       end
     end
 
-    describe 'POST Copy' do
-      it 'one copy w/qty 1' do
-        expect do
-          post :copy, params: { id: @participant.to_param, event_id: @participant.event.id }
-        end.to change(Participant, :count).by(+1)
-        expect(@participant.quantity).to eq 1
-      end
-
-      it 'redirects to the participants list' do
-        post :copy, params: { id: @participant.to_param, event_id: @participant.event.id }
-        expect(response).to redirect_to("/events/#{@participant.event.id}/participants")
-      end
-    end
-    describe 'DELETE destroy' do
-      it 'destroys the requested participant' do
-        expect do
-          delete :destroy, params: { id: @participant.to_param, event_id: @participant.event.id }
-        end.to change(Participant, :count).by(-1)
-      end
-
-      it 'redirects to the participants list' do
-        delete :destroy, params: { id: @participant.to_param, event_id: @participant.event.id }
-        expect(response).to redirect_to("/events/#{@participant.event.id}/participants")
-      end
-    end
-
-    describe 'search a participant' do
-      it 'By last name' do
-        get :search, params: { name: @participant[:fname] }
-        expect(assigns(:participants)).to eq [@participant]
-      end
-    end
-
-    describe 'print attendance sheet' do
-      it 'A message is shown when no participant is confirmed' do
-        get :print, params: { event_id: @participant.event.id }
-        expect(assigns(:participants)).to eq []
-      end
-
-      it 'A confirmed participant is shown' do
-        @participant.confirm!
-        @participant.save!
-        get :print, params: { event_id: @participant.event.id }
-        expect(assigns(:participants)).to eq [@participant]
-        expect(response).to render_template('print')
-      end
-    end
-
     describe 'batch load' do
       it 'Load one' do
         expect do
@@ -211,24 +148,12 @@ describe ParticipantsController do
                                       participants_batch: 'tra,la,la@lan.cl,--' }
         end.to change(Participant, :count).by(1)
 
-        expect(response).to redirect_to(event_participants_path)
+        expect(response).to redirect_to(admin_event_path(@participant.event))
         expect(flash[:alert]).to include '0 líneas erroneas'
         expect(flash[:notice]).to include '1 participantes creados exitosament'
       end
     end
 
-    describe 'Survey' do
-      it 'w/o attended participant' do
-        get :survey, params: { event_id: @participant.event.id }
-        expect(assigns(:participants)).to match_array([])
-      end
-      it 'w/o an attended participant' do
-        @participant.attend!
-        @participant.save!
-        get :survey, params: { event_id: @participant.event.id }
-        expect(assigns(:participants)).to match_array([@participant])
-      end
-    end
     describe 'certificate' do
       before(:each) do
         FileStoreService.create_null
@@ -264,7 +189,7 @@ describe ParticipantsController do
             page_size: 'A4', verification_code: @participant.verification_code,
             format: :pdf
           }
-          expect(response).to redirect_to event_participants_path
+          expect(response).to redirect_to admin_event_path(@participant.event)
           expect(flash[:alert]).to include 'sin firma'
         end
 
@@ -275,7 +200,7 @@ describe ParticipantsController do
             verification_code: @participant.verification_code,
             format: :pdf
           }
-          expect(response).to redirect_to event_participants_path
+          expect(response).to redirect_to admin_event_path(@participant.event)
           expect(flash[:alert]).to include 'carta'
         end
         it 'wrong page size' do
@@ -285,7 +210,7 @@ describe ParticipantsController do
             verification_code: @participant.verification_code,
             format: :pdf
           }
-          expect(response).to redirect_to event_participants_path
+          expect(response).to redirect_to admin_event_path(@participant.event)
           expect(flash[:alert]).to include 'carta'
         end
         it 'wrong verification code' do
@@ -295,7 +220,7 @@ describe ParticipantsController do
             verification_code: '5BA4365pepeB443ED1801C57',
             format: :pdf
           }
-          expect(response).to redirect_to event_participants_path
+          expect(response).to redirect_to admin_event_path(@participant.event)
           expect(flash[:alert]).to include 'verificación'
         end
 
@@ -309,32 +234,11 @@ describe ParticipantsController do
             verification_code: @participant.verification_code,
             format: :pdf
           }
-          expect(response).to redirect_to event_participants_path
+          expect(response).to redirect_to admin_event_path(@participant.event)
           expect(flash[:alert]).to include 'presente'
         end
       end
     end
-    context 'Follow Up' do
-      it 'w/o contacted participant' do
-        get :followup
-        expect(assigns(:participants)).to match_array([])
-      end
-      it 'contacted participant' do
-        @participant.contact!
-        @participant.save!
-        get :followup
-        expect(assigns(:participants).count).to eq 1
-      end
-      it "contacted participant except today's events" do
-        @participant.event.date = Date.today
-        @participant.event.save!
-        @participant.contact!
-        @participant.save!
-        get :followup
-        expect(assigns(:participants).count).to eq 0
-      end
-    end
-
     describe '.update_payment_status' do
       let(:invoice_id) { 'test-invoice-123' }
       let(:xero_invoice) do

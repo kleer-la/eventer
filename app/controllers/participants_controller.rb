@@ -223,7 +223,7 @@ class ParticipantsController < ApplicationController
         # new_participant_status = participant_params[:status]
         @event = Event.find(params[:event_id])
         format.html do
-          redirect_to event_participants_path(@participant.event), notice: 'Participant was successfully updated.'
+          redirect_to admin_event_path(@participant.event), notice: 'Participant was successfully updated.'
         end
       else
         format.html { render action: 'edit' }
@@ -253,7 +253,7 @@ class ParticipantsController < ApplicationController
 
   def certificate_error(msg)
     flash[:alert] = msg
-    redirect_to event_participants_path
+    redirect_to admin_event_path(@participant.event)
   end
 
   def render_certificate
@@ -288,7 +288,7 @@ class ParticipantsController < ApplicationController
     flash[:alert] = t('flash.event.batch_load.error', errored_loads:, errored_lines:)
     flash[:notice] = t('flash.event.batch_load.success', success_loads:)
 
-    redirect_to event_participants_path
+    redirect_to admin_event_path(params[:event_id])
   end
 
   MAX_SEARCH_RESULT_SIZE = 1000

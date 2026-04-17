@@ -93,19 +93,25 @@ describe Certificate do
 
   it 'should return the event human readable date' do
     @e.date = Date.new(2014, 3, 20)
-    cert = Certificate.new(@participant)
-    expect(cert.event_date).to eq '20-21 Mar'
+    I18n.with_locale(:es) do
+      cert = Certificate.new(@participant)
+      expect(cert.event_date).to eq '20-21 Mar'
+    end
   end
 
   it 'event human readable date in same year' do
     @e.date = Date.new(2021, 10, 31)
-    cert = Certificate.new(@participant)
-    expect(cert.date).to eq '31 Oct-1 Nov 2021'
+    I18n.with_locale(:es) do
+      cert = Certificate.new(@participant)
+      expect(cert.date).to eq '31 Oct-1 Nov 2021'
+    end
   end
   it 'event human readable date across year`s eve' do
     @e.date = Date.new(2021, 12, 31)
-    cert = Certificate.new(@participant)
-    expect(cert.date).to eq '31 Dic 2021-1 Ene 2022'
+    I18n.with_locale(:es) do
+      cert = Certificate.new(@participant)
+      expect(cert.date).to eq '31 Dic 2021-1 Ene 2022'
+    end
   end
 
   it 'should return the event year' do
@@ -148,6 +154,8 @@ describe Certificate do
   end
 
   describe 'certificate description' do
+    around(:each) { |example| I18n.with_locale(:es) { example.run } }
+
     context 'participant present' do
       it 'base description' do
         cert = Certificate.new(@participant)
