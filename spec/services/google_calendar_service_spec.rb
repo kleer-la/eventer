@@ -14,11 +14,16 @@ RSpec.describe GoogleCalendarService do
 
   let(:service) { described_class.new(trainer) }
 
+  let(:booking_calendar_id) { 'booking-cal-id@group.calendar.google.com' }
+
   before do
     stub_request(:get, 'https://www.googleapis.com/calendar/v3/users/me/calendarList')
       .to_return(
         status: 200,
-        body: { items: [{ id: 'primary' }] }.to_json,
+        body: { items: [
+          { id: 'primary', summary: 'trainer@example.com', primary: true },
+          { id: booking_calendar_id, summary: 'Horarios de citas' }
+        ] }.to_json,
         headers: { 'Content-Type' => 'application/json' }
       )
   end
@@ -82,7 +87,7 @@ RSpec.describe GoogleCalendarService do
           status: 200,
           body: {
             calendars: {
-              'primary' => {
+              booking_calendar_id => {
                 busy: [
                   { start: '2026-04-20T10:00:00Z', end: '2026-04-20T11:00:00Z' },
                   { start: '2026-04-20T14:00:00Z', end: '2026-04-20T14:30:00Z' }
@@ -94,30 +99,23 @@ RSpec.describe GoogleCalendarService do
         )
     end
 
-    it 'returns busy periods from Google Calendar' do
+    it 'returns busy periods from the booking calendar' do
       result = service.fetch_freebusy(start_time, end_time)
       expect(result).to be_success
       expect(result.data[:busy_periods].length).to eq(2)
     end
 
-    it 'merges busy periods from multiple calendars' do
-      stub_request(:get, 'https://www.googleapis.com/calendar/v3/users/me/calendarList')
-        .to_return(
-          status: 200,
-          body: { items: [{ id: 'primary' }, { id: 'secondary@group.calendar.google.com' }] }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
-        )
-
+    it 'merges busy periods from primary and booking calendars' do
       stub_request(:post, 'https://www.googleapis.com/calendar/v3/freeBusy')
         .to_return(
           status: 200,
           body: {
             calendars: {
               'primary' => {
-                busy: [{ start: '2026-04-20T10:00:00Z', end: '2026-04-20T11:00:00Z' }]
-              },
-              'secondary@group.calendar.google.com' => {
                 busy: [{ start: '2026-04-20T15:00:00Z', end: '2026-04-20T16:00:00Z' }]
+              },
+              booking_calendar_id => {
+                busy: [{ start: '2026-04-20T10:00:00Z', end: '2026-04-20T11:00:00Z' }]
               }
             }
           }.to_json,
@@ -127,6 +125,36 @@ RSpec.describe GoogleCalendarService do
       result = service.fetch_freebusy(start_time, end_time)
       expect(result).to be_success
       expect(result.data[:busy_periods].length).to eq(2)
+    end
+
+    context 'when no booking calendar exists' do
+      before do
+        stub_request(:get, 'https://www.googleapis.com/calendar/v3/users/me/calendarList')
+          .to_return(
+            status: 200,
+            body: { items: [{ id: 'primary', summary: 'trainer@example.com', primary: true }] }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+
+        stub_request(:post, 'https://www.googleapis.com/calendar/v3/freeBusy')
+          .to_return(
+            status: 200,
+            body: {
+              calendars: {
+                'primary' => {
+                  busy: [{ start: '2026-04-20T10:00:00Z', end: '2026-04-20T11:00:00Z' }]
+                }
+              }
+            }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+      end
+
+      it 'checks only primary calendar' do
+        result = service.fetch_freebusy(start_time, end_time)
+        expect(result).to be_success
+        expect(result.data[:busy_periods].length).to eq(1)
+      end
     end
   end
 
@@ -170,7 +198,7 @@ RSpec.describe GoogleCalendarService do
           status: 200,
           body: {
             calendars: {
-              'primary' => {
+              booking_calendar_id => {
                 busy: [
                   { start: '2026-04-20T13:00:00Z', end: '2026-04-20T14:00:00Z' }
                 ]
@@ -211,7 +239,7 @@ RSpec.describe GoogleCalendarService do
       stub_request(:post, 'https://www.googleapis.com/calendar/v3/freeBusy')
         .to_return(
           status: 200,
-          body: { calendars: { 'primary' => { busy: [] } } }.to_json,
+          body: { calendars: { booking_calendar_id => { busy: [] } } }.to_json,
           headers: { 'Content-Type' => 'application/json' }
         )
 

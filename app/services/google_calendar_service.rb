@@ -27,6 +27,7 @@ class GoogleCalendarService
   BUSINESS_START_HOUR = 9
   BUSINESS_END_HOUR = 18
   MAX_DAYS_AHEAD = 14
+  BOOKING_CALENDAR_NAME = 'Horarios de citas'
 
   def initialize(trainer)
     @trainer = trainer
@@ -194,7 +195,7 @@ class GoogleCalendarService
     ActiveSupport::TimeZone['UTC']
   end
 
-  def fetch_calendar_ids
+  def fetch_calendar_list
     uri = URI('https://www.googleapis.com/calendar/v3/users/me/calendarList')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -203,20 +204,28 @@ class GoogleCalendarService
     req['Authorization'] = "Bearer #{@trainer.google_access_token}"
 
     response = http.request(req)
-    body = JSON.parse(response.body)
+    JSON.parse(response.body)['items'] || []
+  end
 
-    all_items = body['items'] || []
-    own_calendars = all_items.select do |cal|
-      # Include primary calendar and group calendars owned by the user
-      # Exclude other people's calendars (even if shared with writer access)
-      cal['primary'] || (cal['accessRole'] == 'owner' && cal['id'].include?('@group.calendar.google.com'))
+  def fetch_booking_calendar_id
+    items = fetch_calendar_list
+    cal = items.find { |c| c['summary'] == BOOKING_CALENDAR_NAME }
+    if cal
+      Rails.logger.info "[GoogleCalendar] Found '#{BOOKING_CALENDAR_NAME}' calendar: #{cal['id']}"
+    else
+      Rails.logger.warn "[GoogleCalendar] No '#{BOOKING_CALENDAR_NAME}' calendar found among #{items.map { |c| c['summary'] }.inspect}"
     end
-    ids = own_calendars.map { |cal| cal['id'] }
-    Rails.logger.info "[GoogleCalendar] CalendarList selected #{ids.size} of #{all_items.size} calendars: #{ids.inspect}"
-    ids.presence || ['primary']
+    cal&.dig('id')
   rescue StandardError => e
-    Rails.logger.warn "[GoogleCalendar] CalendarList failed (#{e.message}), falling back to primary"
-    ['primary']
+    Rails.logger.warn "[GoogleCalendar] CalendarList failed (#{e.message})"
+    nil
+  end
+
+  def fetch_calendar_ids
+    ids = ['primary']
+    booking_id = fetch_booking_calendar_id
+    ids << booking_id if booking_id
+    ids
   end
 
   def success_result(message: nil, data: {})
