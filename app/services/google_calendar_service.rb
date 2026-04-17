@@ -114,7 +114,7 @@ class GoogleCalendarService
       }
     }
 
-    uri = URI('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1')
+    uri = URI('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&sendUpdates=all')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
 
