@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 ruby '~> 3.4.7'
-gem 'rails', '~> 7.2.2' # ~>
+gem 'rails', '~> 8.0'
 
 group :development do
   gem 'kamal', '~> 2.0'
