@@ -100,10 +100,10 @@ class GoogleCalendarService
     failure_result("FreeBusy error: #{e.message}")
   end
 
-  def create_event(booking)
+  def create_event(booking, context: nil, language: nil)
     event_body = {
-      summary: "Consultation with #{booking.visitor_name}",
-      description: "Booking via Kleer website\nCompany: #{booking.visitor_company}",
+      summary: build_event_summary(language),
+      description: build_event_description(booking, context),
       start: { dateTime: booking.starts_at.iso8601 },
       end: { dateTime: booking.ends_at.iso8601 },
       attendees: [
@@ -180,6 +180,25 @@ class GoogleCalendarService
   end
 
   private
+
+  def build_event_summary(language)
+    if language.to_s == 'en'
+      "Meeting with #{@trainer.name} from Kleer"
+    else
+      "Reunión con #{@trainer.name} de Kleer"
+    end
+  end
+
+  def build_event_description(booking, context)
+    lines = ['Booking via Kleer website']
+    lines << "Company: #{booking.visitor_company}" if booking.visitor_company.present?
+    lines << "Page: #{context}" if context.present?
+    if booking.notes.present?
+      lines << ''
+      lines << booking.notes
+    end
+    lines.join("\n")
+  end
 
   def resolve_timezone(timezone)
     # Direct match (canonical IANA identifiers like America/Argentina/Buenos_Aires)

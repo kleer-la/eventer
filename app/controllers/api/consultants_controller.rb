@@ -88,7 +88,7 @@ module Api
         starts_at: starts_at,
         ends_at: ends_at,
         status: 'confirmed',
-        notes: params[:notes],
+        notes: params[:notes].presence || params[:visitor_message],
         qualifying_answers: params[:qualifying_answers]
       )
 
@@ -96,7 +96,7 @@ module Api
         return render json: { error: booking.errors.full_messages.join(', ') }, status: :unprocessable_entity
       end
 
-      event_result = service.create_event(booking)
+      event_result = service.create_event(booking, context: params[:visitor_context], language: params[:language])
       if event_result.failure?
         return render json: { error: event_result.message }, status: :unprocessable_entity
       end
