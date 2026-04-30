@@ -27,6 +27,7 @@ module Api
           secondary_color: service_area.secondary_color,
           secondary_font_color: service_area.secondary_font_color,
           is_training_program: service_area.is_training_program,
+          ordering: service_area.ordering,
           services: service_area.services.order(:ordering).map do |service|
             {
               id: service.id,

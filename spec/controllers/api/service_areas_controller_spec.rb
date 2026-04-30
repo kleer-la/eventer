@@ -28,6 +28,13 @@ describe Api::ServiceAreasController do
       expect(program_slugs).to include(@training_program.slug)
       expect(program_slugs).not_to include(@regular_service.slug)
     end
+
+    it 'exposes ordering on each item in the list' do
+      get :index, params: { format: 'json' }
+      json_response = JSON.parse(response.body)
+      expect(json_response.first).to have_key('ordering')
+      expect(json_response.first['ordering']).to eq(@regular_service.ordering)
+    end
   end
 
   describe "GET 'ServiceAreas/#' (/api/services/#.<format>)" do
