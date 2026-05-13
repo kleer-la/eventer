@@ -70,14 +70,22 @@ RSpec.describe 'Api::Contacts Webhook Integration', type: :request do
     expect(a_request(:post, webhook_url)).not_to have_been_made
   end
 
-  it 'still creates contact if webhook fails' do
+  it 'still creates contact if webhook fails, and lets Delayed::Job retry the webhook' do
     stub_request(:post, webhook_url).to_return(status: 500)
-    post '/api/contacts', params: contact_params
+
+    Delayed::Worker.delay_jobs = true
+    begin
+      post '/api/contacts', params: contact_params
+    ensure
+      Delayed::Worker.delay_jobs = false
+    end
 
     expect(response).to have_http_status(:created)
     expect(Contact.exists?(email: 'test@example.com')).to be true
-    Delayed::Worker.new.work_off
+
+    expect { Delayed::Worker.new.work_off }.not_to raise_error
     expect(a_request(:post, webhook_url)).to have_been_made
+    expect(Delayed::Job.where('last_error IS NOT NULL').count).to eq(1)
   end
 
   it 'returns error if resource not found' do

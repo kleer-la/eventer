@@ -1,9 +1,17 @@
 require 'faraday'
 
 class WebhookService
+  class DeliveryError < StandardError; end
+
+  MAX_ATTEMPTS = 7
+
   def initialize(contact, webhook: nil)
     @contact = contact
     @webhook = webhook || Webhook.find_by(event: "contact.#{@contact.trigger_type}", active: true)
+  end
+
+  def max_attempts
+    MAX_ATTEMPTS
   end
 
   def deliver
@@ -28,6 +36,8 @@ class WebhookService
       req.headers['Content-Type'] = 'application/json'
     end
     Log.log(:mail, :info, 'Webhook', "#{resp.status} - #{resp.body}")
+    raise DeliveryError, "Webhook #{@webhook.id} returned #{resp.status}: #{resp.body}" unless resp.success?
+
     resp
   end
 end
