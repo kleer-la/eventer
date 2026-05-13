@@ -55,7 +55,7 @@ gem 'eventmachine', '1.2.7'
 gem 'nokogiri'
 # Gemas para idetificación y autorización de usuarios
 gem 'cancancan'
-gem 'devise', '~> 4'
+gem 'devise', '~> 5.0'
 
 gem 'comma'
 gem 'daemons'

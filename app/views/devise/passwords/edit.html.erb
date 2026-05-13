@@ -1,48 +1,18 @@
-<style type="text/css">
-	 body {
-	   padding-top: 20px;
-	   padding-bottom: 40px;
-	   background-color: #f5f5f5;
-	 }
+<h2>Reset de Clave</h2>
 
-	 .form-signin {
-	   max-width: 300px;
-	   padding: 19px 29px 29px;
-	   margin: 0 auto 20px;
-	   background-color: #fff;
-	   border: 1px solid #e5e5e5;
-	   -webkit-border-radius: 5px;
-	      -moz-border-radius: 5px;
-	           border-radius: 5px;
-	   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	           box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	 }
-	 .form-signin .form-signin-heading,
-	 .form-signin .checkbox {
-	   margin-bottom: 10px;
-	 }
-	 .form-signin input[type="text"],
-	 .form-signin input[type="password"] {
-	   font-size: 16px;
-	   height: auto;
-	   margin-bottom: 15px;
-	   padding: 7px 9px;
-	 }
-
-</style>
-
-<div class="container">
-	
-	<%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :class => "form-signin", :method => :put}) do |f| %>  
-        <h2 class="form-signin-heading">Reset de clave</h2>
-		<%= devise_error_messages! %>
-		<%= f.hidden_field :reset_password_token %>
-		
-		<%= f.password_field :password, :class => "input-block-level", :placeholder => "Nueva Clave" %>
-		<%= f.password_field :password_confirmation, :class => "input-block-level", :placeholder => "Confirmación" %>
-        <%= f.submit "Cambiar Clave", :class => "btn btn-large btn-primary" %>
-		<%= render "devise/shared/links" %>
-	<%end%>
-
-</div> <!-- /container -->
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+  <%= f.hidden_field :reset_password_token %>
+  <div>
+    <%= f.password_field :password, placeholder: 'Nueva Clave', autofocus: true %>
+  </div>
+  <div>
+    <%= f.password_field :password_confirmation, placeholder: 'Confirmación' %>
+  </div>
+  <div>
+    <%= f.submit 'Cambiar Clave' %>
+  </div>
+  <div class="links">
+    <%= render 'devise/shared/links' %>
+  </div>
+<% end %>

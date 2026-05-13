@@ -214,10 +214,10 @@ GEM
       ruby-statistics (>= 4.0.1)
       ruby2_keywords
       thor (>= 0.19, < 2)
-    devise (4.9.4)
+    devise (5.0.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0)
+      railties (>= 7.0)
       responders
       warden (~> 1.2.3)
     diff-lcs (1.6.2)
@@ -681,7 +681,7 @@ DEPENDENCIES
   debug (>= 1.0.0)
   delayed_job_active_record
   derailed_benchmarks
-  devise (~> 4)
+  devise (~> 5.0)
   dimensions
   eventmachine (= 1.2.7)
   factory_bot_rails

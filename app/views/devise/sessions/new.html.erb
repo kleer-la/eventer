@@ -1,50 +1,21 @@
-<style type="text/css">
-	 body {
-	   padding-top: 20px;
-	   padding-bottom: 40px;
-	   background-color: #f5f5f5;
-	 }
+<h2>Identificación</h2>
 
-	 .form-signin {
-	   max-width: 300px;
-	   padding: 19px 29px 29px;
-	   margin: 0 auto 20px;
-	   background-color: #fff;
-	   border: 1px solid #e5e5e5;
-	   -webkit-border-radius: 5px;
-	      -moz-border-radius: 5px;
-	           border-radius: 5px;
-	   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	           box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	 }
-	 .form-signin .form-signin-heading,
-	 .form-signin .checkbox {
-	   margin-bottom: 10px;
-	 }
-	 .form-signin input[type="email"],
-	 .form-signin input[type="password"] {
-	   font-size: 16px;
-	   height: auto;
-	   margin-bottom: 15px;
-	   padding: 7px 9px;
-	 }
-
-</style>
-
-<div class="container">
-	
-	<%=render '/commons/notice'%> 
-
-    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => { :class => "form-signin"}) do |f| %>  
-        <h2 class="form-signin-heading">Identificación</h2>
-		<%= f.email_field :email, :autofocus => true, :class => "input-block-level", :placeholder => "Email" %>
-		<%= f.password_field :password, :class => "input-block-level", :placeholder => "Clave" %>
-        <% if devise_mapping.rememberable? -%>
-		    <label class="checkbox"><%= f.check_box :remember_me %> Recordarme.</label>
-		  <% end -%>
-        <%= f.submit "Sign in", :class => "btn btn-large btn-primary" %>
-		<%= render "devise/shared/links" %>
-	<%end%>
-
-</div> <!-- /container -->
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <div>
+    <%= f.email_field :email, autofocus: true, placeholder: 'Email' %>
+  </div>
+  <div>
+    <%= f.password_field :password, placeholder: 'Clave' %>
+  </div>
+  <% if devise_mapping.rememberable? %>
+    <div>
+      <label><%= f.check_box :remember_me %> Recordarme</label>
+    </div>
+  <% end %>
+  <div>
+    <%= f.submit 'Identificarme' %>
+  </div>
+  <div class="links">
+    <%= render 'devise/shared/links' %>
+  </div>
+<% end %>
