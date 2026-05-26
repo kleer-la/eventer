@@ -84,6 +84,21 @@ describe Api::ServiceAreasController do
         expect(service_ids).to include(invisible_service.id)
       end
     end
+    describe 'value_proposition_title' do
+      it 'exposes value_proposition_title when set' do
+        sa = FactoryBot.create(:service_area, value_proposition_title: 'Por qué elegirnos')
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['value_proposition_title']).to eq('Por qué elegirnos')
+      end
+
+      it 'returns nil value_proposition_title when not set' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['value_proposition_title']).to be_nil
+      end
+    end
+
     describe 'SEO fields' do
       it 'includes seo_title and seo_description for services' do
         service = FactoryBot.create(:service, service_area:, visible: true,

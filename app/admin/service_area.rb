@@ -6,7 +6,7 @@ ActiveAdmin.register ServiceArea do
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :primary_font_color, :secondary_font_color,
                 :visible, :summary, :cta_message, :lang,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
-                :target_title, :seo_title, :seo_description, :is_training_program
+                :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program
   filter :name
 
   controller do
@@ -63,6 +63,9 @@ ActiveAdmin.register ServiceArea do
       f.input :description, as: :rich_text_area
       f.input :target_title
       f.input :target, as: :rich_text_area
+      f.input :value_proposition_title,
+              hint: 'Optional. Title for the value proposition section. ' \
+                    'If empty, a default ("¿Por qué elegir...?") is shown.'
       f.input :value_proposition, as: :rich_text_area
       f.input :ordering
       f.input :seo_title
@@ -138,6 +141,7 @@ ActiveAdmin.register ServiceArea do
       rich_row :description
       row :target_title
       rich_row :target
+      row :value_proposition_title
       rich_row :value_proposition
       row :ordering
       row :seo_title

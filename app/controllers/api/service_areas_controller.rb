@@ -89,6 +89,7 @@ module Api
         target_title: service_area.target_title,
         target: service_area.target&.body.to_s,
         value_proposition: service_area.value_proposition.body.to_s,
+        value_proposition_title: service_area.value_proposition_title,
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
         is_training_program: service_area.is_training_program,
