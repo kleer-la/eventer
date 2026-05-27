@@ -70,15 +70,20 @@ ActiveAdmin.register ServiceArea do
       f.input :value_proposition, as: :rich_text_area
       f.input :ordering
 
-      f.inputs 'Forma Recomendada (Markdown + HTML — full control, same on Areas & Services)' do
+      f.inputs 'Forma Recomendada (HTML-first — use the .rw-* kit classes; simple Markdown also works)' do
         f.input :recommended_way_title,
                 hint: 'E.g. "La forma más efectiva de adoptar IA en tu empresa"'
         f.input :recommended_way_note,
                 hint: 'Short line, e.g. "Funciona para el 80% de las empresas..."'
-        f.input :recommended_way_summary, as: :text, input_html: { rows: 10 },
-                hint: '3–5 high-level steps. Markdown + raw HTML allowed for full control.'
-        f.input :recommended_way_details, as: :text, input_html: { rows: 18 },
-                hint: 'Full prescriptive details. Markdown + HTML. Appears identically on area pages as on service pages.'
+        f.input :recommended_way_summary, as: :text, input_html: { rows: 12 },
+                hint: 'Short + scannable. Steps kit: ul.rw-steps > li.rw-step (span.rw-step-number + ' \
+                      'div.rw-step-body with h4 + p). NOTE: the preview below has no site CSS, so .rw-* ' \
+                      'blocks look unstyled here — verify on the public page.'
+        f.input :recommended_way_details, as: :text, input_html: { rows: 20 },
+                hint: 'Full details, HTML-first. Kit: .rw-grid-2 (two columns), .rw-pricing / ' \
+                      '.rw-pricing-card(.--starred) / .rw-star-badge / .rw-plan-name / .rw-pricing-line ' \
+                      '(.rw-pricing-label + .rw-pricing-value) / .rw-price, .rw-callout. Colors auto-theme ' \
+                      'from the area palette. Preview below is unstyled.'
       end
 
       f.input :seo_title

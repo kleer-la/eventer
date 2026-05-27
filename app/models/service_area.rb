@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ServiceArea < ApplicationRecord
+  include RecommendedWayRenderable
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]
@@ -43,29 +44,7 @@ class ServiceArea < ApplicationRecord
     %w[services trainers]
   end
 
-  def recommended_way_summary_html
-    render_markdown(recommended_way_summary)
-  end
-
-  def recommended_way_details_html
-    render_markdown(recommended_way_details)
-  end
-
   private
-
-  def render_markdown(source)
-    return nil if source.blank?
-
-    # Matches the Redcarpet + HTML approach already used for Trainer long_bio in ActiveAdmin
-    markdown = Redcarpet::Markdown.new(
-      Redcarpet::Render::HTML.new(hard_wrap: true, filter_html: false),
-      tables: true,
-      autolink: true,
-      fenced_code_blocks: true,
-      strikethrough: true
-    )
-    markdown.render(source)
-  end
 
   def strip_slug
     slug.strip! if slug.present?

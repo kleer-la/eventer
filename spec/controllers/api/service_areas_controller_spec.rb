@@ -156,6 +156,23 @@ describe Api::ServiceAreasController do
         svc = json_response['services'].find { |s| s['id'] == visible_service.id }
         expect(svc['recommended_way_details']).to be_nil
       end
+
+      it 'passes raw HTML through untouched (HTML-first authoring)' do
+        sa = FactoryBot.create(:service_area,
+                               recommended_way_summary: %(<ul class="rw-steps">\n  <li class="rw-step">A</li>\n</ul>))
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['recommended_way_summary']).to include('<ul class="rw-steps">')
+        expect(json_response['recommended_way_summary']).to include('<li class="rw-step">A</li>')
+      end
+
+      it 'does not inject <br> for single newlines (hard_wrap disabled)' do
+        sa = FactoryBot.create(:service_area,
+                               recommended_way_details: "<div>\nlinea uno\nlinea dos\n</div>")
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['recommended_way_details']).not_to include('<br')
+      end
     end
 
     describe 'Redirect' do
