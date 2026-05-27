@@ -6,7 +6,8 @@ ActiveAdmin.register ServiceArea do
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :primary_font_color, :secondary_font_color,
                 :visible, :summary, :cta_message, :lang,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
-                :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program
+                :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program,
+                :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details
   filter :name
 
   controller do
@@ -68,6 +69,18 @@ ActiveAdmin.register ServiceArea do
                     'If empty, a default ("¿Por qué elegir...?") is shown.'
       f.input :value_proposition, as: :rich_text_area
       f.input :ordering
+
+      f.inputs 'Forma Recomendada (Markdown + HTML — full control, same on Areas & Services)' do
+        f.input :recommended_way_title,
+                hint: 'E.g. "La forma más efectiva de adoptar IA en tu empresa"'
+        f.input :recommended_way_note,
+                hint: 'Short line, e.g. "Funciona para el 80% de las empresas..."'
+        f.input :recommended_way_summary, as: :text, input_html: { rows: 10 },
+                hint: '3–5 high-level steps. Markdown + raw HTML allowed for full control.'
+        f.input :recommended_way_details, as: :text, input_html: { rows: 18 },
+                hint: 'Full prescriptive details. Markdown + HTML. Appears identically on area pages as on service pages.'
+      end
+
       f.input :seo_title
       f.input :seo_description
     end
@@ -146,6 +159,38 @@ ActiveAdmin.register ServiceArea do
       row :ordering
       row :seo_title
       row :seo_description
+
+      if resource.recommended_way_summary.present? || resource.recommended_way_details.present?
+        panel 'Forma Recomendada (rendered HTML)' do
+          if resource.recommended_way_title.present?
+            div do
+              strong 'Title: '
+              text_node resource.recommended_way_title
+            end
+          end
+          if resource.recommended_way_note.present?
+            div do
+              strong 'Note: '
+              text_node resource.recommended_way_note
+            end
+          end
+
+          if resource.recommended_way_summary_html.present?
+            div style: 'margin-top: 12px; padding: 8px; background: #f8f9fa; border-left: 4px solid #68CEF2;' do
+              h4 'Summary (rendered)'
+              div resource.recommended_way_summary_html.html_safe
+            end
+          end
+
+          if resource.recommended_way_details_html.present?
+            div style: 'margin-top: 12px; padding: 8px; background: #fff; border: 1px solid #ddd;' do
+              h4 'Details (rendered)'
+              div resource.recommended_way_details_html.html_safe
+            end
+          end
+        end
+      end
+
       if service_area.side_image.present?
         div 'Side Image '
         div do

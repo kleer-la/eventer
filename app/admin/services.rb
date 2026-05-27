@@ -5,7 +5,7 @@ ActiveAdmin.register Service do
 
   permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
                    outcomes program target faq definitions pricing brochure side_image ordering visible
-                   seo_title seo_description],
+                   seo_title seo_description recommended_way_title recommended_way_note recommended_way_summary recommended_way_details],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   controller do
@@ -60,6 +60,18 @@ ActiveAdmin.register Service do
       f.input :pricing
       f.input :faq, as: :rich_text_area, hint: hint_colapsable
       f.input :brochure
+
+      f.inputs 'Forma Recomendada (Markdown + HTML — full control, same on Areas & Services)' do
+        f.input :recommended_way_title,
+                hint: 'E.g. "La forma más efectiva: Membresía IA" (shown as header)'
+        f.input :recommended_way_note,
+                hint: 'Short line, e.g. "Funciona para el 80% de las empresas..."'
+        f.input :recommended_way_summary, as: :text, input_html: { rows: 10 },
+                hint: '3–5 high-level steps. Markdown + raw HTML allowed for full control (see Trainer long_bio precedent).'
+        f.input :recommended_way_details, as: :text, input_html: { rows: 18 },
+                hint: 'Expanded steps + roles, timeline, deliverables, pitfalls, strong CTA. Markdown + HTML.'
+      end
+
       f.inputs 'Recommended Contents' do
         f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
           rc.input :target_type, as: :select,
@@ -201,6 +213,37 @@ ActiveAdmin.register Service do
           end
           column :subtitle do |recommendation|
             recommendation['subtitle']
+          end
+        end
+      end
+
+      if resource.recommended_way_summary.present? || resource.recommended_way_details.present?
+        panel 'Forma Recomendada (rendered HTML)' do
+          if resource.recommended_way_title.present?
+            div do
+              strong 'Title: '
+              text_node resource.recommended_way_title
+            end
+          end
+          if resource.recommended_way_note.present?
+            div do
+              strong 'Note: '
+              text_node resource.recommended_way_note
+            end
+          end
+
+          if resource.recommended_way_summary_html.present?
+            div style: 'margin-top: 12px; padding: 8px; background: #f8f9fa; border-left: 4px solid #68CEF2;' do
+              h4 'Summary (rendered)'
+              div resource.recommended_way_summary_html.html_safe
+            end
+          end
+
+          if resource.recommended_way_details_html.present?
+            div style: 'margin-top: 12px; padding: 8px; background: #fff; border: 1px solid #ddd;' do
+              h4 'Details (rendered)'
+              div resource.recommended_way_details_html.html_safe
+            end
           end
         end
       end

@@ -120,6 +120,44 @@ describe Api::ServiceAreasController do
       end
     end
 
+    describe 'Forma Recomendada fields (Markdown rendered to HTML)' do
+      it 'exposes recommended way fields at area level when set' do
+        sa = FactoryBot.create(:service_area,
+                               recommended_way_title: 'Forma del Área',
+                               recommended_way_note: '80% path',
+                               recommended_way_summary: "## Paso 1\n\nAlgo",
+                               recommended_way_details: "### Detalle completo\n\nMás")
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['recommended_way_title']).to eq('Forma del Área')
+        expect(json_response['recommended_way_note']).to eq('80% path')
+        expect(json_response['recommended_way_summary']).to include('<h2>Paso 1</h2>')
+        expect(json_response['recommended_way_summary']).to include('<p>Algo</p>')
+        expect(json_response['recommended_way_details']).to include('<h3>Detalle completo</h3>')
+        expect(json_response['recommended_way_details']).to include('<p>Más</p>')
+      end
+
+      it 'exposes recommended way fields on individual services' do
+        service = FactoryBot.create(:service, service_area:, visible: true,
+                                    recommended_way_title: 'Forma del Servicio',
+                                    recommended_way_summary: '- Paso A\n- Paso B')
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        svc = json_response['services'].find { |s| s['id'] == service.id }
+        expect(svc['recommended_way_title']).to eq('Forma del Servicio')
+        expect(svc['recommended_way_summary']).to include('<ul>')
+      end
+
+      it 'returns nil recommended way fields when not set' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        expect(json_response['recommended_way_title']).to be_nil
+        expect(json_response['recommended_way_summary']).to be_nil
+        svc = json_response['services'].find { |s| s['id'] == visible_service.id }
+        expect(svc['recommended_way_details']).to be_nil
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)

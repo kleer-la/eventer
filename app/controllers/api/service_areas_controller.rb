@@ -93,6 +93,10 @@ module Api
         seo_title: service_area.seo_title,
         seo_description: service_area.seo_description,
         is_training_program: service_area.is_training_program,
+        recommended_way_title: service_area.recommended_way_title,
+        recommended_way_note: service_area.recommended_way_note,
+        recommended_way_summary: service_area.recommended_way_summary_html,
+        recommended_way_details: service_area.recommended_way_details_html,
         services: services2json(services, service_chg, req_slug, lang)
       }
     end
@@ -118,7 +122,11 @@ module Api
           faq: service.faq_list,
           brochure: service.brochure,
           side_image: service.side_image,
-          recommended: service.recommended(lang:)
+          recommended: service.recommended(lang:),
+          recommended_way_title: service.recommended_way_title,
+          recommended_way_note: service.recommended_way_note,
+          recommended_way_summary: service.recommended_way_summary_html,
+          recommended_way_details: service.recommended_way_details_html
         }
       end
     end

@@ -35,14 +35,37 @@ class ServiceArea < ApplicationRecord
   end
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[abstract created_at icon id id_value lang name primary_color secondary_color slug updated_at visible]
+    %w[abstract created_at icon id id_value lang name primary_color secondary_color slug updated_at visible
+       recommended_way_title recommended_way_note]
   end
 
   def self.ransackable_associations(_auth_object = nil)
     %w[services trainers]
   end
 
+  def recommended_way_summary_html
+    render_markdown(recommended_way_summary)
+  end
+
+  def recommended_way_details_html
+    render_markdown(recommended_way_details)
+  end
+
   private
+
+  def render_markdown(source)
+    return nil if source.blank?
+
+    # Matches the Redcarpet + HTML approach already used for Trainer long_bio in ActiveAdmin
+    markdown = Redcarpet::Markdown.new(
+      Redcarpet::Render::HTML.new(hard_wrap: true, filter_html: false),
+      tables: true,
+      autolink: true,
+      fenced_code_blocks: true,
+      strikethrough: true
+    )
+    markdown.render(source)
+  end
 
   def strip_slug
     slug.strip! if slug.present?

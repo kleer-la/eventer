@@ -25,7 +25,7 @@ class Service < ApplicationRecord
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at id name slug service_area_id subtitle updated_at value_proposition outcomes program target faq
-       seo_title seo_description]
+       seo_title seo_description recommended_way_title recommended_way_note]
   end
 
   def self.ransackable_associations(_auth_object = nil)
@@ -68,7 +68,29 @@ class Service < ApplicationRecord
       .merge('is_training_program' => service_area&.is_training_program || false)
   end
 
+  def recommended_way_summary_html
+    render_markdown(recommended_way_summary)
+  end
+
+  def recommended_way_details_html
+    render_markdown(recommended_way_details)
+  end
+
   private
+
+  def render_markdown(source)
+    return nil if source.blank?
+
+    # Matches the Redcarpet + HTML approach already used for Trainer long_bio in ActiveAdmin
+    markdown = Redcarpet::Markdown.new(
+      Redcarpet::Render::HTML.new(hard_wrap: true, filter_html: false),
+      tables: true,
+      autolink: true,
+      fenced_code_blocks: true,
+      strikethrough: true
+    )
+    markdown.render(source)
+  end
 
   def field_list(field)
     return [] unless field.present?
