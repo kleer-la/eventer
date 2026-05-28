@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# One-command Kamal deploy from the devcontainer.
+#
+# Why this wrapper exists: VS Code's Dev Containers extension injects a
+# "credsStore": "dev-containers-<id>" entry into ~/.docker/config.json. That
+# helper only works inside the VS Code terminal; in any other non-interactive
+# shell (docker exec, CI, SSH) `docker login` fails with exit status 255,
+# breaking `kamal deploy`. It is re-added on every rebuild/re-attach, so we
+# strip it here, right before each deploy.
+#
+# Usage:
+#   bin/deploy deploy            # build + deploy to PROD
+#   bin/deploy deploy -d qa      # build + deploy to QA
+#   bin/deploy app logs -f       # any other kamal subcommand works too
+set -euo pipefail
+
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# 1. Load deploy env (registry password, SERVER_IP, secrets inputs, …)
+if [ -f eventer.env ]; then
+  set -a; . ./eventer.env; set +a
+fi
+
+# 2. Strip the devcontainer credsStore so `docker login` can store creds
+cfg="${HOME}/.docker/config.json"
+if [ -f "$cfg" ] && grep -q '"credsStore"' "$cfg"; then
+  python3 -c "import json,sys; p='$cfg'; d=json.load(open(p)); d.pop('credsStore', None); json.dump(d, open(p,'w'), indent=2)"
+  echo "→ removed devcontainer credsStore from $cfg"
+fi
+
+# 3. Deploy
+exec bundle exec kamal "$@"
