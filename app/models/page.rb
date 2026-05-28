@@ -13,10 +13,17 @@ class Page < ApplicationRecord
 
   enum :lang, %w[es en]
 
+  # "overlay" (default): provides section overrides for an existing static
+  # template (current Page behavior — home, contact, area landings, …).
+  # "flagship": a fully-authored standalone page rendered at /:lang/:slug,
+  # composed from sections using the .rw-* kit.
+  enum :template, { overlay: 'overlay', flagship: 'flagship' }, default: 'overlay'
+
   validates :name, presence: true
   validates :lang, presence: true
   validates :slug, uniqueness: { scope: :lang, allow_nil: true }
   validates :cover, presence: true, allow_blank: true
+  validates :template, presence: true
 
   scope :en, -> { where(lang: :en) }
   scope :es, -> { where(lang: :es) }
@@ -74,7 +81,7 @@ class Page < ApplicationRecord
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[name seo_title seo_description lang slug canonical visible created_at updated_at]
+    %w[name seo_title seo_description lang slug canonical visible created_at updated_at template show_in_footer]
   end
 
   def self.ransackable_associations(_auth_object = nil)

@@ -119,4 +119,31 @@ RSpec.describe Page, type: :model do
       expect(page.update(cover: 'https://example.com/new_image.jpg')).to be true
     end
   end
+
+  describe 'template' do
+    it 'defaults to overlay' do
+      expect(Page.create!(name: 'Test', lang: :en).template).to eq('overlay')
+    end
+
+    it 'can be set to flagship' do
+      page = Page.create!(name: 'Flag', lang: :en, template: 'flagship')
+      expect(page).to be_flagship
+      expect(page).not_to be_overlay
+    end
+
+    it 'rejects unknown values' do
+      expect { Page.create!(name: 'X', lang: :en, template: 'bogus') }
+        .to raise_error(ArgumentError, /not a valid template/)
+    end
+  end
+
+  describe 'show_in_footer' do
+    it 'defaults to false' do
+      expect(Page.create!(name: 'Test', lang: :en).show_in_footer).to be false
+    end
+
+    it 'can be flagged true' do
+      expect(Page.create!(name: 'Test', lang: :en, show_in_footer: true).show_in_footer).to be true
+    end
+  end
 end

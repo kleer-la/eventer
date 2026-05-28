@@ -4,6 +4,7 @@ ActiveAdmin.register Page do
   menu parent: 'Assets', priority: 11
 
   permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :cover,
+                :template, :show_in_footer,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy],
                 sections_attributes: %i[id title content position slug cta_text cta_url _destroy]
 
@@ -26,6 +27,8 @@ ActiveAdmin.register Page do
     column :name
     column :slug
     column :lang
+    column :template
+    column :show_in_footer
     column :created_at
     column :updated_at
     actions
@@ -43,6 +46,8 @@ ActiveAdmin.register Page do
       row :name
       row :slug
       row :lang
+      row :template
+      row :show_in_footer
       row :seo_title
       row :seo_description
       row :canonical
@@ -100,6 +105,13 @@ ActiveAdmin.register Page do
       f.input :slug, input_html: { disabled: f.object.home_page? },
                      hint: f.object.home_page? ? 'Home pages cannot have a custom slug' : 'Leave empty to auto-generate from name'
 
+      f.input :template, as: :select, collection: Page.templates.keys, include_blank: false,
+                         hint: '"overlay" provides section overrides for a known static template (default). ' \
+                               '"flagship" renders a fully-authored standalone page at /:lang/:slug, composed ' \
+                               'from sections using the .rw-* kit.'
+      f.input :show_in_footer,
+              hint: 'When checked, the page appears in the global footer link list. ' \
+                    'Use sparingly — flagship pages only.'
       f.input :seo_title
       f.input :seo_description
       f.input :canonical, hint: 'Leave empty to auto-generate'

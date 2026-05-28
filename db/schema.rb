@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_26_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -442,7 +442,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_26_200000) do
     t.string "name"
     t.text "seo_description"
     t.string "seo_title"
+    t.boolean "show_in_footer", default: false, null: false
     t.string "slug"
+    t.string "template", default: "overlay", null: false
     t.datetime "updated_at", null: false
     t.index ["slug", "lang"], name: "index_pages_on_slug_and_lang", unique: true
   end

@@ -34,7 +34,9 @@ Rails.application.routes.draw do
         get :preview
       end
     end
-    resources :pages, only: %i[show]
+    resources :pages, only: %i[show] do
+      get :footer, on: :collection
+    end
     resources :contacts, only: %i[create show] do
       get ':contact_id/status', on: :collection, to: 'contacts#status'
       post :contact_us, on: :collection
