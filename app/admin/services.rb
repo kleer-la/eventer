@@ -3,7 +3,7 @@
 ActiveAdmin.register Service do
   menu parent: 'Services Mgnt'
 
-  permit_params %i[created_at id name slug service_area_id subtitle updated_at value_proposition
+  permit_params %i[created_at id name slug service_area_id subtitle card_description updated_at value_proposition
                    outcomes program target faq definitions pricing brochure side_image ordering visible
                    seo_title seo_description recommended_way_title recommended_way_note recommended_way_summary recommended_way_details],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
@@ -51,6 +51,10 @@ ActiveAdmin.register Service do
       f.input :seo_title
       f.input :seo_description
       f.input :subtitle, as: :rich_text_area
+      f.input :card_description, as: :text, input_html: { rows: 20 },
+              hint: 'Optional HTML. If present, REPLACES this service\'s preview card on the ' \
+                    'service-area page, rendered full-width inside a bordered box (same frame as ' \
+                    'Forma Recomendada). Use the .rw-* kit / inline styles. Leave empty to show the normal card.'
       f.input :value_proposition, as: :rich_text_area
       f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
       f.input :definitions, as: :rich_text_area
@@ -110,6 +114,9 @@ ActiveAdmin.register Service do
       row :seo_title
       row :seo_description
       row :subtitle
+      row :card_description do |service|
+        service.card_description.to_s.html_safe if service.card_description.present?
+      end
       row :side_image
       row :pricing
       row :value_proposition do |service|

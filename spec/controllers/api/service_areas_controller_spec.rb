@@ -120,6 +120,24 @@ describe Api::ServiceAreasController do
       end
     end
 
+    describe 'card_description field' do
+      it 'exposes card_description on individual services when set' do
+        service = FactoryBot.create(:service, service_area:, visible: true,
+                                              card_description: '<section class="rw-section"><h2>Programa</h2></section>')
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        svc = json_response['services'].find { |s| s['id'] == service.id }
+        expect(svc['card_description']).to include('Programa')
+      end
+
+      it 'returns nil card_description when not set' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+        svc = json_response['services'].find { |s| s['id'] == visible_service.id }
+        expect(svc['card_description']).to be_nil
+      end
+    end
+
     describe 'Forma Recomendada fields (Markdown rendered to HTML)' do
       it 'exposes recommended way fields at area level when set' do
         sa = FactoryBot.create(:service_area,

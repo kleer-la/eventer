@@ -113,6 +113,7 @@ module Api
           seo_title: service.seo_title,
           seo_description: service.seo_description,
           subtitle: service.subtitle.gsub('<h1>', '<h2>').gsub('</h1>', '</h2>'),
+          card_description: service.card_description,
           value_proposition: service.value_proposition.body.to_s,
           outcomes: service.outcomes_list,
           definitions: content_or_nil(service.definitions),
