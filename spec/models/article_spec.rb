@@ -136,4 +136,27 @@ RSpec.describe Article, type: :model do
       end
     end
   end
+
+  describe 'audio generation' do
+    it 'enqueues GenerateArticleAudioJob when a new article with a body is created' do
+      expect(GenerateArticleAudioJob).to receive(:perform_later).with(kind_of(Integer))
+      FactoryBot.create(:article)
+    end
+
+    context 'when updating an existing article' do
+      let(:article) { FactoryBot.create(:article) }
+
+      it 'enqueues the job when the body changes' do
+        article # create first (create enqueue is stubbed by default)
+        expect(GenerateArticleAudioJob).to receive(:perform_later).with(article.id)
+        article.update!(body: 'A brand new body for this article')
+      end
+
+      it 'does not enqueue the job when an unrelated field changes' do
+        article
+        expect(GenerateArticleAudioJob).not_to receive(:perform_later)
+        article.update!(title: 'Just a new title')
+      end
+    end
+  end
 end

@@ -44,6 +44,15 @@ RSpec.configure do |config|
   end
   Delayed::Worker.delay_jobs = false
 
+  # Jobs run inline in the test suite (delay_jobs = false). Article saves enqueue
+  # GenerateArticleAudioJob, which shells out to the edge-tts binary; stub it by
+  # default so unrelated specs don't spawn that process. Specs that exercise the
+  # job call `perform_now` directly, and the model spec overrides this with an
+  # `expect(...).to receive(:perform_later)` message expectation.
+  config.before(:each) do
+    allow(GenerateArticleAudioJob).to receive(:perform_later)
+  end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')

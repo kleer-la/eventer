@@ -4,7 +4,7 @@ ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
   permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :header, :body,
-                :industry, :noindex, :substantive_change_at,
+                :industry, :noindex, :substantive_change_at, :audio,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   scope :all
@@ -73,9 +73,19 @@ ActiveAdmin.register Article do
     end
   end
   action_item :preview, only: :show do
-    link_to 'Preview', "https://www.kleer.la/es/blog-preview/#{resource.slug}", 
-      class: 'button', 
+    link_to 'Preview', "https://www.kleer.la/es/blog-preview/#{resource.slug}",
+      class: 'button',
       target: '_blank'
+  end
+
+  action_item :regenerate_audio, only: :show do
+    link_to 'Regenerate audio', regenerate_audio_admin_article_path(resource),
+            method: :post, class: 'button'
+  end
+
+  member_action :regenerate_audio, method: :post do
+    GenerateArticleAudioJob.perform_later(resource.id)
+    redirect_to admin_article_path(resource), notice: 'Audio generation enqueued'
   end
 
   show do
@@ -97,6 +107,16 @@ ActiveAdmin.register Article do
       row :header
       row :body do
         markdown resource.body
+      end
+      row :audio do |article|
+        if article.audio.present?
+          div link_to article.audio, article.audio, target: '_blank'
+          div audio controls: true do
+            source src: article.audio
+          end
+        else
+          em 'Not generated yet (auto-generated when the body changes)'
+        end
       end
 
       row :substantive_change_at

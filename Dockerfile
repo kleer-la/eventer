@@ -37,8 +37,13 @@ RUN apt-get update -qq && \
       libmagickwand-7.q16-10 \
       libcurl4 \
       libjemalloc2 \
+      python3 \
+      python3-pip \
       nodejs && \
     rm -rf /var/lib/apt/lists/*
+
+# edge-tts: free, key-less text-to-speech CLI used by GenerateArticleAudioJob
+RUN pip3 install --no-cache-dir --break-system-packages edge-tts
 
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 ENV MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"

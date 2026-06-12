@@ -23,6 +23,7 @@ class Article < ApplicationRecord
 
   before_save :strip_image_urls
   before_save :update_substantive_change_at
+  after_commit :enqueue_audio_generation, on: %i[create update]
 
   enum :industry, {
     finantial: 0,
@@ -79,5 +80,13 @@ class Article < ApplicationRecord
     if new_record?
       self.substantive_change_at = Time.current
     end
+  end
+
+  # Regenerate the spoken-audio version only when the body actually changed,
+  # so unrelated edits (and the job's own `update_column`) don't re-trigger it.
+  def enqueue_audio_generation
+    return unless saved_change_to_body? && body.present?
+
+    GenerateArticleAudioJob.perform_later(id)
   end
 end
