@@ -102,13 +102,21 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'eventos.kleer.la' }
 
   config.action_mailer.delivery_method = :smtp
+  # Email via Google Workspace SMTP relay (kleer.la is on Workspace; SPF/DKIM already aligned).
+  # Migrated off Mandrill — see issues #192 / #194.
+  # Auth is by server-IP allowlist (Admin Console → Apps → Gmail → Routing → SMTP relay),
+  # so no username/password is needed. Set KEVENTER_SMTP_USERNAME/PASSWORD only if you
+  # switch to authenticated SMTP (e.g. an existing seat + App Password).
   config.action_mailer.smtp_settings = {
-    address: ENV['KEVENTER_SMTP_ADDRESS'] || 'smtp.mandrillapp.com',
+    address: ENV['KEVENTER_SMTP_ADDRESS'] || 'smtp-relay.gmail.com',
     port: ENV['KEVENTER_SMTP_PORT'] || 587,
-    domain: 'example.com',
-    #    authentication: "plain",
-    #    enable_starttls_auto: true,
-    user_name: ENV['KEVENTER_SMTP_USERNAME'],
-    password: ENV['KEVENTER_SMTP_PASSWORD']
-  }
+    domain: 'kleer.la',
+    enable_starttls_auto: true
+  }.tap do |s|
+    if ENV['KEVENTER_SMTP_USERNAME'].present?
+      s[:authentication] = :plain
+      s[:user_name] = ENV['KEVENTER_SMTP_USERNAME']
+      s[:password] = ENV['KEVENTER_SMTP_PASSWORD']
+    end
+  end
 end
