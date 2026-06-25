@@ -65,13 +65,6 @@ class ParticipantsController < ApplicationController
     redirect_to "#{polymorphic_path([original.event])}/participants"
   end
 
-  def survey
-    @event = Event.find(params[:event_id])
-    @participants = @event.participants.to_certify.sort_by { |e| [e.fname, e.lname] }
-
-    respond_to(&:html)
-  end
-
   def print
     @event = Event.find(params[:event_id])
     @participants = @event.participants.attended?.sort_by(&:lname)

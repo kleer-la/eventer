@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_25_120100) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -265,18 +265,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_120000) do
     t.text "learnings"
     t.text "materials"
     t.string "name"
-    t.integer "net_promoter_score"
     t.boolean "new_version", default: false, null: false
     t.boolean "noindex", default: false, null: false
     t.integer "ordering", default: 100
     t.integer "platform", default: 0
     t.text "program"
-    t.integer "promoter_count"
     t.text "recipients"
     t.string "seo_title"
     t.string "side_image"
     t.string "subtitle"
-    t.integer "surveyed_count"
     t.string "tag_name"
     t.text "takeaways"
     t.datetime "updated_at", precision: nil
@@ -319,13 +316,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_120000) do
     t.date "finish_date"
     t.boolean "is_sold_out"
     t.decimal "list_price", precision: 10, scale: 2
-    t.boolean "mailchimp_workflow"
-    t.string "mailchimp_workflow_call"
-    t.boolean "mailchimp_workflow_for_warmup"
-    t.string "mailchimp_workflow_for_warmup_call"
     t.string "mode", limit: 2
     t.string "monitor_email"
-    t.integer "net_promoter_score"
     t.boolean "notify_webinar_start", default: false
     t.string "online_cohort_codename"
     t.string "online_course_codename"
@@ -517,19 +509,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_120000) do
     t.datetime "updated_at", null: false
     t.index ["assessment_id"], name: "index_questions_on_assessment_id"
     t.index ["question_group_id"], name: "index_questions_on_question_group_id"
-  end
-
-  create_table "ratings", force: :cascade do |t|
-    t.datetime "created_at", precision: nil
-    t.decimal "global_event_rating", precision: 4, scale: 2
-    t.integer "global_event_rating_count"
-    t.integer "global_nps"
-    t.integer "global_nps_count"
-    t.decimal "global_trainer_rating", precision: 4, scale: 2
-    t.integer "global_trainer_rating_count"
-    t.datetime "updated_at", precision: nil
-    t.integer "user_id"
-    t.index ["user_id"], name: "index_ratings_on_user_id"
   end
 
   create_table "recommended_contents", force: :cascade do |t|
@@ -736,11 +715,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_120000) do
     t.text "long_bio"
     t.text "long_bio_en"
     t.string "name"
-    t.integer "net_promoter_score"
-    t.integer "promoter_count"
     t.string "signature_credentials"
     t.string "signature_image"
-    t.integer "surveyed_count"
     t.string "tag_name"
     t.string "twitter_username"
     t.datetime "updated_at", precision: nil

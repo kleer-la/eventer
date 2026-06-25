@@ -203,8 +203,6 @@ class EventsController < ApplicationController
                   :specific_conditions, :should_welcome_email, :should_ask_for_referer_code,
                   :couples_eb_price, :business_price, :business_eb_price, :enterprise_6plus_price,
                   :enterprise_11plus_price, :show_pricing, :extra_script, :specific_subtitle,
-                  :mailchimp_workflow, :mailchimp_workflow_call, :mailchimp_workflow_for_warmup,
-                  :mailchimp_workflow_for_warmup_call,
                   :banner_text, :banner_type, :registration_ends,
                   :cancellation_policy, :enable_online_payment, :online_course_codename, :online_cohort_codename
   end

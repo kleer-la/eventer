@@ -41,8 +41,8 @@ class Trainer < ApplicationRecord
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[average_rating bio bio_en country_id created_at deleted gravatar_email id id_value
-       is_kleerer landing linkedin_url name net_promoter_score promoter_count signature_credentials signature_image
+       is_kleerer landing linkedin_url name signature_credentials signature_image
        long_bio long_bio_en
-       surveyed_count tag_name twitter_username updated_at]
+       tag_name twitter_username updated_at]
   end
 end

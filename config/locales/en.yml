@@ -193,8 +193,6 @@ en:
         draft: "Borrador"
         cancelled: "Cancelado"
         is_sold_out: "Cupo Completo"
-        mailchimp_workflow: "Registrar Participantes en Mailchimp Workflow"
-        mailchimp_workflow_call: "Mailchimp Workflow Call"
         mode: "Modalidad"
         time_zone_name: "Zona Horaria"
         sepyme_enabled: "Habilitado para Sepyme"
@@ -261,7 +259,6 @@ en:
         monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco notificar a entrenamos@kleer.la."
         specific_conditions: "Se muestra como popup sobre la fecha en agenda. Sugerencia: días y horarios especiales. En blanco, si no tiene."
         extra_script: "Pixel Facebook script"
-        mailchimp_workflow_call: "Este valor se obtiene al crear un nuevo Workflow en Mailchimp"
       participant:
         phone_old: "Una persona de Kleer se contactará a este teléfono para continuar con tu inscripción."
       event_type:

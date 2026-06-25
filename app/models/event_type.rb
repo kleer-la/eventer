@@ -137,8 +137,8 @@ class EventType < ApplicationRecord
     %w[average_rating brochure cancellation_policy canonical_id cover created_at
        csd_eligible deleted description duration elevator_pitch external_id external_site_url
        extra_script faq goal id id_value include_in_catalog is_kleer_certification kleer_cert_seal_image
-       lang learnings materials name net_promoter_score new_version noindex ordering platform program
-       promoter_count recipients seo_title side_image subtitle surveyed_count tag_name takeaways updated_at]
+       lang learnings materials name new_version noindex ordering platform program
+       recipients seo_title side_image subtitle tag_name takeaways updated_at]
   end
 
   def self.ransackable_associations(auth_object = nil)
