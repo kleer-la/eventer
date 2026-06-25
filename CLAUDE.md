@@ -29,7 +29,8 @@ bundle exec rake ci               # Run fast tests (exclude slow tests)
 bundle exec rake slow_tests       # Run slow tests only
 bundle exec rake spec             # Run all RSpec tests
 bundle exec rake spec SPEC=<path> # Run specific test file
-# Note: Cucumber features are currently broken
+# Note: Cucumber was retired (Jun 2026); tests live in RSpec. JS-driven coverage
+# uses RSpec system specs with driven_by(:selenium, using: :headless_chrome).
 
 # Run tests inside Docker container (when using devcontainer)
 docker exec eventer_devcontainer-app-1 bundle exec rake ci
@@ -135,7 +136,7 @@ The application manages a complex event ecosystem with the following key compone
 - SimpleCov for test coverage
 - Separate fast/slow test suites for CI optimization
 - Factory Bot for test data generation
-- Note: Cucumber feature tests are currently broken
+- RSpec system specs for browser/JS coverage (`type: :system`, `driven_by(:selenium, using: :headless_chrome)` for JS; `:rack_test` otherwise). Cucumber was retired (Jun 2026).
 
 ### Development Tools
 

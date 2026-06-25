@@ -11,7 +11,6 @@ Eventer::Application.load_tasks
 
 task :ci do
   ["rake spec SPEC_OPTS='--tag ~slow'"].each do |cmd|
-    #  ["rake spec", "rake cucumber"].each do |cmd|
     puts "Starting to run #{cmd}..."
     system("export DISPLAY=:99.0 && bundle exec #{cmd}")
     raise "#{cmd} failed!" unless $CHILD_STATUS.exitstatus.zero?

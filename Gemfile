@@ -28,7 +28,6 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'cucumber-rails', require: false
   gem 'factory_bot_rails', require: false
   gem 'faker'
   gem 'selenium-webdriver' # , '~> 3'
