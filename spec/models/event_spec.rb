@@ -203,16 +203,6 @@ describe Event do
       expect(tz).to eq ActiveSupport::TimeZone.all.first
     end
 
-    it 'should have a embedded player' do
-      @event.embedded_player = 'hhhh'
-      expect(@event.embedded_player).to eq 'hhhh'
-    end
-
-    it 'should have an embedded twitter search' do
-      @event.twitter_embedded_search = 'hhhh'
-      expect(@event.twitter_embedded_search).to eq 'hhhh'
-    end
-
     it 'should allow custom e-mail prices overrite' do
       @event.custom_prices_email_text = 'PL: 300, EB: 200, BN: 100'
       expect(@event.custom_prices_email_text).to eq 'PL: 300, EB: 200, BN: 100'

@@ -199,20 +199,6 @@ describe Participant do
       expect { @participant.photo_url = 'a' }.not_to raise_error
       expect { @participant.profile_url = 'b' }.not_to raise_error
     end
-
-    it 'should have a promoter_score from a participant satisfaction survey' do
-      @participant.promoter_score = 8
-      expect(@participant.promoter_score).to eq 8
-    end
-    it 'should have a promoter_score smaller or equal to 10' do
-      @participant.promoter_score = 11
-      expect(@participant.valid?).to be false
-    end
-
-    it 'should have a promoter_score greater or equal to 0' do
-      @participant.promoter_score = -1
-      expect(@participant.valid?).to be false
-    end
   end
 
   context 'given a PDF certificate is generated' do

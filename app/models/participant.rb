@@ -33,10 +33,6 @@ class Participant < ApplicationRecord
     val_range(record, attr, value, :trainer_rating_should_be_between_1_and_5, 1, 5)
   end
 
-  validates_each :promoter_score do |record, attr, value|
-    val_range(record, attr, value, :promoter_score_should_be_between_0_and_10, 0, 10)
-  end
-
   STATUSES = {
     new: {
       code: 'N',
@@ -113,8 +109,8 @@ class Participant < ApplicationRecord
   }
   scope :to_certify, -> { where(status: [STATUS[:attended], STATUS[:certified]]) }
 
-  scope :surveyed, -> { where('trainer_rating > 0 AND event_rating > 0 and promoter_score > -1') }
-  scope :cotrainer_surveyed, -> { where('trainer2_rating > 0 AND event_rating > 0 and promoter_score > -1') }
+  scope :surveyed, -> { where('trainer_rating > 0 AND event_rating > 0') }
+  scope :cotrainer_surveyed, -> { where('trainer2_rating > 0 AND event_rating > 0') }
 
   after_initialize :initialize_defaults
 
@@ -330,7 +326,7 @@ class Participant < ApplicationRecord
 
   def self.ransackable_attributes(auth_object = nil)
     %w[address company_name created_at email event_id event_rating
-       fname id id_number id_value influence_zone_id invoice_id is_payed konline_po_number lname notes online_invoice_url pay_notes payment_type phone photo_url profile_url promoter_score quantity referer_code selected status testimony trainer2_rating trainer_rating updated_at verification_code xero_invoice_amount xero_invoice_number xero_invoice_reference]
+       fname id id_number id_value influence_zone_id invoice_id is_payed konline_po_number lname notes online_invoice_url pay_notes payment_type phone photo_url profile_url quantity referer_code selected status testimony trainer2_rating trainer_rating updated_at verification_code xero_invoice_amount xero_invoice_number xero_invoice_reference]
   end
 
   def self.ransackable_associations(auth_object = nil)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_25_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_25_120300) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -306,7 +306,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_25_120100) do
     t.integer "duration"
     t.date "eb_end_date"
     t.decimal "eb_price", precision: 10, scale: 2
-    t.text "embedded_player"
     t.boolean "enable_online_payment", default: false
     t.time "end_time"
     t.decimal "enterprise_11plus_price", precision: 10, scale: 2
@@ -318,7 +317,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_25_120100) do
     t.decimal "list_price", precision: 10, scale: 2
     t.string "mode", limit: 2
     t.string "monitor_email"
-    t.boolean "notify_webinar_start", default: false
     t.string "online_cohort_codename"
     t.string "online_course_codename"
     t.string "place"
@@ -335,10 +333,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_25_120100) do
     t.integer "trainer2_id"
     t.integer "trainer3_id"
     t.integer "trainer_id"
-    t.text "twitter_embedded_search"
     t.datetime "updated_at", precision: nil
     t.string "visibility_type", limit: 2
-    t.boolean "webinar_started", default: false
     t.index ["country_id"], name: "index_events_on_country_id"
     t.index ["trainer_id"], name: "index_events_on_trainer_id"
   end
@@ -463,7 +459,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_25_120100) do
     t.string "phone"
     t.string "photo_url"
     t.string "profile_url"
-    t.integer "promoter_score"
     t.integer "quantity", default: 1, null: false
     t.string "referer_code"
     t.boolean "selected", default: false, null: false

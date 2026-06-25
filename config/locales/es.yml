@@ -90,7 +90,6 @@ es:
           private_event_should_not_have_discounts: "un evento Privado no puede tener descuentos por cantidad de personas"
           event_rating_should_be_between_1_and_5: "el rating del evento debe estar entre 1 y 5"
           trainer_rating_should_be_between_1_and_5: "el rating del entrenador debe estar entre 1 y 5"
-          promoter_score_should_be_between_0_and_10: "el promoter score debe estar entre 0 y 10"
         models:
           service:
             attributes:
@@ -202,8 +201,6 @@ es:
         enable_online_payment: "Habilitar Pagos en Kleer Online"
         online_course_codename: "Código del curso en Kleer Online"
         online_cohort_codename: "Código del evento/cohort en Kleer Online"
-        embedded_player: "Embedded Video (Hangout o YouTube)"
-        twitter_embedded_search: "Búsqueda de #hashtag Twitter"
         place: "Lugar"
         address: "Dirección"
         country: "País"
@@ -261,8 +258,6 @@ es:
         registration_link: "Dejar en blanco para que Keventer gestione los interesados"
         online_course_codename: "Código del curso en Kleer Online"
         online_cohort_codename: "Código del evento/cohort en Kleer Online"
-        embedded_player: "Inicia el Google Hangout (On Air) y, sin comenzar el broadcasting, pega aquí el código del reproductor embebido."
-        twitter_embedded_search: "Haz una búsqueda en Twitter con el #hashtag del webinar y pega aquí el código para embeberla."
         custom_prices_email_text: "Dejar en blanco para que el e-mail de bienvenida contenga información de precio de lista, early bird y descuentos para 2 y 3+ personas (si corresponde)"
         monitor_email: "Email de la persona a quien se notificarán nuevos registros. En blanco notificar a entrenamos@kleer.la."
         specific_subtitle: "Un texto que aparecerá en la agenda y como un subtítulo adiconal, particular al evento."
@@ -381,7 +376,7 @@ es:
       login:
           required: "Debes estar logueado para acceder a esta página."
       participant:
-          is_attending: "El participante ya está presente en el webinar. Por favor, regístrate mediante el siguiente formulario."
+          is_attending: "El participante ya está presente en el evento. Por favor, regístrate mediante el siguiente formulario."
           not_found: "El participante indicado no fue encontrado. Por favor, regístrate mediante el siguiente formulario."
           registration_required: "Es necesario que te registres. Por favor, utiliza el siguiente formulario."
           buy:

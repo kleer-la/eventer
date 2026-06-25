@@ -12,7 +12,7 @@ ActiveAdmin.register Participant do
         event_id influence_zone_id company_name id_number invoice_id
         xero_invoice_number xero_invoice_reference xero_invoice_amount is_payed
         selected testimony photo_url profile_url
-        promoter_score event_rating trainer_rating trainer2_rating
+        event_rating trainer_rating trainer2_rating
         referer_code verification_code
       ].map { |col| "participants.#{col}" }
 
@@ -51,7 +51,7 @@ ActiveAdmin.register Participant do
                 :company_name, :id_number, :invoice_id, :xero_invoice_number,
                 :xero_invoice_reference, :xero_invoice_amount,
                 :is_payed, :selected, :testimony, :photo_url, :profile_url,
-                :accept_terms, :promoter_score, :event_rating, :trainer_rating,
+                :accept_terms, :event_rating, :trainer_rating,
                 :trainer2_rating
 
   member_action :copy, method: :post do
@@ -204,9 +204,8 @@ ActiveAdmin.register Participant do
         end
       end
 
-      tab 'NPS' do
+      tab 'Survey' do
         f.inputs do
-          f.input :promoter_score
           f.input :event_rating
           f.input :trainer_rating
           f.input :trainer2_rating
@@ -268,9 +267,8 @@ ActiveAdmin.register Participant do
         end
       end
 
-      tab 'NPS' do
+      tab 'Survey' do
         attributes_table do
-          row :promoter_score
           row :event_rating
           row :trainer_rating
           row :trainer2_rating
