@@ -6,15 +6,11 @@
 # instead of editing this one. Cucumber will automatically load all features/**/*.rb
 # files.
 
-require 'coveralls'
-Coveralls.wear!('rails')
-
 require 'cucumber/rails'
 require 'selenium-webdriver'
-require 'webdrivers'
 
-# to run in chrome
-Webdrivers::Chromedriver.required_version = '87.0.4280.88'
+# Chromedriver is auto-provisioned by Selenium Manager (bundled with
+# selenium-webdriver 4.x) against the installed google-chrome-stable.
 
 # driver.manage.timeouts.implicit_wait = 20
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
@@ -33,15 +29,6 @@ Capybara.register_driver :selenium do |app|
   )
   Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
 end
-
-# require 'webdrivers'
-#   Webdrivers::Chromedriver.required_version = '87.0.4280.88'
-#   options = Selenium::WebDriver::Chrome::Options.new(
-#     args: %w[--headless --no-sandbox --disable-gpu --disable-dev-shm-usage
-#           --disable-setuid-sandbox --disable-web-security --disable-popup-blocking --window-size=1920,1080]
-#   )
-#   driver=Selenium::WebDriver.for :chrome, options: options
-#   driver.get 'http://www.google.com'
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how
