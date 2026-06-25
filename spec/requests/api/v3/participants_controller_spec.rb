@@ -63,6 +63,20 @@ RSpec.describe 'Api::V3::ParticipantsController', type: :request do
         expect(json_response['error']).to eq('Event is cancelled or draft')
       end
     end
+
+    context 'with ended registration' do
+      before { event.update_columns(date: 1.month.ago.to_date, finish_date: 1.month.ago.to_date) }
+
+      it 'rejects registration once the registration period has ended' do
+        expect do
+          post "/api/v3/events/#{event.id}/participants/register", params: valid_params
+        end.not_to change(Participant, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        json_response = JSON.parse(response.body)
+        expect(json_response['error']).to eq('Registration has ended')
+      end
+    end
   end
 
   describe 'GET /api/v3/events/:event_id/participants/pricing_info' do
