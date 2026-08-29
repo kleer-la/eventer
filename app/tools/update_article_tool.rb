@@ -38,7 +38,7 @@ class UpdateArticleTool < AuthenticatedTool
 
   def call(id:, confirm: false, **fields)
     article = Article.friendly.find(id)
-    ArticleWriteService.new(ability: ability, article: article, **fields).call(confirm: confirm).to_json
+    ArticleWriteService.new(ability: ability, record: article, **fields).call(confirm: confirm).to_json
   rescue ActiveRecord::RecordNotFound
     { status: 'error', errors: ["No article with slug or id #{id.inspect}"] }.to_json
   end
