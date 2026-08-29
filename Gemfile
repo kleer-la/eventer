@@ -93,6 +93,10 @@ gem 'xero-ruby'
 gem 'activeadmin'
 gem 'activeadmin_addons'
 
+# MCP server: lets Claude read and edit blog articles over OAuth 2.1
+gem 'doorkeeper', '~> 5.9'
+gem 'fast-mcp'
+
 gem 'aws-sdk-s3', '~> 1.0'
 gem 'mini_magick'
 

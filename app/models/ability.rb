@@ -26,6 +26,9 @@ class Ability
     # All roles can read everything
     can :read, :all
 
+    # MCP connections: everyone revokes the ones granted with their own account
+    can %i[read revoke], Doorkeeper::AccessToken, resource_owner_id: user.id
+
     # Comercial: only read (already granted above)
 
     # Content: read + create/update specific models, but cannot set publishing fields

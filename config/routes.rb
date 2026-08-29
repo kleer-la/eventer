@@ -5,6 +5,14 @@ Rails.application.routes.draw do
 
   ActiveAdmin.routes(self)
 
+  # OAuth 2.1 for MCP clients: Doorkeeper + dynamic client registration + metadata
+  use_doorkeeper do
+    skip_controllers :applications, :authorized_applications
+  end
+  post '/oauth/register' => 'oauth/registrations#create'
+  get '/.well-known/oauth-authorization-server' => 'oauth/metadata#authorization_server'
+  get '/.well-known/oauth-protected-resource' => 'oauth/metadata#protected_resource'
+
   # Custom admin routes
   namespace :admin do
     get 'current_user_roles', to: 'current_user#roles'
