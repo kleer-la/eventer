@@ -35,6 +35,7 @@ class Ability
     if user.role?(:content)
       can %i[create update], CONTENT_MODELS
       can :manage, ActiveAdmin::Page, name: 'Images', namespace_name: 'admin'
+      can :manage, :images
 
       # Cannot set publishing fields
       cannot :set_include_in_catalog, EventType
@@ -45,6 +46,7 @@ class Ability
     if user.role?(:publisher)
       can %i[create update], CONTENT_MODELS
       can :manage, ActiveAdmin::Page, name: 'Images', namespace_name: 'admin'
+      can :manage, :images
       can :set_include_in_catalog, EventType
       can :set_published, [Article, Resource]
     end
@@ -53,6 +55,7 @@ class Ability
     if user.role?(:marketing)
       can :create, :all
       can :update, :all
+      can :manage, :images
     end
 
     # Administrator: full access including destroy

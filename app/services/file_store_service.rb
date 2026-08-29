@@ -6,8 +6,8 @@ require 'ostruct'
 class FileStoreService
   @current = nil
 
-  def self.create_null(exists: {})
-    @current = FileStoreService.new NullFileStore.new(exists:)
+  def self.create_null(exists: {}, files: nil)
+    @current = FileStoreService.new NullFileStore.new(exists:, files:)
   end
 
   def self.create_s3
@@ -132,8 +132,11 @@ class FileStoreService
 end
 
 class NullFileStore
-  def initialize(exists:)
+  # `files` overrides what list_objects returns: either names, or hashes with
+  # :key, :size and :last_modified when a test cares about those.
+  def initialize(exists:, files: nil)
     @exists = exists
+    @files = files
   end
 
   def objects(key, _bucket_name = nil)
@@ -142,7 +145,7 @@ class NullFileStore
 
   def list_objects(bucket:)
     list = OpenStruct.new
-    list.contents = [NullStoreObject.new('some file.png', exists: @exists)]
+    list.contents = (@files || ['some file.png']).map { |file| null_object(file) }
     list
   end
 
@@ -153,6 +156,17 @@ class NullFileStore
   def copy(source_key, target_key, bucket_name = nil)
     # No-op for testing
     true
+  end
+
+  private
+
+  def null_object(file)
+    return NullStoreObject.new(file, exists: @exists) unless file.is_a?(Hash)
+
+    object = NullStoreObject.new(file[:key], exists: @exists)
+    object.size = file[:size] if file.key?(:size)
+    object.last_modified = file[:last_modified] if file.key?(:last_modified)
+    object
   end
 end
 
