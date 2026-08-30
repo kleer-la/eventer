@@ -30,7 +30,10 @@ class ImageImportService
     file_name = target_name(content_type)
     replacing = store.exists?(file_name)
 
-    return { status: 'error', errors: ["#{file_name} already exists. Pass overwrite=true to replace it."] } if replacing && !@overwrite
+    if replacing && !@overwrite
+      return { status: 'error',
+               errors: ["#{file_name} already exists. Pass overwrite=true to replace it."] }
+    end
 
     return preview(file_name, content_type, body.bytesize, replacing) unless confirm
 
@@ -49,7 +52,9 @@ class ImageImportService
   def preview(file_name, content_type, bytes, replacing)
     warnings = []
     warnings << "#{file_name} already exists and would be replaced." if replacing
-    warnings << 'Animated GIFs are stored as-is: no WebP conversion, so the file stays heavy.' if content_type == 'image/gif'
+    if content_type == 'image/gif'
+      warnings << 'Animated GIFs are stored as-is: no WebP conversion, so the file stays heavy.'
+    end
     { status: 'preview', file_name: file_name, content_type: content_type, bytes: bytes,
       url: FileStoreService.image_url(file_name, 'image'), warnings: warnings,
       note: 'Nothing was stored. Call again with confirm=true to upload it.' }
@@ -95,14 +100,36 @@ class ImageImportService
   end
 
   def body_of(response)
-    content_type = response['content-type'].to_s.split(';').first.to_s.strip.downcase
-    raise FetchError, "#{content_type.presence || 'unknown'} is not an image type" unless EXTENSIONS.key?(content_type)
-
     body = response.body.to_s
-    raise FetchError, "The image is #{body.bytesize} bytes, over the #{MAX_BYTES} limit" if body.bytesize > MAX_BYTES
     raise FetchError, 'The URL returned an empty body' if body.empty?
+    raise FetchError, "The image is #{body.bytesize} bytes, over the #{MAX_BYTES} limit" if body.bytesize > MAX_BYTES
+
+    # The file itself decides, not the header: images served straight from a
+    # bucket usually arrive as application/octet-stream, and a server is free
+    # to claim image/png for a login page.
+    content_type = detect_type(body)
+    if content_type.nil?
+      declared = response['content-type'].to_s.split(';').first.to_s.strip.presence || 'nothing'
+      raise FetchError, "That does not look like an image (the server declared #{declared})"
+    end
 
     [body, content_type]
+  end
+
+  def detect_type(body)
+    head = body.byteslice(0, 16).to_s.b
+    return 'image/gif' if head.start_with?('GIF87a'.b, 'GIF89a'.b)
+    return 'image/png' if head.start_with?("\x89PNG\r\n\x1A\n".b)
+    return 'image/jpeg' if head.start_with?("\xFF\xD8\xFF".b)
+    return 'image/webp' if head.byteslice(0, 4) == 'RIFF'.b && head.byteslice(8, 4) == 'WEBP'.b
+    return 'image/svg+xml' if svg?(body)
+
+    nil
+  end
+
+  def svg?(body)
+    body.byteslice(0, 2000).to_s.force_encoding(Encoding::UTF_8).valid_encoding? &&
+      body.byteslice(0, 2000).to_s.include?('<svg')
   end
 
   def request(uri)

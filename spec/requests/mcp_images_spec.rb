@@ -27,9 +27,12 @@ RSpec.describe 'MCP image tools', type: :request do
   describe 'list_images' do
     before do
       FileStoreService.create_null(files: [
-                                     { key: 'demo-animado.gif', size: 2_048_000, last_modified: Time.zone.parse('2026-08-20') },
-                                     { key: 'portada.webp', size: 40_960, last_modified: Time.zone.parse('2026-08-25') },
-                                     { key: 'viejo-logo.png', size: 5_120, last_modified: Time.zone.parse('2026-01-05') }
+                                     { key: 'demo-animado.gif', size: 2_048_000,
+                                       last_modified: Time.zone.parse('2026-08-20') },
+                                     { key: 'portada.webp', size: 40_960,
+                                       last_modified: Time.zone.parse('2026-08-25') },
+                                     { key: 'viejo-logo.png', size: 5_120,
+                                       last_modified: Time.zone.parse('2026-01-05') }
                                    ])
     end
 
@@ -73,11 +76,12 @@ RSpec.describe 'MCP image tools', type: :request do
 
     before do
       # The null store answers exists? => true for anything not named here
-      FileStoreService.create_null(exists: { 'animado.gif' => false, 'demo del producto.gif' => false,
-                                             'ya-esta.gif' => true })
+      FileStoreService.create_null(exists: { 'animado.gif' => false, 'animado.png' => false,
+                                             'demo del producto.gif' => false, 'ya-esta.gif' => true })
       allow(Resolv).to receive(:getaddresses).and_call_original
       allow(Resolv).to receive(:getaddresses).with('images.example.com').and_return(['93.184.216.34'])
-      stub_request(:get, source).to_return(body: 'GIF89a-bytes', headers: { 'Content-Type' => 'image/gif' })
+      stub_request(:get, source).to_return(body: "GIF89a\x01\x00\x01\x00 bytes",
+                                           headers: { 'Content-Type' => 'application/octet-stream' })
     end
 
     it 'checks the image without storing it, then stores it on confirm' do
@@ -106,9 +110,20 @@ RSpec.describe 'MCP image tools', type: :request do
       expect(result['warnings'].join).to include('would be replaced')
     end
 
-    it 'refuses anything that is not an image' do
-      stub_request(:get, source).to_return(body: '<html>', headers: { 'Content-Type' => 'text/html' })
-      expect(call_tool('upload_image_from_url', { url: source })['errors'].join).to include('not an image type')
+    it 'trusts the bytes, not the header: a page claiming to be a GIF is refused' do
+      stub_request(:get, source).to_return(body: '<html>Not a GIF at all</html>',
+                                           headers: { 'Content-Type' => 'image/gif' })
+      expect(call_tool('upload_image_from_url', { url: source })['errors'].join)
+        .to include('does not look like an image')
+    end
+
+    it 'accepts a real image served as application/octet-stream, as a bucket does' do
+      png = "\x89PNG\r\n\x1A\n".b + ('x' * 40)
+      stub_request(:get, source).to_return(body: png, headers: { 'Content-Type' => 'application/octet-stream' })
+
+      result = call_tool('upload_image_from_url', { url: source, path: 'animado' })
+      expect(result['content_type']).to eq('image/png')
+      expect(result['file_name']).to eq('animado.png')
     end
 
     it 'refuses a host only the server can reach' do
