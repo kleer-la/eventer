@@ -21,6 +21,19 @@ describe FileStoreService do
     end
   end
 
+  describe '#upload' do
+    it 'reports the upload even when the bucket refuses per-object ACLs' do
+      # Object Ownership set to bucket owner enforced: the object is stored and
+      # public by policy, but PutObjectAcl comes back denied.
+      allow_any_instance_of(NullStoreObjectAcl).to receive(:put)
+        .and_raise(Aws::S3::Errors::AccessDenied.new(nil, 'Access Denied'))
+
+      url = FileStoreService.create_null.upload(Tempfile.new('x'), 'animado.gif', 'image')
+
+      expect(url).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/animado.gif')
+    end
+  end
+
   describe '.image_url' do
     context 'when image_name contains special characters' do
       it 'properly encodes accents and spaces for image type' do

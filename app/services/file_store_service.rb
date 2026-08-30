@@ -52,7 +52,7 @@ class FileStoreService
     file_path = folder.to_s + file_name
     object = @store.objects(file_path, bucket)
     object.upload_file(tempfile)
-    object.acl.put({ acl: 'public-read' })
+    grant_public_read(object)
 
     # "https://s3.amazonaws.com/#{bucket}/#{file_path}"
     self.class.image_url(file_name, image_bucket)
@@ -62,7 +62,7 @@ class FileStoreService
     key = File.basename(filename)
     object = @store.objects("certificates/#{key}")
     object.upload_file(filename)
-    object.acl.put({ acl: 'public-read' })
+    grant_public_read(object)
 
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
@@ -128,6 +128,19 @@ class FileStoreService
     file_path = folder.to_s + key
     object = @store.objects(file_path, bucket)
     object.exists?
+  end
+
+  private
+
+  # A bucket with ACLs disabled (Object Ownership set to bucket owner enforced,
+  # the current AWS default) rejects PutObjectAcl and grants public read through
+  # its policy instead. The object is already stored and already public by then,
+  # so refusing the ACL is not a failed upload — treating it as one made the
+  # admin report "Access Denied" on uploads that had in fact worked.
+  def grant_public_read(object)
+    object.acl.put({ acl: 'public-read' })
+  rescue Aws::S3::Errors::AccessDenied
+    Rails.logger.info("S3: per-object ACLs are disabled, leaving #{object.key} to the bucket policy")
   end
 end
 
