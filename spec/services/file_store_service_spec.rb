@@ -3,6 +3,24 @@
 require 'rails_helper'
 
 describe FileStoreService do
+  # The images bucket lives in sa-east-1 and the legacy one in us-east-1. Aiming
+  # a client at the wrong region survives a GET (S3 redirects) but makes every
+  # HEAD fail with a bare 400, which broke exists? on the images bucket while
+  # listing kept working.
+  describe S3FileStore do
+    let(:store) { S3FileStore.new(access_key_id: 'key', secret_access_key: 'secret') }
+
+    it 'reaches each bucket through a client pinned to its own region' do
+      expect(store.objects('animado.gif', 'kleer-images').client.config.region).to eq('sa-east-1')
+      expect(store.objects('certificate-images/x.png').client.config.region).to eq('us-east-1')
+    end
+
+    it 'reuses one client per region instead of building one per call' do
+      expect(store.objects('a.gif', 'kleer-images').client)
+        .to equal(store.objects('b.gif', 'kleer-images').client)
+    end
+  end
+
   describe '.image_url' do
     context 'when image_name contains special characters' do
       it 'properly encodes accents and spaces for image type' do

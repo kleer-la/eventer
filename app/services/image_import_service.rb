@@ -38,6 +38,10 @@ class ImageImportService
       bytes: body.bytesize, content_type: content_type, replaced: replacing }
   rescue FetchError => e
     { status: 'error', errors: [e.message] }
+  rescue Aws::Errors::ServiceError => e
+    # Reaching the image store failed. Say which call broke rather than letting
+    # a bare AWS error escape as a tool crash.
+    { status: 'error', errors: ["The image store rejected the request (#{e.class.name.demodulize})"] }
   end
 
   private

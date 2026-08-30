@@ -201,34 +201,55 @@ class NullStoreObjectAcl
 end
 
 class S3FileStore
+  # Each bucket is reached through a client pinned to the region it lives in.
+  #
+  # Without that, a us-east-1 client talks to the legacy global endpoint
+  # (s3_us_east_1_regional_endpoint is 'legacy') and kleer-images answers from
+  # sa-east-1. A GET survives it — S3 replies 301 with a body, the SDK follows
+  # it and caches the bucket's real region on that client — but a HEAD gets a
+  # bare 400 with no body to interpret. So the failure only shows on a *cold*
+  # client: exists? blew up when it was the first S3 call of the process, while
+  # anything reached from a screen that had already listed worked fine.
+  LEGACY_BUCKET = 'Keventer'
+  BUCKET_REGIONS = { 'kleer-images' => 'sa-east-1' }.freeze
+  DEFAULT_REGION = 'us-east-1'
+
   def initialize(access_key_id: nil, secret_access_key: nil)
-    @client = Aws::S3::Client.new(
+    @credentials = {
       access_key_id: access_key_id || ENV['KEVENTER_AWS_ACCESS_KEY_ID'],
       secret_access_key: secret_access_key || ENV['KEVENTER_AWS_SECRET_ACCESS_KEY']
-    )
-    @resource = Aws::S3::Resource.new(client: @client)
-    @bucket = @resource.bucket('Keventer')
+    }
+    @clients = {}
   end
 
   def objects(key, bucket_name = nil)
-    bucket = @resource.bucket(bucket_name) if bucket_name.present?
-    (bucket || @bucket).object(key)
+    bucket(bucket_name.presence || LEGACY_BUCKET).object(key)
   end
 
   def list_objects(bucket:)
-    @client.list_objects(bucket:)
+    client_for(bucket).list_objects(bucket:)
   end
 
   def copy(source_key, target_key, bucket_name)
-    bucket = @resource.bucket(bucket_name)
-    source_object = bucket.object(source_key)
-    target_object = bucket.object(target_key)
-    
-    target_object.copy_from(source_object)
+    target_bucket = bucket(bucket_name)
+    target_object = target_bucket.object(target_key)
+
+    target_object.copy_from(target_bucket.object(source_key))
     target_object.acl.put(acl: 'public-read')
     true
   rescue StandardError => e
     Rails.logger.error "S3 copy failed: #{e.message}"
     false
+  end
+
+  private
+
+  def bucket(name)
+    Aws::S3::Resource.new(client: client_for(name)).bucket(name)
+  end
+
+  def client_for(bucket_name)
+    region = BUCKET_REGIONS.fetch(bucket_name, DEFAULT_REGION)
+    @clients[region] ||= Aws::S3::Client.new(region: region, **@credentials)
   end
 end
