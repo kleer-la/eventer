@@ -5,7 +5,9 @@ class UpdateNewsTool < AuthenticatedTool
   requires_permission :update, News
 
   description <<~MD
-    Edits a news item by id. Only the fields you pass are touched.
+    Edits a news item by id. Only the fields you pass are touched. To change
+    part of the announcement, prefer `replacements`: `description` is the only
+    field it patches.
 
     Two steps: confirm=false (the default) previews the change without saving.
   MD
@@ -23,6 +25,7 @@ class UpdateNewsTool < AuthenticatedTool
     optional(:audio).filled(:string).description('Audio URL')
     optional(:visible).filled(:bool).description('Show or hide it on the site')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
+    instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
   def call(id:, confirm: false, visible: nil, **fields)

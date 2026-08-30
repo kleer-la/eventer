@@ -40,6 +40,35 @@ Los tools de escritura funcionan **en dos pasos**: la primera llamada devuelve u
 *preview* de lo que cambiaría sin guardar nada, y recién con `confirm=true`
 persiste. Claude te tiene que mostrar el preview antes de confirmar.
 
+Hay tools equivalentes para recursos, servicios, páginas, podcasts y novedades.
+
+## Editar un texto largo sin reenviarlo entero
+
+Cambiar una frase de un cuerpo de 6.000 caracteres no debería costar mandar los
+6.000 de vuelta. Los tools de edición aceptan `replacements`, una lista de
+reemplazos aplicados en orden sobre un campo largo:
+
+```json
+{
+  "id": "mi-articulo",
+  "replacements": [
+    { "field": "body", "find": "la frase vieja", "replace": "la frase nueva" }
+  ]
+}
+```
+
+- `replace` vacío borra el texto encontrado; `all: true` reemplaza todas las
+  apariciones.
+- Si `find` no aparece, o aparece más de una vez sin `all`, **falla y no guarda
+  nada**: es a propósito, para que una copia desactualizada del texto se note en
+  lugar de editar la frase equivocada.
+- El preview muestra cada edición con el texto que la rodea, no el principio del
+  campo.
+- Qué campos lo aceptan: `body` en artículos; `description` en novedades,
+  podcasts y episodios; las cuatro descripciones largas de recursos; y los
+  bloques de servicios. En los campos de texto enriquecido (podcast, episodio,
+  servicios) el `find` se busca contra el **HTML**.
+
 ## Permisos
 
 Valen las reglas de `app/models/ability.rb`, las mismas que las pantallas:

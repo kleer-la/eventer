@@ -9,6 +9,10 @@ class UpdateServiceTool < AuthenticatedTool
     touched. The page blocks are rich text, so HTML is accepted and replaces
     the whole block — read it with get_service first.
 
+    To change part of a block, prefer `replacements`, which matches against that
+    HTML. It patches value_proposition, outcomes, definitions, program, target,
+    faq, card_description, recommended_way_summary and recommended_way_details.
+
     Two steps: confirm=false (the default) previews without saving.
   MD
 
@@ -37,6 +41,7 @@ class UpdateServiceTool < AuthenticatedTool
     optional(:recommended_way_details).filled(:string).description('Recommended-way details')
     optional(:visible).filled(:bool).description('Show or hide it on the site')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
+    instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
   def call(id:, confirm: false, visible: nil, service_area: nil, **fields)

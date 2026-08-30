@@ -15,6 +15,10 @@ class UpdateResourceTool < AuthenticatedTool
 
     Fields ending in _es and _en are the Spanish and English sides of the same
     thing; the Spanish title and description are the required ones.
+
+    To change part of a long text, prefer `replacements` over resending it. It
+    patches long_description_es, long_description_en, comments_es and
+    comments_en.
   MD
 
   arguments do
@@ -51,6 +55,7 @@ class UpdateResourceTool < AuthenticatedTool
     optional(:tabtitle_en).filled(:string).description('English browser tab title')
     optional(:published).filled(:bool).description('Publish or unpublish. Needs publishing rights')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
+    instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
   def call(id:, confirm: false, **fields)

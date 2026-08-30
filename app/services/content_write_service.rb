@@ -9,8 +9,6 @@
 # edit but not publish, the same line the admin forms draw. Models that spell it
 # `visible`, or have no such flag at all, say so through `publication_flag`.
 class ContentWriteService
-  LONG_FIELD_PREVIEW = 200
-
   # Subclasses declare what they write: the model, the fields a tool may set,
   # which of those are long enough to summarise instead of echoing, which are
   # ActionText (those never reach record.changes), and how the model spells
@@ -31,7 +29,11 @@ class ContentWriteService
     @record = record || self.class.model.new
     @category = category
     @published = published
+    # `replacements` travels with the fields but is not one of them: it says how
+    # to edit a long field in place instead of giving its new value.
+    @replacements = fields[:replacements]
     @fields = fields.slice(*self.class.editable_fields).compact
+    @applied = {}
   end
 
   def call(confirm: false)
@@ -50,6 +52,7 @@ class ContentWriteService
 
   def assign
     @rich_text_before = self.class.rich_text_fields.to_h { |f| [f.to_s, @record.public_send(f).to_s] }
+    apply_replacements
     @record.assign_attributes(@fields)
     assign_category
     assign_published
@@ -80,6 +83,18 @@ class ContentWriteService
     @record.public_send("#{flag}=", @published)
   end
 
+  # Find/replace inside long fields, resolved before anything is assigned so a
+  # `find` that no longer matches fails the whole call instead of half-editing.
+  def apply_replacements
+    return if @replacements.blank?
+
+    patch = LongTextPatch.new(@replacements, patchable: self.class.long_field_names, given: @fields.keys,
+                                             current: ->(field) { @record.public_send(field) }).apply
+    errors.concat(patch.errors)
+    @fields.merge!(patch.fields.symbolize_keys)
+    @applied = patch.applied
+  end
+
   def publication_value
     flag = self.class.publication_flag
     flag && @record.public_send(flag)
@@ -100,27 +115,8 @@ class ContentWriteService
   def admin_path = "/admin/#{self.class.model.model_name.route_key}/#{@record.id}"
 
   def changes
-    attribute_changes.merge(rich_text_changes)
-  end
-
-  def attribute_changes
-    @record.changes.to_h do |field, (before, after)|
-      [field, self.class.long_field_names.include?(field) ? long_change(before, after) : { from: before, to: after }]
-    end
-  end
-
-  # ActionText lives in its own table, so a change to it never shows up in
-  # record.changes; report it from what the caller actually passed.
-  def rich_text_changes
-    self.class.rich_text_fields.select { |field| @fields.key?(field) }.to_h do |field|
-      [field.to_s, long_change(@rich_text_before[field.to_s], @fields[field])]
-    end
-  end
-
-  # Long texts would drown the preview, so summarise instead of echoing them.
-  def long_change(before, after)
-    { from_length: before.to_s.length, to_length: after.to_s.length,
-      new_beginning: after.to_s.truncate(LONG_FIELD_PREVIEW) }
+    ContentChangePreview.new(@record, fields: @fields, long: self.class.long_field_names,
+                                      before: @rich_text_before, applied: @applied).to_h
   end
 
   def warnings

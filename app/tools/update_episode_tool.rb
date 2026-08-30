@@ -4,7 +4,11 @@ class UpdateEpisodeTool < AuthenticatedTool
   tool_name 'update_episode'
   requires_permission :update, Episode
 
-  description 'Edits an episode by id. Only the fields you pass are touched. Previews unless confirm=true.'
+  description <<~MD
+    Edits an episode by id. Only the fields you pass are touched. Previews unless
+    confirm=true. To change part of the description, prefer `replacements`:
+    `description` is the only field it patches, and it is matched as HTML.
+  MD
 
   arguments do
     required(:id).filled(:integer).description('Numeric id of the episode')
@@ -17,6 +21,7 @@ class UpdateEpisodeTool < AuthenticatedTool
     optional(:youtube_url).filled(:string).description('YouTube link')
     optional(:thumbnail_url).filled(:string).description('Cover image URL')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
+    instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
   def call(id:, confirm: false, **fields)

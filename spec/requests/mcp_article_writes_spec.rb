@@ -73,6 +73,75 @@ RSpec.describe 'MCP article writes', type: :request do
     it 'answers an error for an unknown article' do
       expect(call_tool('update_article', { id: 'no-such-article' })['errors'].join).to include('no-such-article')
     end
+
+    describe 'replacements' do
+      let!(:article) do
+        create(:article, body: 'Primer párrafo. La frase vieja cierra la idea. Tercer párrafo.')
+      end
+
+      def patch(find, replace, extra = {})
+        call_tool('update_article',
+                  { id: article.slug, replacements: [{ field: 'body', find: find, replace: replace }] }.merge(extra))
+      end
+
+      it 'edits the body in place, showing the change in context, without resending the whole text' do
+        result = patch('La frase vieja', 'La frase nueva')
+        expect(result['status']).to eq('preview')
+        change = result['changes']['body']
+        expect(change['replacements'].first).to include('occurrences' => 1)
+        expect(change['replacements'].first['context']).to include('La frase nueva cierra la idea')
+        expect(change).not_to include('new_beginning')
+        expect(article.reload.body).to include('La frase vieja')
+
+        expect(patch('La frase vieja', 'La frase nueva', confirm: true)['status']).to eq('saved')
+        expect(article.reload.body).to eq('Primer párrafo. La frase nueva cierra la idea. Tercer párrafo.')
+      end
+
+      it 'applies several replacements in order, each against the text left by the previous one' do
+        result = call_tool('update_article',
+                           { id: article.slug, confirm: true,
+                             replacements: [{ field: 'body', find: 'Primer', replace: 'Nuevo primer' },
+                                            { field: 'body', find: 'Tercer párrafo.', replace: '' }] })
+        expect(result['status']).to eq('saved')
+        expect(article.reload.body).to eq('Nuevo primer párrafo. La frase vieja cierra la idea. ')
+      end
+
+      it 'refuses text it cannot find and saves nothing' do
+        result = patch('La frase inexistente', 'otra', confirm: true)
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('La frase inexistente')
+        expect(article.reload.body).to include('La frase vieja')
+      end
+
+      it 'refuses an ambiguous match unless all is asked for' do
+        result = patch('párrafo', 'sección', confirm: true)
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to match(/2 times/)
+        expect(article.reload.body).to include('Primer párrafo')
+
+        call_tool('update_article',
+                  { id: article.slug, confirm: true,
+                    replacements: [{ field: 'body', find: 'párrafo', replace: 'sección', all: true }] })
+        expect(article.reload.body).to eq('Primer sección. La frase vieja cierra la idea. Tercer sección.')
+      end
+
+      it 'refuses a field that is not a long text, naming the ones that are' do
+        result = call_tool('update_article',
+                           { id: article.slug, confirm: true,
+                             replacements: [{ field: 'title', find: 'a', replace: 'b' }] })
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('title').and include('body')
+      end
+
+      it 'refuses to take the whole field and a replacement for it at the same time' do
+        result = call_tool('update_article',
+                           { id: article.slug, confirm: true, body: 'Cuerpo entero',
+                             replacements: [{ field: 'body', find: 'Primer', replace: 'Nuevo' }] })
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to match(/both/i)
+        expect(article.reload.body).to include('Primer párrafo')
+      end
+    end
   end
 
   describe 'publishing rights' do

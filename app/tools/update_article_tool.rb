@@ -13,8 +13,10 @@ class UpdateArticleTool < AuthenticatedTool
     confirm=true only once they explicitly agree.
 
     Read the article with get_article first, so the edit is made against the
-    current text. Changing `published` needs publishing rights: a `content` user
-    can edit but not publish, exactly as in the admin screens.
+    current text. To change part of the body, prefer `replacements` over sending
+    the whole body back: `body` is the only field it patches. Changing
+    `published` needs publishing rights: a `content` user can edit but not
+    publish, exactly as in the admin screens.
   MD
 
   arguments do
@@ -34,6 +36,7 @@ class UpdateArticleTool < AuthenticatedTool
     optional(:selected).filled(:bool).description('true = feature it on the blog')
     optional(:published).filled(:bool).description('Publish or unpublish. Needs publishing rights')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
+    instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
   def call(id:, confirm: false, **fields)

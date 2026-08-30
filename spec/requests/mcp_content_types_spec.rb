@@ -114,6 +114,16 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(service.reload.value_proposition.body.to_s).to include('Nueva propuesta')
     end
 
+    it 'patches a rich-text block in place, matching against its HTML' do
+      service.update!(value_proposition: '<p>Acompañamos al equipo durante tres meses.</p>')
+
+      result = call_tool('update_service',
+                         { id: service.slug, confirm: true,
+                           replacements: [{ field: 'value_proposition', find: 'tres meses', replace: 'seis meses' }] })
+      expect(result['status']).to eq('saved')
+      expect(service.reload.value_proposition.body.to_s).to include('durante seis meses')
+    end
+
     it 'rejects a service area it does not know, naming the ones that exist' do
       result = call_tool('update_service', { id: service.slug, service_area: 'No existe', confirm: true })
       expect(result['status']).to eq('error')
