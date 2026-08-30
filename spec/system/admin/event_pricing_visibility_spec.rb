@@ -14,6 +14,12 @@ RSpec.describe 'Admin event pricing visibility', type: :system do
   let(:administrator) { create(:administrator) }
 
   before do
+    # The devcontainer preloads jemalloc for the Rails process (see
+    # .devcontainer/dockerfile). Chrome's subprocesses inherit LD_PRELOAD and
+    # its GPU process then dies with "GPU process isn't usable. Goodbye.",
+    # which surfaces as InvalidSessionIdError while creating the session.
+    ENV.delete('LD_PRELOAD')
+
     driven_by(:selenium, using: :headless_chrome, screen_size: [1400, 1400]) do |options|
       # Required for Chrome running as root in CI/containers.
       options.add_argument('--no-sandbox')

@@ -25,6 +25,11 @@ services:
     # Uncomment the next line to use a non-root user for all processes.
     user: vscode
 
+    # tini as PID 1 reaps orphaned processes. Without it `sleep infinity` is
+    # PID 1 and never does, so every browser-driven system spec leaves its
+    # Chrome subprocesses behind as zombies until the container is restarted.
+    init: true
+
     command: sleep infinity
     networks:
       - local-kleer-network
