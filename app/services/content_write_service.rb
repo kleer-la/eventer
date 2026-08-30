@@ -52,7 +52,9 @@ class ContentWriteService
     return if @category.blank?
 
     category = Category.find_by(name: @category)
-    return errors << "Unknown category #{@category.inspect}. Existing ones: #{Category.pluck(:name).join(', ')}" if category.nil?
+    if category.nil?
+      return errors << "Unknown category #{@category.inspect}. Existing ones: #{Category.pluck(:name).join(', ')}"
+    end
 
     @record.category = category
   end
@@ -60,7 +62,8 @@ class ContentWriteService
   def assign_published
     return if @published.nil? || @published == @record.published
 
-    return errors << 'You are not allowed to change whether this is published' unless @ability.can?(:set_published, self.class.model)
+    return errors << 'You are not allowed to change whether this is published' unless @ability.can?(:set_published,
+                                                                                                    self.class.model)
 
     @record.published = @published
   end
