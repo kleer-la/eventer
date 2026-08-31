@@ -128,7 +128,27 @@ The application manages a complex event ecosystem with the following key compone
 - **Containerization**: Docker + devcontainer
 - **IDE**: VS Code with Remote-Containers extension
 - **Runtime**: Rails application runs inside Docker container
-- **Database**: SQLite (development), PostgreSQL (staging/production on Heroku)
+- **Database**: SQLite (development), PostgreSQL (QA and production)
+
+### Deployment
+
+Kamal, on a Hetzner server (`5.78.92.152`) — **not Heroku**, which the project
+left. `bin/deploy` wraps `bundle exec kamal`, so like every other Rails command
+it runs inside the devcontainer: it sources `eventer.env` and strips the
+devcontainer `credsStore` that would otherwise fail `docker login`.
+
+```bash
+bin/deploy config -d qa          # what would be deployed; check :version:
+bin/deploy deploy -d qa          # QA → qa.eventos.kleer.la
+bin/deploy deploy                # production → eventos.kleer.la
+bin/deploy app logs -f -d qa     # any other kamal subcommand
+```
+
+Each destination runs a `web` role and a `job` role (`rake jobs:work`) on that
+same server, and builds the image remotely over SSH there. QA takes its
+database from `DATABASE_URL_QA`; the two destinations are configured by
+`config/deploy.yml` plus `config/deploy.qa.yml`, and their secrets by
+`.kamal/secrets` and `.kamal/secrets.qa`.
 
 ### Testing Strategy
 
