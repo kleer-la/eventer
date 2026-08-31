@@ -30,7 +30,8 @@ class ListImagesTool < AuthenticatedTool
     images = images.select { |image| image.size.to_i >= min_size_kb * 1024 } if min_size_kb
 
     listed = images.sort_by { |image| image.last_modified.to_s }.reverse.first(limit.clamp(1, MAX_LIMIT))
-    { count: listed.size, total_matching: images.size, images: listed.map { |image| summary(image) } }.to_json
+    summaries = listed.map { |image| summary(image) }
+    listing(:images, summaries, total: images.size, narrow: 'query, extension or min_size_kb')
   end
 
   private

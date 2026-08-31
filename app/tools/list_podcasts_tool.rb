@@ -8,16 +8,21 @@ class ListPodcastsTool < AuthenticatedTool
 
   arguments do
     optional(:query).filled(:string).description('Substring matched against the title')
+    optional(:limit).filled(:integer).description("How many to return (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
   end
 
-  def call(query: nil)
+  def call(query: nil, limit: DEFAULT_LIMIT)
     scope = Podcast.includes(:episodes).order(:title)
     scope = scope.where('title LIKE ?', "%#{query}%") if query.present?
 
-    { count: scope.size,
-      podcasts: scope.map do |podcast|
-        { id: podcast.id, title: podcast.title, episodes: podcast.episodes.size,
-          spotify_url: podcast.spotify_url, youtube_url: podcast.youtube_url }
-      end }.to_json
+    podcasts = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |podcast| summary(podcast) }
+    listing(:podcasts, podcasts, total: scope.count, narrow: 'query')
+  end
+
+  private
+
+  def summary(podcast)
+    { id: podcast.id, title: podcast.title, episodes: podcast.episodes.size,
+      spotify_url: podcast.spotify_url, youtube_url: podcast.youtube_url }
   end
 end

@@ -49,7 +49,8 @@ RSpec.describe 'MCP server', type: :request do
     create(:article, title: 'Draft about Scrum', lang: 'en', published: false)
 
     listing = JSON.parse(call_tool('list_articles').dig('result', 'content', 0, 'text'))
-    expect(listing['count']).to eq(2)
+    expect(listing).to include('returned' => 2, 'total' => 2)
+    expect(listing).not_to include('truncated')
 
     published = JSON.parse(call_tool('list_articles', { published: true }).dig('result', 'content', 0, 'text'))
     expect(published['articles'].pluck('title')).to eq(['Kanban en equipos'])

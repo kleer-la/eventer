@@ -39,7 +39,7 @@ RSpec.describe 'MCP image tools', type: :request do
     it 'lists everything newest first, with public URLs and sizes' do
       result = call_tool('list_images')
 
-      expect(result['count']).to eq(3)
+      expect(result['returned']).to eq(3)
       expect(result['images'].pluck('name')).to eq(%w[portada.webp demo-animado.gif viejo-logo.png])
       expect(result['images'].first['url']).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/portada.webp')
       expect(result['images'].first['size_kb']).to eq(40.0)
@@ -137,7 +137,7 @@ RSpec.describe 'MCP image tools', type: :request do
 
     it 'lets a read-only role list images but not upload one' do
       FileStoreService.create_null
-      expect(call_tool('list_images')['count']).to eq(1)
+      expect(call_tool('list_images')['returned']).to eq(1)
       expect(call_tool('upload_image_from_url', { url: 'https://images.example.com/x.gif' }).to_s)
         .to include('Unauthorized')
     end

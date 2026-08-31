@@ -29,7 +29,7 @@ RSpec.describe 'MCP resource tools', type: :request do
       create(:resource, title_es: 'Canvas de propuesta', format: :canvas, published: true)
       create(:resource, title_es: 'Libro de agilidad', format: :book, published: false)
 
-      expect(call_tool('list_resources')['count']).to eq(2)
+      expect(call_tool('list_resources')['returned']).to eq(2)
       expect(call_tool('list_resources', { format: 'canvas' })['resources'].pluck('title_es'))
         .to eq(['Canvas de propuesta'])
       expect(call_tool('list_resources', { query: 'agilidad' })['resources'].pluck('title_es'))

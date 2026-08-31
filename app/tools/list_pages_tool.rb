@@ -15,9 +15,10 @@ class ListPagesTool < AuthenticatedTool
     optional(:query).filled(:string).description('Substring matched against the name')
     optional(:lang).filled(:string).description("Language: 'es' or 'en'")
     optional(:template).filled(:string).description('overlay | flagship')
+    optional(:limit).filled(:integer).description("How many to return (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
   end
 
-  def call(query: nil, lang: nil, template: nil)
+  def call(query: nil, lang: nil, template: nil, limit: DEFAULT_LIMIT)
     return unknown_template(template) if template.present? && Page.templates.exclude?(template)
 
     scope = Page.includes(:sections).order(:lang, :name)
@@ -25,7 +26,8 @@ class ListPagesTool < AuthenticatedTool
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(template: template) if template.present?
 
-    { count: scope.size, pages: scope.map { |page| summary(page) } }.to_json
+    pages = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |page| summary(page) }
+    listing(:pages, pages, total: scope.count, narrow: 'query, lang or template')
   end
 
   private

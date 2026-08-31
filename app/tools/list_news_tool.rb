@@ -4,9 +4,6 @@ class ListNewsTool < AuthenticatedTool
   tool_name 'list_news'
   requires_permission :read, News
 
-  DEFAULT_LIMIT = 25
-  MAX_LIMIT = 100
-
   description <<~MD
     Lists news items — the short announcements with a date, a place and a link.
     Newest event date first. Unlike articles, news carries no separate
@@ -26,8 +23,8 @@ class ListNewsTool < AuthenticatedTool
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(published: published) unless published.nil?
 
-    items = scope.limit(limit.clamp(1, MAX_LIMIT))
-    { count: items.size, news: items.map { |item| summary(item) } }.to_json
+    items = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |item| summary(item) }
+    listing(:news, items, total: scope.count, narrow: 'query, lang or published')
   end
 
   private

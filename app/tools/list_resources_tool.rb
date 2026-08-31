@@ -4,9 +4,6 @@ class ListResourcesTool < AuthenticatedTool
   tool_name 'list_resources'
   requires_permission :read, Resource
 
-  DEFAULT_LIMIT = 25
-  MAX_LIMIT = 100
-
   description <<~MD
     Lists resources (books, infographics, canvases, guides, games, videos…)
     with a summary of each: id, slug, both titles, format, whether it is
@@ -32,8 +29,8 @@ class ListResourcesTool < AuthenticatedTool
     scope = scope.where(published: published) unless published.nil?
     scope = scope.joins(:category).where(categories: { name: category }) if category.present?
 
-    resources = scope.limit(limit.clamp(1, MAX_LIMIT))
-    { count: resources.size, resources: resources.map { |resource| summary(resource) } }.to_json
+    resources = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |resource| summary(resource) }
+    listing(:resources, resources, total: scope.count, narrow: 'query, format, published or category')
   end
 
   private

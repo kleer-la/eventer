@@ -4,9 +4,6 @@ class ListArticlesTool < AuthenticatedTool
   tool_name 'list_articles'
   requires_permission :read, Article
 
-  DEFAULT_LIMIT = 25
-  MAX_LIMIT = 100
-
   description <<~MD
     Lists blog articles with a summary of each one — id, slug, title, language,
     whether it is published, category and when it last changed substantively.
@@ -30,8 +27,8 @@ class ListArticlesTool < AuthenticatedTool
     scope = scope.where(published: published) unless published.nil?
     scope = scope.joins(:category).where(categories: { name: category }) if category.present?
 
-    articles = scope.limit(limit.clamp(1, MAX_LIMIT))
-    { count: articles.size, articles: articles.map { |article| summary(article) } }.to_json
+    articles = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |article| summary(article) }
+    listing(:articles, articles, total: scope.count, narrow: 'query, lang, published or category')
   end
 
   private

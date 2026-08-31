@@ -31,7 +31,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       published = create(:news, title: 'Charla en Buenos Aires', published: true)
       create(:news, title: 'Borrador interno', published: false)
 
-      expect(call_tool('list_news')['count']).to eq(2)
+      expect(call_tool('list_news')['returned']).to eq(2)
       expect(call_tool('list_news', { published: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
       expect(call_tool('get_news_item', { id: published.id })['where']).to eq('Buenos Aires, Argentina')
       expect(call_tool('get_news_item', { id: 0 })['errors'].join).to include('No news item')
@@ -81,6 +81,12 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(call_tool('list_podcasts')['podcasts'].first['episodes']).to eq(1)
     end
 
+    it 'caps the listing with limit, like the other list tools' do
+      3.times { |i| Podcast.create!(title: "Podcast #{i}", description: '<p>x</p>') }
+
+      expect(call_tool('list_podcasts', { limit: 2 })['podcasts'].size).to eq(2)
+    end
+
     it 'warns before repeating a season and episode number' do
       podcast = Podcast.create!(title: 'Kleer Podcast', description: '<p>x</p>')
       podcast.episodes.create!(title: 'Piloto', description: '<p>x</p>', season: 1, episode: 1,
@@ -124,6 +130,12 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(service.reload.value_proposition.body.to_s).to include('durante seis meses')
     end
 
+    it 'caps the listing with limit, like the other list tools' do
+      2.times { |i| create(:service, name: "Otro servicio #{i}") }
+
+      expect(call_tool('list_services', { limit: 2 })['services'].size).to eq(2)
+    end
+
     it 'rejects a service area it does not know, naming the ones that exist' do
       result = call_tool('update_service', { id: service.slug, service_area: 'No existe', confirm: true })
       expect(result['status']).to eq('error')
@@ -147,6 +159,16 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
       expect(call_tool('list_pages', { template: 'flagship' })['pages'].pluck('name')).to eq(['Landing'])
       expect(call_tool('list_pages', { template: 'inventado' })['errors'].join).to include('overlay')
+    end
+
+    it 'caps the listing with limit, and says so rather than passing 2 of 3 off as all of them' do
+      3.times { |i| create(:page, name: "Página #{i}", lang: :es, template: 'overlay') }
+
+      result = call_tool('list_pages', { limit: 2 })
+
+      expect(result['pages'].size).to eq(2)
+      expect(result).to include('returned' => 2, 'total' => 3, 'truncated' => true)
+      expect(result['note']).to include('3 matched').and include('query, lang or template')
     end
 
     it 'creates a page and returns its sections when read' do

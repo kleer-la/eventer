@@ -42,6 +42,14 @@ persiste. Claude te tiene que mostrar el preview antes de confirmar.
 
 Hay tools equivalentes para recursos, servicios, páginas, podcasts y novedades.
 
+## Listados: nunca devuelven "todo" en silencio
+
+Los `list_*` truncan (25 por defecto, 100 máximo; imágenes 50 y 200) y lo dicen:
+la respuesta trae `returned`, `total` y, cuando sobra algo, `truncated: true` y
+una `note` que nombra los filtros con los que afinar. Es a propósito: un listado
+de 25 sin más datos se lee como el mundo entero, y "no está en los primeros 25"
+termina llegando al usuario como "no existe".
+
 ## Editar un texto largo sin reenviarlo entero
 
 Cambiar una frase de un cuerpo de 6.000 caracteres no debería costar mandar los
