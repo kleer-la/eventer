@@ -32,6 +32,20 @@ describe FileStoreService do
 
       expect(url).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/animado.gif')
     end
+
+    it 'tells S3 what the file is, so it is not served as octet-stream' do
+      expect_any_instance_of(NullStoreObject).to receive(:upload_file)
+        .with(anything, content_type: 'audio/mpeg')
+
+      FileStoreService.create_null.upload(Tempfile.new('x'), 'article_1.mp3', 'image')
+    end
+
+    it 'falls back to octet-stream for an extension it does not know' do
+      expect_any_instance_of(NullStoreObject).to receive(:upload_file)
+        .with(anything, content_type: 'application/octet-stream')
+
+      FileStoreService.create_null.upload(Tempfile.new('x'), 'raro.qqq', 'image')
+    end
   end
 
   describe '.image_url' do

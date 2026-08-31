@@ -51,11 +51,19 @@ class FileStoreService
 
     file_path = folder.to_s + file_name
     object = @store.objects(file_path, bucket)
-    object.upload_file(tempfile)
+    object.upload_file(tempfile, content_type: content_type_for(file_name))
     grant_public_read(object)
 
     # "https://s3.amazonaws.com/#{bucket}/#{file_path}"
     self.class.image_url(file_name, image_bucket)
+  end
+
+  # S3 serves back whatever type it was told on upload, and told nothing it says
+  # application/octet-stream. Browsers guess their way through that for images,
+  # but <audio> in Firefox refuses to play it, and no player can read the
+  # duration of a file it will not open.
+  def content_type_for(file_name)
+    Rack::Mime.mime_type(File.extname(file_name).downcase, 'application/octet-stream')
   end
 
   def write(filename)
@@ -198,7 +206,7 @@ class NullStoreObject
     FileUtils.cp './spec/views/participants/base2021-A4.png', file
   end
 
-  def upload_file(file); end
+  def upload_file(file, **_options); end
 
   def exists?
     @exists[@key].nil? ? true : @exists[@key]
