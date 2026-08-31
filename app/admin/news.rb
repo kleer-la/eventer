@@ -16,10 +16,6 @@ ActiveAdmin.register News do
   scope :published
   scope :unpublished, -> { where(published: false) }
 
-  action_item :view_old_version, only: :index do
-    link_to 'Old News View', news_index_path, class: 'button'
-  end
-
   index do
     selectable_column
     id_column
