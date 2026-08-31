@@ -39,15 +39,15 @@ class UpdateServiceTool < AuthenticatedTool
     optional(:recommended_way_note).filled(:string).description('Recommended-way note')
     optional(:recommended_way_summary).filled(:string).description('Recommended-way summary')
     optional(:recommended_way_details).filled(:string).description('Recommended-way details')
-    optional(:visible).filled(:bool).description('Show or hide it on the site')
+    optional(:published).filled(:bool).description('Publish or unpublish it on the site')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
-  def call(id:, confirm: false, visible: nil, service_area: nil, **fields)
+  def call(id:, confirm: false, published: nil, service_area: nil, **fields)
     service = Service.friendly.find(id)
     ServiceWriteService.new(ability: ability, record: service, service_area: service_area,
-                            published: visible, **fields).call(confirm: confirm).to_json
+                            published: published, **fields).call(confirm: confirm).to_json
   rescue ActiveRecord::RecordNotFound
     { status: 'error', errors: ["No service with slug or id #{id.inspect}"] }.to_json
   end

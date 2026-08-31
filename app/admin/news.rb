@@ -2,7 +2,7 @@
 
 ActiveAdmin.register News do
   menu parent: 'We Publish'
-  permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date, :visible,
+  permit_params :lang, :title, :where, :description, :url, :img, :video, :audio, :event_date, :published,
                 trainer_ids: []
 
   controller do
@@ -13,8 +13,8 @@ ActiveAdmin.register News do
   end
 
   scope :all, default: true
-  scope :visible
-  scope :hidden, -> { where(visible: false) }
+  scope :published
+  scope :unpublished, -> { where(published: false) }
 
   action_item :view_old_version, only: :index do
     link_to 'Old News View', news_index_path, class: 'button'
@@ -26,9 +26,9 @@ ActiveAdmin.register News do
     column :lang
     column :title
     column :where
-    column :visible do |news|
-      status_tag news.visible ? 'Yes' : 'No',
-                 class: news.visible ? 'ok' : 'error'
+    column :published do |news|
+      status_tag news.published ? 'Yes' : 'No',
+                 class: news.published ? 'ok' : 'error'
     end
     column :event_date
     column :created_at
@@ -38,7 +38,7 @@ ActiveAdmin.register News do
   filter :lang
   filter :title
   filter :where
-  filter :visible
+  filter :published
   filter :event_date
   filter :created_at
 
@@ -46,7 +46,7 @@ ActiveAdmin.register News do
     f.inputs do
       f.input :lang, as: :select, collection: News.langs.keys
       f.input :title
-      f.input :visible
+      f.input :published
       f.input :where
       f.input :description
       f.input :url, hint: 'Link to more information or external article'
@@ -64,9 +64,9 @@ ActiveAdmin.register News do
       row :id
       row :lang
       row :title
-      row :visible do |news|
-        status_tag news.visible ? 'Yes' : 'No',
-                   class: news.visible ? 'ok' : 'error'
+      row :published do |news|
+        status_tag news.published ? 'Yes' : 'No',
+                   class: news.published ? 'ok' : 'error'
       end
 
       row :where

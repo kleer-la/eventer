@@ -81,7 +81,7 @@ class Page < ApplicationRecord
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[name seo_title seo_description lang slug canonical visible created_at updated_at template show_in_footer]
+    %w[name seo_title seo_description lang slug canonical created_at updated_at template show_in_footer]
   end
 
   def self.ransackable_associations(_auth_object = nil)

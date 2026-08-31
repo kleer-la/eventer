@@ -5,7 +5,7 @@ class CreateNewsTool < AuthenticatedTool
   requires_permission :create, News
 
   description <<~MD
-    Creates a news item. It is created hidden unless you pass visible=true.
+    Creates a news item. It is created unpublished unless you pass published=true.
 
     Two steps: confirm=false (the default) previews without saving; call again
     with confirm=true once the user agrees.
@@ -21,11 +21,11 @@ class CreateNewsTool < AuthenticatedTool
     optional(:img).filled(:string).description('Image URL')
     optional(:video).filled(:string).description('Video URL')
     optional(:audio).filled(:string).description('Audio URL')
-    optional(:visible).filled(:bool).description('true = show it on the site')
+    optional(:published).filled(:bool).description('true = publish it on the site')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
   end
 
-  def call(confirm: false, visible: false, **fields)
-    NewsWriteService.new(ability: ability, published: visible, **fields).call(confirm: confirm).to_json
+  def call(confirm: false, published: false, **fields)
+    NewsWriteService.new(ability: ability, published: published, **fields).call(confirm: confirm).to_json
   end
 end

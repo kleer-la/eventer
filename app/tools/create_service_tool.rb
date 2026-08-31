@@ -10,7 +10,7 @@ class CreateServiceTool < AuthenticatedTool
     so is a side image. Those blocks are rich text, so HTML is accepted.
 
     Two steps: confirm=false (the default) previews without saving. It is
-    created hidden unless you pass visible=true.
+    created unpublished unless you pass published=true.
   MD
 
   arguments do
@@ -31,12 +31,12 @@ class CreateServiceTool < AuthenticatedTool
     optional(:ordering).filled(:integer).description('Display order within the area')
     optional(:seo_title).filled(:string).description('SEO title')
     optional(:seo_description).filled(:string).description('SEO description')
-    optional(:visible).filled(:bool).description('true = show it on the site')
+    optional(:published).filled(:bool).description('true = publish it on the site')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
   end
 
-  def call(confirm: false, visible: false, service_area: nil, **fields)
-    ServiceWriteService.new(ability: ability, service_area: service_area, published: visible, **fields)
+  def call(confirm: false, published: false, service_area: nil, **fields)
+    ServiceWriteService.new(ability: ability, service_area: service_area, published: published, **fields)
                        .call(confirm: confirm).to_json
   end
 end

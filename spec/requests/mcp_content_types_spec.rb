@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 # Services, pages, podcasts and news over MCP. They differ from articles in ways
-# the shared write service has to absorb: some say "visible" instead of
-# "published", some have no such flag, some have no slug, and several keep their
-# main text in ActionText.
+# the shared write service has to absorb: some publish without a permission
+# guard, some have no publication flag at all, some have no slug, and several
+# keep their main text in ActionText.
 RSpec.describe 'MCP tools for the other content types', type: :request do
   let(:user) { create(:administrator) }
   let(:oauth_application) do
@@ -28,37 +28,37 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
   describe 'news' do
     it 'lists, filters and reads one by id' do
-      visible = create(:news, title: 'Charla en Buenos Aires', visible: true)
-      create(:news, title: 'Borrador interno', visible: false)
+      published = create(:news, title: 'Charla en Buenos Aires', published: true)
+      create(:news, title: 'Borrador interno', published: false)
 
       expect(call_tool('list_news')['count']).to eq(2)
-      expect(call_tool('list_news', { visible: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
-      expect(call_tool('get_news_item', { id: visible.id })['where']).to eq('Buenos Aires, Argentina')
+      expect(call_tool('list_news', { published: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
+      expect(call_tool('get_news_item', { id: published.id })['where']).to eq('Buenos Aires, Argentina')
       expect(call_tool('get_news_item', { id: 0 })['errors'].join).to include('No news item')
     end
 
-    it 'creates hidden by default and shows it only when asked' do
+    it 'creates it unpublished by default and publishes it only when asked' do
       result = call_tool('create_news', { title: 'Nueva charla' })
       expect(result['status']).to eq('preview')
       expect(News.count).to eq(0)
 
       result = call_tool('create_news', { title: 'Nueva charla', confirm: true })
       expect(result['status']).to eq('saved')
-      expect(News.last.visible).to be(false)
+      expect(News.last.published).to be(false)
 
-      call_tool('update_news', { id: News.last.id, visible: true, confirm: true })
-      expect(News.last.visible).to be(true)
+      call_tool('update_news', { id: News.last.id, published: true, confirm: true })
+      expect(News.last.published).to be(true)
     end
 
     context 'as a content user' do
       let(:user) { create(:content_user) }
 
-      it 'may show a news item: unlike articles, visibility carries no separate permission' do
-        item = create(:news, visible: false)
-        result = call_tool('update_news', { id: item.id, visible: true, confirm: true })
+      it 'may publish a news item: unlike articles, that carries no separate permission' do
+        item = create(:news, published: false)
+        result = call_tool('update_news', { id: item.id, published: true, confirm: true })
 
         expect(result['status']).to eq('saved')
-        expect(item.reload.visible).to be(true)
+        expect(item.reload.published).to be(true)
       end
     end
   end
@@ -95,7 +95,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
   end
 
   describe 'services' do
-    let!(:service) { create(:service, name: 'Formación en Scrum', visible: false) }
+    let!(:service) { create(:service, name: 'Formación en Scrum', published: false) }
 
     it 'lists, and returns the rich-text blocks as HTML' do
       expect(call_tool('list_services')['services'].pluck('name')).to eq(['Formación en Scrum'])

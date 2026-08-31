@@ -18,7 +18,7 @@ class GetServiceTool < AuthenticatedTool
   def call(id:)
     service = Service.friendly.find(id)
     { id: service.id, slug: service.slug, name: service.name, subtitle: service.subtitle,
-      service_area: service.service_area&.name, visible: service.visible, ordering: service.ordering,
+      service_area: service.service_area&.name, published: service.published, ordering: service.ordering,
       card_description: service.card_description, pricing: service.pricing,
       side_image: service.side_image, brochure: service.brochure,
       seo_title: service.seo_title, seo_description: service.seo_description,

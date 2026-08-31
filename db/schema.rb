@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_31_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -400,11 +400,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_210000) do
     t.date "event_date"
     t.string "img"
     t.integer "lang", default: 0, null: false
+    t.boolean "published", default: true, null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.string "url"
     t.string "video"
-    t.boolean "visible", default: true, null: false
     t.string "where"
   end
 
@@ -687,6 +687,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_210000) do
     t.string "name"
     t.integer "ordering"
     t.string "pricing"
+    t.boolean "published", default: false, null: false
     t.text "recommended_way_details"
     t.string "recommended_way_note"
     t.text "recommended_way_summary"
@@ -698,7 +699,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_210000) do
     t.string "slug"
     t.string "subtitle"
     t.datetime "updated_at", null: false
-    t.boolean "visible", default: false, null: false
     t.index ["service_area_id"], name: "index_services_on_service_area_id"
     t.index ["slug"], name: "index_services_on_slug", unique: true
   end

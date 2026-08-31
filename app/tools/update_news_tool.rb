@@ -23,14 +23,14 @@ class UpdateNewsTool < AuthenticatedTool
     optional(:img).filled(:string).description('Image URL')
     optional(:video).filled(:string).description('Video URL')
     optional(:audio).filled(:string).description('Audio URL')
-    optional(:visible).filled(:bool).description('Show or hide it on the site')
+    optional(:published).filled(:bool).description('Publish or unpublish it on the site')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
-  def call(id:, confirm: false, visible: nil, **fields)
+  def call(id:, confirm: false, published: nil, **fields)
     item = News.find(id)
-    NewsWriteService.new(ability: ability, record: item, published: visible, **fields)
+    NewsWriteService.new(ability: ability, record: item, published: published, **fields)
                     .call(confirm: confirm).to_json
   rescue ActiveRecord::RecordNotFound
     { status: 'error', errors: ["No news item with id #{id}"] }.to_json

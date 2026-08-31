@@ -23,7 +23,7 @@ RSpec.describe News, type: :model do
       expect(news).to respond_to(:video)
       expect(news).to respond_to(:audio)
       expect(news).to respond_to(:event_date)
-      expect(news).to respond_to(:visible)
+      expect(news).to respond_to(:published)
     end
 
     it 'stores attributes correctly' do
@@ -218,33 +218,33 @@ RSpec.describe News, type: :model do
     end
   end
 
-  describe 'visibility' do
-    it 'defaults to visible' do
+  describe 'publication' do
+    it 'defaults to published' do
       news = build(:news)
-      expect(news.visible).to be true
+      expect(news.published).to be true
     end
 
-    it 'can be set to hidden' do
-      news = build(:news, :hidden)
-      expect(news.visible).to be false
+    it 'can be set to unpublished' do
+      news = build(:news, :unpublished)
+      expect(news.published).to be false
     end
 
     describe 'scopes' do
       before do
-        @visible_news = create(:news, visible: true)
-        @hidden_news = create(:news, :hidden)
+        @published_news = create(:news, published: true)
+        @unpublished_news = create(:news, :unpublished)
       end
 
-      it 'visible scope returns only visible news' do
-        visible_items = News.visible
-        expect(visible_items).to include(@visible_news)
-        expect(visible_items).not_to include(@hidden_news)
+      it 'published scope returns only published news' do
+        published_items = News.published
+        expect(published_items).to include(@published_news)
+        expect(published_items).not_to include(@unpublished_news)
       end
 
-      it 'hidden scope returns only hidden news' do
-        hidden_items = News.hidden
-        expect(hidden_items).to include(@hidden_news)
-        expect(hidden_items).not_to include(@visible_news)
+      it 'unpublished scope returns only unpublished news' do
+        unpublished_items = News.unpublished
+        expect(unpublished_items).to include(@unpublished_news)
+        expect(unpublished_items).not_to include(@published_news)
       end
     end
   end
@@ -252,7 +252,7 @@ RSpec.describe News, type: :model do
   describe 'Ransack functionality' do
     it 'returns expected searchable attributes' do
       expected_attributes = %w[audio created_at description event_date id id_value img lang
-                               title updated_at url video visible where]
+                               published title updated_at url video where]
 
       expect(News.ransackable_attributes).to match_array(expected_attributes)
     end

@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe Api::NewsController, type: :controller do
   describe 'GET #index' do
     before do
-      @visible_news = create(:news, title: 'Visible News', visible: true)
-      @hidden_news = create(:news, title: 'Hidden News', visible: false)
+      @visible_news = create(:news, title: 'Visible News', published: true)
+      @hidden_news = create(:news, title: 'Hidden News', published: false)
     end
 
     it 'returns only visible news in JSON format' do
@@ -24,11 +24,11 @@ RSpec.describe Api::NewsController, type: :controller do
       create(:news,
              title: 'Old Visible News',
              event_date: 1.month.ago,
-             visible: true)
+             published: true)
       create(:news,
              title: 'New Visible News',
              event_date: 1.month.from_now,
-             visible: true)
+             published: true)
 
       get :index, format: :json
 
@@ -41,7 +41,7 @@ RSpec.describe Api::NewsController, type: :controller do
 
     it 'includes trainer information in the response' do
       trainer = create(:trainer, name: 'Test Trainer')
-      news_with_trainer = create(:news, visible: true)
+      news_with_trainer = create(:news, published: true)
       news_with_trainer.trainers << trainer
 
       get :index, format: :json
@@ -57,8 +57,8 @@ RSpec.describe Api::NewsController, type: :controller do
 
   describe 'GET #preview' do
     before do
-      @visible_news = create(:news, title: 'Visible News', visible: true)
-      @hidden_news = create(:news, title: 'Hidden News', visible: false)
+      @visible_news = create(:news, title: 'Visible News', published: true)
+      @hidden_news = create(:news, title: 'Hidden News', published: false)
     end
 
     it 'returns all news including hidden ones in JSON format' do
@@ -76,11 +76,11 @@ RSpec.describe Api::NewsController, type: :controller do
       create(:news,
              title: 'Old Hidden News',
              event_date: 1.month.ago,
-             visible: false)
+             published: false)
       create(:news,
              title: 'New Visible News',
              event_date: 1.month.from_now,
-             visible: true)
+             published: true)
 
       get :preview, format: :json
 
@@ -93,7 +93,7 @@ RSpec.describe Api::NewsController, type: :controller do
 
     it 'includes trainer information in the response' do
       trainer = create(:trainer, name: 'Test Trainer')
-      hidden_news_with_trainer = create(:news, visible: false)
+      hidden_news_with_trainer = create(:news, published: false)
       hidden_news_with_trainer.trainers << trainer
 
       get :preview, format: :json
@@ -106,7 +106,9 @@ RSpec.describe Api::NewsController, type: :controller do
       expect(news_item['trainers'].first['name']).to eq('Test Trainer')
     end
 
-    it 'includes visible flag in the response' do
+    # The column is `published` now, but website17 still reads `visible`, so the
+    # payload answers with both until the client moves. See News#visible.
+    it 'answers with the legacy visible key alongside published' do
       get :preview, format: :json
 
       expect(response).to have_http_status(:success)
@@ -116,6 +118,7 @@ RSpec.describe Api::NewsController, type: :controller do
       hidden_item = json_response.find { |item| item['title'] == 'Hidden News' }
 
       expect(visible_item['visible']).to be true
+      expect(visible_item['published']).to be true
       expect(hidden_item['visible']).to be false
     end
   end

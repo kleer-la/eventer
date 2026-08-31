@@ -9,7 +9,6 @@ class ServiceWriteService < ContentWriteService
                             recommended_way_summary recommended_way_details]
   self.rich_text_fields = %i[value_proposition outcomes definitions program target faq]
   self.long_fields = %w[card_description recommended_way_summary recommended_way_details]
-  self.publication_flag = :visible
   self.guarded_publication = false
 
   def initialize(service_area: nil, **args)

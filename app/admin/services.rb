@@ -4,7 +4,7 @@ ActiveAdmin.register Service do
   menu parent: 'Services Mgnt'
 
   permit_params %i[created_at id name slug service_area_id subtitle card_description updated_at value_proposition
-                   outcomes program target faq definitions pricing brochure side_image ordering visible
+                   outcomes program target faq definitions pricing brochure side_image ordering published
                    seo_title seo_description recommended_way_title recommended_way_note recommended_way_summary recommended_way_details],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
@@ -25,8 +25,8 @@ ActiveAdmin.register Service do
     column :subtitle
     column :ordering
     column :service_area if defined?(ServiceArea) # Optional: Display associated ServiceArea if relevant
-    column :visible do |service|
-      status_tag service.visible
+    column :published do |service|
+      status_tag service.published
     end
 
     actions
@@ -47,7 +47,7 @@ ActiveAdmin.register Service do
       f.input :name
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :ordering
-      f.input :visible
+      f.input :published
       f.input :seo_title
       f.input :seo_description
       f.input :subtitle, as: :rich_text_area
@@ -110,7 +110,7 @@ ActiveAdmin.register Service do
       row :name
       row :slug
       row :ordering
-      row :visible
+      row :published
       row :seo_title
       row :seo_description
       row :subtitle

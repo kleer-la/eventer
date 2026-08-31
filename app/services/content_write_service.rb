@@ -6,14 +6,15 @@
 # It also carries the publishing guard. For Article and Resource, `published` is
 # the one rule ability.rb expresses outside plain CRUD (`cannot :set_published`),
 # so it never travels with the rest of the fields: a content user can draft and
-# edit but not publish, the same line the admin forms draw. Models that spell it
-# `visible`, or have no such flag at all, say so through `publication_flag`.
+# edit but not publish, the same line the admin forms draw. News and Service are
+# published without that guard, and Page, Podcast and Episode have no such flag
+# at all — `publication_flag` and `guarded_publication` say which is which.
 class ContentWriteService
   # Subclasses declare what they write: the model, the fields a tool may set,
   # which of those are long enough to summarise instead of echoing, which are
-  # ActionText (those never reach record.changes), and how the model spells
-  # "publicly visible" — :published, :visible, or nothing. class_attribute so a
-  # subclass inherits the defaults and overrides only what differs.
+  # ActionText (those never reach record.changes), and whether it has a
+  # `published` flag at all. class_attribute so a subclass inherits the defaults
+  # and overrides only what differs.
   class_attribute :model, :editable_fields, :publication_flag, :guarded_publication,
                   :long_fields, :rich_text_fields
 

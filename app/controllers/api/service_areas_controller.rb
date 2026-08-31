@@ -67,7 +67,7 @@ module Api
       lang = service_area.lang
 
       services = service_area.services
-      services = services.where(visible: true) if visible
+      services = services.where(published: true) if visible
 
       render json: {
         id: service_area.id,

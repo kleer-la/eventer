@@ -39,8 +39,8 @@ describe Api::ServiceAreasController do
 
   describe "GET 'ServiceAreas/#' (/api/services/#.<format>)" do
     let(:service_area) { FactoryBot.create(:service_area) }
-    let!(:visible_service) { FactoryBot.create(:service, service_area:, visible: true) }
-    let!(:invisible_service) { FactoryBot.create(:service, service_area:, visible: false) }
+    let!(:visible_service) { FactoryBot.create(:service, service_area:, published: true) }
+    let!(:invisible_service) { FactoryBot.create(:service, service_area:, published: false) }
 
     context 'fetch visible' do
       it 'fetch a ServiceArea' do
@@ -101,7 +101,7 @@ describe Api::ServiceAreasController do
 
     describe 'SEO fields' do
       it 'includes seo_title and seo_description for services' do
-        service = FactoryBot.create(:service, service_area:, visible: true,
+        service = FactoryBot.create(:service, service_area:, published: true,
                                               seo_title: 'Service SEO Title',
                                               seo_description: 'Service SEO Description')
         get :show, params: { id: service_area.slug, format: 'json' }
@@ -122,7 +122,7 @@ describe Api::ServiceAreasController do
 
     describe 'card_description field' do
       it 'exposes card_description on individual services when set' do
-        service = FactoryBot.create(:service, service_area:, visible: true,
+        service = FactoryBot.create(:service, service_area:, published: true,
                                               card_description: '<section class="rw-section"><h2>Programa</h2></section>')
         get :show, params: { id: service_area.slug, format: 'json' }
         json_response = JSON.parse(response.body)
@@ -156,7 +156,7 @@ describe Api::ServiceAreasController do
       end
 
       it 'exposes recommended way fields on individual services' do
-        service = FactoryBot.create(:service, service_area:, visible: true,
+        service = FactoryBot.create(:service, service_area:, published: true,
                                     recommended_way_title: 'Forma del Servicio',
                                     recommended_way_summary: '- Paso A\n- Paso B')
         get :show, params: { id: service_area.slug, format: 'json' }
@@ -196,7 +196,7 @@ describe Api::ServiceAreasController do
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)
-        @service = FactoryBot.create(:service, service_area: @service_area, visible: true)
+        @service = FactoryBot.create(:service, service_area: @service_area, published: true)
       end
 
       it 'No slug changed (by ServiceArea)' do

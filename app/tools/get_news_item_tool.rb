@@ -13,7 +13,7 @@ class GetNewsItemTool < AuthenticatedTool
   def call(id:)
     item = News.find(id)
     { id: item.id, title: item.title, description: item.description, lang: item.lang,
-      visible: item.visible, event_date: item.event_date, where: item.where, url: item.url,
+      published: item.published, event_date: item.event_date, where: item.where, url: item.url,
       img: item.img, video: item.video, audio: item.audio,
       trainers: item.trainers.map(&:name), updated_at: item.updated_at }.to_json
   rescue ActiveRecord::RecordNotFound
