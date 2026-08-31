@@ -73,12 +73,27 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(Podcast.find(podcast_id).description_body).to include('Sobre agilidad')
 
       episode = { podcast_id: podcast_id, title: 'Piloto', description: '<p>Primero</p>',
-                  season: 1, episode: 1, published_at: '2026-08-01' }
+                  season: 1, episode: 1, released_at: '2026-08-01' }
       expect(call_tool('create_episode', episode.merge(confirm: true))['status']).to eq('saved')
 
       listing = call_tool('get_podcast', { id: podcast_id })
       expect(listing['episodes'].first).to include('season' => 1, 'episode' => 1, 'title' => 'Piloto')
       expect(call_tool('list_podcasts')['podcasts'].first['episodes']).to eq(1)
+    end
+
+    it 'keeps an episode off the site until it is published, apart from when it was released' do
+      podcast = Podcast.create!(title: 'Kleer Podcast', description: '<p>x</p>')
+      episode = { podcast_id: podcast.id, title: 'Piloto', description: '<p>x</p>', season: 1, episode: 1,
+                  released_at: '2026-08-01' }
+
+      expect(call_tool('create_episode', episode.merge(confirm: true))['status']).to eq('saved')
+      expect(Episode.last.published).to be(false)
+      expect(Episode.last.released_at).to eq(Date.new(2026, 8, 1))
+
+      call_tool('update_episode', { id: Episode.last.id, published: true, confirm: true })
+      expect(Episode.last.published).to be(true)
+      expect(call_tool('get_podcast', { id: podcast.id })['episodes'].first)
+        .to include('published' => true, 'released_at' => '2026-08-01')
     end
 
     it 'caps the listing with limit, like the other list tools' do
@@ -90,11 +105,11 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
     it 'warns before repeating a season and episode number' do
       podcast = Podcast.create!(title: 'Kleer Podcast', description: '<p>x</p>')
       podcast.episodes.create!(title: 'Piloto', description: '<p>x</p>', season: 1, episode: 1,
-                               published_at: Date.new(2026, 8, 1))
+                               released_at: Date.new(2026, 8, 1))
 
       result = call_tool('create_episode', { podcast_id: podcast.id, title: 'Repetido',
                                              description: '<p>y</p>', season: 1, episode: 1,
-                                             published_at: '2026-08-08' })
+                                             released_at: '2026-08-08' })
 
       expect(result['warnings'].join).to include('already exists')
     end

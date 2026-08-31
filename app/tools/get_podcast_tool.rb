@@ -27,7 +27,7 @@ class GetPodcastTool < AuthenticatedTool
 
   def episode(episode)
     { id: episode.id, season: episode.season, episode: episode.episode, title: episode.title,
-      published_at: episode.published_at, spotify_url: episode.spotify_url,
+      published: episode.published, released_at: episode.released_at, spotify_url: episode.spotify_url,
       youtube_url: episode.youtube_url }
   end
 end

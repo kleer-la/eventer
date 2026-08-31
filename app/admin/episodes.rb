@@ -4,7 +4,7 @@ ActiveAdmin.register Episode do
   menu parent: 'We Publish'
 
   permit_params :podcast_id, :season, :episode, :title, :description, :youtube_url, :spotify_url,
-                :thumbnail_url, :published_at
+                :thumbnail_url, :released_at, :published
 
   controller do
     def scoped_collection
@@ -19,13 +19,15 @@ ActiveAdmin.register Episode do
     column :season
     column :episode
     column :title
-    column :published_at
+    column :released_at
+    column :published
     actions
   end
 
   filter :podcast
   filter :title
-  filter :published_at
+  filter :released_at
+  filter :published
 
   form do |f|
     f.inputs do
@@ -37,7 +39,8 @@ ActiveAdmin.register Episode do
       f.input :youtube_url
       f.input :spotify_url
       f.input :thumbnail_url
-      f.input :published_at, as: :datepicker
+      f.input :released_at, as: :datepicker
+      f.input :published
     end
     f.actions
   end
@@ -55,7 +58,8 @@ ActiveAdmin.register Episode do
       row :youtube_url
       row :spotify_url
       row :thumbnail_url
-      row :published_at
+      row :released_at
+      row :published
       row :created_at
       row :updated_at
     end

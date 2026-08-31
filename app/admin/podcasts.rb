@@ -55,7 +55,8 @@ ActiveAdmin.register Podcast do
         column :season
         column :episode
         column :title
-        column :published_at
+        column :released_at
+        column :published
         column :actions do |episode|
           link_to 'View', admin_episode_path(episode)
         end

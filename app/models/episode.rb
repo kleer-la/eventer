@@ -11,10 +11,16 @@ class Episode < ApplicationRecord
   validates :description, presence: true
   validates :season, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :episode, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :published_at, presence: true
+  validates :released_at, presence: true
+
+  # `released_at` was called `published_at`, and the API still answers with that
+  # key: website17 reads it. Remove this and the `methods:` in
+  # Api::V3::PodcastsController once the client asks for `released_at`.
+  def published_at = released_at
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[created_at episode id podcast_id published_at season spotify_url thumbnail_url title updated_at youtube_url]
+    %w[created_at episode id podcast_id published released_at season spotify_url thumbnail_url title updated_at
+       youtube_url]
   end
 
   def self.ransackable_associations(_auth_object = nil)

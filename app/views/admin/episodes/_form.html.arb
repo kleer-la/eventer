@@ -10,7 +10,8 @@ active_admin_form_for Episode.new(podcast:), url: admin_episodes_path do |f|
     f.input :youtube_url
     f.input :spotify_url
     f.input :thumbnail_url
-    f.input :published_at, as: :datepicker
+    f.input :released_at, as: :datepicker
+    f.input :published
   end
   f.actions
 end
