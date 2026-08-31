@@ -14,6 +14,10 @@ class GenerateArticleAudioJob < ActiveJob::Base
     'en' => 'en-US-JennyNeural'
   }.freeze
 
+  # Narration weighs around 300 bytes of MP3 per character of text. A tenth of
+  # that is not a terse article, it is a truncated stream — see #verify_complete.
+  MIN_BYTES_PER_CHAR = 30
+
   def perform(article_id)
     article = Article.find(article_id)
     return if article.body.blank?
@@ -36,7 +40,7 @@ class GenerateArticleAudioJob < ActiveJob::Base
     mp3_path = Rails.root.join('tmp', "#{base}.mp3")
 
     File.write(txt_path, text)
-    synthesize(voice_for(article.lang), txt_path, mp3_path)
+    synthesize(voice_for(article.lang), txt_path, mp3_path, text.length)
 
     url = FileStoreService.current.upload(mp3_path, "article_#{article.id}.mp3", 'image')
     article.update_column(:audio, url)
@@ -58,11 +62,26 @@ class GenerateArticleAudioJob < ActiveJob::Base
     ENV["TTS_VOICE_#{lang.to_s.upcase}"].presence || DEFAULT_VOICES[lang] || DEFAULT_VOICES['en']
   end
 
-  def synthesize(voice, txt_path, mp3_path)
+  def synthesize(voice, txt_path, mp3_path, text_length)
     _stdout, stderr, status = Open3.capture3(
       'edge-tts', '--voice', voice, '--file', txt_path.to_s, '--write-media', mp3_path.to_s
     )
     raise "edge-tts failed (#{status.exitstatus}): #{stderr}" unless status.success?
+
+    verify_complete(mp3_path, text_length)
+  end
+
+  # edge-tts can exit 0 having written only part of the stream. One article came
+  # back as 27 KB for 5.700 characters — fourteen seconds of a nine-minute read —
+  # and a check for "more than zero bytes" waved it through, so the site served
+  # the stump for days. Measure the file against the text it came from instead,
+  # and let the failure reach the retry rather than the reader.
+  def verify_complete(mp3_path, text_length)
     raise 'edge-tts produced no audio' unless File.exist?(mp3_path) && File.size(mp3_path).positive?
+
+    size = File.size(mp3_path)
+    return if size >= text_length * MIN_BYTES_PER_CHAR
+
+    raise "edge-tts wrote #{size} bytes for #{text_length} characters: the stream was cut short"
   end
 end

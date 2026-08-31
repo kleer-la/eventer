@@ -10,10 +10,12 @@ RSpec.describe GenerateArticleAudioJob, type: :job do
   before do
     allow(FileStoreService).to receive(:current).and_return(store_service)
     allow(store_service).to receive(:upload).and_return('https://kleer-images.s3.sa-east-1.amazonaws.com/article.mp3')
-    # Pretend edge-tts ran: write a non-empty file at the --write-media path it was given.
+    # Pretend edge-tts ran: write a file at the --write-media path it was given,
+    # weighing what narration of that text would weigh.
     allow(Open3).to receive(:capture3) do |*args|
       media = args[args.index('--write-media') + 1]
-      File.binwrite(media, 'FAKE-MP3-BYTES')
+      source = args[args.index('--file') + 1]
+      File.binwrite(media, 'x' * (File.size(source) * 300))
       ['', '', ok_status]
     end
   end
@@ -55,6 +57,22 @@ RSpec.describe GenerateArticleAudioJob, type: :job do
       GenerateArticleAudioJob.perform_now(blank.id)
       expect(store_service).not_to have_received(:upload)
       expect(blank.reload.audio).to be_nil
+    end
+
+    context 'when edge-tts writes only part of the stream' do
+      before do
+        allow(Open3).to receive(:capture3) do |*args|
+          File.binwrite(args[args.index('--write-media') + 1], 'x' * 200)
+          ['', '', ok_status]
+        end
+      end
+
+      it 'refuses the stump instead of publishing seconds of a whole article' do
+        expect(Log).to receive(:log).with(:app, :error, anything, anything)
+
+        expect { GenerateArticleAudioJob.perform_now(article.id) }.to raise_error(/cut short/)
+        expect(article.reload.audio).to be_nil
+      end
     end
 
     context 'when edge-tts fails' do
