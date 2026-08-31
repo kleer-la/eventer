@@ -47,6 +47,18 @@ class ApplicationTool < ActionTool::Base
     envelope.merge(key => items).to_json
   end
 
+  # fast-mcp hands the tool whatever the caller sent, and dry-schema quietly
+  # ignores keys the tool never declared, so an argument with no matching
+  # keyword reached `call` and raised ArgumentError — which the server passed
+  # back to the client as a Ruby backtrace. Answer with the argument's name and
+  # the ones this tool does take: a caller that guessed wrong can then fix it.
+  def call_with_schema_validation!(**args)
+    unknown = args.keys.map(&:to_s) - known_arguments
+    return [unknown_arguments(unknown), _meta] if unknown.any?
+
+    super
+  end
+
   def current_user
     return @current_user if defined?(@current_user)
 
@@ -58,6 +70,14 @@ class ApplicationTool < ActionTool::Base
   end
 
   private
+
+  def known_arguments = self.class.input_schema.key_map.map(&:name)
+
+  def unknown_arguments(unknown)
+    { status: 'error',
+      errors: ["Unknown argument#{'s' if unknown.size > 1} #{unknown.map(&:inspect).join(', ')}. " \
+               "#{self.class.tool_name} takes: #{known_arguments.join(', ')}"] }.to_json
+  end
 
   def bearer_token
     headers['authorization']&.delete_prefix('Bearer ')

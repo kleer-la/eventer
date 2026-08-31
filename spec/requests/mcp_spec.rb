@@ -66,6 +66,14 @@ RSpec.describe 'MCP server', type: :request do
     expect(missing['error']).to eq('not_found')
   end
 
+  it 'names an argument it does not know, instead of leaking a Ruby backtrace' do
+    answer = JSON.parse(call_tool('get_article', { id: 'x', fields: 'title' }).dig('result', 'content', 0, 'text'))
+
+    expect(answer['status']).to eq('error')
+    expect(answer['errors'].join).to include('fields').and include('get_article takes: id')
+    expect(answer.to_s).not_to include('.rb:')
+  end
+
   it 'refuses a token whose user has no roles, the way the admin screens do' do
     user.roles.destroy_all
     create(:article)
