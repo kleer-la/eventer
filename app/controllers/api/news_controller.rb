@@ -5,7 +5,7 @@ class Api::NewsController < ApplicationController
     news = News.published.order(event_date: :desc)
     respond_to do |format|
       format.json do
-        render json: news, methods: :visible,
+        render json: news,
                include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
                                                linkedin_url] } }
       end
@@ -16,7 +16,7 @@ class Api::NewsController < ApplicationController
     news = News.all.order(event_date: :desc)
     respond_to do |format|
       format.json do
-        render json: news, methods: :visible,
+        render json: news,
                include: { trainers: { only: %i[name bio bio_en gravatar_email twitter_username
                                                linkedin_url] } }
       end

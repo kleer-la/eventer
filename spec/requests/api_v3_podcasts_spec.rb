@@ -24,13 +24,15 @@ RSpec.describe 'API v3 podcasts', type: :request do
     expect(titles).to eq(['Al aire'])
   end
 
-  it 'answers with the legacy published_at key alongside released_at' do
+  # website17 read `published_at` until it moved to `released_at`; the alias that
+  # kept answering with the old key is gone with it.
+  it 'answers with released_at, and no longer with the old published_at key' do
     episode('Al aire', published: true)
 
     get '/api/v3/podcasts.json'
 
     aired = response.parsed_body.first['episodes'].first
     expect(aired['released_at']).to eq('2026-08-01')
-    expect(aired['published_at']).to eq('2026-08-01')
+    expect(aired).not_to have_key('published_at')
   end
 end

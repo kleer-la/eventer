@@ -106,20 +106,20 @@ RSpec.describe Api::NewsController, type: :controller do
       expect(news_item['trainers'].first['name']).to eq('Test Trainer')
     end
 
-    # The column is `published` now, but website17 still reads `visible`, so the
-    # payload answers with both until the client moves. See News#visible.
-    it 'answers with the legacy visible key alongside published' do
+    # website17 read `visible` until it moved to `published`; the compatibility
+    # reader that kept answering with the old key is gone with it.
+    it 'answers with published, and no longer with the old visible key' do
       get :preview, format: :json
 
       expect(response).to have_http_status(:success)
       json_response = JSON.parse(response.body)
 
-      visible_item = json_response.find { |item| item['title'] == 'Visible News' }
+      published_item = json_response.find { |item| item['title'] == 'Visible News' }
       hidden_item = json_response.find { |item| item['title'] == 'Hidden News' }
 
-      expect(visible_item['visible']).to be true
-      expect(visible_item['published']).to be true
-      expect(hidden_item['visible']).to be false
+      expect(published_item['published']).to be true
+      expect(hidden_item['published']).to be false
+      expect(published_item).not_to have_key('visible')
     end
   end
 end

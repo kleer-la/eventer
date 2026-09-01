@@ -13,11 +13,6 @@ class News < ApplicationRecord
 
   after_initialize :set_default_published, if: :new_record?
 
-  # The column was renamed from `visible`, but the public API still answers with
-  # a `visible` key: website17 reads it. Remove both this and the `methods:` in
-  # Api::NewsController once the client asks for `published`.
-  def visible = published
-
   private
 
   def set_default_published

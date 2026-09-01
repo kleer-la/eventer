@@ -6,8 +6,7 @@ module Api
       EPISODE_FIELDS = %i[season episode title youtube_url spotify_url thumbnail_url released_at].freeze
 
       # Only the episodes we publish on our own site. `released_at` is a
-      # different thing — when the episode came out on Spotify or YouTube — and
-      # still travels as `published_at` too, the name the client reads today.
+      # different thing: when the episode came out on Spotify or YouTube.
       def index
         podcasts = Podcast.includes(:episodes).all
         render json: podcasts.map { |podcast| podcast_json(podcast) }
@@ -24,7 +23,7 @@ module Api
       # select, not a where: the episodes are already preloaded.
       def published_episodes(podcast)
         podcast.episodes.select(&:published)
-               .map { |episode| episode.as_json(only: EPISODE_FIELDS, methods: %i[description_body published_at]) }
+               .map { |episode| episode.as_json(only: EPISODE_FIELDS, methods: [:description_body]) }
       end
     end
   end
