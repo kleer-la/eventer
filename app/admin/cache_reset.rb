@@ -40,37 +40,13 @@ ActiveAdmin.register_page 'Cache Reset' do
   end
 
   page_action :execute, method: :post do
-    require 'net/http'
-    require 'uri'
+    # force: a person clicked the button, so no throttle stands in their way.
+    result = WebsiteCacheReset.new.call(force: true)
 
-    token = ENV.fetch('CACHE_RESET_TOKEN', nil)
-
-    if token.blank?
-      flash[:error] = 'CACHE_RESET_TOKEN environment variable is not configured'
-      redirect_to admin_cache_reset_path
-      return
-    end
-
-    begin
-      website_url = ENV.fetch('WEBSITE_URL', nil)
-      if website_url.blank?
-        flash[:error] = 'WEBSITE_URL environment variable is not configured'
-        redirect_to admin_cache_reset_path
-        return
-      end
-
-      url = "#{website_url}/cache-reset?token=#{token}"
-      uri = URI.parse(url)
-
-      response = Net::HTTP.get_response(uri)
-
-      if response.is_a?(Net::HTTPSuccess)
-        flash[:notice] = "Cache reset successful. Response: #{response.code} #{response.message}"
-      else
-        flash[:alert] = "Cache reset request completed with status: #{response.code} #{response.message}"
-      end
-    rescue StandardError => e
-      flash[:error] = "Error resetting cache: #{e.message}"
+    case result.status
+    when :ok then flash[:notice] = result.message
+    when :not_configured then flash[:error] = result.message
+    else flash[:alert] = result.message
     end
 
     redirect_to admin_cache_reset_path
