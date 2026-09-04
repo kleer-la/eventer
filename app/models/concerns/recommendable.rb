@@ -45,7 +45,11 @@ module Recommendable
         'Article' => Article.all.order(:title).pluck(:title, :id),
         'EventType' => EventType.included_in_catalog.order(:name).map { |et| [et.unique_name, et.id] },
         'Service' => Service.all.order(:name).pluck(:name, :id),
-        'Resource' => Resource.all.order(:title_es).pluck(:title_es, :id)
+        'Resource' => Resource.all.order(:title_es).pluck(:title_es, :id),
+        # Only flagship pages: an overlay is section overrides for a template
+        # that already has its own URL, so recommending one would point at a
+        # page that does not exist on its own.
+        'Page' => Page.flagship.order(:name).map { |page| [page.display_name, page.id] }
       }
     end
   end

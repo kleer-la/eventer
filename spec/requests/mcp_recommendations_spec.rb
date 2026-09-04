@@ -83,9 +83,9 @@ RSpec.describe 'MCP recommendation tools', type: :request do
     end
 
     it 'rejects a type that cannot be a target' do
-      page = create(:page)
+      # The type is checked before anything is looked up, so no record is needed.
       result = call_tool('add_recommendation', { source_type: 'Article', source_id: article.slug,
-                                                 target_type: 'Page', target_id: page.slug })
+                                                 target_type: 'Podcast', target_id: 'kleer-podcast' })
       expect(result['errors'].join).to include('is not one of')
     end
 
@@ -130,6 +130,43 @@ RSpec.describe 'MCP recommendation tools', type: :request do
       result = call_tool('remove_recommendation', { source_type: 'Article', source_id: article.slug,
                                                     target_type: 'Resource', target_id: other.slug })
       expect(result['errors'].join).to include('is not recommended by')
+    end
+  end
+
+  describe 'pages as a target' do
+    let(:page) { create(:page, name: 'Membresía IA', lang: :es, template: 'flagship', slug: 'membresia-ia') }
+
+    it 'recommends a flagship page from an article' do
+      result = call_tool('add_recommendation', { source_type: 'Article', source_id: article.slug,
+                                                 target_type: 'Page', target_id: page.slug, confirm: true })
+
+      expect(result['status']).to eq('saved')
+      expect(article.reload.recommended_contents.first.target).to eq(page)
+    end
+
+    it 'gives the page a card without the language suffix the admin label carries' do
+      card = page.as_recommendation
+
+      expect(card['title']).to eq('Membresía IA')
+      expect(card['type']).to eq('page')
+      expect(card['slug']).to eq('membresia-ia')
+    end
+
+    it 'refuses an overlay page: it has no URL of its own to link to' do
+      overlay = create(:page, name: 'Contacto', lang: :es, template: 'overlay')
+
+      result = call_tool('add_recommendation', { source_type: 'Article', source_id: article.slug,
+                                                 target_type: 'Page', target_id: overlay.slug, confirm: true })
+
+      expect(result['errors'].join).to include('overlay page')
+      expect(article.reload.recommended_contents).to be_empty
+    end
+
+    it 'offers only flagship pages in the admin picker' do
+      flagship = page
+      create(:page, name: 'Contacto', lang: :es, template: 'overlay')
+
+      expect(Article.recommended_content_targets['Page']).to eq([[flagship.display_name, flagship.id]])
     end
   end
 

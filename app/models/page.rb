@@ -71,7 +71,9 @@ class Page < ApplicationRecord
     super
       .merge('subtitle' => seo_description)
       .merge('slug' => slug)
-      .merge('title' => title)
+      # `title` is the admin label and carries the language suffix
+      # ("Membresía IA - es"), which would end up printed on the card.
+      .merge('title' => name)
   end
 
   def title

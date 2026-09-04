@@ -6,7 +6,7 @@
 # *source* — that is what gets checked here, not a separate rule.
 class RecommendationService
   SOURCE_TYPES = %w[Article Resource EventType Service Page].freeze
-  TARGET_TYPES = %w[Article Resource EventType Service].freeze
+  TARGET_TYPES = %w[Article Resource EventType Service Page].freeze
   DEFAULT_RELEVANCE = 50
 
   def initialize(ability:, source_type:, source_id:)

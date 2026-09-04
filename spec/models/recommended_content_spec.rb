@@ -30,6 +30,21 @@ RSpec.describe RecommendedContent, type: :model do
       expect(recommended_content).to be_valid
     end
 
+    it 'refuses a page with no URL of its own' do
+      overlay = create(:page, name: 'Contacto', lang: :es, template: 'overlay')
+
+      link = RecommendedContent.new(source: event_type1, target: overlay, relevance_order: 1)
+
+      expect(link).to be_invalid
+      expect(link.errors[:target].join).to include('overlay page')
+    end
+
+    it 'accepts a flagship page, which is routed at /:lang/:slug' do
+      flagship = create(:page, name: 'Membresía IA', lang: :es, template: 'flagship')
+
+      expect(RecommendedContent.new(source: event_type1, target: flagship, relevance_order: 1)).to be_valid
+    end
+
     it 'does not allow relevance_order to be less than 1' do
       recommended_content = RecommendedContent.new(
         source: event_type1,

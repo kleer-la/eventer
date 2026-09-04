@@ -22,7 +22,7 @@ class AddRecommendationTool < AuthenticatedTool
   arguments do
     required(:source_type).filled(:string).description('Article | Resource | EventType | Service | Page')
     required(:source_id).filled(:string).description('Slug, numeric id, or name/title of the recommending entity')
-    required(:target_type).filled(:string).description('Article | Resource | EventType | Service')
+    required(:target_type).filled(:string).description('Article | Resource | EventType | Service | Page')
     required(:target_id).filled(:string).description('Slug, numeric id, or name/title of the recommended entity')
     optional(:relevance_order).filled(:integer).description('Order and level; 1 or more, defaults to 50')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
