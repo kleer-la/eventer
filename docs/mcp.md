@@ -42,6 +42,62 @@ persiste. Claude te tiene que mostrar el preview antes de confirmar.
 
 Hay tools equivalentes para recursos, servicios, páginas, podcasts y novedades.
 
+## Cursos y certificados
+
+Además del contenido del sitio, el server expone la cadena que hace falta para
+darle su certificado a alguien que quedó fuera del sistema: el curso que se dio,
+el evento, la persona y el PDF.
+
+| Tool | Qué hace |
+|---|---|
+| `list_event_types` | Busca tipos de curso: el id que necesita un evento, y el nombre y la duración que salen impresos |
+| `create_event_type` | Crea un tipo de curso nuevo, **siempre fuera del catálogo público** |
+| `list_events` | Busca ediciones de un curso, por nombre, ciudad o fecha |
+| `create_event` | Crea una edición; **privada y gratuita** salvo que digas otra cosa |
+| `search_participants` | Busca personas por nombre, mail o código de verificación |
+| `create_participant` | Inscribe a alguien en un evento y devuelve su código de verificación |
+| `issue_certificate` | Genera el PDF A4 y LETTER y los sube a S3 |
+
+Los cuatro de escritura funcionan en dos pasos igual que los de contenido:
+`confirm=false` (el default) muestra qué haría sin tocar nada.
+
+### Por qué el certificado necesita toda la cadena
+
+`kleer.la/certificado` no consulta esta base: lista el bucket `Keventer` por el
+prefijo del código y devuelve el PDF que encuentre. O sea que un certificado es
+verificable **recién cuando el archivo está en S3**, y el archivo saca su texto
+del participante, del evento y del tipo de curso. De ahí el orden:
+
+```
+list_event_types  →  create_event  →  create_participant  →  issue_certificate
+(o create_event_type si el curso no existe)
+```
+
+`issue_certificate` no manda ningún mail salvo que le pases `notify=true`. Y no
+genera nada si el participante no está en Presente (A) o Certificado (K), o si
+el trainer 1 del evento no tiene firma cargada: el PDF saldría sin firmar. Los
+dos motivos vienen también en `search_participants`, en
+`certificate_blocked_by`, antes de que intentes emitir.
+
+### Dos cosas que los tools deciden por vos
+
+- **El tipo de curso se crea fuera del catálogo** (`include_in_catalog` en
+  falso, sin argumento que lo cambie). Ese mismo registro es la ficha del curso
+  en el sitio: ponerlo a la venta es una decisión que se sigue tomando desde el
+  admin.
+- **El evento se crea privado** (`visibility_type: 'pr'`) y con precio 0. Cargar
+  un curso que ya se dio no es publicar un curso nuevo. Si querés uno público,
+  pedilo explícitamente.
+
+### Datos personales
+
+`search_participants` devuelve mail y estado de cada persona, y vale la regla de
+siempre: los mismos permisos que en el admin, donde `can :read, :all` alcanza a
+cualquier usuario con rol, incluido `comercial`. Nunca lista a todo el mundo —
+exige un término de búsqueda o un `event_id` — pero si querés que los datos de
+participantes queden fuera del alcance de un conector, eso se cambia en
+`ability.rb`, no en los tools.
+
 ## Listados: nunca devuelven "todo" en silencio
 
 Los `list_*` truncan (25 por defecto, 100 máximo; imágenes 50 y 200) y lo dicen:

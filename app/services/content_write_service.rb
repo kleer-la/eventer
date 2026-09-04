@@ -46,7 +46,8 @@ class ContentWriteService
 
     @record.save!
     { status: 'saved', id: @record.id, slug: @record.try(:slug), title: label,
-      published: publication_value, admin_path: admin_path, warnings: saved_warnings }.compact
+      published: publication_value, admin_path: admin_path, warnings: saved_warnings }
+      .compact.merge(saved_extras)
   end
 
   private
@@ -130,6 +131,10 @@ class ContentWriteService
 
   # Subclasses add whatever is worth saying about their own fields.
   def model_warnings = []
+
+  # What the caller could not have known before saving and needs afterwards —
+  # a participant's verification code, generated on create.
+  def saved_extras = {}
 
   def publishing? = publication_changed? && publication_value
   def unpublishing? = publication_changed? && !publication_value
