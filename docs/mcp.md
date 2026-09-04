@@ -73,6 +73,13 @@ list_event_types  →  create_event  →  create_participant  →  issue_certifi
 (o create_event_type si el curso no existe)
 ```
 
+El link que devuelve `issue_certificate` en `verify_at` tiene una sola forma
+que funciona: `https://www.kleer.la/es/certificado?q=<código>` (o
+`/en/certificate` para un curso en inglés). El código va en el query string, no
+en el path, y tiene que ser el host con `www` y con prefijo de idioma: el
+dominio pelado redirige 301 y se come el `?q=`, con lo cual la página llega con
+el formulario vacío.
+
 `issue_certificate` no manda ningún mail salvo que le pases `notify=true`. Y no
 genera nada si el participante no está en Presente (A) o Certificado (K), o si
 el trainer 1 del evento no tiene firma cargada: el PDF saldría sin firmar. Los

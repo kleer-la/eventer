@@ -8,7 +8,11 @@
 # the default is not to, because generating a link to review is the common case
 # and an unexpected mail to a participant cannot be taken back.
 class CertificateIssueService
-  VERIFY_URL = 'https://kleer.la/certificado'
+  # The www host with the locale prefix, because the apex redirects 301 to it
+  # and drops the query string on the way — and the code travels in the query
+  # string, so a link to kleer.la/certificado?q=... arrives with an empty form.
+  VERIFY_URL = { 'es' => 'https://www.kleer.la/es/certificado',
+                 'en' => 'https://www.kleer.la/en/certificate' }.freeze
 
   def initialize(participant:, notify: false)
     @participant = participant
@@ -43,7 +47,7 @@ class CertificateIssueService
   def preview
     { status: 'preview', participant: participant_summary,
       will: 'Render the A4 and LETTER PDFs and upload them to S3, making the code verifiable at ' \
-            "#{VERIFY_URL}.",
+            "#{verify_url}.",
       notify: @notify,
       note: 'Nothing was generated. Call again with confirm=true to issue it.' }
   end
@@ -54,9 +58,14 @@ class CertificateIssueService
 
     { status: 'issued', participant: participant_summary,
       verification_code: @participant.verification_code, urls: urls,
-      verify_at: "#{VERIFY_URL}?q=#{@participant.verification_code}",
+      verify_at: "#{verify_url}?q=#{@participant.verification_code}",
       notified: @notify,
       note: 'The PDFs are in S3; the code can now be checked on the public page.' }
+  end
+
+  # The public page is per language, and so is the certificate itself.
+  def verify_url
+    VERIFY_URL.fetch(@participant.event.event_type.lang, VERIFY_URL['es'])
   end
 
   def deliver(urls)

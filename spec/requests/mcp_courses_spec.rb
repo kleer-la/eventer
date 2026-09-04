@@ -195,8 +195,20 @@ RSpec.describe 'MCP tools for courses and certificates', type: :request do
       expect(result['status']).to eq('issued')
       expect(result['urls'].keys).to contain_exactly('A4', 'LETTER')
       expect(result['verification_code']).to eq(participant.verification_code)
-      expect(result['verify_at']).to include(participant.verification_code)
+      # The apex domain 301s to www and drops the query string, so the link has
+      # to carry the host and the locale the page actually lives at.
+      expect(result['verify_at'])
+        .to eq("https://www.kleer.la/es/certificado?q=#{participant.verification_code}")
       expect(result['notified']).to be(false)
+    end
+
+    it 'points at the English page for a course given in English' do
+      event.event_type.update!(lang: 'en')
+
+      result = call_tool('issue_certificate', { participant_id: participant.id, confirm: true })
+
+      expect(result['verify_at'])
+        .to eq("https://www.kleer.la/en/certificate?q=#{participant.verification_code}")
     end
 
     it 'only mails the participant when asked' do
