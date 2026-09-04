@@ -300,6 +300,24 @@ describe 'render certificates' do
     WebMock.disable_net_connect!(allow_localhost: true)
   end
 
+  it 'uploads without touching the ACL: the bucket already serves certificates/ publicly' do
+    client = instance_double(Aws::S3::Client)
+    transfer_manager = instance_double(Aws::S3::TransferManager)
+    allow(Aws::S3::Client).to receive(:new).and_return(client)
+    allow(Aws::S3::TransferManager).to receive(:new).with(client: client).and_return(transfer_manager)
+    allow(transfer_manager).to receive(:upload_file)
+    allow(client).to receive(:put_object_acl)
+
+    url = ParticipantsHelper.upload_certificate('/tmp/ABC123p1-A4.pdf')
+
+    expect(transfer_manager).to have_received(:upload_file)
+      .with('/tmp/ABC123p1-A4.pdf', bucket: 'Keventer', key: 'certificates/ABC123p1-A4.pdf')
+    # Asking for public-read is what the credentials are not allowed to do, and
+    # it used to raise between the A4 and the LETTER.
+    expect(client).not_to have_received(:put_object_acl)
+    expect(url).to eq('https://s3.amazonaws.com/Keventer/certificates/ABC123p1-A4.pdf')
+  end
+
   it 'new (2021) certificate file' do
     @participant.event.event_type.kleer_cert_seal_image = 'base2021.png'
     certificate_filename = ParticipantsHelper.generate_certificate(@participant, 'A4', @certificate_store)

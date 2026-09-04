@@ -469,13 +469,13 @@ module ParticipantsHelper
     transfer_manager = Aws::S3::TransferManager.new(client: client)
     transfer_manager.upload_file(certificate_filename, bucket: bucket_name, key: object_key)
 
-    # Set ACL to public-read
-    client.put_object_acl({
-      bucket: bucket_name,
-      key: object_key,
-      acl: 'public-read'
-    })
-
+    # No put_object_acl here. The eventer-s3 user has not been allowed that
+    # action for a while, and the call raised in the middle of generating a
+    # certificate: the A4 was already in the bucket, the LETTER never got made
+    # and the mail never went out. It bought nothing — the bucket serves
+    # certificates/ publicly on its own, so objects uploaded while the ACL call
+    # was failing are readable over HTTP anyway. Asking for public-read a
+    # second time was only a way to lose the second half of the job.
     "https://s3.amazonaws.com/Keventer/certificates/#{key}"
   end
 
