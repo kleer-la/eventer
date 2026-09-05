@@ -22,6 +22,8 @@ class UpdatePageTool < AuthenticatedTool
     optional(:seo_title).filled(:string).description('SEO title')
     optional(:seo_description).filled(:string).description('SEO description')
     optional(:show_in_footer).filled(:bool).description('true = link it from the footer')
+    optional(:noindex).filled(:bool)
+                      .description('true = keep it out of search results. The page stays reachable at its URL')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
   end
 

@@ -4,7 +4,7 @@ ActiveAdmin.register Page do
   menu parent: 'Assets', priority: 11
 
   permit_params :name, :slug, :seo_title, :seo_description, :lang, :canonical, :cover,
-                :template, :show_in_footer,
+                :template, :show_in_footer, :noindex,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy],
                 sections_attributes: %i[id title content position slug cta_text cta_url _destroy]
 
@@ -115,6 +115,7 @@ ActiveAdmin.register Page do
       f.input :seo_title
       f.input :seo_description
       f.input :canonical, hint: 'Leave empty to auto-generate'
+      f.input :noindex, hint: 'Keep it out of search results. The page stays reachable at its URL'
       f.input :cover, as: :url
     end
 

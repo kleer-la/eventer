@@ -98,4 +98,24 @@ RSpec.describe 'Api::Pages', type: :request do
       end
     end
   end
+
+  describe 'the noindex flag' do
+    # website17 renders the meta tag; it can only honour a flag it receives.
+    it 'travels with the page, so a preview can stay out of the index' do
+      preview = Page.create!(name: 'Landing v2', slug: 'landing-v2', lang: 'es',
+                             template: 'flagship', noindex: true)
+
+      get "/api/pages/es-#{preview.slug}"
+
+      expect(response.parsed_body).to include('noindex' => true)
+    end
+
+    it 'is false for a page nobody asked to hide' do
+      normal = Page.create!(name: 'Landing', slug: 'landing', lang: 'es', template: 'flagship')
+
+      get "/api/pages/es-#{normal.slug}"
+
+      expect(response.parsed_body).to include('noindex' => false)
+    end
+  end
 end

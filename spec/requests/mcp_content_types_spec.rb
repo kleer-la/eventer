@@ -186,6 +186,16 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(result['note']).to include('3 matched').and include('query, lang or template')
     end
 
+    it 'keeps a page out of the index without hiding it' do
+      preview = create(:page, name: 'Landing v2', lang: :es, template: 'flagship')
+      expect(preview.noindex).to be(false)
+
+      result = call_tool('update_page', { id: preview.id, noindex: true, confirm: true })
+
+      expect(result['status']).to eq('saved')
+      expect(preview.reload.noindex).to be(true)
+    end
+
     it 'creates a page and returns its sections when read' do
       result = call_tool('create_page', { name: 'Nueva landing', lang: 'es', template: 'flagship',
                                           confirm: true })

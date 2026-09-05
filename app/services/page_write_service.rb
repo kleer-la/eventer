@@ -3,7 +3,7 @@
 class PageWriteService < ContentWriteService
   self.model = Page
   self.editable_fields = %i[name lang slug template cover canonical
-                            seo_title seo_description show_in_footer]
+                            seo_title seo_description show_in_footer noindex]
   # A page is reachable as soon as it has a slug; there is no visibility flag.
   self.publication_flag = nil
 

@@ -8,7 +8,7 @@ module Api
       page = Page.find_by_param!(params[:id])
       render json: page,
              methods: %i[recommended],
-             only: %i[name seo_title seo_description lang canonical cover template show_in_footer],
+             only: %i[name seo_title seo_description lang canonical cover template show_in_footer noindex],
              include: { sections: { only: %i[slug title content cta_text cta_url position] } }
     end
 
