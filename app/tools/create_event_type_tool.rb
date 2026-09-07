@@ -30,6 +30,8 @@ class CreateEventTypeTool < AuthenticatedTool
     optional(:goal).filled(:string).description('Objective')
     optional(:learnings).filled(:string).description('What the participant learns')
     optional(:takeaways).filled(:string).description('What the participant takes home')
+    optional(:faq).filled(:string)
+                  .description('Questions and answers, each one an `<h4>` heading followed by its answer')
     optional(:tag_name).filled(:string).description('Short tag used in listings')
     optional(:subtitle).filled(:string).description('Subtitle')
     optional(:is_kleer_certification).filled(:bool)

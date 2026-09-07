@@ -7,12 +7,12 @@ class GetEventTypeTool < AuthenticatedTool
   description <<~MD
     Returns one course type in full, by slug or id: the blocks that make up its
     page on the site (description, recipients, program, goal, learnings,
-    takeaways), what the certificate says, and who teaches it.
+    takeaways, faq), what the certificate says, and who teaches it.
 
     Read it before editing, so the change is made against the current text.
   MD
 
-  BLOCKS = %i[description recipients program goal learnings takeaways].freeze
+  BLOCKS = %i[description recipients program goal learnings takeaways faq].freeze
 
   arguments do
     required(:id).filled(:string).description('Course slug (preferred) or numeric id')

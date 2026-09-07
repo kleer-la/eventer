@@ -10,8 +10,8 @@ class UpdateEventTypeTool < AuthenticatedTool
     the current text.
 
     To change part of a block, prefer `replacements` over resending it whole. It
-    patches description, recipients, program, goal, learnings and takeaways —
-    which is how a stale link inside a course page gets fixed.
+    patches description, recipients, program, goal, learnings, takeaways and
+    faq — which is how a stale link inside a course page gets fixed.
 
     Whether a course is on sale on the site is not an argument here: that is a
     decision about what Kleer sells, and it is made from the admin.
@@ -30,6 +30,8 @@ class UpdateEventTypeTool < AuthenticatedTool
     optional(:goal).filled(:string).description('Objective')
     optional(:learnings).filled(:string).description('What the participant learns')
     optional(:takeaways).filled(:string).description('What the participant takes home')
+    optional(:faq).filled(:string)
+                  .description('Questions and answers, each one an `<h4>` heading followed by its answer')
     optional(:subtitle).filled(:string).description('Subtitle')
     optional(:tag_name).filled(:string).description('Short tag used in listings')
     optional(:duration).filled(:integer).description('Hours, the number printed on the certificate')

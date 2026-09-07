@@ -11,6 +11,7 @@ describe 'event type MCP tools' do
   let(:event_type) do
     EventType.create!(name: 'Taller de Prueba', description: 'Un taller <a href="/cursos/7-viejo">viejo</a>',
                       recipients: 'Equipos', program: 'Contenidos', elevator_pitch: 'Un taller',
+                      faq: '<h4>¿Por dónde empiezo?</h4>Por <a href="/cursos/7-viejo">este</a>.',
                       trainers: [trainer], lang: 'es', duration: 8)
   end
 
@@ -27,6 +28,14 @@ describe 'event type MCP tools' do
       expect(result['name']).to eq 'Taller de Prueba'
       expect(result['blocks']['description']).to include '/cursos/7-viejo'
       expect(result['trainers']).to eq ['Ana Prueba']
+    end
+
+    # The questions and answers are a block of the page like any other, and the
+    # links inside them go stale the same way.
+    it 'returns the questions and answers' do
+      result = run(described_class, id: event_type.slug)
+
+      expect(result['blocks']['faq']).to include '/cursos/7-viejo'
     end
 
     it 'says so when there is no such course' do
@@ -60,6 +69,14 @@ describe 'event type MCP tools' do
 
       expect(event_type.reload.description).to include '/es/cursos/7-nuevo'
       expect(event_type.description).not_to include '/cursos/7-viejo"'
+    end
+
+    it 'patches a link inside the questions and answers' do
+      run(described_class, id: event_type.slug, confirm: true,
+                           replacements: [{ field: 'faq', find: '/cursos/7-viejo',
+                                            replace: '/es/cursos/7-nuevo' }])
+
+      expect(event_type.reload.faq).to include '/es/cursos/7-nuevo'
     end
 
     it 'says so when there is no such course' do
