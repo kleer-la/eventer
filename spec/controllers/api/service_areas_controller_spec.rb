@@ -35,6 +35,28 @@ describe Api::ServiceAreasController do
       expect(json_response.first).to have_key('ordering')
       expect(json_response.first['ordering']).to eq(@regular_service.ordering)
     end
+
+    # The show endpoint filters these out and the list did not, so website17's
+    # sitemap — which reads the list — declared a service page that answers 404.
+    it 'lists only published services' do
+      published = FactoryBot.create(:service, service_area: @regular_service, published: true)
+      unpublished = FactoryBot.create(:service, service_area: @regular_service, published: false)
+
+      get :index, params: { format: 'json' }
+      services = JSON.parse(response.body).find { |sa| sa['slug'] == @regular_service.slug }['services']
+
+      expect(services.map { |s| s['id'] }).to include(published.id)
+      expect(services.map { |s| s['id'] }).not_to include(unpublished.id)
+    end
+
+    it 'lists only published services of a training programme' do
+      unpublished = FactoryBot.create(:service, service_area: @training_program, published: false)
+
+      get :programs, params: { format: 'json' }
+      services = JSON.parse(response.body).find { |sa| sa['slug'] == @training_program.slug }['services']
+
+      expect(services.map { |s| s['id'] }).not_to include(unpublished.id)
+    end
   end
 
   describe "GET 'ServiceAreas/#' (/api/services/#.<format>)" do

@@ -28,7 +28,10 @@ module Api
           secondary_font_color: service_area.secondary_font_color,
           is_training_program: service_area.is_training_program,
           ordering: service_area.ordering,
-          services: service_area.services.order(:ordering).map do |service|
+          # Only what is published: the show endpoint has always filtered these,
+          # and the list not doing it put an unpublished service into the
+          # sitemap, which then declared a URL answering 404.
+          services: service_area.services.where(published: true).order(:ordering).map do |service|
             {
               id: service.id,
               slug: service.slug,
