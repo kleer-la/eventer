@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_05_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_15_190000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -392,6 +392,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_05_120000) do
     t.index ["delivery_schedule"], name: "index_mail_templates_on_delivery_schedule"
     t.index ["identifier"], name: "index_mail_templates_on_identifier", unique: true
     t.index ["trigger_type"], name: "index_mail_templates_on_trigger_type"
+  end
+
+  create_table "mcp_suggestions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "friction", null: false
+    t.text "goal"
+    t.text "proposal"
+    t.integer "reported_by_id"
+    t.text "resolution"
+    t.integer "status", default: 0, null: false
+    t.string "tools"
+    t.datetime "updated_at", null: false
+    t.index ["reported_by_id"], name: "index_mcp_suggestions_on_reported_by_id"
+    t.index ["status"], name: "index_mcp_suggestions_on_status"
   end
 
   create_table "news", force: :cascade do |t|
@@ -814,6 +828,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_05_120000) do
   add_foreign_key "event_types", "event_types", column: "canonical_id"
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"
+  add_foreign_key "mcp_suggestions", "users", column: "reported_by_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "question_groups", "assessments"
