@@ -67,6 +67,9 @@ Rails.application.routes.draw do
     get 'service_areas/:slug/consultants', to: 'consultants#index'
     get 'consultants/:id/availability', to: 'consultants#availability'
     post 'consultants/:id/bookings', to: 'consultants#create_booking'
+
+    # session-handoff plugin: briefing JSON in, narrated MP3 out
+    post 'tts/briefing', to: 'tts#create'
   end
 
   get 'api/events' => 'home#index'

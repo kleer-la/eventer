@@ -57,6 +57,7 @@ env:
     - GOOGLE_CLIENT_ID
     - GOOGLE_CLIENT_SECRET
     - WEBSITE_URL
+    - TTS_API_SECRET
 
 ssh:
   user: appuser

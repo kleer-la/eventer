@@ -39,10 +39,13 @@ RUN apt-get update -qq && \
       libjemalloc2 \
       python3 \
       python3-pip \
+      ffmpeg \
       nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# edge-tts: free, key-less text-to-speech CLI used by GenerateArticleAudioJob
+# edge-tts: free, key-less text-to-speech CLI used by GenerateArticleAudioJob and
+# TtsBriefingService. ffmpeg (ffmpeg + ffprobe) is TtsBriefingService's own: padding
+# and concatenating beats into one MP3.
 RUN pip3 install --no-cache-dir --break-system-packages edge-tts
 
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
