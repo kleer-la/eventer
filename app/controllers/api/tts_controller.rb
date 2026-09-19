@@ -14,7 +14,7 @@ module Api
   class TtsController < ApplicationController
     skip_before_action :verify_authenticity_token
 
-    MAX_SYNTHESIS_SECONDS = 60
+    MAX_SYNTHESIS_SECONDS = TtsBriefingService::MAX_SYNTHESIS_SECONDS
 
     before_action :authenticate_tts_request!
 

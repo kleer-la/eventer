@@ -16,7 +16,7 @@ module Oauth
 
       application = Doorkeeper::Application.new(name: params[:client_name].presence || 'MCP client',
                                                 redirect_uri: redirect_uris.join("\n"),
-                                                scopes: 'mcp', confidential: false)
+                                                scopes: 'mcp handoff', confidential: false)
       unless application.save
         return render json: { error: 'invalid_client_metadata',
                               error_description: application.errors.full_messages.join(', ') },
@@ -31,7 +31,7 @@ module Oauth
         token_endpoint_auth_method: 'none',
         grant_types: %w[authorization_code refresh_token],
         response_types: ['code'],
-        scope: 'mcp'
+        scope: 'mcp handoff'
       }, status: :created
     end
   end

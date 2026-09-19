@@ -7,6 +7,7 @@
 # be given our own transport subclass.
 require 'fast_mcp'
 require Rails.root.join('lib/middleware/mcp_token_transport')
+require Rails.root.join('lib/middleware/handoff_mcp_transport')
 
 FastMcp.server = FastMcp::Server.new(
   name: Rails.application.class.module_parent_name.underscore.dasherize,
@@ -14,12 +15,20 @@ FastMcp.server = FastMcp::Server.new(
   logger: Rails.logger
 )
 
+# The session-handoff connector (#202): a second server on /handoff/mcp with the
+# HandoffTool family only, authorized by HandoffUsers, never by admin tokens.
+HANDOFF_MCP_SERVER = FastMcp::Server.new(name: 'kleer-session-handoff', version: '1.0.0', logger: Rails.logger)
+
 Rails.application.config.after_initialize do
   # Tools are discovered through ApplicationTool.descendants, which is only
   # populated once the classes are loaded — force it, since eager loading is off
-  # in development and test. AuthenticatedTool is an abstract base, not a tool.
+  # in development and test. AuthenticatedTool and HandoffTool are abstract
+  # bases, not tools, and the handoff tools belong to the other server.
   Rails.autoloaders.main.eager_load_dir(Rails.root.join('app/tools'))
-  FastMcp.server.register_tools(*ApplicationTool.descendants.reject { |klass| klass == AuthenticatedTool })
+  handoff_tools = HandoffTool.descendants
+  admin_tools = ApplicationTool.descendants - [AuthenticatedTool, HandoffTool] - handoff_tools
+  FastMcp.server.register_tools(*admin_tools)
+  HANDOFF_MCP_SERVER.register_tools(*handoff_tools)
 end
 
 FastMcp.server.transport_klass = McpTokenTransport
@@ -33,6 +42,18 @@ Rails.application.config.middleware.insert_before(
   McpTokenTransport,
   FastMcp.server,
   path_prefix: '/mcp',
+  messages_route: 'messages',
+  sse_route: 'sse',
+  localhost_only: false,
+  allowed_origins: FastMcp.default_rails_allowed_origins(Rails.application),
+  logger: Rails.logger
+)
+
+Rails.application.config.middleware.insert_before(
+  Warden::Manager,
+  HandoffMcpTransport,
+  HANDOFF_MCP_SERVER,
+  path_prefix: '/handoff/mcp',
   messages_route: 'messages',
   sse_route: 'sse',
   localhost_only: false,

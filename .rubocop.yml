@@ -12,6 +12,7 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/factories.rb'
     - 'config/routes.rb'
+    - 'config/initializers/doorkeeper.rb' # one configure block, a DSL like routes.rb
 
 
 Style/Documentation:

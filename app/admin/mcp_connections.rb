@@ -11,7 +11,7 @@ ActiveAdmin.register Doorkeeper::AccessToken, as: 'MCP Connection' do
 
   Doorkeeper::AccessToken.class_eval do
     def self.ransackable_attributes(_auth_object = nil)
-      %w[application_id created_at expires_in id resource_owner_id revoked_at scopes]
+      %w[application_id created_at expires_in id resource_owner_id resource_owner_type revoked_at scopes]
     end
 
     def self.ransackable_associations(_auth_object = nil)
@@ -30,13 +30,19 @@ ActiveAdmin.register Doorkeeper::AccessToken, as: 'MCP Connection' do
   controller do
     def scoped_collection
       scope = Doorkeeper::AccessToken.includes(:application)
-      current_user.role?(:administrator) ? scope : scope.where(resource_owner_id: current_user.id)
+      return scope if current_user.role?(:administrator)
+
+      scope.where(resource_owner_id: current_user.id, resource_owner_type: ['User', nil])
     end
   end
 
   index download_links: false do
     column('Client') { |token| token.application&.name }
-    column('User') { |token| User.find_by(id: token.resource_owner_id)&.email }
+    # Tokens issued before owners were typed are Users (same rule as OauthAccess)
+    column('User') do |token|
+      owner = token.resource_owner_type ? token.resource_owner : User.find_by(id: token.resource_owner_id)
+      owner&.email
+    end
     column('Created', &:created_at)
     column('Expires', &:expires_at)
     column('Status') do |token|
@@ -63,7 +69,8 @@ ActiveAdmin.register Doorkeeper::AccessToken, as: 'MCP Connection' do
     authorize! :revoke, token
 
     Doorkeeper::AccessToken.where(application_id: token.application_id,
-                                  resource_owner_id: token.resource_owner_id).find_each(&:revoke)
+                                  resource_owner_id: token.resource_owner_id,
+                                  resource_owner_type: token.resource_owner_type).find_each(&:revoke)
     redirect_to collection_path, notice: 'Connection revoked.'
   end
 end

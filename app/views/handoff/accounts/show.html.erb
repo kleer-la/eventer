@@ -22,5 +22,10 @@
   <%= button_to 'Generar token', handoff_token_path, method: :post %>
 <% end %>
 
+<h2>Conector para Claude Desktop / web</h2>
+<p>En Claude: <em>Settings → Connectors → Add custom connector</em>, con esta URL:</p>
+<pre><%= request.base_url %>/handoff/mcp</pre>
+<p class="muted">Al conectarlo, Claude te pide iniciar sesión con Google (la misma cuenta) y aparece la herramienta <code>briefing_audio</code>: le pedís el briefing y te devuelve un link de descarga que dura una hora.</p>
+
 <h2>Uso</h2>
 <p>Este mes: <%= @user.briefings_this_month %> de <%= TtsUsage.limits.find { |l| l[:key] == 'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER' }[:value] %> briefings.</p>

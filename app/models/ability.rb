@@ -27,7 +27,7 @@ class Ability
     can :read, :all
 
     # MCP connections: everyone revokes the ones granted with their own account
-    can %i[read revoke], Doorkeeper::AccessToken, resource_owner_id: user.id
+    can %i[read revoke], Doorkeeper::AccessToken, resource_owner_id: user.id, resource_owner_type: ['User', nil]
 
     # Comercial: only read (already granted above)
 

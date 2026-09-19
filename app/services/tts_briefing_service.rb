@@ -15,6 +15,8 @@ class TtsBriefingService
   Error = Class.new(StandardError)
 
   MAX_BEATS = 40
+  # Wall-clock budget a caller gives one briefing (the controller and the MCP tool both use it).
+  MAX_SYNTHESIS_SECONDS = 60
   MAX_TOTAL_CHARS = 6000
   MAX_BEAT_SECONDS = 60
   BREATH_SECONDS = 0.35

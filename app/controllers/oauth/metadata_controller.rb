@@ -18,7 +18,7 @@ module Oauth
         code_challenge_methods_supported: ['S256'],
         token_endpoint_auth_methods_supported: ['none'],
         revocation_endpoint_auth_methods_supported: ['none'],
-        scopes_supported: ['mcp']
+        scopes_supported: %w[mcp handoff]
       }
     end
 
@@ -28,6 +28,17 @@ module Oauth
         authorization_servers: [base_url],
         bearer_methods_supported: ['header'],
         scopes_supported: ['mcp']
+      }
+    end
+
+    # RFC 9728 path-specific document for the session-handoff connector (#202):
+    # the same authorization server, its own scope.
+    def handoff_protected_resource
+      render json: {
+        resource: "#{base_url}/handoff/mcp",
+        authorization_servers: [base_url],
+        bearer_methods_supported: ['header'],
+        scopes_supported: ['handoff']
       }
     end
 

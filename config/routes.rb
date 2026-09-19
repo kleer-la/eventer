@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   post '/oauth/register' => 'oauth/registrations#create'
   get '/.well-known/oauth-authorization-server' => 'oauth/metadata#authorization_server'
   get '/.well-known/oauth-protected-resource' => 'oauth/metadata#protected_resource'
+  get '/.well-known/oauth-protected-resource/handoff/mcp' => 'oauth/metadata#handoff_protected_resource'
 
   # Custom admin routes
   namespace :admin do
@@ -102,6 +103,8 @@ Rails.application.routes.draw do
   delete 'handoff/sign_out', to: 'handoff/sessions#destroy', as: :handoff_sign_out
   post 'handoff/token', to: 'handoff/tokens#create', as: :handoff_token
   delete 'handoff/token', to: 'handoff/tokens#destroy'
+  # Download link briefing_audio (the /handoff/mcp tool) answers with; the signed id is the credential
+  get 'handoff/briefings/:id', to: 'handoff/briefings#show', as: :handoff_briefing
 
   # Xero OAuth
   get 'oauth_tokens/new' => 'oauth_tokens#new'

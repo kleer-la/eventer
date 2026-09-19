@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_220000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -351,6 +351,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_200000) do
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
+  create_table "handoff_briefings", force: :cascade do |t|
+    t.binary "audio", null: false
+    t.integer "beats_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.integer "handoff_user_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_handoff_briefings_on_expires_at"
+    t.index ["handoff_user_id"], name: "index_handoff_briefings_on_handoff_user_id"
+  end
+
   create_table "handoff_tokens", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "digest", null: false
@@ -461,10 +472,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_200000) do
     t.integer "expires_in", null: false
     t.text "redirect_uri", null: false
     t.integer "resource_owner_id", null: false
+    t.string "resource_owner_type"
     t.datetime "revoked_at"
     t.string "scopes", default: "", null: false
     t.string "token", null: false
     t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
+    t.index ["resource_owner_id", "resource_owner_type"], name: "idx_on_resource_owner_id_resource_owner_type_819e948fd3"
     t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
   end
@@ -476,11 +489,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_200000) do
     t.string "previous_refresh_token", default: "", null: false
     t.string "refresh_token"
     t.integer "resource_owner_id"
+    t.string "resource_owner_type"
     t.datetime "revoked_at"
     t.string "scopes"
     t.string "token", null: false
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
+    t.index ["resource_owner_id", "resource_owner_type"], name: "idx_on_resource_owner_id_resource_owner_type_9f65986833"
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
   end
@@ -866,6 +881,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_200000) do
   add_foreign_key "contacts", "assessments"
   add_foreign_key "episodes", "podcasts"
   add_foreign_key "event_types", "event_types", column: "canonical_id"
+  add_foreign_key "handoff_briefings", "handoff_users"
   add_foreign_key "handoff_tokens", "handoff_users"
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"

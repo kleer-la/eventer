@@ -93,6 +93,12 @@ RSpec.describe 'Handoff account', type: :system do
     expect(page).to have_content("1 de #{TtsUsage::DEFAULT_MAX_BRIEFINGS_PER_MONTH_PER_USER}")
   end
 
+  it 'shows the MCP connector URL' do
+    sign_in_with_google
+
+    expect(page).to have_content('/handoff/mcp')
+  end
+
   it 'does not let a handoff user into the admin' do
     sign_in_with_google
 
