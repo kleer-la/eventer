@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_160000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -783,6 +783,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_190000) do
     t.index ["resource_id", "trainer_id"], name: "index_translations_on_resource_id_and_trainer_id", unique: true
     t.index ["resource_id"], name: "index_translations_on_resource_id"
     t.index ["trainer_id"], name: "index_translations_on_trainer_id"
+  end
+
+  create_table "tts_usages", force: :cascade do |t|
+    t.integer "beats_count", default: 0, null: false
+    t.integer "chars", default: 0, null: false
+    t.string "client_hash", limit: 16
+    t.datetime "created_at", null: false
+    t.integer "owner_id"
+    t.string "status", default: "running", null: false
+    t.integer "synthesis_ms"
+    t.datetime "updated_at", null: false
+    t.index ["client_hash", "created_at"], name: "index_tts_usages_on_client_hash_and_created_at"
+    t.index ["created_at"], name: "index_tts_usages_on_created_at"
+    t.index ["status"], name: "index_tts_usages_on_status"
   end
 
   create_table "users", force: :cascade do |t|
