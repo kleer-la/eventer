@@ -16,6 +16,7 @@ class TtsBriefingService
 
   MAX_BEATS = 40
   MAX_TOTAL_CHARS = 6000
+  MAX_BEAT_SECONDS = 60
   BREATH_SECONDS = 0.35
   DEFAULT_VOICE = 'es-AR-ElenaNeural'
   DEFAULT_RATE = '+8%'
@@ -70,7 +71,7 @@ class TtsBriefingService
       raise Error, "edge-tts produced no audio for beat #{index + 1}"
     end
 
-    pad_segment(audio_path, floor: beat['duration'].to_f, dir: dir, index: index)
+    pad_segment(audio_path, floor: beat['duration'].to_f.clamp(0, MAX_BEAT_SECONDS), dir: dir, index: index)
   end
 
   def pad_segment(audio_path, floor:, dir:, index:)

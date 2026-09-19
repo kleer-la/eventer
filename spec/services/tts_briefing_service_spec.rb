@@ -73,6 +73,22 @@ describe TtsBriefingService do
     expect(pad).to be_within(0.01).of(0.35)
   end
 
+  it 'caps an oversized duration floor so a beat cannot ask for unbounded silence' do
+    described_class.call(beats: [{ 'narration' => 'Hola', 'duration' => 1_000_000 }])
+
+    pad_call = calls.find { |a| a.first == 'ffmpeg' && a.include?('-af') }
+    pad = pad_call[pad_call.index('-af') + 1][/pad_dur=([\d.]+)/, 1].to_f
+    expect(pad).to be_within(0.01).of(TtsBriefingService::MAX_BEAT_SECONDS - 1.2)
+  end
+
+  it 'treats a negative duration floor as no floor' do
+    described_class.call(beats: [{ 'narration' => 'Hola', 'duration' => -30 }])
+
+    pad_call = calls.find { |a| a.first == 'ffmpeg' && a.include?('-af') }
+    pad = pad_call[pad_call.index('-af') + 1][/pad_dur=([\d.]+)/, 1].to_f
+    expect(pad).to be_within(0.01).of(0.35)
+  end
+
   it 'rejects an empty beats list' do
     expect { described_class.call(beats: []) }.to raise_error(TtsBriefingService::Error, /non-empty/)
   end
