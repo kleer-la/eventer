@@ -82,6 +82,11 @@ Rails.application.routes.draw do
   get 'api/categories' => 'home#categories'
   get 'api/catalog' => 'home#catalog'
 
+  # On the session-handoff host (handoff.kleer.la, qa.handoff.kleer.la) the
+  # account page is the site: nobody using the plugin should see eventos.kleer.la.
+  constraints(host: /(\A|\.)handoff\.kleer\.la\z/) do
+    root to: 'handoff/accounts#show', as: :handoff_root
+  end
   root to: 'admin/dashboard#index'
 
   # Participant registration and certificates (public-facing)

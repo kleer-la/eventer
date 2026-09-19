@@ -1,6 +1,7 @@
 proxy:
   hosts:
     - qa.eventos.kleer.la
+    - qa.handoff.kleer.la # session-handoff accounts (#203); DNS A record → this server
   ssl: true
   app_port: 3000
   healthcheck:
