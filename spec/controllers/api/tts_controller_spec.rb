@@ -171,6 +171,52 @@ RSpec.describe Api::TtsController, type: :controller do
       end
     end
 
+    context 'with a personal token' do
+      let(:user) { create(:handoff_user) }
+      let(:token) { HandoffToken.issue!(user) }
+
+      before { allow(TtsBriefingService).to receive(:call).and_return('fake mp3 bytes') }
+
+      it 'authenticates and attributes the usage to the token owner' do
+        authorize!(token.plaintext)
+
+        post :create, params: { beats: [{ narration: 'Hola' }] }
+
+        expect(response).to have_http_status(:ok)
+        expect(TtsUsage.last.owner_id).to eq user.id
+      end
+
+      it 'rejects a revoked token' do
+        token.revoke!
+        authorize!(token.plaintext)
+
+        post :create, params: { beats: [{ narration: 'Hola' }] }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(TtsUsage.count).to eq 0
+      end
+
+      it 'answers 429 once the monthly quota is used' do
+        Setting.create!(key: 'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER', value: '1')
+        TtsUsage.create!(status: 'ok', beats_count: 1, chars: 1, owner_id: user.id)
+        authorize!(token.plaintext)
+
+        post :create, params: { beats: [{ narration: 'Hola' }] }
+
+        expect(response).to have_http_status(:too_many_requests)
+        expect(response.headers['Retry-After'].to_i).to be_positive
+      end
+
+      it 'leaves the shared secret working with no owner' do
+        authorize!
+
+        post :create, params: { beats: [{ narration: 'Hola' }] }
+
+        expect(response).to have_http_status(:ok)
+        expect(TtsUsage.last.owner_id).to be_nil
+      end
+    end
+
     context 'when synthesis takes too long' do
       before do
         authorize!

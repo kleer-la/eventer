@@ -3,16 +3,17 @@
 require 'rails_helper'
 
 describe TtsUsage do
-  def admit(beats_count: 1, chars: 100, client: nil)
-    described_class.admit!(beats_count: beats_count, chars: chars, client: client)
+  def admit(beats_count: 1, chars: 100, client: nil, owner: nil)
+    described_class.admit!(beats_count: beats_count, chars: chars, client: client, owner: owner)
   end
 
   def set(key, value)
     Setting.find_or_initialize_by(key: key).update!(value: value.to_s)
   end
 
-  def record(status: 'ok', chars: 100, at: Time.current, client: nil)
-    described_class.create!(status: status, beats_count: 1, chars: chars, created_at: at, client_hash: client)
+  def record(status: 'ok', chars: 100, at: Time.current, client: nil, owner: nil)
+    described_class.create!(status: status, beats_count: 1, chars: chars, created_at: at, client_hash: client,
+                            owner_id: owner&.id)
   end
 
   describe '.admit!' do
@@ -108,6 +109,40 @@ describe TtsUsage do
       end
     end
 
+    context 'with the monthly per-user quota' do
+      let(:user) { create(:handoff_user) }
+
+      before { set('TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER', 2) }
+
+      it 'stores the owner with the usage' do
+        expect(admit(owner: user).owner_id).to eq user.id
+      end
+
+      it 'denies with 429 and a Retry-After that reaches next month once the quota is used' do
+        record(owner: user)
+        record(owner: user, status: 'error')
+
+        expect { admit(owner: user) }.to raise_error(TtsUsage::Denied) { |e|
+          expect(e.status).to eq 429
+          expect(e.retry_after).to be_within(60).of(Time.current.next_month.beginning_of_month - Time.current)
+        }
+      end
+
+      it 'ignores last month and other users' do
+        record(owner: user, at: 5.weeks.ago)
+        record(owner: create(:handoff_user, email: 'b@example.com', google_uid: 'g-2'))
+
+        expect { admit(owner: user) }.not_to raise_error
+      end
+
+      it 'does not apply to the internal shared secret (no owner)' do
+        record(owner: nil)
+        record(owner: nil)
+
+        expect { admit(owner: nil) }.not_to raise_error
+      end
+    end
+
     it 'does not count errors as free: a failed synthesis still burned CPU' do
       set('TTS_MAX_BRIEFINGS_PER_HOUR', 1)
       record(status: 'error')
@@ -144,7 +179,8 @@ describe TtsUsage do
 
       expect(limits.map { |l| l[:key] }).to include('TTS_ENABLED', 'TTS_MAX_BRIEFINGS_PER_HOUR',
                                                     'TTS_MAX_BRIEFINGS_PER_HOUR_PER_CLIENT',
-                                                    'TTS_MAX_CHARS_PER_DAY', 'TTS_MAX_CONCURRENCY')
+                                                    'TTS_MAX_CHARS_PER_DAY', 'TTS_MAX_CONCURRENCY',
+                                                    'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER')
       expect(concurrency).to include(value: 5, default: TtsUsage::DEFAULT_MAX_CONCURRENCY)
     end
   end

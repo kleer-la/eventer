@@ -1,0 +1,6 @@
+<h1>session-handoff</h1>
+<p>Convertí una sesión de trabajo con Claude en un briefing de audio para tu equipo, sin instalar nada. Con tu cuenta obtenés un token personal para el plugin.</p>
+
+<%= button_to 'Continuar con Google', handoff_user_google_oauth2_omniauth_authorize_path, method: :post %>
+
+<p class="muted">Solo usamos tu email para identificarte. Las narraciones que el plugin envía se convierten en audio y no se guardan; el texto pasa por el servicio de voz de Microsoft (edge-tts).</p>

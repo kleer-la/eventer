@@ -1,0 +1,26 @@
+<header>
+  <h1>session-handoff</h1>
+  <span class="muted"><%= @user.email %> · <%= button_to 'Salir', handoff_sign_out_path, method: :delete, class: 'secondary' %></span>
+</header>
+
+<h2>Tu token</h2>
+<% if @issued %>
+  <p>Copialo ahora: <strong>no se vuelve a mostrar</strong>.</p>
+  <pre><code id="handoff-token"><%= @issued %></code></pre>
+  <p>En Claude Code, antes de correr el skill:</p>
+  <pre>SESSION_HANDOFF_TTS_TOKEN=<%= @issued %></pre>
+  <%= button_to 'Regenerar token', handoff_token_path, method: :post, class: 'secondary' %>
+  <%= button_to 'Revocar token', handoff_token_path, method: :delete, class: 'danger' %>
+<% elsif @token %>
+  <p>Generado el <%= @token.created_at.strftime('%d/%m/%Y') %>.
+    <% if @token.last_used_at %>Último uso: <%= @token.last_used_at.strftime('%d/%m/%Y %H:%M') %> UTC.<% else %>Todavía sin uso.<% end %></p>
+  <p class="muted">Si lo perdiste, regeneralo: el anterior deja de funcionar.</p>
+  <%= button_to 'Regenerar token', handoff_token_path, method: :post, class: 'secondary' %>
+  <%= button_to 'Revocar token', handoff_token_path, method: :delete, class: 'danger' %>
+<% else %>
+  <p>Todavía no tenés un token.</p>
+  <%= button_to 'Generar token', handoff_token_path, method: :post %>
+<% end %>
+
+<h2>Uso</h2>
+<p>Este mes: <%= @user.briefings_this_month %> de <%= TtsUsage.limits.find { |l| l[:key] == 'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER' }[:value] %> briefings.</p>

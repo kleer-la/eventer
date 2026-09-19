@@ -7,10 +7,10 @@ module Api
   # narrated beats) into one MP3, so the plugin needs neither edge-tts nor
   # ffmpeg installed locally. See TtsBriefingService for the synthesis itself.
   #
-  # Gated by a single shared secret (TTS_API_SECRET) rather than Doorkeeper —
-  # this has nothing to do with a Keventer user account, it is the plugin
-  # authenticating to a metered proxy. How that secret reaches an individual
-  # plugin user is a separate, undecided product question (see issue #198).
+  # Gated by a bearer token rather than Doorkeeper — this has nothing to do with
+  # a Keventer user account, it is the plugin authenticating to a metered proxy.
+  # The token is either a HandoffUser's personal one (#201, subject to a monthly
+  # quota) or the internal shared secret TTS_API_SECRET (no owner, no quota).
   class TtsController < ApplicationController
     skip_before_action :verify_authenticity_token
 
@@ -19,7 +19,8 @@ module Api
     before_action :authenticate_tts_request!
 
     rescue_from TtsUsage::Denied do |e|
-      Rails.logger.warn("TTS briefing denied (#{e.status}): #{e.message} — client #{client_hash}")
+      Rails.logger.warn("TTS briefing denied (#{e.status}): #{e.message} — client #{client_hash}, " \
+                        "owner #{token_owner&.id || 'internal'}")
       response.set_header('Retry-After', e.retry_after.to_s)
       render json: { error: e.message }, status: e.status
     end
@@ -33,11 +34,10 @@ module Api
     def create
       beats = briefing_beats
 
-      @usage = TtsUsage.admit!(beats_count: beats.size, chars: narration_chars(beats), client: client_hash)
+      @usage = TtsUsage.admit!(beats_count: beats.size, chars: narration_chars(beats), client: client_hash,
+                               owner: token_owner)
       @started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      mp3 = Timeout.timeout(MAX_SYNTHESIS_SECONDS) do
-        TtsBriefingService.call(beats: beats, voice: params[:voice], rate: params[:rate])
-      end
+      mp3 = synthesize(beats)
 
       @usage.finish!(:ok, synthesis_ms: elapsed_ms)
       send_data mp3, type: 'audio/mpeg', filename: 'briefing.mp3', disposition: 'attachment'
@@ -51,6 +51,12 @@ module Api
 
     def client_hash
       TtsUsage.client_hash_for(request.remote_ip)
+    end
+
+    def synthesize(beats)
+      Timeout.timeout(MAX_SYNTHESIS_SECONDS) do
+        TtsBriefingService.call(beats: beats, voice: params[:voice], rate: params[:rate])
+      end
     end
 
     def briefing_beats
@@ -68,11 +74,22 @@ module Api
     end
 
     def authenticate_tts_request!
-      secret = ENV['TTS_API_SECRET'].to_s
       token = request.headers['Authorization'].to_s.delete_prefix('Bearer ')
-      return if secret.present? && ActiveSupport::SecurityUtils.secure_compare(token, secret)
+      return if internal_secret?(token)
+
+      @handoff_token = HandoffToken.authenticate(token)
+      return if @handoff_token
 
       render json: { error: 'Unauthorized' }, status: :unauthorized
+    end
+
+    def internal_secret?(token)
+      secret = ENV['TTS_API_SECRET'].to_s
+      secret.present? && ActiveSupport::SecurityUtils.secure_compare(token, secret)
+    end
+
+    def token_owner
+      @handoff_token&.handoff_user
     end
   end
 end

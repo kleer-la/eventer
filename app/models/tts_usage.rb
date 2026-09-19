@@ -13,6 +13,7 @@
 #   TTS_MAX_BRIEFINGS_PER_HOUR_PER_CLIENT  default 10, per client (a hash of the IP)
 #   TTS_MAX_CHARS_PER_DAY                  default 60_000
 #   TTS_MAX_CONCURRENCY                    default 2
+#   TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER   default 30, per HandoffUser (personal tokens only)
 class TtsUsage < ApplicationRecord
   # A request the guards turned away: `status` is the HTTP status to answer with.
   class Denied < StandardError
@@ -31,6 +32,7 @@ class TtsUsage < ApplicationRecord
   DEFAULT_MAX_BRIEFINGS_PER_HOUR_PER_CLIENT = 10
   DEFAULT_MAX_CHARS_PER_DAY = 60_000
   DEFAULT_MAX_CONCURRENCY = 2
+  DEFAULT_MAX_BRIEFINGS_PER_MONTH_PER_USER = 30
   # A synthesis is cut off well before this; a `running` row older than it belongs
   # to a request that died, and must not hold a concurrency slot forever.
   STALE_AFTER = 2.minutes
@@ -41,16 +43,18 @@ class TtsUsage < ApplicationRecord
   # Every status counts against the limits: a failed synthesis still burned CPU.
   scope :within, ->(period) { where(created_at: period.ago..) }
   scope :in_flight, -> { where(status: 'running', created_at: STALE_AFTER.ago..) }
+  scope :this_month, -> { where(created_at: Time.current.beginning_of_month..) }
 
   # Checks the kill switch and the limits, then records the briefing as running.
   # Raises Denied (with the status and Retry-After to answer with) otherwise.
-  def self.admit!(beats_count:, chars:, client: nil)
+  def self.admit!(beats_count:, chars:, client: nil, owner: nil)
     ensure_enabled!
     ensure_briefings_within_hour!
     ensure_client_within_hour!(client)
+    ensure_owner_within_month!(owner)
     ensure_chars_within_day!(chars)
 
-    usage = create!(beats_count: beats_count, chars: chars, client_hash: client)
+    usage = create!(beats_count: beats_count, chars: chars, client_hash: client, owner_id: owner&.id)
     # Insert first, then count: two simultaneous requests both see each other and
     # both back off, which errs on the side of protecting the public site.
     ensure_concurrency!(usage)
@@ -82,6 +86,16 @@ class TtsUsage < ApplicationRecord
                                                                       retry_after: seconds_until_room(recent, 1.hour))
   end
 
+  def self.ensure_owner_within_month!(owner)
+    return if owner.nil?
+
+    max = setting_limit('TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER', DEFAULT_MAX_BRIEFINGS_PER_MONTH_PER_USER)
+    return if this_month.where(owner_id: owner.id).count < max
+
+    next_month = (Time.current.next_month.beginning_of_month - Time.current).ceil
+    raise Denied.new('Monthly briefing quota reached', status: 429, retry_after: next_month)
+  end
+
   def self.ensure_chars_within_day!(chars)
     max = setting_limit('TTS_MAX_CHARS_PER_DAY', DEFAULT_MAX_CHARS_PER_DAY)
     recent = within(1.day)
@@ -110,7 +124,8 @@ class TtsUsage < ApplicationRecord
   end
 
   private_class_method :ensure_enabled!, :ensure_briefings_within_hour!, :ensure_client_within_hour!,
-                       :ensure_chars_within_day!, :ensure_concurrency!, :seconds_until_room, :setting_limit
+                       :ensure_owner_within_month!, :ensure_chars_within_day!, :ensure_concurrency!,
+                       :seconds_until_room, :setting_limit
 
   # Tells one client from another without keeping the IP: an HMAC keyed with the
   # app secret, so it cannot be brute-forced back from the (small) IPv4 space.
@@ -127,12 +142,13 @@ class TtsUsage < ApplicationRecord
       { key: 'TTS_MAX_BRIEFINGS_PER_HOUR', default: DEFAULT_MAX_BRIEFINGS_PER_HOUR },
       { key: 'TTS_MAX_BRIEFINGS_PER_HOUR_PER_CLIENT', default: DEFAULT_MAX_BRIEFINGS_PER_HOUR_PER_CLIENT },
       { key: 'TTS_MAX_CHARS_PER_DAY', default: DEFAULT_MAX_CHARS_PER_DAY },
-      { key: 'TTS_MAX_CONCURRENCY', default: DEFAULT_MAX_CONCURRENCY }
+      { key: 'TTS_MAX_CONCURRENCY', default: DEFAULT_MAX_CONCURRENCY },
+      { key: 'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER', default: DEFAULT_MAX_BRIEFINGS_PER_MONTH_PER_USER }
     ].map { |l| l.key?(:value) ? l : l.merge(value: setting_limit(l[:key], l[:default])) }
   end
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[id status beats_count chars synthesis_ms client_hash created_at]
+    %w[id status beats_count chars synthesis_ms client_hash owner_id created_at]
   end
 
   def self.ransackable_associations(_auth_object = nil) = []

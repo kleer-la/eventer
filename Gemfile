@@ -95,6 +95,9 @@ gem 'activeadmin_addons'
 
 # MCP server: lets Claude read and edit blog articles over OAuth 2.1
 gem 'doorkeeper', '~> 5.9'
+# Login with Google for the session-handoff accounts (HandoffUser, #201)
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'
 gem 'fast-mcp'
 
 gem 'aws-sdk-s3', '~> 1.0'

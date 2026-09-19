@@ -93,6 +93,16 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  # session-handoff accounts (#201): Google login, personal TTS token. Not Users:
+  # a signed-in User reaches the admin; a HandoffUser never does.
+  devise_for :handoff_users, path: 'handoff', only: :omniauth_callbacks,
+                             controllers: { omniauth_callbacks: 'handoff/omniauth_callbacks' }
+  get 'handoff', to: 'handoff/accounts#show', as: :handoff
+  get 'handoff/sign_in', to: 'handoff/sessions#new', as: :handoff_sign_in
+  delete 'handoff/sign_out', to: 'handoff/sessions#destroy', as: :handoff_sign_out
+  post 'handoff/token', to: 'handoff/tokens#create', as: :handoff_token
+  delete 'handoff/token', to: 'handoff/tokens#destroy'
+
   # Xero OAuth
   get 'oauth_tokens/new' => 'oauth_tokens#new'
   get 'oauth_tokens/callback' => 'oauth_tokens#callback'

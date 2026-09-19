@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>session-handoff · Kleer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <%= csrf_meta_tags %>
+    <%= favicon_link_tag 'favicon.ico' %>
+    <style>
+      :root { --primary: #5c6bc0; --text: #1e2a33; --muted: #6b7280; --bg: #f5f5f5; --border: #e5e7eb; --danger: #f34541; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--text);
+             background: var(--bg); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+      main { width: 100%; max-width: 600px; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+      h1 { font-size: 1.4rem; margin: 0 0 .5rem; }
+      h2 { font-size: 1.05rem; margin: 1.5rem 0 .5rem; }
+      p.muted, .muted { color: var(--muted); font-size: .9rem; }
+      code, pre { font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+      pre { background: #f3f4f6; border: 1px solid var(--border); border-radius: 6px; padding: .75rem 1rem; overflow-x: auto; margin: .5rem 0; }
+      form { display: inline-block; margin: .25rem .5rem .25rem 0; }
+      button { font: inherit; padding: .5rem 1rem; border-radius: 6px; border: 1px solid var(--primary); background: var(--primary); color: #fff; cursor: pointer; }
+      button.secondary { background: #fff; color: var(--primary); }
+      button.danger { background: #fff; color: var(--danger); border-color: var(--danger); }
+      .flash { padding: .6rem .9rem; border-radius: 6px; margin-bottom: 1rem; }
+      .flash.alert { background: #fdecea; color: #7f1d1d; }
+      .flash.notice { background: #e8f5e9; color: #1b5e20; }
+      header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <% flash.each do |kind, message| %>
+        <div class="flash <%= kind %>"><%= message %></div>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

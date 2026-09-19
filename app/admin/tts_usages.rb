@@ -10,6 +10,7 @@ ActiveAdmin.register TtsUsage do
 
   filter :status, as: :select, collection: TtsUsage::STATUSES
   filter :client_hash
+  filter :owner_id
   filter :created_at
 
   index do
@@ -21,6 +22,7 @@ ActiveAdmin.register TtsUsage do
     column :chars
     column('Synthesis (ms)', :synthesis_ms)
     column('Client', :client_hash)
+    column('Owner', :owner_id)
     column :created_at
   end
 
@@ -52,6 +54,7 @@ ActiveAdmin.register TtsUsage do
       row :chars
       row :synthesis_ms
       row :client_hash
+      row :owner_id
       row :created_at
       row :updated_at
     end

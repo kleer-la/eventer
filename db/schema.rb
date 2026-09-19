@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_200000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -349,6 +349,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_160000) do
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
+  end
+
+  create_table "handoff_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "digest", null: false
+    t.integer "handoff_user_id", null: false
+    t.datetime "last_used_at"
+    t.datetime "revoked_at"
+    t.datetime "updated_at", null: false
+    t.index ["digest"], name: "index_handoff_tokens_on_digest", unique: true
+    t.index ["handoff_user_id"], name: "index_handoff_tokens_on_handoff_user_id"
+  end
+
+  create_table "handoff_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "current_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "email", null: false
+    t.string "google_uid", null: false
+    t.datetime "last_sign_in_at"
+    t.string "last_sign_in_ip"
+    t.string "name"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["google_uid"], name: "index_handoff_users_on_google_uid", unique: true
   end
 
   create_table "illustrations", force: :cascade do |t|
@@ -796,6 +821,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_160000) do
     t.datetime "updated_at", null: false
     t.index ["client_hash", "created_at"], name: "index_tts_usages_on_client_hash_and_created_at"
     t.index ["created_at"], name: "index_tts_usages_on_created_at"
+    t.index ["owner_id", "created_at"], name: "index_tts_usages_on_owner_id_and_created_at"
     t.index ["status"], name: "index_tts_usages_on_status"
   end
 
@@ -840,6 +866,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_160000) do
   add_foreign_key "contacts", "assessments"
   add_foreign_key "episodes", "podcasts"
   add_foreign_key "event_types", "event_types", column: "canonical_id"
+  add_foreign_key "handoff_tokens", "handoff_users"
   add_foreign_key "illustrations", "resources"
   add_foreign_key "illustrations", "trainers"
   add_foreign_key "mcp_suggestions", "users", column: "reported_by_id"
