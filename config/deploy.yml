@@ -14,6 +14,7 @@ servers:
 proxy:
   hosts:
     - eventos.kleer.la
+    - handoff.kleer.la # session-handoff accounts and MCP connector (#203); DNS A record → this server
   ssl: true
   app_port: 3000
   healthcheck:
