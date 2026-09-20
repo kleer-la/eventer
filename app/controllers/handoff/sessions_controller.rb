@@ -2,9 +2,13 @@
 
 module Handoff
   class SessionsController < ApplicationController
+    include HandoffLocale
+
     layout 'handoff'
+    around_action :use_handoff_locale
 
     def new
+      session[:handoff_locale] = params[:locale] if params[:locale].present?
       redirect_to handoff_path if handoff_user_signed_in?
     end
 

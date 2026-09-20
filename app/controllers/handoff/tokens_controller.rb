@@ -13,7 +13,7 @@ module Handoff
 
     def destroy
       current_handoff_user.active_token&.revoke!
-      redirect_to handoff_path, notice: 'Token revocado.'
+      redirect_to handoff_path, notice: t('handoff.account.revoked')
     end
   end
 end

@@ -23,14 +23,16 @@ class BriefingAudioTool < HandoffTool
       required(:narration).filled(:string).description('What the voice says for this beat')
       optional(:duration).filled(Dry::Types['coercible.float']).description('Minimum seconds this beat lasts, max 60')
     end.description('The briefing, in order')
-    optional(:voice).filled(:string).description("edge-tts voice, default #{TtsBriefingService::DEFAULT_VOICE}")
+    optional(:voice).filled(:string).description('edge-tts voice; default follows the account language ' \
+                                                 "(#{TtsBriefingService::DEFAULT_VOICES.values.join(' / ')})")
     optional(:rate).filled(:string).description("Speech rate, default #{TtsBriefingService::DEFAULT_RATE}")
   end
 
   def call(beats:, voice: nil, rate: nil)
     HandoffBriefing.purge_expired!
     beats = beats.map { |beat| beat.to_h.stringify_keys }
-    briefing = synthesize(admit(beats), beats: beats, voice: voice, rate: rate)
+    briefing = synthesize(admit(beats), beats: beats, voice: voice.presence || current_handoff_user.default_voice,
+                                        rate: rate)
     { download_url: download_url(briefing), expires_at: briefing.expires_at.iso8601,
       note: 'The link works for one hour and needs no login.' }.to_json
   rescue TtsUsage::Denied => e

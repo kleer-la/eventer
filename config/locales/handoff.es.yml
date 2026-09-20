@@ -1,0 +1,42 @@
+es:
+  handoff:
+    layout:
+      title: session-handoff · Kleer
+    sign_in:
+      title: session-handoff
+      intro: Convertí una sesión de trabajo con Claude en un briefing de audio para tu equipo, sin instalar nada. Con tu cuenta obtenés un token personal para el plugin.
+      google_button: Continuar con Google
+      privacy: "Solo usamos tu email para identificarte. Las narraciones que el plugin envía se convierten en audio y no se guardan; el texto pasa por el servicio de voz de Microsoft (edge-tts)."
+      not_requested_html: "No encontramos una solicitud del recurso con <strong>%{email}</strong>. Pedilo con ese email en <a href=\"%{url}\">kleer.la</a> y volvé a entrar."
+      unverified: Necesitamos una cuenta de Google con el email verificado.
+      failed: No pudimos iniciar sesión con Google.
+    account:
+      title: session-handoff
+      sign_out: Salir
+      token_title: Tu token
+      copy_now_html: "Copialo ahora: <strong>no se vuelve a mostrar</strong>."
+      in_claude_code: "En Claude Code, antes de correr el skill:"
+      regenerate: Regenerar token
+      revoke: Revocar token
+      generate: Generar token
+      generated_on: "Generado el %{date}."
+      last_used: "Último uso: %{time} UTC."
+      never_used: Todavía sin uso.
+      lost_hint: "Si lo perdiste, regeneralo: el anterior deja de funcionar."
+      no_token: Todavía no tenés un token.
+      revoked: Token revocado.
+      connector_title: Conector para Claude Desktop / web
+      connector_intro_html: "En Claude: <em>Settings → Connectors → Add custom connector</em>, con esta URL:"
+      connector_note_html: "Al conectarlo, Claude te pide iniciar sesión con Google (la misma cuenta) y aparece la herramienta <code>briefing_audio</code>: le pedís el briefing y te devuelve un link de descarga que dura una hora."
+      usage_title: Uso
+      usage: "Este mes: %{count} de %{max} briefings."
+    consent:
+      title: "Conectar %{client} con session-handoff"
+      authorizing_as_html: "Estás autorizando como <strong>%{email}</strong>."
+      not_you: ¿No sos vos?
+      change_account: Cambiar de cuenta
+      will_be_able: "%{client} va a poder:"
+      permission: Generar briefings de audio con tu cuenta (cuentan para tu cuota mensual).
+      nothing_else: "Nada más: no ve tu email en Google ni otros datos. Podés revocar la conexión cuando quieras."
+      authorize: Autorizar
+      deny: Denegar

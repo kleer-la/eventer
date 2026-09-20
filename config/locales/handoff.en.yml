@@ -1,0 +1,42 @@
+en:
+  handoff:
+    layout:
+      title: session-handoff · Kleer
+    sign_in:
+      title: session-handoff
+      intro: Turn a working session with Claude into an audio briefing for your team, with nothing to install. Your account gives you a personal token for the plugin.
+      google_button: Continue with Google
+      privacy: "We only use your email to identify you. The narrations the plugin sends are turned into audio and not kept; the text goes through Microsoft's voice service (edge-tts)."
+      not_requested_html: "We found no request for the resource with <strong>%{email}</strong>. Request it with that email at <a href=\"%{url}\">kleer.la</a> and sign in again."
+      unverified: We need a Google account with a verified email.
+      failed: We could not sign you in with Google.
+    account:
+      title: session-handoff
+      sign_out: Sign out
+      token_title: Your token
+      copy_now_html: "Copy it now: <strong>it will not be shown again</strong>."
+      in_claude_code: "In Claude Code, before running the skill:"
+      regenerate: Regenerate token
+      revoke: Revoke token
+      generate: Generate token
+      generated_on: "Generated on %{date}."
+      last_used: "Last used: %{time} UTC."
+      never_used: Not used yet.
+      lost_hint: "If you lost it, regenerate it: the old one stops working."
+      no_token: You have no token yet.
+      revoked: Token revoked.
+      connector_title: Connector for Claude Desktop / web
+      connector_intro_html: "In Claude: <em>Settings → Connectors → Add custom connector</em>, with this URL:"
+      connector_note_html: "When you connect it, Claude asks you to sign in with Google (the same account) and the <code>briefing_audio</code> tool appears: ask for the briefing and it answers a download link that lasts one hour."
+      usage_title: Usage
+      usage: "This month: %{count} of %{max} briefings."
+    consent:
+      title: "Connect %{client} to session-handoff"
+      authorizing_as_html: "You are authorizing as <strong>%{email}</strong>."
+      not_you: Not you?
+      change_account: Change account
+      will_be_able: "%{client} will be able to:"
+      permission: Generate audio briefings with your account (they count against your monthly quota).
+      nothing_else: "Nothing else: it does not see your Google email or any other data. You can revoke the connection whenever you want."
+      authorize: Authorize
+      deny: Deny

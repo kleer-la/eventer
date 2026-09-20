@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_230000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -381,6 +381,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_220000) do
     t.string "google_uid", null: false
     t.datetime "last_sign_in_at"
     t.string "last_sign_in_ip"
+    t.string "locale", default: "es", null: false
     t.string "name"
     t.integer "sign_in_count", default: 0, null: false
     t.datetime "updated_at", null: false

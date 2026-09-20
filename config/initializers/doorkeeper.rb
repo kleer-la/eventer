@@ -69,4 +69,7 @@ Rails.application.config.to_prepare do
   Doorkeeper::AuthorizationsController.layout(lambda do |controller|
     controller.params[:scope].to_s.split.include?('handoff') ? 'handoff' : 'devise'
   end)
+  Doorkeeper::AuthorizationsController.include(HandoffLocale)
+  Doorkeeper::AuthorizationsController.around_action(:use_handoff_locale,
+                                                     if: -> { params[:scope].to_s.split.include?('handoff') })
 end

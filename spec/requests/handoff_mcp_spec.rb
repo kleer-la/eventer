@@ -83,6 +83,14 @@ RSpec.describe 'Handoff MCP connector', type: :request do
       expect(response.body).not_to include('translation missing')
     end
 
+    it 'shows the consent page in the language of the account' do
+      sign_in create(:handoff_user, locale: 'en'), scope: :handoff_user
+      get '/oauth/authorize', params: authorize_params
+
+      expect(response.body).to include('Change account', 'Authorize', 'Deny')
+      expect(response.body).not_to include('Cambiar de cuenta')
+    end
+
     it 'keeps the admin consent page as it was, with its scope translated' do
       sign_in administrator
       get '/oauth/authorize', params: authorize_params.merge(scope: 'mcp')
@@ -97,6 +105,8 @@ RSpec.describe 'Handoff MCP connector', type: :request do
         provider: 'google_oauth2', uid: 'other-uid', info: { email: 'otra@example.com', name: 'Otra' },
         extra: { raw_info: { email_verified: true } }
       )
+      Contact.create!(trigger_type: :download_form, email: 'otra@example.com',
+                      form_data: { 'resource_slug' => 'session-handoff', 'language' => 'es' })
       sign_in handoff_user, scope: :handoff_user
       authorize_url = "/oauth/authorize?#{authorize_params.to_query}"
 
@@ -175,13 +185,23 @@ RSpec.describe 'Handoff MCP connector', type: :request do
       expect(result['expires_at']).to be_present
       expect(TtsBriefingService).to have_received(:call).with(beats: [{ 'narration' => 'Hola equipo', 'duration' => 5 },
                                                                       { 'narration' => 'Chau' }],
-                                                              voice: nil, rate: nil)
+                                                              voice: 'es-AR-ElenaNeural', rate: nil)
       expect(TtsUsage.last).to have_attributes(status: 'ok', owner_id: handoff_user.id, beats_count: 2)
 
       get result['download_url']
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq 'audio/mpeg'
       expect(response.body).to eq 'ID3 fake mp3 bytes'
+    end
+
+    it 'narrates in the voice of the account language unless told otherwise' do
+      en_token = issue_token(create(:handoff_user, email: 'b@example.com', google_uid: 'g-en', locale: 'en'), 'handoff')
+
+      call_tool(en_token, 'briefing_audio', { beats: beats })
+      expect(TtsBriefingService).to have_received(:call).with(hash_including(voice: 'en-US-JennyNeural'))
+
+      call_tool(en_token, 'briefing_audio', { beats: beats, voice: 'es-AR-TomasNeural' })
+      expect(TtsBriefingService).to have_received(:call).with(hash_including(voice: 'es-AR-TomasNeural'))
     end
 
     it 'stops serving the link once it expires, and purges the audio' do

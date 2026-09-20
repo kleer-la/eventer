@@ -5,5 +5,6 @@ FactoryBot.define do
     email { 'ana@example.com' }
     name { 'Ana' }
     google_uid { 'google-uid-1' }
+    locale { 'es' }
   end
 end

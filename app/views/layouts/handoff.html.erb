@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= I18n.locale %>">
   <head>
-    <title>session-handoff · Kleer</title>
+    <title><%= t("handoff.layout.title") %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
@@ -31,6 +31,7 @@
   <body>
     <main>
       <% flash.each do |kind, message| %>
+        <% next if kind == 'not_requested' %><%# the sign-in page renders that one itself %>
         <div class="flash <%= kind %>"><%= message %></div>
       <% end %>
       <%= yield %>

@@ -1,31 +1,31 @@
 <header>
-  <h1>session-handoff</h1>
-  <span class="muted"><%= @user.email %> · <%= button_to 'Salir', handoff_sign_out_path, method: :delete, class: 'secondary' %></span>
+  <h1><%= t('handoff.account.title') %></h1>
+  <span class="muted"><%= @user.email %> · <%= button_to t('handoff.account.sign_out'), handoff_sign_out_path, method: :delete, class: 'secondary' %></span>
 </header>
 
-<h2>Tu token</h2>
+<h2><%= t('handoff.account.token_title') %></h2>
 <% if @issued %>
-  <p>Copialo ahora: <strong>no se vuelve a mostrar</strong>.</p>
+  <p><%= t('handoff.account.copy_now_html') %></p>
   <pre><code id="handoff-token"><%= @issued %></code></pre>
-  <p>En Claude Code, antes de correr el skill:</p>
+  <p><%= t('handoff.account.in_claude_code') %></p>
   <pre>SESSION_HANDOFF_TTS_TOKEN=<%= @issued %></pre>
-  <%= button_to 'Regenerar token', handoff_token_path, method: :post, class: 'secondary' %>
-  <%= button_to 'Revocar token', handoff_token_path, method: :delete, class: 'danger' %>
+  <%= button_to t('handoff.account.regenerate'), handoff_token_path, method: :post, class: 'secondary' %>
+  <%= button_to t('handoff.account.revoke'), handoff_token_path, method: :delete, class: 'danger' %>
 <% elsif @token %>
-  <p>Generado el <%= @token.created_at.strftime('%d/%m/%Y') %>.
-    <% if @token.last_used_at %>Último uso: <%= @token.last_used_at.strftime('%d/%m/%Y %H:%M') %> UTC.<% else %>Todavía sin uso.<% end %></p>
-  <p class="muted">Si lo perdiste, regeneralo: el anterior deja de funcionar.</p>
-  <%= button_to 'Regenerar token', handoff_token_path, method: :post, class: 'secondary' %>
-  <%= button_to 'Revocar token', handoff_token_path, method: :delete, class: 'danger' %>
+  <p><%= t('handoff.account.generated_on', date: @token.created_at.strftime('%d/%m/%Y')) %>
+    <% if @token.last_used_at %><%= t('handoff.account.last_used', time: @token.last_used_at.strftime('%d/%m/%Y %H:%M')) %><% else %><%= t('handoff.account.never_used') %><% end %></p>
+  <p class="muted"><%= t('handoff.account.lost_hint') %></p>
+  <%= button_to t('handoff.account.regenerate'), handoff_token_path, method: :post, class: 'secondary' %>
+  <%= button_to t('handoff.account.revoke'), handoff_token_path, method: :delete, class: 'danger' %>
 <% else %>
-  <p>Todavía no tenés un token.</p>
-  <%= button_to 'Generar token', handoff_token_path, method: :post %>
+  <p><%= t('handoff.account.no_token') %></p>
+  <%= button_to t('handoff.account.generate'), handoff_token_path, method: :post %>
 <% end %>
 
-<h2>Conector para Claude Desktop / web</h2>
-<p>En Claude: <em>Settings → Connectors → Add custom connector</em>, con esta URL:</p>
+<h2><%= t('handoff.account.connector_title') %></h2>
+<p><%= t('handoff.account.connector_intro_html') %></p>
 <pre><%= request.base_url %>/handoff/mcp</pre>
-<p class="muted">Al conectarlo, Claude te pide iniciar sesión con Google (la misma cuenta) y aparece la herramienta <code>briefing_audio</code>: le pedís el briefing y te devuelve un link de descarga que dura una hora.</p>
+<p class="muted"><%= t('handoff.account.connector_note_html') %></p>
 
-<h2>Uso</h2>
-<p>Este mes: <%= @user.briefings_this_month %> de <%= TtsUsage.limits.find { |l| l[:key] == 'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER' }[:value] %> briefings.</p>
+<h2><%= t('handoff.account.usage_title') %></h2>
+<p><%= t('handoff.account.usage', count: @user.briefings_this_month, max: TtsUsage.limits.find { |l| l[:key] == 'TTS_MAX_BRIEFINGS_PER_MONTH_PER_USER' }[:value]) %></p>

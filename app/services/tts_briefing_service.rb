@@ -20,7 +20,8 @@ class TtsBriefingService
   MAX_TOTAL_CHARS = 6000
   MAX_BEAT_SECONDS = 60
   BREATH_SECONDS = 0.35
-  DEFAULT_VOICE = 'es-AR-ElenaNeural'
+  DEFAULT_VOICES = { 'es' => 'es-AR-ElenaNeural', 'en' => 'en-US-JennyNeural' }.freeze
+  DEFAULT_VOICE = DEFAULT_VOICES['es']
   DEFAULT_RATE = '+8%'
   VOICE_FORMAT = /\A[a-z]{2}-[A-Z]{2}-[A-Za-z]+\z/
 

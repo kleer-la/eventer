@@ -86,6 +86,7 @@ Rails.application.routes.draw do
   # account page is the site: nobody using the plugin should see eventos.kleer.la.
   constraints(host: /(\A|\.)handoff\.kleer\.la\z/) do
     root to: 'handoff/accounts#show', as: :handoff_root
+    get ':locale', to: 'handoff/sessions#new', constraints: { locale: /es|en/ }, as: :handoff_host_entry
   end
   root to: 'admin/dashboard#index'
 
@@ -105,6 +106,8 @@ Rails.application.routes.draw do
                              controllers: { omniauth_callbacks: 'handoff/omniauth_callbacks' }
   get 'handoff', to: 'handoff/accounts#show', as: :handoff
   get 'handoff/sign_in', to: 'handoff/sessions#new', as: :handoff_sign_in
+  # Entry points the site's download email links to: they fix the language (#203)
+  get 'handoff/:locale', to: 'handoff/sessions#new', constraints: { locale: /es|en/ }, as: :handoff_entry
   delete 'handoff/sign_out', to: 'handoff/sessions#destroy', as: :handoff_sign_out
   post 'handoff/token', to: 'handoff/tokens#create', as: :handoff_token
   delete 'handoff/token', to: 'handoff/tokens#destroy'
