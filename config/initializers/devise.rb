@@ -213,11 +213,14 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', :scope => 'user,public_repo'
-  # Login with Google for HandoffUser (#201). Same Google OAuth client as the
-  # Calendar integration: it only needs the /handoff/auth/google_oauth2/callback
-  # redirect URI added in Cloud Console. Scopes are per request, so this asks
-  # for identity only.
-  config.omniauth :google_oauth2, ENV.fetch('GOOGLE_CLIENT_ID', nil), ENV.fetch('GOOGLE_CLIENT_SECRET', nil),
+  # Login with Google for HandoffUser (#201): its own OAuth client, whose consent
+  # screen is "External" — the Calendar client's is "Internal" (kleer.la
+  # accounts only), and Google answers 403 org_internal to anyone else. Falls
+  # back to the Calendar client where the handoff one is not configured yet.
+  # Scopes are per request, so this asks for identity only.
+  config.omniauth :google_oauth2,
+                  ENV['HANDOFF_GOOGLE_CLIENT_ID'].presence || ENV.fetch('GOOGLE_CLIENT_ID', nil),
+                  ENV['HANDOFF_GOOGLE_CLIENT_SECRET'].presence || ENV.fetch('GOOGLE_CLIENT_SECRET', nil),
                   scope: 'openid,email,profile', prompt: 'select_account'
 
   # ==> Warden configuration
