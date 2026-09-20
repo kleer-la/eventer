@@ -64,5 +64,9 @@ end
 # Doorkeeper's consent screen has no layout of its own; reuse the Devise one so
 # it looks like the rest of the admin login flow.
 Rails.application.config.to_prepare do
-  Doorkeeper::AuthorizationsController.layout 'devise'
+  # The consent page wears the layout of whoever is authorizing: the handoff
+  # scope belongs to the session-handoff pages, everything else to the admin.
+  Doorkeeper::AuthorizationsController.layout(lambda do |controller|
+    controller.params[:scope].to_s.split.include?('handoff') ? 'handoff' : 'devise'
+  end)
 end

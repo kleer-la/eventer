@@ -1,0 +1,5 @@
+en:
+  doorkeeper:
+    scopes:
+      mcp: Read and edit Keventer content on your behalf, with your admin permissions
+      handoff: Generate audio briefings with your session-handoff account

@@ -1,0 +1,39 @@
+<%# Doorkeeper's consent page. The session-handoff connector (scope `handoff`,
+    a HandoffUser signed in with Google) gets its own, in Spanish and with a way
+    to change account; the admin MCP (scope `mcp`) keeps Doorkeeper's default. %>
+<% if @pre_auth.scopes.exists?('handoff') %>
+  <%= render 'doorkeeper/authorizations/handoff' %>
+<% else %>
+<header class="page-header" role="banner">
+  <h1><%= t('.title') %></h1>
+</header>
+
+<main role="main">
+  <p class="h4">
+    <%= raw t('.prompt', client_name: content_tag(:strong, class: 'text-info') { @pre_auth.client.name }) %>
+  </p>
+
+  <% if @pre_auth.scopes.count > 0 %>
+    <div id="oauth-permissions">
+      <p><%= t('.able_to') %></p>
+
+      <ul class="text-info">
+        <% @pre_auth.scopes.each do |scope| %>
+          <li><%= t scope, scope: [:doorkeeper, :scopes] %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form_tag oauth_authorization_path, method: :post do %>
+      <%= render 'doorkeeper/authorizations/pre_auth_fields' %>
+      <%= submit_tag t('doorkeeper.authorizations.buttons.authorize'), class: "btn btn-success btn-lg btn-block" %>
+    <% end %>
+    <%= form_tag oauth_authorization_path, method: :delete do %>
+      <%= render 'doorkeeper/authorizations/pre_auth_fields' %>
+      <%= submit_tag t('doorkeeper.authorizations.buttons.deny'), class: "btn btn-danger btn-lg btn-block" %>
+    <% end %>
+  </div>
+</main>
+<% end %>

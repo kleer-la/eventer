@@ -75,6 +75,49 @@ RSpec.describe 'Handoff MCP connector', type: :request do
       expect(Doorkeeper::AccessToken.by_token(token['access_token']).resource_owner).to eq handoff_user
     end
 
+    it 'shows a Spanish consent page naming the account, with a way to change it' do
+      sign_in handoff_user, scope: :handoff_user
+      get '/oauth/authorize', params: authorize_params
+
+      expect(response.body).to include(handoff_user.email, 'Cambiar de cuenta', 'Autorizar', 'Denegar', 'Claude')
+      expect(response.body).not_to include('translation missing')
+    end
+
+    it 'keeps the admin consent page as it was, with its scope translated' do
+      sign_in administrator
+      get '/oauth/authorize', params: authorize_params.merge(scope: 'mcp')
+
+      expect(response.body).to include('Authorize', 'Deny')
+      expect(response.body).not_to include('translation missing', 'Cambiar de cuenta')
+    end
+
+    it 'lets the person change account: sign out, Google again, back to the same authorization' do
+      OmniAuth.config.test_mode = true
+      OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
+        provider: 'google_oauth2', uid: 'other-uid', info: { email: 'otra@example.com', name: 'Otra' },
+        extra: { raw_info: { email_verified: true } }
+      )
+      sign_in handoff_user, scope: :handoff_user
+      authorize_url = "/oauth/authorize?#{authorize_params.to_query}"
+
+      delete handoff_sign_out_path(return_to: authorize_url)
+      expect(response).to redirect_to(handoff_sign_in_path)
+
+      post '/handoff/auth/google_oauth2'
+      follow_redirect!
+      expect(response).to redirect_to(authorize_url)
+      expect(HandoffUser.find_by(email: 'otra@example.com')).to be_present
+    ensure
+      OmniAuth.config.mock_auth[:google_oauth2] = nil
+    end
+
+    it 'ignores a return_to that is not an authorization' do
+      sign_in handoff_user, scope: :handoff_user
+
+      delete handoff_sign_out_path(return_to: 'https://evil.example/x')
+      expect(session['handoff_return_to']).to be_nil
+    end
+
     it 'does not let an admin session authorize the handoff scope' do
       sign_in administrator
       get '/oauth/authorize', params: authorize_params

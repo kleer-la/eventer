@@ -1,0 +1,23 @@
+<h1>Conectar <%= @pre_auth.client.name %> con session-handoff</h1>
+
+<p>Estás autorizando como <strong><%= current_handoff_user.email %></strong>.
+  <span class="muted">¿No sos vos?</span>
+  <%= button_to 'Cambiar de cuenta', handoff_sign_out_path(return_to: request.fullpath), method: :delete, class: 'secondary' %>
+</p>
+
+<p><%= @pre_auth.client.name %> va a poder:</p>
+<ul>
+  <li>Generar briefings de audio con tu cuenta (cuentan para tu cuota mensual).</li>
+</ul>
+<p class="muted">Nada más: no ve tu email en Google ni otros datos. Podés revocar la conexión cuando quieras.</p>
+
+<div class="actions">
+  <%= form_tag oauth_authorization_path, method: :post do %>
+    <%= render 'doorkeeper/authorizations/pre_auth_fields' %>
+    <%= submit_tag 'Autorizar' %>
+  <% end %>
+  <%= form_tag oauth_authorization_path, method: :delete do %>
+    <%= render 'doorkeeper/authorizations/pre_auth_fields' %>
+    <%= submit_tag 'Denegar', class: 'danger' %>
+  <% end %>
+</div>
