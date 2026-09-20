@@ -2,10 +2,11 @@
 ActiveAdmin.register MailTemplate do
   menu parent: 'Mail'
   permit_params :trigger_type, :identifier, :subject, :content,
-                :delivery_schedule, :to, :cc, :active, :lang
+                :delivery_schedule, :to, :cc, :active, :lang, :resource_slug
 
   filter :trigger_type
   filter :identifier
+  filter :resource_slug
   filter :subject
   filter :active
   filter :delivery_schedule
@@ -17,6 +18,7 @@ ActiveAdmin.register MailTemplate do
     column :trigger_type
     column :identifier
     column :lang
+    column :resource_slug
     column :subject
     column :to
     column :delivery_schedule
@@ -30,6 +32,9 @@ ActiveAdmin.register MailTemplate do
       f.input :trigger_type
       f.input :identifier, hint: "Unique identifier for this template (e.g., 'contact_confirmation')"
       f.input :lang, as: :radio
+      f.input :resource_slug,
+              hint: 'Download form only. Set a resource slug to make this template that resource\'s own: ' \
+                    'it then replaces the generic download templates (those with no slug) for that resource.'
       f.input :subject
       f.input :content, as: :text,
                         hint: 'Available variables: {{name}}, {{email}}, {{message}}, {{page}}, {{resource_slug}}. {{resource_getit_en}}, {{resource_getit_es}}, {{resource_title_en}}, {{resource_title_es}}'
@@ -46,6 +51,7 @@ ActiveAdmin.register MailTemplate do
       row :trigger_type
       row :identifier
       row :lang
+      row :resource_slug
       row :subject
       row :content do |template|
         content_tag :pre, template.content

@@ -10,6 +10,16 @@ class MailTemplate < ApplicationRecord
   validates :content, presence: true
   validates :delivery_schedule, presence: true
 
+  # The templates to send for a contact: the immediate, active ones of its
+  # trigger type and language — and, for a download, the resource's own when it
+  # has any (resource_slug), the generic ones (no resource_slug) otherwise.
+  def self.for(contact)
+    candidates = where(trigger_type: contact.trigger_type, lang: (contact.form_data['language'] || 'es').to_sym,
+                       active: true, delivery_schedule: 'immediate')
+    own = contact.resource_slug.present? ? candidates.where(resource_slug: contact.resource_slug) : none
+    own.any? ? own : candidates.where(resource_slug: nil)
+  end
+
   def render_content(contact)
     render_field(:content, contact)
   end
@@ -20,7 +30,7 @@ class MailTemplate < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[active cc content created_at delivery_schedule id id_value identifier subject to
+    %w[active cc content created_at delivery_schedule id id_value identifier resource_slug subject to
        trigger_type updated_at]
   end
 

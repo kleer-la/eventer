@@ -1,6 +1,47 @@
 require 'rails_helper'
 
 RSpec.describe MailTemplate, type: :model do
+  describe '.for' do
+    def template(identifier, lang: 'es', resource_slug: nil, **attrs)
+      defaults = { identifier: identifier, trigger_type: 'download_form', lang: lang, resource_slug: resource_slug,
+                   active: true, delivery_schedule: 'immediate' }
+      create(:mail_template, defaults.merge(attrs))
+    end
+
+    def download_of(slug, language: 'es')
+      Contact.create!(trigger_type: :download_form, email: 'ana@example.com',
+                      form_data: { 'resource_slug' => slug, 'language' => language })
+    end
+
+    it 'prefers the templates of the contact resource over the generic ones' do
+      generic = template('generic_es')
+      own = template('handoff_es', resource_slug: 'session-handoff')
+      template('other_es', resource_slug: 'otro-recurso')
+
+      expect(described_class.for(download_of('session-handoff'))).to eq [own]
+      expect(described_class.for(download_of('otro-recurso'))).not_to include(generic, own)
+      expect(described_class.for(download_of('guia-x'))).to eq [generic]
+    end
+
+    it 'respects language, activity and schedule' do
+      template('handoff_en', lang: 'en', resource_slug: 'session-handoff')
+      template('handoff_es_off', resource_slug: 'session-handoff', active: false)
+      template('handoff_es_daily', resource_slug: 'session-handoff', delivery_schedule: 'daily')
+      generic = template('generic_es')
+
+      expect(described_class.for(download_of('session-handoff', language: 'en')).map(&:identifier)).to eq ['handoff_en']
+      # No immediate, active Spanish template of its own: the generic one applies
+      expect(described_class.for(download_of('session-handoff'))).to eq [generic]
+    end
+
+    it 'defaults to Spanish when the contact has no language' do
+      generic = template('generic_es')
+      contact = Contact.create!(trigger_type: :download_form, email: 'a@b.c', form_data: { 'resource_slug' => 'x' })
+
+      expect(described_class.for(contact)).to eq [generic]
+    end
+  end
+
   describe 'validations' do
     let(:template) { build(:mail_template) }
 

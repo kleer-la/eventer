@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_000000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -422,12 +422,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_230000) do
     t.integer "delivery_schedule", default: 0
     t.string "identifier", null: false
     t.integer "lang", default: 0, null: false
+    t.string "resource_slug"
     t.string "subject", null: false
     t.string "to", null: false
     t.integer "trigger_type", null: false
     t.datetime "updated_at", null: false
     t.index ["delivery_schedule"], name: "index_mail_templates_on_delivery_schedule"
     t.index ["identifier"], name: "index_mail_templates_on_identifier", unique: true
+    t.index ["resource_slug"], name: "index_mail_templates_on_resource_slug"
     t.index ["trigger_type"], name: "index_mail_templates_on_trigger_type"
   end
 
