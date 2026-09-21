@@ -16,4 +16,15 @@ class AuthenticatedTool < ApplicationTool
   def self.requires_permission(action, subject)
     authorize { ability.can?(action, subject) }
   end
+
+  # Tools that bundle several operations (`operation: list | get | ...`) are
+  # authorized for reading as a whole and check each write here, with the
+  # same rules ability.rb gives the admin screens.
+  def unauthorized(action, subject)
+    error("Unauthorized: you are not allowed to #{action} #{subject.model_name.human.downcase.pluralize}")
+  end
+
+  def unknown_operation(operation)
+    error("Unknown operation #{operation.inspect}. Valid ones: #{self.class::OPERATIONS.join(', ')}")
+  end
 end

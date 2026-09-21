@@ -16,5 +16,4 @@ class HandoffTool < ApplicationTool
 
   private
 
-  def error(message) = { status: 'error', errors: [message] }.to_json
 end

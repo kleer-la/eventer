@@ -59,6 +59,9 @@ class ApplicationTool < ActionTool::Base
     super
   end
 
+  # The error every tool answers with when it cannot do what was asked.
+  def error(message) = { status: 'error', errors: [message] }.to_json
+
   def current_user
     return @current_user if defined?(@current_user)
 

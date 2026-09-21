@@ -65,7 +65,7 @@ class MailTemplatesTool < AuthenticatedTool
     when 'get' then get(id, resource_slug: fields[:resource_slug])
     when 'update' then write(find(id), confirm: confirm, **fields)
     when 'create' then write(nil, confirm: confirm, **{ to: '{{email}}' }.merge(fields))
-    else error("Unknown operation #{operation.inspect}. Valid ones: #{OPERATIONS.join(', ')}")
+    else unknown_operation(operation)
     end
   rescue ActiveRecord::RecordNotFound
     error("No mail template with identifier or id #{id.inspect}")
@@ -93,7 +93,7 @@ class MailTemplatesTool < AuthenticatedTool
 
   def write(template, confirm:, **fields)
     action = template ? :update : :create
-    return error("You are not allowed to #{action} mail templates") unless ability.can?(action, MailTemplate)
+    return unauthorized(action, MailTemplate) unless ability.can?(action, MailTemplate)
 
     MailTemplateWriteService.new(ability: ability, record: template, **fields).call(confirm: confirm).to_json
   end
@@ -120,5 +120,4 @@ class MailTemplatesTool < AuthenticatedTool
     Contact.new(trigger_type: :download_form, email: form_data['email'], form_data: form_data)
   end
 
-  def error(message) = { status: 'error', errors: [message] }.to_json
 end

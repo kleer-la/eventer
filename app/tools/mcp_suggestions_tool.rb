@@ -57,5 +57,4 @@ class McpSuggestionsTool < AuthenticatedTool
       reported_by: suggestion.reported_by&.email, created_at: suggestion.created_at }
   end
 
-  def error(message) = { status: 'error', errors: [message] }.to_json
 end

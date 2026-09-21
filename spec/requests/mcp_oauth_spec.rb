@@ -67,13 +67,13 @@ RSpec.describe 'OAuth for MCP clients', type: :request do
     expect(token['refresh_token']).to be_present
 
     access_token = token['access_token']
-    expect(ListArticlesTool.new(headers: { 'authorization' => "Bearer #{access_token}" }).current_user)
+    expect(ArticlesTool.new(headers: { 'authorization' => "Bearer #{access_token}" }).current_user)
       .to eq(administrator)
     expect(OauthAccess.valid?(access_token)).to be(true)
 
     Doorkeeper::AccessToken.by_token(access_token).revoke
     expect(OauthAccess.valid?(access_token)).to be(false)
-    expect(ListArticlesTool.new(headers: { 'authorization' => "Bearer #{access_token}" }).current_user).to be_nil
+    expect(ArticlesTool.new(headers: { 'authorization' => "Bearer #{access_token}" }).current_user).to be_nil
   end
 
   it 'requires PKCE and only allows http redirect uris on localhost' do

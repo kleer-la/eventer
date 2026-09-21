@@ -38,7 +38,7 @@ RSpec.describe 'MCP server', type: :request do
     expect(response).to have_http_status(:accepted)
 
     post '/mcp', params: rpc('tools/list', nil, id: 2), headers: headers
-    expect(response.parsed_body['result']['tools'].pluck('name')).to include('list_articles', 'get_article')
+    expect(response.parsed_body['result']['tools'].pluck('name')).to include('articles', 'resources')
 
     get '/mcp', headers: headers
     expect(response).to have_http_status(:method_not_allowed)
@@ -48,29 +48,29 @@ RSpec.describe 'MCP server', type: :request do
     create(:article, title: 'Kanban en equipos', lang: 'es', published: true)
     create(:article, title: 'Draft about Scrum', lang: 'en', published: false)
 
-    listing = JSON.parse(call_tool('list_articles').dig('result', 'content', 0, 'text'))
+    listing = JSON.parse(call_tool('articles').dig('result', 'content', 0, 'text'))
     expect(listing).to include('returned' => 2, 'total' => 2)
     expect(listing).not_to include('truncated')
 
-    published = JSON.parse(call_tool('list_articles', { published: true }).dig('result', 'content', 0, 'text'))
+    published = JSON.parse(call_tool('articles', { operation: 'list', published: true }).dig('result', 'content', 0, 'text'))
     expect(published['articles'].pluck('title')).to eq(['Kanban en equipos'])
 
-    matched = JSON.parse(call_tool('list_articles', { query: 'Scrum' }).dig('result', 'content', 0, 'text'))
+    matched = JSON.parse(call_tool('articles', { operation: 'list', query: 'Scrum' }).dig('result', 'content', 0, 'text'))
     expect(matched['articles'].pluck('title')).to eq(['Draft about Scrum'])
 
     article = create(:article, title: 'Full text', body: 'The whole body')
-    fetched = JSON.parse(call_tool('get_article', { id: article.slug }).dig('result', 'content', 0, 'text'))
+    fetched = JSON.parse(call_tool('articles', { operation: 'get', id: article.slug }).dig('result', 'content', 0, 'text'))
     expect(fetched).to include('slug' => article.slug, 'body' => 'The whole body')
 
-    missing = JSON.parse(call_tool('get_article', { id: 'no-such-article' }).dig('result', 'content', 0, 'text'))
-    expect(missing['error']).to eq('not_found')
+    missing = JSON.parse(call_tool('articles', { operation: 'get', id: 'no-such-article' }).dig('result', 'content', 0, 'text'))
+    expect(missing['status']).to eq('error')
   end
 
   it 'names an argument it does not know, instead of leaking a Ruby backtrace' do
-    answer = JSON.parse(call_tool('get_article', { id: 'x', fields: 'title' }).dig('result', 'content', 0, 'text'))
+    answer = JSON.parse(call_tool('articles', { operation: 'get', id: 'x', fields: 'title' }).dig('result', 'content', 0, 'text'))
 
     expect(answer['status']).to eq('error')
-    expect(answer['errors'].join).to include('fields').and include('get_article takes: id')
+    expect(answer['errors'].join).to include('fields').and include('articles takes: operation')
     expect(answer.to_s).not_to include('.rb:')
   end
 
@@ -78,7 +78,7 @@ RSpec.describe 'MCP server', type: :request do
     user.roles.destroy_all
     create(:article)
 
-    expect(call_tool('list_articles').to_s).to include('Unauthorized')
+    expect(call_tool('articles').to_s).to include('Unauthorized')
   end
 
   it 'refuses a revoked token' do
