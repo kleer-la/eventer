@@ -2,9 +2,10 @@
 
 require 'rails_helper'
 
-# Mail template tools over MCP: the emails the site's forms trigger, readable
-# with a rendered sample and editable with the same preview/confirm as content.
-RSpec.describe 'MCP mail template tools', type: :request do
+# The mail_templates tool over MCP — one tool, four operations — for the emails
+# the site's forms trigger: readable with a rendered sample, editable with the
+# same preview/confirm as content.
+RSpec.describe 'MCP mail_templates tool', type: :request do
   let(:user) { create(:administrator) }
   let(:oauth_application) do
     Doorkeeper::Application.create!(name: 'Claude', redirect_uri: 'https://claude.ai/api/mcp/auth_callback',
@@ -35,23 +36,23 @@ RSpec.describe 'MCP mail template tools', type: :request do
                            content: 'Go to {{resource_getit_en}}')
   end
 
-  describe 'list_mail_templates' do
+  describe 'operation=list (the default)' do
     it 'lists them with what decides when they are sent, and filters' do
-      result = call_tool('list_mail_templates')
+      result = call_tool('mail_templates')
       expect(result['total']).to eq 2
       expect(result['templates'].first.keys).to include('id', 'identifier', 'trigger_type', 'lang', 'resource_slug',
                                                         'subject', 'to', 'active', 'delivery_schedule')
 
-      expect(call_tool('list_mail_templates', { resource_slug: 'session-handoff' })['templates']
+      expect(call_tool('mail_templates', { operation: 'list', resource_slug: 'session-handoff' })['templates']
                .map { |t| t['identifier'] }).to eq ['session_handoff_en']
-      expect(call_tool('list_mail_templates', { lang: 'es' })['templates'].map { |t| t['identifier'] })
+      expect(call_tool('mail_templates', { operation: 'list', lang: 'es' })['templates'].map { |t| t['identifier'] })
         .to eq ['descarga_recurso']
     end
   end
 
-  describe 'get_mail_template' do
+  describe 'operation=get' do
     it 'returns the template and how it renders for a sample contact' do
-      result = call_tool('get_mail_template', { id: 'descarga_recurso' })
+      result = call_tool('mail_templates', { operation: 'get', id: 'descarga_recurso' })
 
       expect(result['content']).to include('{{resource_getit_es}}')
       expect(result['rendered']['subject']).to eq 'Descarga de Recurso de ejemplo'
@@ -62,25 +63,26 @@ RSpec.describe 'MCP mail template tools', type: :request do
     it 'renders with a real resource when given its slug' do
       create(:resource, slug: 'guia-x', title_es: 'Guía X', getit_es: 'https://files.example/guia-x.pdf')
 
-      result = call_tool('get_mail_template', { id: generic.id.to_s, resource_slug: 'guia-x' })
+      result = call_tool('mail_templates', { operation: 'get', id: generic.id.to_s, resource_slug: 'guia-x' })
 
       expect(result['rendered']['subject']).to eq 'Descarga de Guía X'
       expect(result['rendered']['content']).to include('https://files.example/guia-x.pdf')
     end
 
     it 'answers an error for one that does not exist' do
-      expect(call_tool('get_mail_template', { id: 'nope' })['status']).to eq 'error'
+      expect(call_tool('mail_templates', { operation: 'get', id: 'nope' })['status']).to eq 'error'
     end
   end
 
-  describe 'update_mail_template' do
+  describe 'operation=update' do
     it 'previews, then saves on confirm, and patches content with replacements' do
-      result = call_tool('update_mail_template', { id: 'descarga_recurso', subject: 'Tu descarga' })
+      result = call_tool('mail_templates',
+                         { operation: 'update', id: 'descarga_recurso', subject: 'Tu descarga' })
       expect(result['status']).to eq 'preview'
       expect(generic.reload.subject).to eq 'Descarga de {{resource_title_es}}'
 
-      result = call_tool('update_mail_template',
-                         { id: 'descarga_recurso', subject: 'Tu descarga', confirm: true,
+      result = call_tool('mail_templates',
+                         { operation: 'update', id: 'descarga_recurso', subject: 'Tu descarga', confirm: true,
                            replacements: [{ field: 'content', find: 'Descargar', replace: 'Bajar el recurso' }] })
       expect(result['status']).to eq 'saved'
       expect(generic.reload).to have_attributes(subject: 'Tu descarga')
@@ -88,13 +90,15 @@ RSpec.describe 'MCP mail template tools', type: :request do
     end
 
     it 'warns when a Liquid variable in the content is not one the form provides' do
-      result = call_tool('update_mail_template', { id: 'descarga_recurso', content: 'Hola {{nombre}}' })
+      result = call_tool('mail_templates',
+                         { operation: 'update', id: 'descarga_recurso', content: 'Hola {{nombre}}' })
 
       expect(result['warnings'].join).to include('nombre')
     end
 
     it 'can clear the resource slug, making the template generic again' do
-      call_tool('update_mail_template', { id: 'session_handoff_en', resource_slug: '', confirm: true })
+      call_tool('mail_templates',
+                { operation: 'update', id: 'session_handoff_en', resource_slug: '', confirm: true })
 
       expect(own.reload.resource_slug).to eq ''
     end
@@ -103,18 +107,27 @@ RSpec.describe 'MCP mail template tools', type: :request do
       let(:user) { create(:content_user) }
 
       it 'can read but not write' do
-        expect(call_tool('get_mail_template', { id: 'descarga_recurso' })['content']).to be_present
-        expect(call_tool('update_mail_template', { id: 'descarga_recurso', subject: 'x', confirm: true })
-                 .dig('error', 'message')).to eq('Unauthorized')
+        expect(call_tool('mail_templates', { operation: 'get', id: 'descarga_recurso' })['content']).to be_present
+        result = call_tool('mail_templates',
+                           { operation: 'update', id: 'descarga_recurso', subject: 'x', confirm: true })
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to match(/not allowed/i)
       end
     end
   end
 
-  describe 'create_mail_template' do
+  it 'names the operations it knows when given another' do
+    result = call_tool('mail_templates', { operation: 'send' })
+
+    expect(result['status']).to eq('error')
+    expect(result['errors'].join).to include('list', 'get', 'update', 'create')
+  end
+
+  describe 'operation=create' do
     it 'creates a template of a resource own, unpublished until active' do
-      result = call_tool('create_mail_template',
-                         { identifier: 'session_handoff_es', trigger_type: 'download_form', lang: 'es',
-                           resource_slug: 'session-handoff', subject: 'Tu acceso', to: '{{email}}',
+      result = call_tool('mail_templates',
+                         { operation: 'create', identifier: 'session_handoff_es', trigger_type: 'download_form',
+                           lang: 'es', resource_slug: 'session-handoff', subject: 'Tu acceso', to: '{{email}}',
                            content: 'Entrá en {{resource_getit_es}} con {{email}}', confirm: true })
 
       expect(result['status']).to eq 'saved'
@@ -124,9 +137,9 @@ RSpec.describe 'MCP mail template tools', type: :request do
     end
 
     it 'reports validation errors instead of saving' do
-      result = call_tool('create_mail_template',
-                         { identifier: 'descarga_recurso', trigger_type: 'download_form', lang: 'es',
-                           subject: 'x', to: '{{email}}', content: 'y', confirm: true })
+      result = call_tool('mail_templates',
+                         { operation: 'create', identifier: 'descarga_recurso', trigger_type: 'download_form',
+                           lang: 'es', subject: 'x', to: '{{email}}', content: 'y', confirm: true })
 
       expect(result['status']).to eq 'error'
       expect(result['errors'].join).to match(/identifier/i)
