@@ -21,7 +21,7 @@ class UpdateMailTemplateTool < AuthenticatedTool
     optional(:trigger_type).filled(:string).description('contact_form | download_form')
     optional(:lang).filled(:string).description("'es' or 'en'")
     optional(:resource_slug).value(:string)
-                            .description("download_form only: the resource this template belongs to; \"\" = generic")
+                            .description('download_form only: the resource this template belongs to; "" = generic')
     optional(:subject).filled(:string).description('Subject; Liquid variables allowed')
     optional(:content).filled(:string).description('Body (HTML); Liquid variables allowed')
     optional(:to).filled(:string).description('Recipient, usually {{email}}')
