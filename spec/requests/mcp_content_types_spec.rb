@@ -31,22 +31,22 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       published = create(:news, title: 'Charla en Buenos Aires', published: true)
       create(:news, title: 'Borrador interno', published: false)
 
-      expect(call_tool('list_news')['returned']).to eq(2)
-      expect(call_tool('list_news', { published: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
-      expect(call_tool('get_news_item', { id: published.id })['where']).to eq('Buenos Aires, Argentina')
-      expect(call_tool('get_news_item', { id: 0 })['errors'].join).to include('No news item')
+      expect(call_tool('news')['returned']).to eq(2)
+      expect(call_tool('news', { operation: 'list', published: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
+      expect(call_tool('news', { operation: 'get', id: published.id })['where']).to eq('Buenos Aires, Argentina')
+      expect(call_tool('news', { operation: 'get', id: 0 })['errors'].join).to include('No news item')
     end
 
     it 'creates it unpublished by default and publishes it only when asked' do
-      result = call_tool('create_news', { title: 'Nueva charla' })
+      result = call_tool('news', { operation: 'create', title: 'Nueva charla' })
       expect(result['status']).to eq('preview')
       expect(News.count).to eq(0)
 
-      result = call_tool('create_news', { title: 'Nueva charla', confirm: true })
+      result = call_tool('news', { operation: 'create', title: 'Nueva charla', confirm: true })
       expect(result['status']).to eq('saved')
       expect(News.last.published).to be(false)
 
-      call_tool('update_news', { id: News.last.id, published: true, confirm: true })
+      call_tool('news', { operation: 'update', id: News.last.id, published: true, confirm: true })
       expect(News.last.published).to be(true)
     end
 
@@ -55,7 +55,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
       it 'may publish a news item: unlike articles, that carries no separate permission' do
         item = create(:news, published: false)
-        result = call_tool('update_news', { id: item.id, published: true, confirm: true })
+        result = call_tool('news', { operation: 'update', id: item.id, published: true, confirm: true })
 
         expect(result['status']).to eq('saved')
         expect(item.reload.published).to be(true)
@@ -65,20 +65,20 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
   describe 'podcasts and episodes' do
     it 'creates a podcast, summarises its rich-text description, and adds episodes' do
-      result = call_tool('create_podcast', { title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>' })
+      result = call_tool('podcasts', { operation: 'create', title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>' })
       expect(result['changes']['description']).to include('to_length', 'new_beginning')
 
-      podcast_id = call_tool('create_podcast', { title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>',
+      podcast_id = call_tool('podcasts', { operation: 'create', title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>',
                                                  confirm: true })['id']
       expect(Podcast.find(podcast_id).description_body).to include('Sobre agilidad')
 
       episode = { podcast_id: podcast_id, title: 'Piloto', description: '<p>Primero</p>',
                   season: 1, episode: 1, released_at: '2026-08-01' }
-      expect(call_tool('create_episode', episode.merge(confirm: true))['status']).to eq('saved')
+      expect(call_tool('podcasts', episode.merge(operation: 'create_episode', confirm: true))['status']).to eq('saved')
 
-      listing = call_tool('get_podcast', { id: podcast_id })
+      listing = call_tool('podcasts', { operation: 'get', id: podcast_id })
       expect(listing['episodes'].first).to include('season' => 1, 'episode' => 1, 'title' => 'Piloto')
-      expect(call_tool('list_podcasts')['podcasts'].first['episodes']).to eq(1)
+      expect(call_tool('podcasts')['podcasts'].first['episodes']).to eq(1)
     end
 
     it 'keeps an episode off the site until it is published, apart from when it was released' do
@@ -86,20 +86,20 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       episode = { podcast_id: podcast.id, title: 'Piloto', description: '<p>x</p>', season: 1, episode: 1,
                   released_at: '2026-08-01' }
 
-      expect(call_tool('create_episode', episode.merge(confirm: true))['status']).to eq('saved')
+      expect(call_tool('podcasts', episode.merge(operation: 'create_episode', confirm: true))['status']).to eq('saved')
       expect(Episode.last.published).to be(false)
       expect(Episode.last.released_at).to eq(Date.new(2026, 8, 1))
 
-      call_tool('update_episode', { id: Episode.last.id, published: true, confirm: true })
+      call_tool('podcasts', { operation: 'update_episode', id: Episode.last.id, published: true, confirm: true })
       expect(Episode.last.published).to be(true)
-      expect(call_tool('get_podcast', { id: podcast.id })['episodes'].first)
+      expect(call_tool('podcasts', { operation: 'get', id: podcast.id })['episodes'].first)
         .to include('published' => true, 'released_at' => '2026-08-01')
     end
 
     it 'caps the listing with limit, like the other list tools' do
       3.times { |i| Podcast.create!(title: "Podcast #{i}", description: '<p>x</p>') }
 
-      expect(call_tool('list_podcasts', { limit: 2 })['podcasts'].size).to eq(2)
+      expect(call_tool('podcasts', { operation: 'list', limit: 2 })['podcasts'].size).to eq(2)
     end
 
     it 'warns before repeating a season and episode number' do
@@ -107,7 +107,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       podcast.episodes.create!(title: 'Piloto', description: '<p>x</p>', season: 1, episode: 1,
                                released_at: Date.new(2026, 8, 1))
 
-      result = call_tool('create_episode', { podcast_id: podcast.id, title: 'Repetido',
+      result = call_tool('podcasts', { operation: 'create_episode', podcast_id: podcast.id, title: 'Repetido',
                                              description: '<p>y</p>', season: 1, episode: 1,
                                              released_at: '2026-08-08' })
 
@@ -172,14 +172,14 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       create(:page, name: 'Home', lang: :es, template: 'overlay')
       create(:page, name: 'Landing', lang: :es, template: 'flagship')
 
-      expect(call_tool('list_pages', { template: 'flagship' })['pages'].pluck('name')).to eq(['Landing'])
-      expect(call_tool('list_pages', { template: 'inventado' })['errors'].join).to include('overlay')
+      expect(call_tool('pages', { operation: 'list', template: 'flagship' })['pages'].pluck('name')).to eq(['Landing'])
+      expect(call_tool('pages', { operation: 'list', template: 'inventado' })['errors'].join).to include('overlay')
     end
 
     it 'caps the listing with limit, and says so rather than passing 2 of 3 off as all of them' do
       3.times { |i| create(:page, name: "Página #{i}", lang: :es, template: 'overlay') }
 
-      result = call_tool('list_pages', { limit: 2 })
+      result = call_tool('pages', { operation: 'list', limit: 2 })
 
       expect(result['pages'].size).to eq(2)
       expect(result).to include('returned' => 2, 'total' => 3, 'truncated' => true)
@@ -190,28 +190,28 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       preview = create(:page, name: 'Landing v2', lang: :es, template: 'flagship')
       expect(preview.noindex).to be(false)
 
-      result = call_tool('update_page', { id: preview.id, noindex: true, confirm: true })
+      result = call_tool('pages', { operation: 'update', id: preview.id, noindex: true, confirm: true })
 
       expect(result['status']).to eq('saved')
       expect(preview.reload.noindex).to be(true)
     end
 
     it 'creates a page and returns its sections when read' do
-      result = call_tool('create_page', { name: 'Nueva landing', lang: 'es', template: 'flagship',
+      result = call_tool('pages', { operation: 'create', name: 'Nueva landing', lang: 'es', template: 'flagship',
                                           confirm: true })
       expect(result['status']).to eq('saved')
 
       page = Page.find(result['id'])
       page.sections.create!(title: 'Intro', position: 1, content: 'Hola')
 
-      read = call_tool('get_page', { id: page.id })
+      read = call_tool('pages', { operation: 'get', id: page.id })
       expect(read['template']).to eq('flagship')
       expect(read['sections'].first).to include('title' => 'Intro', 'position' => 1)
     end
 
     it 'allows the same slug in each language' do
-      call_tool('create_page', { name: 'Contacto', lang: 'es', slug: 'contacto', confirm: true })
-      result = call_tool('create_page', { name: 'Contact', lang: 'en', slug: 'contacto', confirm: true })
+      call_tool('pages', { operation: 'create', name: 'Contacto', lang: 'es', slug: 'contacto', confirm: true })
+      result = call_tool('pages', { operation: 'create', name: 'Contact', lang: 'en', slug: 'contacto', confirm: true })
 
       expect(result['status']).to eq('saved')
       expect(Page.where(slug: 'contacto').count).to eq(2)
