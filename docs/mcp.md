@@ -30,7 +30,7 @@ Claude Code: tiene que listar los tools.
 ## Qué se puede hacer
 
 Una tool por entidad, y `operation` dice qué hacer con ella: el conector lista
-cada tool como un permiso por usuario, así que son 16 y no 49.
+cada tool como un permiso por usuario, así que son 17 y no 49.
 
 | Tool | Operaciones |
 |---|---|
@@ -44,6 +44,7 @@ cada tool como un permiso por usuario, así que son 16 y no 49.
 | `recommendations` | `list`, `add`, `remove` — qué recomienda un contenido |
 | `images` | `list`, `find_usage`, `upload` (sólo desde una URL pública) |
 | `mail_templates` | `list`, `get` (con el render para un contacto de muestra), `update`, `create` |
+| `contacts` | `search`, `get` — lo que mandaron los formularios del sitio (mensajes, descargas, assessments); sólo lectura |
 | `event_types`, `events`, `participants` | ver *Cursos y certificados* |
 | `refresh_website_cache` | el sitio recarga lo que cachea de acá |
 | `suggest_mcp_improvement`, `mcp_suggestions` | registrar fricción de una sesión, y triagearla |
