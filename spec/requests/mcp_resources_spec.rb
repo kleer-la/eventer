@@ -104,6 +104,38 @@ RSpec.describe 'MCP resource tools', type: :request do
       expect(resource.reload.title_en).to eq('New')
     end
 
+    it 'clears a link or a metadata field when given an empty string' do
+      resource.update!(getit_es: 'https://x.example/file.pdf', landing_en: 'https://x.example/page', tags_es: 'a, b')
+
+      result = call_tool('update_resource',
+                         { id: resource.slug, getit_es: '', landing_en: '', tags_es: '', confirm: true })
+
+      expect(result['status']).to eq('saved')
+      expect(resource.reload).to have_attributes(getit_es: '', landing_en: '', tags_es: '')
+    end
+
+    it 'still refuses an empty Spanish title' do
+      post '/mcp', params: { jsonrpc: '2.0', method: 'tools/call', id: 1,
+                             params: { name: 'update_resource',
+                                       arguments: { id: resource.slug, title_es: '', confirm: true } } }.to_json,
+                   headers: headers
+
+      expect(response.parsed_body.dig('result', 'isError')).to be(true)
+      expect(response.parsed_body.dig('result', 'content', 0, 'text')).to include('title_es')
+      expect(resource.reload.title_es).to eq('Viejo')
+    end
+
+    it 'tells what the site does with each link' do
+      post '/mcp', params: { jsonrpc: '2.0', method: 'tools/list', id: 1 }.to_json, headers: headers
+      tools = response.parsed_body.dig('result', 'tools').index_by { |t| t['name'] }
+
+      %w[create_resource update_resource].each do |name|
+        properties = tools[name].dig('inputSchema', 'properties')
+        expect(properties.dig('getit_es', 'description')).to match(/download form/i)
+        expect(properties.dig('landing_es', 'description')).to match(/button/i)
+      end
+    end
+
     context 'as a content user' do
       let(:user) { create(:content_user) }
 

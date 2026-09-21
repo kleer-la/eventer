@@ -9,6 +9,7 @@ Metrics/BlockLength:
   AllowedMethods:
     - 'describe'
     - 'context'
+    - 'arguments' # an MCP tool's argument declarations: a schema, one line per field
   Exclude:
     - 'spec/factories.rb'
     - 'config/routes.rb'

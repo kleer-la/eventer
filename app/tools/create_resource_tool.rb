@@ -31,12 +31,17 @@ class CreateResourceTool < AuthenticatedTool
     optional(:long_description_en).filled(:string).description('English long description')
     optional(:cover_es).filled(:string).description('Spanish cover image URL')
     optional(:cover_en).filled(:string).description('English cover image URL')
-    optional(:getit_es).filled(:string).description('Spanish download link; having one makes it downloadable')
-    optional(:getit_en).filled(:string).description('English download link')
+    optional(:getit_es).filled(:string)
+                       .description('Spanish download link. On the site it turns the page into a download form ' \
+                                    '(name, email, reCAPTCHA) and the link is sent by email; the resource counts as ' \
+                                    'downloadable. Leave it out for a page without the form')
+    optional(:getit_en).filled(:string).description('English download link (see getit_es)')
     optional(:buyit_es).filled(:string).description('Spanish purchase link')
     optional(:buyit_en).filled(:string).description('English purchase link')
-    optional(:landing_es).filled(:string).description('Spanish landing page URL')
-    optional(:landing_en).filled(:string).description('English landing page URL')
+    optional(:landing_es).filled(:string)
+                         .description("Spanish landing page URL. With no getit, the site shows a 'Más info' button " \
+                                      'linking here; a youtu.be URL is embedded as a video instead')
+    optional(:landing_en).filled(:string).description('English landing page URL (see landing_es)')
     optional(:tags_es).filled(:string).description('Spanish tags')
     optional(:tags_en).filled(:string).description('English tags')
     optional(:published).filled(:bool).description('Publish on creation. Needs publishing rights')

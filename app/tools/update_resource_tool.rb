@@ -14,7 +14,8 @@ class UpdateResourceTool < AuthenticatedTool
     can edit but not publish, as in the admin screens.
 
     Fields ending in _es and _en are the Spanish and English sides of the same
-    thing; the Spanish title and description are the required ones.
+    thing; the Spanish title and description are the required ones. Any other
+    text field can be emptied by passing "".
 
     To change part of a long text, prefer `replacements` over resending it. It
     patches long_description_es, long_description_en, comments_es and
@@ -24,35 +25,40 @@ class UpdateResourceTool < AuthenticatedTool
   arguments do
     required(:id).filled(:string).description('Resource slug (preferred) or numeric id')
     optional(:title_es).filled(:string).description('Spanish title, 2 to 100 characters')
-    optional(:title_en).filled(:string).description('English title')
+    optional(:title_en).value(:string).description('English title')
     optional(:description_es).filled(:string).description('Spanish summary, at most 220 characters')
-    optional(:description_en).filled(:string).description('English summary')
+    optional(:description_en).value(:string).description('English summary')
     optional(:format).filled(:string)
                      .description('card | book | infographic | canvas | guide | game | assessment | video | other')
     optional(:category).filled(:string).description('Category name')
     optional(:slug).filled(:string).description('URL slug')
-    optional(:long_description_es).filled(:string).description('Spanish long description')
-    optional(:long_description_en).filled(:string).description('English long description')
-    optional(:comments_es).filled(:string).description('Spanish notes shown on the page')
-    optional(:comments_en).filled(:string).description('English notes shown on the page')
-    optional(:cover_es).filled(:string).description('Spanish cover image URL')
-    optional(:cover_en).filled(:string).description('English cover image URL')
-    optional(:getit_es).filled(:string).description('Spanish download link; having one makes it downloadable')
-    optional(:getit_en).filled(:string).description('English download link')
-    optional(:buyit_es).filled(:string).description('Spanish purchase link')
-    optional(:buyit_en).filled(:string).description('English purchase link')
-    optional(:landing_es).filled(:string).description('Spanish landing page URL')
-    optional(:landing_en).filled(:string).description('English landing page URL')
-    optional(:preview_es).filled(:string).description('Spanish preview link')
-    optional(:preview_en).filled(:string).description('English preview link')
-    optional(:share_text_es).filled(:string).description('Spanish sharing text')
-    optional(:share_text_en).filled(:string).description('English sharing text')
-    optional(:tags_es).filled(:string).description('Spanish tags')
-    optional(:tags_en).filled(:string).description('English tags')
-    optional(:seo_description_es).filled(:string).description('Spanish SEO description')
-    optional(:seo_description_en).filled(:string).description('English SEO description')
-    optional(:tabtitle_es).filled(:string).description('Spanish browser tab title')
-    optional(:tabtitle_en).filled(:string).description('English browser tab title')
+    optional(:long_description_es).value(:string).description('Spanish long description')
+    optional(:long_description_en).value(:string).description('English long description')
+    optional(:comments_es).value(:string).description('Spanish notes shown on the page')
+    optional(:comments_en).value(:string).description('English notes shown on the page')
+    optional(:cover_es).value(:string).description('Spanish cover image URL')
+    optional(:cover_en).value(:string).description('English cover image URL')
+    optional(:getit_es).value(:string)
+                       .description('Spanish download link. On the site it turns the page into a download form ' \
+                                    '(name, email, reCAPTCHA) and the link is sent by email; the resource counts as ' \
+                                    'downloadable. Leave it out for a page without the form')
+    optional(:getit_en).value(:string).description('English download link (see getit_es)')
+    optional(:buyit_es).value(:string).description('Spanish purchase link')
+    optional(:buyit_en).value(:string).description('English purchase link')
+    optional(:landing_es).value(:string)
+                         .description("Spanish landing page URL. With no getit, the site shows a 'Más info' button " \
+                                      'linking here; a youtu.be URL is embedded as a video instead')
+    optional(:landing_en).value(:string).description('English landing page URL (see landing_es)')
+    optional(:preview_es).value(:string).description('Spanish preview link')
+    optional(:preview_en).value(:string).description('English preview link')
+    optional(:share_text_es).value(:string).description('Spanish sharing text')
+    optional(:share_text_en).value(:string).description('English sharing text')
+    optional(:tags_es).value(:string).description('Spanish tags')
+    optional(:tags_en).value(:string).description('English tags')
+    optional(:seo_description_es).value(:string).description('Spanish SEO description')
+    optional(:seo_description_en).value(:string).description('English SEO description')
+    optional(:tabtitle_es).value(:string).description('Spanish browser tab title')
+    optional(:tabtitle_en).value(:string).description('English browser tab title')
     optional(:published).filled(:bool).description('Publish or unpublish. Needs publishing rights')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
