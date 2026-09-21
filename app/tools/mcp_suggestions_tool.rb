@@ -56,5 +56,4 @@ class McpSuggestionsTool < AuthenticatedTool
       proposal: suggestion.proposal, tools: suggestion.tools, resolution: suggestion.resolution,
       reported_by: suggestion.reported_by&.email, created_at: suggestion.created_at }
   end
-
 end

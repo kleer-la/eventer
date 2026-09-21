@@ -80,8 +80,9 @@ RSpec.describe 'MCP resource tools', type: :request do
     end
 
     it 'takes the SEO fields too, like update_resource' do
-      call_tool('resources', { operation: 'create', title_es: 'Con SEO', description_es: 'd', format: 'guide', slug: 'con-seo',
-                                     tabtitle_es: 'Pestaña', seo_description_es: 'Meta', confirm: true })
+      call_tool('resources', { operation: 'create', title_es: 'Con SEO', description_es: 'd', format: 'guide',
+                               slug: 'con-seo',
+                               tabtitle_es: 'Pestaña', seo_description_es: 'Meta', confirm: true })
 
       expect(Resource.find_by(slug: 'con-seo')).to have_attributes(tabtitle_es: 'Pestaña', seo_description_es: 'Meta')
     end
@@ -104,7 +105,8 @@ RSpec.describe 'MCP resource tools', type: :request do
     let!(:resource) { create(:resource, title_es: 'Viejo', published: false) }
 
     it 'summarises long fields and applies the change on confirm' do
-      result = call_tool('resources', { operation: 'update', id: resource.slug, long_description_es: 'Texto largo nuevo' })
+      result = call_tool('resources',
+                         { operation: 'update', id: resource.slug, long_description_es: 'Texto largo nuevo' })
       expect(result['changes']['long_description_es']).to include('from_length', 'to_length')
 
       call_tool('resources', { operation: 'update', id: resource.slug, title_en: 'New', confirm: true })
@@ -114,7 +116,9 @@ RSpec.describe 'MCP resource tools', type: :request do
     it 'clears a link or a metadata field when given an empty string' do
       resource.update!(getit_es: 'https://x.example/file.pdf', landing_en: 'https://x.example/page', tags_es: 'a, b')
 
-      result = call_tool('resources', { operation: 'update', id: resource.slug, getit_es: '', landing_en: '', tags_es: '', confirm: true })
+      result = call_tool('resources',
+                         { operation: 'update', id: resource.slug, getit_es: '', landing_en: '', tags_es: '',
+                           confirm: true })
 
       expect(result['status']).to eq('saved')
       expect(resource.reload).to have_attributes(getit_es: '', landing_en: '', tags_es: '')
@@ -145,7 +149,8 @@ RSpec.describe 'MCP resource tools', type: :request do
       let(:user) { create(:content_user) }
 
       it 'edits but refuses to publish' do
-        expect(call_tool('resources', { operation: 'update', id: resource.slug, title_es: 'Editado', confirm: true })['status'])
+        expect(call_tool('resources',
+                         { operation: 'update', id: resource.slug, title_es: 'Editado', confirm: true })['status'])
           .to eq('saved')
 
         result = call_tool('resources', { operation: 'update', id: resource.slug, published: true, confirm: true })

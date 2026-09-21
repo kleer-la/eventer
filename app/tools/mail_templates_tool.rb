@@ -119,5 +119,4 @@ class MailTemplatesTool < AuthenticatedTool
     end
     Contact.new(trigger_type: :download_form, email: form_data['email'], form_data: form_data)
   end
-
 end

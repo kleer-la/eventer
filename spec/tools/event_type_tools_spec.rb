@@ -21,9 +21,9 @@ describe 'event type MCP tools' do
     JSON.parse(tool.call(**args))
   end
 
-  describe GetEventTypeTool do
+  describe 'operation=get' do
     it 'returns the blocks that make up the page' do
-      result = run(described_class, id: event_type.slug)
+      result = run(EventTypesTool, operation: 'get', id: event_type.slug)
 
       expect(result['name']).to eq 'Taller de Prueba'
       expect(result['blocks']['description']).to include '/cursos/7-viejo'
@@ -33,29 +33,29 @@ describe 'event type MCP tools' do
     # The questions and answers are a block of the page like any other, and the
     # links inside them go stale the same way.
     it 'returns the questions and answers' do
-      result = run(described_class, id: event_type.slug)
+      result = run(EventTypesTool, operation: 'get', id: event_type.slug)
 
       expect(result['blocks']['faq']).to include '/cursos/7-viejo'
     end
 
     it 'says so when there is no such course' do
-      result = run(described_class, id: 'no-existe')
+      result = run(EventTypesTool, operation: 'get', id: 'no-existe')
 
       expect(result['status']).to eq 'error'
       expect(result['errors'].first).to include 'no-existe'
     end
   end
 
-  describe UpdateEventTypeTool do
+  describe 'operation=update' do
     it 'previews without saving' do
-      result = run(described_class, id: event_type.slug, subtitle: 'Nuevo subtítulo')
+      result = run(EventTypesTool, operation: 'update', id: event_type.slug, subtitle: 'Nuevo subtítulo')
 
       expect(result['status']).to eq 'preview'
       expect(event_type.reload.subtitle).to be_blank
     end
 
     it 'saves on confirm' do
-      run(described_class, id: event_type.slug, subtitle: 'Nuevo subtítulo', confirm: true)
+      run(EventTypesTool, operation: 'update', id: event_type.slug, subtitle: 'Nuevo subtítulo', confirm: true)
 
       expect(event_type.reload.subtitle).to eq 'Nuevo subtítulo'
     end
@@ -63,24 +63,24 @@ describe 'event type MCP tools' do
     # The reason these tools exist: patching a link inside a long block without
     # resending the whole thing.
     it 'patches a link inside a long block' do
-      run(described_class, id: event_type.slug, confirm: true,
-                           replacements: [{ field: 'description', find: '/cursos/7-viejo',
-                                            replace: '/es/cursos/7-nuevo' }])
+      run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
+                          replacements: [{ field: 'description', find: '/cursos/7-viejo',
+                                           replace: '/es/cursos/7-nuevo' }])
 
       expect(event_type.reload.description).to include '/es/cursos/7-nuevo'
       expect(event_type.description).not_to include '/cursos/7-viejo"'
     end
 
     it 'patches a link inside the questions and answers' do
-      run(described_class, id: event_type.slug, confirm: true,
-                           replacements: [{ field: 'faq', find: '/cursos/7-viejo',
-                                            replace: '/es/cursos/7-nuevo' }])
+      run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
+                          replacements: [{ field: 'faq', find: '/cursos/7-viejo',
+                                           replace: '/es/cursos/7-nuevo' }])
 
       expect(event_type.reload.faq).to include '/es/cursos/7-nuevo'
     end
 
     it 'says so when there is no such course' do
-      result = run(described_class, id: 'no-existe', subtitle: 'x')
+      result = run(EventTypesTool, operation: 'update', id: 'no-existe', subtitle: 'x')
 
       expect(result['status']).to eq 'error'
       expect(result['errors'].first).to include 'no-existe'
@@ -89,7 +89,7 @@ describe 'event type MCP tools' do
     # Putting a course on sale is a decision about what Kleer sells, and
     # ability.rb keeps it away from the content role. It is not an argument.
     it 'does not take include_in_catalog' do
-      expect(UpdateEventTypeTool.input_schema.key_map.map(&:name)).not_to include 'include_in_catalog'
+      expect(EventTypesTool.input_schema.key_map.map(&:name)).not_to include 'include_in_catalog'
     end
   end
 end

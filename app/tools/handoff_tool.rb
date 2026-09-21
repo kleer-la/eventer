@@ -13,7 +13,4 @@ class HandoffTool < ApplicationTool
   end
 
   def current_user = nil
-
-  private
-
 end

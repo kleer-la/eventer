@@ -32,7 +32,7 @@ class PodcastsTool < AuthenticatedTool
 
   arguments do
     optional(:operation).filled(:string)
-                        .description("'list' (default), 'get', 'create', 'update', 'create_episode' or 'update_episode'")
+                        .description("'list' (default), 'get', 'create', 'update', 'create_episode', 'update_episode'")
     optional(:id).filled(:integer).description('get/update: podcast id. update_episode: episode id')
     optional(:podcast_id).filled(:integer).description('create_episode: the podcast it belongs to')
     optional(:query).filled(:string).description('list: substring matched against the title')
@@ -50,23 +50,19 @@ class PodcastsTool < AuthenticatedTool
     instance_exec(&ApplicationTool::REPLACEMENTS)
   end
 
-  def call(operation: 'list', id: nil, podcast_id: nil, confirm: false, limit: DEFAULT_LIMIT, **fields)
-    case operation
-    when 'list' then list(limit: limit, query: fields[:query])
-    when 'get' then get(Podcast.find(id.presence || raise(ActiveRecord::RecordNotFound)))
-    when 'create' then write(Podcast, nil, confirm: confirm, **fields.except(:query))
-    when 'update' then write(Podcast, Podcast.find(id.presence || raise(ActiveRecord::RecordNotFound)), confirm: confirm, **fields.except(:query))
-    when 'create_episode' then write(Episode, Podcast.find(podcast_id).episodes.build, confirm: confirm, **fields.except(:query))
-    when 'update_episode' then write(Episode, Episode.find(id.presence || raise(ActiveRecord::RecordNotFound)), confirm: confirm, **fields.except(:query))
-    else unknown_operation(operation)
-    end
-  rescue ActiveRecord::RecordNotFound
-    error(operation == 'create_episode' ? "No podcast with id #{podcast_id.inspect}" : "No #{operation.include?('episode') ? 'episode' : 'podcast'} with id #{id.inspect}")
+  # The operation is looked up in OPERATIONS before `send`, so only these six
+  # methods are reachable from a client.
+  def call(operation: 'list', **args)
+    return unknown_operation(operation) unless OPERATIONS.include?(operation)
+
+    send(operation, **args)
+  rescue ActiveRecord::RecordNotFound => e
+    error(e.message)
   end
 
   private
 
-  def list(limit:, query: nil)
+  def list(limit: DEFAULT_LIMIT, query: nil, **)
     scope = Podcast.includes(:episodes).order(:title)
     scope = scope.where('title LIKE ?', "%#{query}%") if query.present?
 
@@ -79,7 +75,8 @@ class PodcastsTool < AuthenticatedTool
       spotify_url: podcast.spotify_url, youtube_url: podcast.youtube_url }
   end
 
-  def get(podcast)
+  def get(id: nil, **)
+    podcast = find(Podcast, id)
     { id: podcast.id, title: podcast.title, description: podcast.description_body,
       spotify_url: podcast.spotify_url, youtube_url: podcast.youtube_url,
       thumbnail_url: podcast.thumbnail_url,
@@ -92,12 +89,35 @@ class PodcastsTool < AuthenticatedTool
       youtube_url: episode.youtube_url }
   end
 
+  def create(confirm: false, **fields)
+    write(Podcast, nil, confirm: confirm, **fields)
+  end
+
+  def update(id: nil, confirm: false, **fields)
+    write(Podcast, find(Podcast, id), confirm: confirm, **fields)
+  end
+
+  def create_episode(podcast_id: nil, confirm: false, **fields)
+    write(Episode, find(Podcast, podcast_id).episodes.build, confirm: confirm, **fields)
+  end
+
+  def update_episode(id: nil, confirm: false, **fields)
+    write(Episode, find(Episode, id), confirm: confirm, **fields)
+  end
+
+  def find(model, id)
+    model.find(id.presence || -1)
+  rescue ActiveRecord::RecordNotFound
+    raise ActiveRecord::RecordNotFound, "No #{model.model_name.human.downcase} with id #{id.inspect}"
+  end
+
   # `record` is nil for a new podcast, a built episode for a new episode, or the one being edited.
   def write(model, record, confirm:, **fields)
     action = record&.persisted? ? :update : :create
     return unauthorized(action, model) unless ability.can?(action, model)
 
     service = model == Podcast ? PodcastWriteService : EpisodeWriteService
-    service.new(ability: ability, record: record, **fields).call(confirm: confirm).to_json
+    service.new(ability: ability, record: record, **fields.except(:query, :limit, :id, :podcast_id))
+           .call(confirm: confirm).to_json
   end
 end

@@ -14,7 +14,7 @@ describe 'service area MCP tools' do
     JSON.parse(tool.call(**args))
   end
 
-  describe CreateServiceAreaTool do
+  describe 'operation=create' do
     let(:required_fields) do
       { name: 'Agile Coaching', summary: 'summary', icon: 'https://example.com/icon.png',
         slogan: 'slogan', subtitle: 'subtitle', description: 'description',
@@ -23,45 +23,45 @@ describe 'service area MCP tools' do
     end
 
     it 'previews without saving' do
-      result = run(described_class, **required_fields)
+      result = run(ServiceAreasTool, operation: 'create', **required_fields)
 
       expect(result['status']).to eq 'preview'
       expect(ServiceArea.find_by(name: 'Agile Coaching')).to be_nil
     end
 
     it 'creates it hidden on confirm, unless told otherwise' do
-      result = run(described_class, **required_fields, confirm: true)
+      result = run(ServiceAreasTool, operation: 'create', **required_fields, confirm: true)
 
       area = ServiceArea.find(result['id'])
       expect(area.visible).to be false
     end
 
     it 'creates it visible when asked' do
-      run(described_class, **required_fields, confirm: true, visible: true)
+      run(ServiceAreasTool, operation: 'create', **required_fields, confirm: true, visible: true)
 
       expect(ServiceArea.find_by(name: 'Agile Coaching').visible).to be true
     end
   end
 
-  describe GetServiceAreaTool do
+  describe 'operation=get' do
     it 'returns the blocks that make up the page' do
-      result = run(described_class, id: service_area.slug)
+      result = run(ServiceAreasTool, operation: 'get', id: service_area.slug)
 
       expect(result['name']).to eq 'IA Aplicada'
       expect(result['blocks']['summary']).to include 'summary'
     end
 
     it 'says so when there is no such service area' do
-      result = run(described_class, id: 'no-existe')
+      result = run(ServiceAreasTool, operation: 'get', id: 'no-existe')
 
       expect(result['status']).to eq 'error'
       expect(result['errors'].first).to include 'no-existe'
     end
   end
 
-  describe UpdateServiceAreaTool do
+  describe 'operation=update' do
     it 'previews without saving' do
-      result = run(described_class, id: service_area.slug, subtitle: 'Nuevo subtítulo')
+      result = run(ServiceAreasTool, operation: 'update', id: service_area.slug, subtitle: 'Nuevo subtítulo')
 
       expect(result['status']).to eq 'preview'
       expect(service_area.reload.subtitle.to_s).to include 'subtitle'
@@ -69,22 +69,22 @@ describe 'service area MCP tools' do
     end
 
     it 'saves on confirm' do
-      run(described_class, id: service_area.slug, subtitle: 'Nuevo subtítulo', confirm: true)
+      run(ServiceAreasTool, operation: 'update', id: service_area.slug, subtitle: 'Nuevo subtítulo', confirm: true)
 
       expect(service_area.reload.subtitle.to_s).to include 'Nuevo subtítulo'
     end
 
     it 'can flip visible' do
-      run(described_class, id: service_area.slug, visible: true, confirm: true)
+      run(ServiceAreasTool, operation: 'update', id: service_area.slug, visible: true, confirm: true)
 
       expect(service_area.reload.visible).to be true
     end
   end
 
-  describe ListServiceAreasTool do
+  describe 'operation=list' do
     it 'lists service areas' do
       service_area
-      result = run(described_class)
+      result = run(ServiceAreasTool, operation: 'list')
 
       expect(result['service_areas'].map { |a| a['name'] }).to include 'IA Aplicada'
     end
@@ -93,7 +93,7 @@ describe 'service area MCP tools' do
       service_area
       visible_area = FactoryBot.create(:service_area, name: 'Visible Area', visible: true)
 
-      result = run(described_class, visible: true)
+      result = run(ServiceAreasTool, operation: 'list', visible: true)
 
       expect(result['service_areas'].map { |a| a['name'] }).to eq [visible_area.name]
     end

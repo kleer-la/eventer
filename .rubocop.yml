@@ -29,3 +29,12 @@ Metrics/AbcSize:
 Style/MixinUsage: 
   Exclude:
     - 'spec/**/*'
+
+# An MCP tool is one class per entity, and its `call` takes one keyword per
+# declared argument: the size follows the schema, not the design.
+Metrics/ClassLength:
+  Exclude:
+    - 'app/tools/*.rb'
+Metrics/ParameterLists:
+  Exclude:
+    - 'app/tools/*.rb'

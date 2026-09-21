@@ -100,17 +100,20 @@ class ResourcesTool < AuthenticatedTool
     Resource.friendly.find(id)
   end
 
-  def list(limit:, query: nil, format: nil, published: nil, category: nil)
+  def list(limit:, format: nil, **filters)
     return unknown_format(format) if format.present? && Resource.formats.exclude?(format)
 
-    scope = Resource.includes(:category).order(updated_at: :desc)
+    scope = filtered(Resource.includes(:category).order(updated_at: :desc), format: format, **filters)
+    resources = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |resource| summary(resource) }
+    listing(:resources, resources, total: scope.count, narrow: 'query, format, published or category')
+  end
+
+  def filtered(scope, query: nil, format: nil, published: nil, category: nil)
     scope = scope.where('title_es LIKE :q OR title_en LIKE :q', q: "%#{query}%") if query.present?
     scope = scope.where(format: format) if format.present?
     scope = scope.where(published: published) unless published.nil?
     scope = scope.joins(:category).where(categories: { name: category }) if category.present?
-
-    resources = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |resource| summary(resource) }
-    listing(:resources, resources, total: scope.count, narrow: 'query, format, published or category')
+    scope
   end
 
   def unknown_format(format)
@@ -126,11 +129,15 @@ class ResourcesTool < AuthenticatedTool
   def get(resource)
     { id: resource.id, slug: resource.slug, format: resource.format, published: resource.published,
       category: resource.category_name, downloadable: resource.downloadable,
-      es: side(resource, 'es'), en: side(resource, 'en'),
-      authors: resource.authors.map(&:name), translators: resource.translators.map(&:name),
-      illustrators: resource.illustrators.map(&:name),
-      recommends: resource.recommended_contents.includes(:target).map { |content| recommendation(content) },
-      updated_at: resource.updated_at }.to_json
+      es: side(resource, 'es'), en: side(resource, 'en'), updated_at: resource.updated_at }
+      .merge(credits(resource))
+      .merge(recommends: resource.recommended_contents.includes(:target).map { |content| recommendation(content) })
+      .to_json
+  end
+
+  def credits(resource)
+    { authors: resource.authors.map(&:name), translators: resource.translators.map(&:name),
+      illustrators: resource.illustrators.map(&:name) }
   end
 
   def side(resource, lang)

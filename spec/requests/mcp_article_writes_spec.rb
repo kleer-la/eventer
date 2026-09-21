@@ -65,13 +65,15 @@ RSpec.describe 'MCP article writes', type: :request do
       expect(result['warnings'].join).to include('audio')
       expect(article.reload.body).to eq('Cuerpo viejo')
 
-      result = call_tool('articles', { operation: 'update', id: article.slug, body: 'Cuerpo nuevo y más largo', confirm: true })
+      result = call_tool('articles',
+                         { operation: 'update', id: article.slug, body: 'Cuerpo nuevo y más largo', confirm: true })
       expect(result['status']).to eq('saved')
       expect(article.reload.body).to eq('Cuerpo nuevo y más largo')
     end
 
     it 'answers an error for an unknown article' do
-      expect(call_tool('articles', { operation: 'update', id: 'no-such-article' })['errors'].join).to include('no-such-article')
+      expect(call_tool('articles',
+                       { operation: 'update', id: 'no-such-article' })['errors'].join).to include('no-such-article')
     end
 
     describe 'replacements' do
@@ -80,7 +82,9 @@ RSpec.describe 'MCP article writes', type: :request do
       end
 
       def patch(find, replace, extra = {})
-        call_tool('articles', { operation: 'update', id: article.slug, replacements: [{ field: 'body', find: find, replace: replace }] }.merge(extra))
+        call_tool('articles',
+                  { operation: 'update', id: article.slug,
+                    replacements: [{ field: 'body', find: find, replace: replace }] }.merge(extra))
       end
 
       it 'edits the body in place, showing the change in context, without resending the whole text' do
@@ -98,8 +102,8 @@ RSpec.describe 'MCP article writes', type: :request do
 
       it 'applies several replacements in order, each against the text left by the previous one' do
         result = call_tool('articles', { operation: 'update', id: article.slug, confirm: true,
-                             replacements: [{ field: 'body', find: 'Primer', replace: 'Nuevo primer' },
-                                            { field: 'body', find: 'Tercer párrafo.', replace: '' }] })
+                                         replacements: [{ field: 'body', find: 'Primer', replace: 'Nuevo primer' },
+                                                        { field: 'body', find: 'Tercer párrafo.', replace: '' }] })
         expect(result['status']).to eq('saved')
         expect(article.reload.body).to eq('Nuevo primer párrafo. La frase vieja cierra la idea. ')
       end
@@ -118,20 +122,20 @@ RSpec.describe 'MCP article writes', type: :request do
         expect(article.reload.body).to include('Primer párrafo')
 
         call_tool('articles', { operation: 'update', id: article.slug, confirm: true,
-                    replacements: [{ field: 'body', find: 'párrafo', replace: 'sección', all: true }] })
+                                replacements: [{ field: 'body', find: 'párrafo', replace: 'sección', all: true }] })
         expect(article.reload.body).to eq('Primer sección. La frase vieja cierra la idea. Tercer sección.')
       end
 
       it 'refuses a field that is not a long text, naming the ones that are' do
         result = call_tool('articles', { operation: 'update', id: article.slug, confirm: true,
-                             replacements: [{ field: 'title', find: 'a', replace: 'b' }] })
+                                         replacements: [{ field: 'title', find: 'a', replace: 'b' }] })
         expect(result['status']).to eq('error')
         expect(result['errors'].join).to include('title').and include('body')
       end
 
       it 'refuses to take the whole field and a replacement for it at the same time' do
         result = call_tool('articles', { operation: 'update', id: article.slug, confirm: true, body: 'Cuerpo entero',
-                             replacements: [{ field: 'body', find: 'Primer', replace: 'Nuevo' }] })
+                                         replacements: [{ field: 'body', find: 'Primer', replace: 'Nuevo' }] })
         expect(result['status']).to eq('error')
         expect(result['errors'].join).to match(/both/i)
         expect(article.reload.body).to include('Primer párrafo')
@@ -146,7 +150,8 @@ RSpec.describe 'MCP article writes', type: :request do
       let(:user) { create(:content_user) }
 
       it 'edits the article but refuses to publish it' do
-        expect(call_tool('articles', { operation: 'update', id: article.slug, title: 'Editado', confirm: true })['status'])
+        expect(call_tool('articles',
+                         { operation: 'update', id: article.slug, title: 'Editado', confirm: true })['status'])
           .to eq('saved')
 
         result = call_tool('articles', { operation: 'update', id: article.slug, published: true, confirm: true })

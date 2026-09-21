@@ -107,7 +107,8 @@ class ArticlesTool < AuthenticatedTool
     action = article ? :update : :create
     return unauthorized(action, Article) unless ability.can?(action, Article)
 
-    ArticleWriteService.new(ability: ability, record: article, **fields.except(*LIST_FILTERS - %i[lang published category]))
+    ArticleWriteService.new(ability: ability, record: article,
+                            **fields.except(*LIST_FILTERS - %i[lang published category]))
                        .call(confirm: confirm).to_json
   end
 end

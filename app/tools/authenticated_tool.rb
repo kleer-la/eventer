@@ -21,7 +21,8 @@ class AuthenticatedTool < ApplicationTool
   # authorized for reading as a whole and check each write here, with the
   # same rules ability.rb gives the admin screens.
   def unauthorized(action, subject)
-    error("Unauthorized: you are not allowed to #{action} #{subject.model_name.human.downcase.pluralize}")
+    what = subject.respond_to?(:model_name) ? subject.model_name.human.downcase.pluralize : subject.to_s
+    error("Unauthorized: you are not allowed to #{action} #{what}")
   end
 
   def unknown_operation(operation)

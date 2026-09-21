@@ -37,7 +37,7 @@ RSpec.describe 'MCP image tools', type: :request do
     end
 
     it 'lists everything newest first, with public URLs and sizes' do
-      result = call_tool('list_images')
+      result = call_tool('images')
 
       expect(result['returned']).to eq(3)
       expect(result['images'].pluck('name')).to eq(%w[portada.webp demo-animado.gif viejo-logo.png])
@@ -46,9 +46,12 @@ RSpec.describe 'MCP image tools', type: :request do
     end
 
     it 'filters by extension, name and minimum size' do
-      expect(call_tool('list_images', { extension: 'gif' })['images'].pluck('name')).to eq(['demo-animado.gif'])
-      expect(call_tool('list_images', { query: 'logo' })['images'].pluck('name')).to eq(['viejo-logo.png'])
-      expect(call_tool('list_images', { min_size_kb: 100 })['images'].pluck('name')).to eq(['demo-animado.gif'])
+      expect(call_tool('images',
+                       { operation: 'list', extension: 'gif' })['images'].pluck('name')).to eq(['demo-animado.gif'])
+      expect(call_tool('images',
+                       { operation: 'list', query: 'logo' })['images'].pluck('name')).to eq(['viejo-logo.png'])
+      expect(call_tool('images',
+                       { operation: 'list', min_size_kb: 100 })['images'].pluck('name')).to eq(['demo-animado.gif'])
     end
   end
 
@@ -59,15 +62,15 @@ RSpec.describe 'MCP image tools', type: :request do
       create(:article, title: 'Con gif', body: "Mirá esto: ![demo](#{url}) y seguimos.")
       create(:article, title: 'Sin gif', body: 'Nada de imágenes acá.')
 
-      result = call_tool('find_image_usage', { image: url })
+      result = call_tool('images', { operation: 'find_usage', image: url })
 
       expect(result['used']).to be(true)
       expect(result['usage'].to_s).to include('Con gif').or include('article')
-      expect(call_tool('find_image_usage', { image: 'demo-animado.gif' })['image']).to eq(url)
+      expect(call_tool('images', { operation: 'find_usage', image: 'demo-animado.gif' })['image']).to eq(url)
     end
 
     it 'says so when nobody uses it' do
-      expect(call_tool('find_image_usage', { image: 'huerfana.png' })['used']).to be(false)
+      expect(call_tool('images', { operation: 'find_usage', image: 'huerfana.png' })['used']).to be(false)
     end
   end
 
@@ -85,27 +88,27 @@ RSpec.describe 'MCP image tools', type: :request do
     end
 
     it 'checks the image without storing it, then stores it on confirm' do
-      result = call_tool('upload_image_from_url', { url: source })
+      result = call_tool('images', { operation: 'upload', url: source })
       expect(result['status']).to eq('preview')
       expect(result).to include('file_name' => 'animado.gif', 'content_type' => 'image/gif')
       expect(result['warnings'].join).to include('no WebP conversion')
 
-      result = call_tool('upload_image_from_url', { url: source, confirm: true })
+      result = call_tool('images', { operation: 'upload', url: source, confirm: true })
       expect(result['status']).to eq('saved')
       expect(result['url']).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/animado.gif')
     end
 
     it 'takes the stored name from path when given' do
-      result = call_tool('upload_image_from_url', { url: source, path: 'blog/demo del producto' })
+      result = call_tool('images', { operation: 'upload', url: source, path: 'blog/demo del producto' })
       expect(result['file_name']).to eq('demo del producto.gif')
     end
 
     it 'refuses to replace an existing name unless told to' do
-      result = call_tool('upload_image_from_url', { url: source, path: 'ya-esta.gif' })
+      result = call_tool('images', { operation: 'upload', url: source, path: 'ya-esta.gif' })
       expect(result['status']).to eq('error')
       expect(result['errors'].join).to include('already exists')
 
-      result = call_tool('upload_image_from_url', { url: source, path: 'ya-esta.gif', overwrite: true })
+      result = call_tool('images', { operation: 'upload', url: source, path: 'ya-esta.gif', overwrite: true })
       expect(result['status']).to eq('preview')
       expect(result['warnings'].join).to include('would be replaced')
     end
@@ -113,7 +116,7 @@ RSpec.describe 'MCP image tools', type: :request do
     it 'trusts the bytes, not the header: a page claiming to be a GIF is refused' do
       stub_request(:get, source).to_return(body: '<html>Not a GIF at all</html>',
                                            headers: { 'Content-Type' => 'image/gif' })
-      expect(call_tool('upload_image_from_url', { url: source })['errors'].join)
+      expect(call_tool('images', { operation: 'upload', url: source })['errors'].join)
         .to include('does not look like an image')
     end
 
@@ -121,13 +124,13 @@ RSpec.describe 'MCP image tools', type: :request do
       png = "\x89PNG\r\n\x1A\n".b + ('x' * 40)
       stub_request(:get, source).to_return(body: png, headers: { 'Content-Type' => 'application/octet-stream' })
 
-      result = call_tool('upload_image_from_url', { url: source, path: 'animado' })
+      result = call_tool('images', { operation: 'upload', url: source, path: 'animado' })
       expect(result['content_type']).to eq('image/png')
       expect(result['file_name']).to eq('animado.png')
     end
 
     it 'refuses a host only the server can reach' do
-      result = call_tool('upload_image_from_url', { url: 'http://localhost:3000/secreto.gif' })
+      result = call_tool('images', { operation: 'upload', url: 'http://localhost:3000/secreto.gif' })
       expect(result['errors'].join).to include('not a public host')
     end
   end
@@ -137,8 +140,8 @@ RSpec.describe 'MCP image tools', type: :request do
 
     it 'lets a read-only role list images but not upload one' do
       FileStoreService.create_null
-      expect(call_tool('list_images')['returned']).to eq(1)
-      expect(call_tool('upload_image_from_url', { url: 'https://images.example.com/x.gif' }).to_s)
+      expect(call_tool('images')['returned']).to eq(1)
+      expect(call_tool('images', { operation: 'upload', url: 'https://images.example.com/x.gif' }).to_s)
         .to include('Unauthorized')
     end
   end

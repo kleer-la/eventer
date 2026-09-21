@@ -32,7 +32,8 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       create(:news, title: 'Borrador interno', published: false)
 
       expect(call_tool('news')['returned']).to eq(2)
-      expect(call_tool('news', { operation: 'list', published: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
+      expect(call_tool('news',
+                       { operation: 'list', published: true })['news'].pluck('title')).to eq(['Charla en Buenos Aires'])
       expect(call_tool('news', { operation: 'get', id: published.id })['where']).to eq('Buenos Aires, Argentina')
       expect(call_tool('news', { operation: 'get', id: 0 })['errors'].join).to include('No news item')
     end
@@ -65,11 +66,13 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
   describe 'podcasts and episodes' do
     it 'creates a podcast, summarises its rich-text description, and adds episodes' do
-      result = call_tool('podcasts', { operation: 'create', title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>' })
+      result = call_tool('podcasts',
+                         { operation: 'create', title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>' })
       expect(result['changes']['description']).to include('to_length', 'new_beginning')
 
-      podcast_id = call_tool('podcasts', { operation: 'create', title: 'Kleer Podcast', description: '<p>Sobre agilidad</p>',
-                                                 confirm: true })['id']
+      podcast_id = call_tool('podcasts', { operation: 'create', title: 'Kleer Podcast',
+                                           description: '<p>Sobre agilidad</p>',
+                                           confirm: true })['id']
       expect(Podcast.find(podcast_id).description_body).to include('Sobre agilidad')
 
       episode = { podcast_id: podcast_id, title: 'Piloto', description: '<p>Primero</p>',
@@ -108,8 +111,8 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
                                released_at: Date.new(2026, 8, 1))
 
       result = call_tool('podcasts', { operation: 'create_episode', podcast_id: podcast.id, title: 'Repetido',
-                                             description: '<p>y</p>', season: 1, episode: 1,
-                                             released_at: '2026-08-08' })
+                                       description: '<p>y</p>', season: 1, episode: 1,
+                                       released_at: '2026-08-08' })
 
       expect(result['warnings'].join).to include('already exists')
     end
@@ -119,28 +122,30 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
     let!(:service) { create(:service, name: 'Formación en Scrum', published: false) }
 
     it 'lists, and returns the rich-text blocks as HTML' do
-      expect(call_tool('list_services')['services'].pluck('name')).to eq(['Formación en Scrum'])
+      expect(call_tool('services')['services'].pluck('name')).to eq(['Formación en Scrum'])
 
-      result = call_tool('get_service', { id: service.slug })
+      result = call_tool('services', { operation: 'get', id: service.slug })
       expect(result['blocks']['outcomes']).to include('<li>one</li>')
       expect(result['service_area']).to be_present
     end
 
     it 'previews a rich-text block as a summary and saves it on confirm' do
-      result = call_tool('update_service', { id: service.slug, value_proposition: '<p>Nueva propuesta</p>' })
+      result = call_tool('services',
+                         { operation: 'update', id: service.slug, value_proposition: '<p>Nueva propuesta</p>' })
       expect(result['changes']['value_proposition']).to include('new_beginning')
       expect(service.reload.value_proposition.body.to_s).to include('Default value_proposition')
 
-      call_tool('update_service', { id: service.slug, value_proposition: '<p>Nueva propuesta</p>', confirm: true })
+      call_tool('services',
+                { operation: 'update', id: service.slug, value_proposition: '<p>Nueva propuesta</p>', confirm: true })
       expect(service.reload.value_proposition.body.to_s).to include('Nueva propuesta')
     end
 
     it 'patches a rich-text block in place, matching against its HTML' do
       service.update!(value_proposition: '<p>Acompañamos al equipo durante tres meses.</p>')
 
-      result = call_tool('update_service',
-                         { id: service.slug, confirm: true,
-                           replacements: [{ field: 'value_proposition', find: 'tres meses', replace: 'seis meses' }] })
+      result = call_tool('services', { operation: 'update', id: service.slug, confirm: true,
+                                       replacements: [{ field: 'value_proposition', find: 'tres meses',
+                                                        replace: 'seis meses' }] })
       expect(result['status']).to eq('saved')
       expect(service.reload.value_proposition.body.to_s).to include('durante seis meses')
     end
@@ -148,11 +153,12 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
     it 'caps the listing with limit, like the other list tools' do
       2.times { |i| create(:service, name: "Otro servicio #{i}") }
 
-      expect(call_tool('list_services', { limit: 2 })['services'].size).to eq(2)
+      expect(call_tool('services', { operation: 'list', limit: 2 })['services'].size).to eq(2)
     end
 
     it 'rejects a service area it does not know, naming the ones that exist' do
-      result = call_tool('update_service', { id: service.slug, service_area: 'No existe', confirm: true })
+      result = call_tool('services',
+                         { operation: 'update', id: service.slug, service_area: 'No existe', confirm: true })
       expect(result['status']).to eq('error')
       expect(result['errors'].join).to include(ServiceArea.first.name)
     end
@@ -161,7 +167,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       let(:user) { create(:content_user) }
 
       it 'cannot touch services: they are not among the content models' do
-        expect(call_tool('update_service', { id: service.slug, name: 'Otro', confirm: true }).to_s)
+        expect(call_tool('services', { operation: 'update', id: service.slug, name: 'Otro', confirm: true }).to_s)
           .to include('Unauthorized')
       end
     end
@@ -198,7 +204,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
     it 'creates a page and returns its sections when read' do
       result = call_tool('pages', { operation: 'create', name: 'Nueva landing', lang: 'es', template: 'flagship',
-                                          confirm: true })
+                                    confirm: true })
       expect(result['status']).to eq('saved')
 
       page = Page.find(result['id'])
