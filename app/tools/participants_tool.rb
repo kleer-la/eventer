@@ -34,7 +34,7 @@ class ParticipantsTool < AuthenticatedTool
     optional(:operation).filled(:string).description("'search' (default), 'create' or 'issue_certificate'")
     optional(:query).filled(:string).description('search: matched against name, e-mail and verification code')
     optional(:event_id).filled(:integer).description('search: filter. create: the event, from events')
-    optional(:status).filled(:string).description('search: filter; create: N, T, C, A (Presente), K (Certificado), D or X')
+    optional(:status).filled(:string).description('search: filter; create: N, T, C, A (Presente), K (Certificado), D, X')
     optional(:limit).filled(:integer).description("search: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:participant_id).filled(:integer).description('issue_certificate: participant id, from search')
     optional(:notify).filled(:bool).description('issue_certificate: true = also mail the certificate')
