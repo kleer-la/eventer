@@ -79,6 +79,13 @@ RSpec.describe 'MCP resource tools', type: :request do
       expect(Resource.last.published).to be_falsey
     end
 
+    it 'takes the SEO fields too, like update_resource' do
+      call_tool('create_resource', { title_es: 'Con SEO', description_es: 'd', format: 'guide', slug: 'con-seo',
+                                     tabtitle_es: 'Pestaña', seo_description_es: 'Meta', confirm: true })
+
+      expect(Resource.find_by(slug: 'con-seo')).to have_attributes(tabtitle_es: 'Pestaña', seo_description_es: 'Meta')
+    end
+
     it 'rejects a format that is not in the enum' do
       result = call_tool('create_resource', fields.merge(format: 'ebook', confirm: true))
       expect(result['status']).to eq('error')

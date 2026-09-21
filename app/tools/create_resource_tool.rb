@@ -44,6 +44,10 @@ class CreateResourceTool < AuthenticatedTool
     optional(:landing_en).filled(:string).description('English landing page URL (see landing_es)')
     optional(:tags_es).filled(:string).description('Spanish tags')
     optional(:tags_en).filled(:string).description('English tags')
+    optional(:seo_description_es).filled(:string).description('Spanish SEO description')
+    optional(:seo_description_en).filled(:string).description('English SEO description')
+    optional(:tabtitle_es).filled(:string).description('Spanish browser tab title')
+    optional(:tabtitle_en).filled(:string).description('English browser tab title')
     optional(:published).filled(:bool).description('Publish on creation. Needs publishing rights')
     optional(:confirm).filled(:bool).description('false (default) = preview only; true = save')
   end
