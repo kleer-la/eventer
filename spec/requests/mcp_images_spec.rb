@@ -101,7 +101,8 @@ RSpec.describe 'MCP image tools', type: :request do
     context 'with a PNG' do
       let(:source) { 'https://images.example.com/foto.png' }
       let(:png_bytes) do
-        Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==')
+        Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5' \
+                        'ErkJggg==')
       end
 
       before do
