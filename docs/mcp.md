@@ -29,18 +29,31 @@ Claude Code: tiene que listar los tools.
 
 ## Qué se puede hacer
 
-| Tool | Qué hace |
+Una tool por entidad, y `operation` dice qué hacer con ella: el conector lista
+cada tool como un permiso por usuario, así que son 16 y no 49.
+
+| Tool | Operaciones |
 |---|---|
-| `list_articles` | Lista artículos con filtros (título, idioma, publicado, categoría). Sin cuerpos |
-| `get_article` | Un artículo completo, con el cuerpo, por slug o id |
-| `create_article` | Crea uno nuevo |
-| `update_article` | Edita uno existente, incluido publicar/despublicar |
+| `articles` | `list` (default), `get`, `create`, `update` |
+| `resources` | `list`, `get`, `create`, `update` |
+| `pages` | `list`, `get`, `create`, `update` (las secciones se editan en el admin) |
+| `news` | `list`, `get`, `create`, `update` |
+| `podcasts` | `list`, `get`, `create`, `update`, `create_episode`, `update_episode` |
+| `services` | `list`, `get`, `create`, `update` |
+| `service_areas` | `list`, `get`, `create`, `update` |
+| `recommendations` | `list`, `add`, `remove` — qué recomienda un contenido |
+| `images` | `list`, `find_usage`, `upload` (sólo desde una URL pública) |
+| `mail_templates` | `list`, `get` (con el render para un contacto de muestra), `update`, `create` |
+| `event_types`, `events`, `participants` | ver *Cursos y certificados* |
+| `refresh_website_cache` | el sitio recarga lo que cachea de acá |
+| `suggest_mcp_improvement`, `mcp_suggestions` | registrar fricción de una sesión, y triagearla |
 
-Los tools de escritura funcionan **en dos pasos**: la primera llamada devuelve un
-*preview* de lo que cambiaría sin guardar nada, y recién con `confirm=true`
-persiste. Claude te tiene que mostrar el preview antes de confirmar.
-
-Hay tools equivalentes para recursos, servicios, páginas, podcasts y novedades.
+`list` (o `search`) es la operación por defecto. `get` devuelve el registro
+completo, por slug o id según la entidad. Las operaciones de escritura funcionan
+**en dos pasos**: la primera llamada devuelve un *preview* de lo que cambiaría
+sin guardar nada, y recién con `confirm=true` persiste. Claude te tiene que
+mostrar el preview antes de confirmar. Leer está autorizado por tool; escribir se
+chequea por operación, con las mismas reglas que las pantallas del admin.
 
 ## Cursos y certificados
 
@@ -48,17 +61,17 @@ Además del contenido del sitio, el server expone la cadena que hace falta para
 darle su certificado a alguien que quedó fuera del sistema: el curso que se dio,
 el evento, la persona y el PDF.
 
-| Tool | Qué hace |
+| Tool y operación | Qué hace |
 |---|---|
-| `list_event_types` | Busca tipos de curso: el id que necesita un evento, y el nombre y la duración que salen impresos |
-| `create_event_type` | Crea un tipo de curso nuevo, **siempre fuera del catálogo público** |
-| `list_events` | Busca ediciones de un curso, por nombre, ciudad o fecha |
-| `create_event` | Crea una edición; **privada y gratuita** salvo que digas otra cosa |
-| `search_participants` | Busca personas por nombre, mail o código de verificación |
-| `create_participant` | Inscribe a alguien en un evento y devuelve su código de verificación |
-| `issue_certificate` | Genera el PDF A4 y LETTER y los sube a S3 |
+| `event_types` `list` | Busca tipos de curso: el id que necesita un evento, y el nombre y la duración que salen impresos |
+| `event_types` `create` | Crea un tipo de curso nuevo, **siempre fuera del catálogo público** |
+| `events` `list` | Busca ediciones de un curso, por nombre, ciudad o fecha |
+| `events` `create` | Crea una edición; **privada y gratuita** salvo que digas otra cosa |
+| `participants` `search` | Busca personas por nombre, mail o código de verificación |
+| `participants` `create` | Inscribe a alguien en un evento y devuelve su código de verificación |
+| `participants` `issue_certificate` | Genera el PDF A4 y LETTER y los sube a S3 |
 
-Los cuatro de escritura funcionan en dos pasos igual que los de contenido:
+Las de escritura funcionan en dos pasos igual que las de contenido:
 `confirm=false` (el default) muestra qué haría sin tocar nada.
 
 ### Por qué el certificado necesita toda la cadena
@@ -69,21 +82,21 @@ verificable **recién cuando el archivo está en S3**, y el archivo saca su text
 del participante, del evento y del tipo de curso. De ahí el orden:
 
 ```
-list_event_types  →  create_event  →  create_participant  →  issue_certificate
-(o create_event_type si el curso no existe)
+event_types list  →  events create  →  participants create  →  participants issue_certificate
+(o event_types create si el curso no existe)
 ```
 
-El link que devuelve `issue_certificate` en `verify_at` tiene una sola forma
+El link que devuelve `issue_certificate` (de `participants`) en `verify_at` tiene una sola forma
 que funciona: `https://www.kleer.la/es/certificado?q=<código>` (o
 `/en/certificate` para un curso en inglés). El código va en el query string, no
 en el path, y tiene que ser el host con `www` y con prefijo de idioma: el
 dominio pelado redirige 301 y se come el `?q=`, con lo cual la página llega con
 el formulario vacío.
 
-`issue_certificate` no manda ningún mail salvo que le pases `notify=true`. Y no
+`participants` con `issue_certificate` no manda ningún mail salvo que le pases `notify=true`. Y no
 genera nada si el participante no está en Presente (A) o Certificado (K), o si
 el trainer 1 del evento no tiene firma cargada: el PDF saldría sin firmar. Los
-dos motivos vienen también en `search_participants`, en
+dos motivos vienen también en `participants` (`search`), en
 `certificate_blocked_by`, antes de que intentes emitir.
 
 ### Dos cosas que los tools deciden por vos
@@ -98,7 +111,7 @@ dos motivos vienen también en `search_participants`, en
 
 ### Datos personales
 
-`search_participants` devuelve mail y estado de cada persona, y vale la regla de
+`participants` (`search`) devuelve mail y estado de cada persona, y vale la regla de
 siempre: los mismos permisos que en el admin, donde `can :read, :all` alcanza a
 cualquier usuario con rol, incluido `comercial`. Nunca lista a todo el mundo —
 exige un término de búsqueda o un `event_id` — pero si querés que los datos de
@@ -107,7 +120,7 @@ participantes queden fuera del alcance de un conector, eso se cambia en
 
 ## Listados: nunca devuelven "todo" en silencio
 
-Los `list_*` truncan (25 por defecto, 100 máximo; imágenes 50 y 200) y lo dicen:
+Los listados (`list` / `search`) truncan (25 por defecto, 100 máximo; imágenes 50 y 200) y lo dicen:
 la respuesta trae `returned`, `total` y, cuando sobra algo, `truncated: true` y
 una `note` que nombra los filtros con los que afinar. Es a propósito: un listado
 de 25 sin más datos se lee como el mundo entero, y "no está en los primeros 25"
