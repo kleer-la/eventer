@@ -34,7 +34,7 @@ FROM ruby:3.4.7-slim
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       libpq5 \
-      libmagickwand-7.q16-10 \
+      imagemagick \
       libcurl4 \
       libjemalloc2 \
       python3 \
@@ -43,6 +43,9 @@ RUN apt-get update -qq && \
       nodejs && \
     rm -rf /var/lib/apt/lists/*
 
+# imagemagick: mini_magick shells out to `magick`, so the library alone
+# (libmagickwand) is not enough — without the binary every WebP conversion
+# fails quietly, which is what happened after the move off Heroku.
 # edge-tts: free, key-less text-to-speech CLI used by GenerateArticleAudioJob and
 # TtsBriefingService. ffmpeg (ffmpeg + ffprobe) is TtsBriefingService's own: padding
 # and concatenating beats into one MP3.

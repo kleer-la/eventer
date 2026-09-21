@@ -19,10 +19,13 @@ class ImageImportService
 
   class FetchError < StandardError; end
 
-  def initialize(url:, path: nil, overwrite: false)
+  CONVERTIBLE = %w[image/png image/jpeg].freeze
+
+  def initialize(url:, path: nil, overwrite: false, convert_to_webp: true)
     @url = url.to_s.strip
     @path = path
     @overwrite = overwrite
+    @convert_to_webp = convert_to_webp
   end
 
   def call(confirm: false)
@@ -39,6 +42,7 @@ class ImageImportService
 
     { status: 'saved', file_name: file_name, url: upload(body, file_name),
       bytes: body.bytesize, content_type: content_type, replaced: replacing }
+      .merge(webp_twin(body, file_name, content_type))
   rescue FetchError => e
     { status: 'error', errors: [e.message] }
   rescue Aws::Errors::ServiceError => e
@@ -57,7 +61,38 @@ class ImageImportService
     end
     { status: 'preview', file_name: file_name, content_type: content_type, bytes: bytes,
       url: FileStoreService.image_url(file_name, 'image'), warnings: warnings,
-      note: 'Nothing was stored. Call again with confirm=true to upload it.' }
+      also_stores: (webp_name(file_name) if converts?(content_type)),
+      note: 'Nothing was stored. Call again with confirm=true to upload it.' }.compact
+  end
+
+  def converts?(content_type)
+    @convert_to_webp && CONVERTIBLE.include?(content_type)
+  end
+
+  def webp_name(file_name)
+    File.join([File.dirname(file_name), ImageConversionService.webp_filename(file_name)].reject { |p| p == '.' })
+  end
+
+  # A PNG or JPEG gets a WebP twin next to it, as the admin upload does. A
+  # failed conversion is reported, never hidden: the original is stored anyway.
+  def webp_twin(body, file_name, content_type)
+    return {} unless converts?(content_type)
+
+    twin = webp_name(file_name)
+    { webp_file_name: twin, webp_url: upload(converted(body, File.extname(file_name)), twin) }
+  rescue StandardError => e
+    { warnings: ["#{file_name} was stored, but its WebP twin was not: #{e.message}"] }
+  end
+
+  def converted(body, extension)
+    source = Tempfile.new(['import', extension], binmode: true)
+    source.write(body)
+    source.flush
+    webp_path = ImageConversionService.convert_to_webp(source.path)
+    File.binread(webp_path)
+  ensure
+    source&.close!
+    FileUtils.rm_f(webp_path.to_s) if webp_path
   end
 
   def upload(body, file_name)

@@ -71,6 +71,40 @@ RSpec.describe 'Admin Images', type: :system do
       end
     end
   end
+  describe 'upload' do
+    let(:png) do
+      file = Tempfile.new(['portada', '.png'], binmode: true)
+      file.write(Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='))
+      file.flush
+      file
+    end
+
+    before do
+      FileStoreService.create_null(exists: { 'portada.png' => false, 'portada.webp' => false })
+      allow(FileStoreService.current).to receive(:upload).and_call_original
+      allow_any_instance_of(FileStoreService).to receive(:list).and_return([])
+      visit admin_images_path
+      attach_file 'image_file', png.path
+      fill_in 'image_path', with: 'portada.png'
+    end
+
+    it 'stores the original and the WebP twin' do
+      click_button 'Upload Image'
+
+      expect(page).to have_content('portada.png, portada.webp')
+      expect(FileStoreService.current).to have_received(:upload).with(anything, 'portada.webp', 'image')
+    end
+
+    it 'says so when the WebP conversion fails, instead of pretending' do
+      allow(ImageConversionService).to receive(:convert_to_webp).and_raise('WebP conversion failed: no magick')
+
+      click_button 'Upload Image'
+
+      expect(page).to have_content('WebP conversion failed')
+      expect(FileStoreService.current).to have_received(:upload).with(anything, 'portada.png', 'image')
+    end
+  end
+
   describe 'usage page' do
     let!(:event_type) { create(:event_type, cover: image_url) }
 

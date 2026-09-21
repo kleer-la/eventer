@@ -27,8 +27,9 @@ class ImagesTool < AuthenticatedTool
     steps: confirm=false (the default) fetches it, checks type and size and
     reports what would be stored; confirm=true uploads. Replacing an existing
     name needs overwrite=true, and replacing an image in use changes it
-    everywhere at once — check with find_usage first. GIFs are stored as they
-    are, so an animated one keeps its animation and its weight.
+    everywhere at once — check with find_usage first. A PNG or JPEG also gets
+    a WebP twin (same name, .webp) unless convert_to_webp=false; GIFs are stored
+    as they are, so an animated one keeps its animation and its weight.
   MD
 
   arguments do
@@ -41,6 +42,7 @@ class ImagesTool < AuthenticatedTool
     optional(:url).filled(:string).description('upload: public http/https URL of the image to fetch')
     optional(:path).filled(:string).description('upload: file name to store it under; taken from the URL when omitted')
     optional(:overwrite).filled(:bool).description('upload: true = allow replacing an image with that name')
+    optional(:convert_to_webp).filled(:bool).description('upload: also store a WebP twin of a PNG/JPEG (default true)')
     optional(:confirm).filled(:bool).description('upload: false (default) = check only; true = store it')
   end
 
@@ -82,10 +84,11 @@ class ImagesTool < AuthenticatedTool
       models_searched: ImageUsageService.registered_models.map(&:name).compact.sort }.to_json
   end
 
-  def upload(url: nil, path: nil, overwrite: false, confirm: false, **)
+  def upload(url: nil, path: nil, overwrite: false, convert_to_webp: true, confirm: false, **)
     return unauthorized(:manage, :images) unless ability.can?(:manage, :images)
     return error('url is required: the public URL of the image to fetch') if url.blank?
 
-    ImageImportService.new(url: url, path: path, overwrite: overwrite).call(confirm: confirm).to_json
+    ImageImportService.new(url: url, path: path, overwrite: overwrite, convert_to_webp: convert_to_webp)
+                      .call(confirm: confirm).to_json
   end
 end

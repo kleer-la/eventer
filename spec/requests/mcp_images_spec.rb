@@ -98,6 +98,49 @@ RSpec.describe 'MCP image tools', type: :request do
       expect(result['url']).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/animado.gif')
     end
 
+    context 'with a PNG' do
+      let(:source) { 'https://images.example.com/foto.png' }
+      let(:png_bytes) do
+        Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==')
+      end
+
+      before do
+        FileStoreService.create_null(exists: { 'foto.png' => false, 'foto.webp' => false })
+        stub_request(:get, source).to_return(body: png_bytes, headers: { 'Content-Type' => 'image/png' })
+        allow(FileStoreService.current).to receive(:upload).and_call_original
+      end
+
+      it 'stores the original and a WebP twin, and says so beforehand' do
+        preview = call_tool('images', { operation: 'upload', url: source })
+        expect(preview['also_stores']).to eq 'foto.webp'
+
+        result = call_tool('images', { operation: 'upload', url: source, confirm: true })
+
+        expect(result['status']).to eq('saved')
+        expect(result['webp_url']).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/foto.webp')
+        expect(FileStoreService.current).to have_received(:upload).with(anything, 'foto.png', 'image')
+        expect(FileStoreService.current).to have_received(:upload).with(anything, 'foto.webp', 'image')
+      end
+
+      it 'stores only the original when told not to convert' do
+        result = call_tool('images',
+                           { operation: 'upload', url: source, convert_to_webp: false, confirm: true })
+
+        expect(result).not_to have_key('webp_url')
+        expect(FileStoreService.current).not_to have_received(:upload).with(anything, 'foto.webp', 'image')
+      end
+
+      it 'keeps the original and says so when the conversion fails' do
+        allow(ImageConversionService).to receive(:convert_to_webp).and_raise('WebP conversion failed: no magick')
+
+        result = call_tool('images', { operation: 'upload', url: source, confirm: true })
+
+        expect(result['status']).to eq('saved')
+        expect(result['warnings'].join).to include('no magick')
+        expect(FileStoreService.current).to have_received(:upload).with(anything, 'foto.png', 'image')
+      end
+    end
+
     it 'takes the stored name from path when given' do
       result = call_tool('images', { operation: 'upload', url: source, path: 'blog/demo del producto' })
       expect(result['file_name']).to eq('demo del producto.gif')

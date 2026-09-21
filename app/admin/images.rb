@@ -217,8 +217,10 @@ ActiveAdmin.register_page 'Images' do
           webp_file.close
           File.delete(webp_path) if File.exist?(webp_path)
         rescue StandardError => e
+          # The original is stored anyway, but the person has to know: for
+          # months this was failing quietly for lack of the ImageMagick binary.
           Rails.logger.warn "WebP conversion failed for #{img_name}: #{e.message}"
-          # Continue with original upload even if WebP conversion fails
+          flash[:alert] = "#{img_name} was uploaded, but the WebP conversion failed: #{e.message}"
         end
       end
 
