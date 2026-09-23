@@ -44,6 +44,17 @@ RSpec.describe 'MCP recommendation tools', type: :request do
       expect(article.reload.recommended_contents.first.target).to eq(resource)
     end
 
+    # An area sells itself like a service does, so it recommends like one too.
+    it 'lets a service area be the source' do
+      area = create(:service_area, name: 'Cambio Organizacional')
+
+      result = call_tool('recommendations', { operation: 'add', source_type: 'ServiceArea', source_id: area.slug,
+                                              target_type: 'Resource', target_id: resource.slug, confirm: true })
+
+      expect(result['status']).to eq('saved')
+      expect(area.reload.recommended_contents.first.target).to eq(resource)
+    end
+
     it 'defaults to relevance 50, which reads as the initial level' do
       call_tool('recommendations', { operation: 'add', source_type: 'Article', source_id: article.slug,
                                      target_type: 'Resource', target_id: resource.slug, confirm: true })

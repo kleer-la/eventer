@@ -215,6 +215,49 @@ describe Api::ServiceAreasController do
       end
     end
 
+    # An area can be an offering in itself — the same blocks a service has, so
+    # the area page can present it and sell it without a service underneath.
+    describe 'offering content on the area' do
+      # Rich text renders through the view layer, which controller specs stub out
+      render_views
+
+      it 'exposes the service blocks at area level' do
+        recommended = FactoryBot.create(:service, service_area:, name: 'Recomendado', published: true)
+        sa = FactoryBot.create(:service_area,
+                               outcomes: '<ul><li>Equipos alineados</li><li>Menos retrabajo</li></ul>',
+                               program: '<ol><li>Diagnóstico<ul><li>Dos semanas</li></ul></li></ol>',
+                               definitions: '<p>Qué entendemos por cambio</p>',
+                               faq: '<ol><li>¿Cuánto dura?<ul><li>Tres meses</li></ul></li></ol>',
+                               pricing: 'Desde USD 5.000',
+                               brochure: 'https://example.com/brochure.pdf')
+        FactoryBot.create(:recommended_content, source: sa, target: recommended, relevance_order: 1)
+
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['outcomes']).to eq(['Equipos alineados', 'Menos retrabajo'])
+        expect(json_response['program']).to eq([['Diagnóstico', 'Dos semanas']])
+        expect(json_response['definitions']).to include('Qué entendemos por cambio')
+        expect(json_response['faq']).to eq([['¿Cuánto dura?', 'Tres meses']])
+        expect(json_response['pricing']).to eq('Desde USD 5.000')
+        expect(json_response['brochure']).to eq('https://example.com/brochure.pdf')
+        expect(json_response['recommended'].map { |r| r['title'] }).to eq(['Recomendado'])
+      end
+
+      it 'answers empty blocks when the area has none' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['outcomes']).to be_nil
+        expect(json_response['program']).to eq([])
+        expect(json_response['definitions']).to be_nil
+        expect(json_response['faq']).to eq([])
+        expect(json_response['pricing']).to be_nil
+        expect(json_response['brochure']).to be_nil
+        expect(json_response['recommended']).to eq([])
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)

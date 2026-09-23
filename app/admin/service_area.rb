@@ -7,7 +7,9 @@ ActiveAdmin.register ServiceArea do
                 :visible, :summary, :cta_message, :lang,
                 :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
                 :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program,
-                :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details
+                :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details,
+                :outcomes, :definitions, :program, :faq, :pricing, :brochure,
+                recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
   filter :name
 
   controller do
@@ -42,6 +44,7 @@ ActiveAdmin.register ServiceArea do
     actions
   end
 
+  hint_colapsable = 'Copy this in a empty line to add an item:<ol><li>item title<ul><li>item content</li></ul></li></ol>'.html_safe
   form do |f|
     f.semantic_errors # Shows errors on :base
     f.inputs 'ServiceArea Details' do
@@ -76,14 +79,40 @@ ActiveAdmin.register ServiceArea do
         f.input :recommended_way_note,
                 hint: 'Short line, e.g. "Funciona para el 80% de las empresas..."'
         f.input :recommended_way_summary, as: :text, input_html: { rows: 12 },
-                hint: 'Short + scannable. Steps kit: ul.rw-steps > li.rw-step (span.rw-step-number + ' \
-                      'div.rw-step-body with h4 + p). NOTE: the preview below has no site CSS, so .rw-* ' \
-                      'blocks look unstyled here — verify on the public page.'
+                                          hint: 'Short + scannable. Steps kit: ul.rw-steps > li.rw-step (span.rw-step-number + ' \
+                                                'div.rw-step-body with h4 + p). NOTE: the preview below has no site CSS, so .rw-* ' \
+                                                'blocks look unstyled here — verify on the public page.'
         f.input :recommended_way_details, as: :text, input_html: { rows: 20 },
-                hint: 'Full details, HTML-first. Kit: .rw-grid-2 (two columns), .rw-pricing / ' \
-                      '.rw-pricing-card(.--starred) / .rw-star-badge / .rw-plan-name / .rw-pricing-line ' \
-                      '(.rw-pricing-label + .rw-pricing-value) / .rw-price, .rw-callout. Colors auto-theme ' \
-                      'from the area palette. Preview below is unstyled.'
+                                          hint: 'Full details, HTML-first. Kit: .rw-grid-2 (two columns), .rw-pricing / ' \
+                                                '.rw-pricing-card(.--starred) / .rw-star-badge / .rw-plan-name / .rw-pricing-line ' \
+                                                '(.rw-pricing-label + .rw-pricing-value) / .rw-price, .rw-callout. Colors auto-theme ' \
+                                                'from the area palette. Preview below is unstyled.'
+      end
+
+      f.inputs 'The area as an offering (what a service has, so the area can be sold on its own)' do
+        f.input :outcomes, as: :rich_text_area, hint: 'Bullet list'
+        f.input :definitions, as: :rich_text_area
+        f.input :program, as: :rich_text_area, hint: hint_colapsable
+        f.input :pricing
+        f.input :faq, as: :rich_text_area, hint: hint_colapsable
+        f.input :brochure
+      end
+
+      f.inputs 'Recommended Contents' do
+        f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
+          rc.input :target_type, as: :select,
+                                 collection: %w[Article EventType Service Resource],
+                                 input_html: { class: 'target-type-select' }
+          rc.input :target_id, label: 'Target', as: :select,
+                               collection: [],
+                               input_html: { class: 'target-id-select' }
+          rc.input :relevance_order
+          rc.input :current_target_info, as: :hidden,
+                                         input_html: {
+                                           class: 'current-target-info',
+                                           value: { type: rc.object.target_type, id: rc.object.target_id }.to_json
+                                         }
+        end
       end
 
       f.input :seo_title
@@ -102,6 +131,9 @@ ActiveAdmin.register ServiceArea do
     end
 
     f.actions         # Adds the 'Submit' and 'Cancel' buttons
+    script do
+      raw RecommendableHelper.recommended_content_js(ServiceArea)
+    end
   end
 
   show do
@@ -162,6 +194,32 @@ ActiveAdmin.register ServiceArea do
       row :value_proposition_title
       rich_row :value_proposition
       row :ordering
+      rich_row :definitions
+      row :outcomes do |service_area|
+        ul do
+          service_area.outcomes_list&.each { |item| li item.html_safe }
+        end
+      end
+      row :program do |service_area|
+        service_area.program_list.each do |main_item, collapsible_item|
+          div do
+            strong main_item
+            div collapsible_item.to_s.html_safe
+          end
+        end
+      end
+      row :pricing
+      row :faq do |service_area|
+        service_area.faq_list.each do |main_item, collapsible_item|
+          div do
+            strong main_item
+            div collapsible_item.to_s.html_safe
+          end
+        end
+      end
+      row :brochure do |service_area|
+        link_to service_area.brochure, service_area.brochure, target: '_blank' if service_area.brochure.present?
+      end
       row :seo_title
       row :seo_description
 

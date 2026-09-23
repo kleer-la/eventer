@@ -7,18 +7,22 @@ class ServiceAreasTool < AuthenticatedTool
   requires_permission :read, ServiceArea
 
   OPERATIONS = %w[list get create update].freeze
-  BLOCKS = %i[summary cta_message slogan subtitle description target value_proposition].freeze
+  BLOCKS = %i[summary cta_message slogan subtitle description target value_proposition
+              outcomes definitions program faq].freeze
 
   description <<~MD
     Service areas: the group a Service belongs to, each with its own page
     (summary, slogan, subtitle, description, target, value proposition, CTA
-    message), palette and icon.
+    message), palette and icon. An area can also be an offering in itself:
+    it carries the same blocks a service has (outcomes, definitions, program,
+    FAQ, pricing, brochure) and can recommend content, so the page presents
+    and sells it without a service underneath.
 
     operation=list (default): summaries in display order, filtered by query
     (name), visible. Long texts are not included.
     operation=get: one area in full, by id (slug or numeric): the rich-text
-    blocks, palette and icon, the recommended-way copy, and the services
-    listed under it.
+    blocks, palette and icon, the recommended-way copy, what it recommends,
+    and the services listed under it.
     operation=create: needs name, summary, icon, slogan, subtitle, description,
     side_image, primary_color, secondary_color, cta_message, seo_title and
     seo_description; hidden unless visible=true.
@@ -55,6 +59,12 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:value_proposition_title).filled(:string)
                                       .description('Optional title for the value proposition section')
     optional(:value_proposition).filled(:string).description('Value proposition block; HTML accepted')
+    optional(:outcomes).filled(:string).description('Outcomes block (bullet list); HTML accepted')
+    optional(:definitions).filled(:string).description('Definitions block; HTML accepted')
+    optional(:program).filled(:string).description('Program block (ol > li, ul > li for the detail); HTML accepted')
+    optional(:faq).filled(:string).description('FAQ block (ol > li, ul > li for the answer); HTML accepted')
+    optional(:pricing).filled(:string).description('Pricing note')
+    optional(:brochure).filled(:string).description('Brochure URL')
     optional(:ordering).filled(:integer).description('Display order')
     optional(:is_training_program).filled(:bool).description('true = it is a training program area')
     optional(:seo_title).filled(:string).description('SEO title')
@@ -109,9 +119,15 @@ class ServiceAreasTool < AuthenticatedTool
       primary_font_color: area.primary_font_color, secondary_font_color: area.secondary_font_color,
       target_title: area.target_title, value_proposition_title: area.value_proposition_title,
       seo_title: area.seo_title, seo_description: area.seo_description,
+      pricing: area.pricing, brochure: area.brochure,
       blocks: BLOCKS.index_with { |field| area.public_send(field).body.to_s },
       recommended_way: { title: area.recommended_way_title, note: area.recommended_way_note,
                          summary: area.recommended_way_summary, details: area.recommended_way_details },
+      recommends: area.recommended_contents.includes(:target).map do |content|
+        { target_type: content.target_type, target_id: content.target_id,
+          target: content.target&.try(:title) || content.target&.try(:name),
+          relevance_order: content.relevance_order }
+      end,
       services: area.services.order(:ordering).map { |s| { id: s.id, slug: s.slug, name: s.name } } }.to_json
   end
 

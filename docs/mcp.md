@@ -40,8 +40,8 @@ cada tool como un permiso por usuario, así que son 17 y no 49.
 | `news` | `list`, `get`, `create`, `update` |
 | `podcasts` | `list`, `get`, `create`, `update`, `create_episode`, `update_episode` |
 | `services` | `list`, `get`, `create`, `update` |
-| `service_areas` | `list`, `get`, `create`, `update` |
-| `recommendations` | `list`, `add`, `remove` — qué recomienda un contenido |
+| `service_areas` | `list`, `get`, `create`, `update` — el área lleva también los bloques de un servicio (outcomes, programa, definiciones, FAQ, pricing, brochure) y puede recomendar contenido, para presentarse y venderse sola |
+| `recommendations` | `list`, `add`, `remove` — qué recomienda un contenido (artículo, recurso, curso, servicio, área de servicio o página) |
 | `images` | `list`, `find_usage`, `upload` (sólo desde una URL pública) |
 | `mail_templates` | `list`, `get` (con el render para un contacto de muestra), `update`, `create` |
 | `contacts` | `search`, `get` — lo que mandaron los formularios del sitio (mensajes, descargas, assessments); sólo lectura |

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-# Cross references between entities: what an article, resource, service, event
-# type or page recommends. In the admin these are edited as nested attributes
+# Cross references between entities: what an article, resource, service,
+# service area, event type or page recommends. In the admin these are edited as nested attributes
 # of the source, so the permission that governs them is the right to update the
 # *source* — that is what gets checked here, not a separate rule.
 class RecommendationService
-  SOURCE_TYPES = %w[Article Resource EventType Service Page].freeze
+  SOURCE_TYPES = %w[Article Resource EventType Service ServiceArea Page].freeze
   TARGET_TYPES = %w[Article Resource EventType Service Page].freeze
   DEFAULT_RELEVANCE = 50
 

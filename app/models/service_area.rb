@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class ServiceArea < ApplicationRecord
+  include Recommendable
   include RecommendedWayRenderable
+  include ServiceOffering
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]
@@ -27,8 +29,14 @@ class ServiceArea < ApplicationRecord
     seo_title seo_description
   ]
 
+  accepts_nested_attributes_for :recommended_contents, allow_destroy: true
+
   def should_generate_new_friendly_id?
     slug.blank?
+  end
+
+  def title
+    name
   end
 
   def testimonies
@@ -37,7 +45,7 @@ class ServiceArea < ApplicationRecord
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[abstract created_at icon id id_value lang name primary_color secondary_color slug updated_at visible
-       recommended_way_title recommended_way_note]
+       recommended_way_title recommended_way_note pricing brochure]
   end
 
   def self.ransackable_associations(_auth_object = nil)

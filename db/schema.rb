@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -709,12 +709,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_000000) do
 
   create_table "service_areas", force: :cascade do |t|
     t.text "abstract"
+    t.string "brochure"
     t.datetime "created_at", null: false
     t.string "icon"
     t.boolean "is_training_program", default: false, null: false
     t.integer "lang"
     t.string "name"
     t.integer "ordering"
+    t.string "pricing"
     t.string "primary_color"
     t.string "primary_font_color", default: "#000000"
     t.text "recommended_way_details"

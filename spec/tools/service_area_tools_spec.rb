@@ -51,6 +51,25 @@ describe 'service area MCP tools' do
       expect(result['blocks']['summary']).to include 'summary'
     end
 
+    it 'returns the offering blocks, pricing, brochure and what it recommends' do
+      article = FactoryBot.create(:article, title: 'Lectura sugerida')
+      service_area.update!(outcomes: '<ul><li>Equipos alineados</li></ul>', program: '<ol><li>Paso 1</li></ol>',
+                           definitions: '<p>Definiciones</p>', faq: '<ol><li>¿Cuánto?</li></ol>',
+                           pricing: 'Desde USD 5.000', brochure: 'https://example.com/b.pdf')
+      FactoryBot.create(:recommended_content, source: service_area, target: article, relevance_order: 1)
+
+      result = run(ServiceAreasTool, operation: 'get', id: service_area.slug)
+
+      expect(result['blocks']['outcomes']).to include 'Equipos alineados'
+      expect(result['blocks']['program']).to include 'Paso 1'
+      expect(result['blocks']['definitions']).to include 'Definiciones'
+      expect(result['blocks']['faq']).to include '¿Cuánto?'
+      expect(result['pricing']).to eq 'Desde USD 5.000'
+      expect(result['brochure']).to eq 'https://example.com/b.pdf'
+      expect(result['recommends']).to eq [{ 'target_type' => 'Article', 'target_id' => article.id,
+                                            'target' => 'Lectura sugerida', 'relevance_order' => 1 }]
+    end
+
     it 'says so when there is no such service area' do
       result = run(ServiceAreasTool, operation: 'get', id: 'no-existe')
 
@@ -72,6 +91,18 @@ describe 'service area MCP tools' do
       run(ServiceAreasTool, operation: 'update', id: service_area.slug, subtitle: 'Nuevo subtítulo', confirm: true)
 
       expect(service_area.reload.subtitle.to_s).to include 'Nuevo subtítulo'
+    end
+
+    it 'writes the offering blocks, pricing and brochure' do
+      run(ServiceAreasTool, operation: 'update', id: service_area.slug, confirm: true,
+                            outcomes: '<ul><li>Equipos alineados</li></ul>', program: '<ol><li>Paso 1</li></ol>',
+                            pricing: 'Desde USD 5.000', brochure: 'https://example.com/b.pdf')
+
+      service_area.reload
+      expect(service_area.outcomes_list).to eq ['Equipos alineados']
+      expect(service_area.program_list).to eq [['Paso 1', nil]]
+      expect(service_area.pricing).to eq 'Desde USD 5.000'
+      expect(service_area.brochure).to eq 'https://example.com/b.pdf'
     end
 
     it 'can flip visible' do

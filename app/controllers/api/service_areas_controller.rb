@@ -100,6 +100,15 @@ module Api
         recommended_way_note: service_area.recommended_way_note,
         recommended_way_summary: service_area.recommended_way_summary_html,
         recommended_way_details: service_area.recommended_way_details_html,
+        # The area as an offering in itself: the same blocks a service has, so
+        # the page can present and sell it without a service underneath.
+        outcomes: service_area.outcomes_list,
+        definitions: content_or_nil(service_area.definitions),
+        program: service_area.program_list,
+        pricing: service_area.pricing,
+        faq: service_area.faq_list,
+        brochure: service_area.brochure,
+        recommended: service_area.recommended(lang:),
         services: services2json(services, service_chg, req_slug, lang)
       }
     end

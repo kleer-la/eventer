@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Cross references between contents — what an article, resource, service,
+# Cross references between contents — what an article, resource, service, area,
 # course type or page recommends: one tool, three operations.
 class RecommendationsTool < AuthenticatedTool
   tool_name 'recommendations'
@@ -29,7 +29,7 @@ class RecommendationsTool < AuthenticatedTool
 
   arguments do
     optional(:operation).filled(:string).description("'list' (default), 'add' or 'remove'")
-    required(:source_type).filled(:string).description('Article | Resource | EventType | Service | Page')
+    required(:source_type).filled(:string).description('Article | Resource | EventType | Service | ServiceArea | Page')
     required(:source_id).filled(:string).description('Slug, numeric id, or name/title of the recommending entity')
     optional(:target_type).filled(:string).description('add/remove: Article | Resource | EventType | Service | Page')
     optional(:target_id).filled(:string).description('add/remove: slug, id, or name/title of the recommended entity')
