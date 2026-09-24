@@ -150,6 +150,32 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(service.reload.value_proposition.body.to_s).to include('durante seis meses')
     end
 
+    # The site builds the FAQ and program out of ol > li items, each with a
+    # nested ul > li detail. Anything else saves fine and then the section is
+    # simply not on the page — so the preview has to say it beforehand.
+    it 'warns when a FAQ or program would not show on the page' do
+      result = call_tool('services', { operation: 'update', id: service.slug,
+                                       faq: '<h4>¿Se puede hacer remoto?</h4><div>Sí</div>',
+                                       program: '<p>Diagnóstico y pilotos</p>' })
+
+      expect(result['warnings']).to include(a_string_matching(/faq.*ol > li/m))
+      expect(result['warnings']).to include(a_string_matching(/program.*ol > li/m))
+    end
+
+    it 'warns about outcomes that are not a bullet list' do
+      result = call_tool('services', { operation: 'update', id: service.slug, outcomes: '<p>Equipos alineados</p>' })
+
+      expect(result['warnings']).to include(a_string_matching(/outcomes.*ul > li/m))
+    end
+
+    it 'says nothing about blocks in the shape the site reads' do
+      result = call_tool('services', { operation: 'update', id: service.slug,
+                                       faq: '<ol><li>¿Se puede hacer remoto?<ul><li>Sí</li></ul></li></ol>',
+                                       outcomes: '<ul><li>Equipos alineados</li></ul>' })
+
+      expect(result['warnings'].join).not_to match(/faq|outcomes|program/)
+    end
+
     it 'caps the listing with limit, like the other list tools' do
       2.times { |i| create(:service, name: "Otro servicio #{i}") }
 

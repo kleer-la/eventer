@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ServiceWriteService < ContentWriteService
+  include OfferingFormatWarnings
+
   self.model = Service
   self.editable_fields = %i[name subtitle slug card_description pricing side_image brochure ordering
                             value_proposition outcomes definitions program target faq
@@ -46,8 +48,7 @@ class ServiceWriteService < ContentWriteService
   def references(areas) = areas.sort_by { |a| [a.name, a.lang] }.map(&:reference).join('; ')
 
   def model_warnings
-    return [] unless @service_area.present? && @record.service_area
-
-    ["Service area: #{@record.service_area.reference}."]
+    area = @service_area.present? && @record.service_area ? ["Service area: #{@record.service_area.reference}."] : []
+    area + offering_format_warnings
   end
 end

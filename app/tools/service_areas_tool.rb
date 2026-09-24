@@ -65,7 +65,7 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:value_proposition_title).filled(:string)
                                       .description('Optional title for the value proposition section')
     optional(:value_proposition).filled(:string).description('Value proposition block; HTML accepted')
-    optional(:outcomes).filled(:string).description('Outcomes block (bullet list); HTML accepted')
+    optional(:outcomes).filled(:string).description('Outcomes block (ul > li bullet list); HTML accepted')
     optional(:definitions).filled(:string).description('Definitions block; HTML accepted')
     optional(:program).filled(:string).description('Program block (ol > li, ul > li for the detail); HTML accepted')
     optional(:faq).filled(:string).description('FAQ block (ol > li, ul > li for the answer); HTML accepted')

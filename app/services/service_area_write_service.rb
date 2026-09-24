@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ServiceAreaWriteService < ContentWriteService
+  include OfferingFormatWarnings
+
   self.model = ServiceArea
   self.editable_fields = %i[name slug icon primary_color secondary_color primary_font_color secondary_font_color
                             lang is_training_program summary cta_message side_image slogan subtitle description
@@ -20,4 +22,8 @@ class ServiceAreaWriteService < ContentWriteService
   def initialize(visible: nil, **args)
     super(published: visible, **args)
   end
+
+  private
+
+  def model_warnings = offering_format_warnings
 end

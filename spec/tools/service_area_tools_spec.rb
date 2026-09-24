@@ -126,6 +126,13 @@ describe 'service area MCP tools' do
       )
     end
 
+    it 'warns when the FAQ would not show on the page' do
+      result = run(ServiceAreasTool, operation: 'update', id: service_area.slug,
+                                     faq: '<h4>¿Cuánto dura?</h4><div>Tres meses</div>')
+
+      expect(result['warnings']).to include(a_string_matching(/faq.*ol > li/m))
+    end
+
     it 'can flip visible' do
       run(ServiceAreasTool, operation: 'update', id: service_area.slug, visible: true, confirm: true)
 
