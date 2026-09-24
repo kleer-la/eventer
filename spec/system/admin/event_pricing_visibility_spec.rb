@@ -31,6 +31,9 @@ RSpec.describe 'Admin event pricing visibility', type: :system do
     fill_in 'user_email', with: administrator.email
     fill_in 'user_password', with: 'please'
     click_button 'Identificarme'
+    # Wait for the login to land: visiting before the session exists bounces
+    # back to the login form, and the radios are never there (flaky on CI).
+    expect(page).to have_no_button('Identificarme')
     visit new_admin_event_path
   end
 
