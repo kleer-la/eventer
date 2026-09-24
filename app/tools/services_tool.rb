@@ -12,7 +12,8 @@ class ServicesTool < AuthenticatedTool
     The services offered, grouped by service area.
 
     operation=list (default): summaries in display order, filtered by query
-    (name), service_area, published. Long texts are not included.
+    (name), service_area, published. Long texts are not included. The area
+    comes with its id, slug and lang: the same name exists once per language.
     operation=get: one service in full, by id (slug or numeric): the rich-text
     blocks that make up its page (value proposition, outcomes, definitions,
     program, target, FAQ), the recommended-way copy, and what it recommends.
@@ -30,7 +31,9 @@ class ServicesTool < AuthenticatedTool
     optional(:operation).filled(:string).description("'list' (default), 'get', 'create' or 'update'")
     optional(:id).filled(:string).description('get/update: service slug (preferred) or numeric id')
     optional(:query).filled(:string).description('list: substring matched against the name')
-    optional(:service_area).filled(:string).description('Service area name (list: filter; create: required)')
+    optional(:service_area).filled(:string)
+                           .description('Service area: numeric id, slug or name (list: filter; create: required). ' \
+                                        'A name shared by two languages is refused: use the id or the slug')
     optional(:published).filled(:bool).description('list: filter. create/update: on the site or not')
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:name).filled(:string).description('Service name')
@@ -78,7 +81,7 @@ class ServicesTool < AuthenticatedTool
   def list(limit: DEFAULT_LIMIT, query: nil, service_area: nil, published: nil, **)
     scope = Service.includes(:service_area).order(:ordering, :name)
     scope = scope.where('name LIKE ?', "%#{query}%") if query.present?
-    scope = scope.joins(:service_area).where(service_areas: { name: service_area }) if service_area.present?
+    scope = scope.where(service_area: ServiceArea.referenced_by(service_area)) if service_area.present?
     scope = scope.where(published: published) unless published.nil?
 
     services = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |service| summary(service) }
@@ -87,13 +90,13 @@ class ServicesTool < AuthenticatedTool
 
   def summary(service)
     { id: service.id, slug: service.slug, name: service.name, subtitle: service.subtitle,
-      service_area: service.service_area&.name, published: service.published, ordering: service.ordering }
+      service_area: service.service_area&.to_mcp, published: service.published, ordering: service.ordering }
   end
 
   def get(id: nil, **)
     service = find(id)
     { id: service.id, slug: service.slug, name: service.name, subtitle: service.subtitle,
-      service_area: service.service_area&.name, published: service.published, ordering: service.ordering,
+      service_area: service.service_area&.to_mcp, published: service.published, ordering: service.ordering,
       card_description: service.card_description, pricing: service.pricing,
       side_image: service.side_image, brochure: service.brochure,
       seo_title: service.seo_title, seo_description: service.seo_description,

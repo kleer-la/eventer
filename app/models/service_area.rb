@@ -35,6 +35,26 @@ class ServiceArea < ApplicationRecord
     slug.blank?
   end
 
+  # The areas an MCP caller may mean by `reference`: a numeric id, a slug or a
+  # name. A name is not unique — the same area exists once per language — so
+  # this can return several, and the caller decides what to do with that.
+  def self.referenced_by(reference)
+    reference = reference.to_s.strip
+    return where(id: reference) if reference.match?(/\A\d+\z/)
+
+    by_slug = where(slug: reference)
+    by_slug.exists? ? by_slug : where(name: reference)
+  end
+
+  # How an MCP response names the area without ambiguity.
+  def reference
+    "#{name} (id #{id}, slug #{slug}, lang #{lang})"
+  end
+
+  def to_mcp
+    { id: id, slug: slug, name: name, lang: lang }
+  end
+
   def title
     name
   end

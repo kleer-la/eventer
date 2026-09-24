@@ -163,6 +163,41 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(result['errors'].join).to include(ServiceArea.first.name)
     end
 
+    context 'when two service areas share a name, one per language' do
+      let!(:area_es) { create(:service_area, name: 'Agile Product Management', slug: 'apm-es', lang: :es) }
+      let!(:area_en) { create(:service_area, name: 'Agile Product Management', slug: 'apm-en', lang: :en) }
+
+      it 'refuses to pick one by name, and lists them with id, slug and lang' do
+        result = call_tool('services', { operation: 'update', id: service.slug,
+                                         service_area: 'Agile Product Management', confirm: true })
+
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('mbiguous')
+          .and include("id #{area_es.id}, slug apm-es, lang es").and include("id #{area_en.id}, slug apm-en, lang en")
+        expect(service.reload.service_area).not_to eq(area_en)
+      end
+
+      it 'takes the area by numeric id or by slug, and the preview says which one and in what language' do
+        result = call_tool('services', { operation: 'update', id: service.slug, service_area: area_es.id.to_s })
+        expect(result['status']).to eq('preview')
+        expect(result['warnings'].join).to include('Agile Product Management').and include("id #{area_es.id}")
+                                                                              .and include('lang es')
+
+        call_tool('services', { operation: 'update', id: service.slug, service_area: 'apm-en', confirm: true })
+        expect(service.reload.service_area).to eq(area_en)
+      end
+
+      it 'reports the area with its language when reading and listing' do
+        service.update!(service_area: area_en)
+
+        expect(call_tool('services', { operation: 'get', id: service.slug })['service_area'])
+          .to include('name' => 'Agile Product Management', 'slug' => 'apm-en', 'lang' => 'en')
+        expect(call_tool('services')['services'].first['service_area']).to include('lang' => 'en')
+        expect(call_tool('services', { service_area: 'apm-en' })['services'].pluck('name')).to eq([service.name])
+        expect(call_tool('services', { service_area: area_es.id.to_s })['services']).to be_empty
+      end
+    end
+
     context 'as a content user' do
       let(:user) { create(:content_user) }
 

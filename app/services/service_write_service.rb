@@ -23,15 +23,31 @@ class ServiceWriteService < ContentWriteService
     assign_service_area
   end
 
+  # Two areas can share a name, one per language, and a service filed under
+  # the wrong one shows its hero in the other language. So an ambiguous name is
+  # an error, never a guess: the caller retries with the id or the slug.
   def assign_service_area
     return if @service_area.blank?
 
-    area = ServiceArea.find_by(name: @service_area)
-    if area.nil?
-      known = ServiceArea.pluck(:name).join(', ')
-      return errors << "Unknown service area #{@service_area.inspect}. Existing ones: #{known}"
-    end
+    areas = ServiceArea.referenced_by(@service_area).order(:lang).to_a
+    return errors << unknown_area(areas) if areas.size != 1
 
-    @record.service_area = area
+    @record.service_area = areas.first
+  end
+
+  def unknown_area(areas)
+    if areas.empty?
+      "Unknown service area #{@service_area.inspect}. Existing ones: #{references(ServiceArea.all)}"
+    else
+      "Ambiguous service area #{@service_area.inspect}: #{references(areas)}. Pass its id or slug."
+    end
+  end
+
+  def references(areas) = areas.sort_by { |a| [a.name, a.lang] }.map(&:reference).join('; ')
+
+  def model_warnings
+    return [] unless @service_area.present? && @record.service_area
+
+    ["Service area: #{@record.service_area.reference}."]
   end
 end
