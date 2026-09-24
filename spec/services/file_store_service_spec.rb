@@ -101,16 +101,20 @@ describe FileStoreService do
     end
   end
 
+  # The one place that talks to the real bucket, so it needs the network that
+  # rails_helper closes for everyone else.
   describe 'S3', slow: true do
     before(:all) do
+      WebMock.allow_net_connect!
       @fname = '12345.png'
       File.open(@fname, 'w') { |f| f.write 'xxx' }
     end
     after(:all) do
+      WebMock.disable_net_connect!(allow_localhost: true)
       File.delete(@filename) if @filename.present?
       File.delete(@fname)    if File.exist? @fname
     end
-    it "try to read from a S3 store - doesn't exists" do
+    it 'reads back a file it wrote to S3' do
       store = FileStoreService.create_s3
       store.write @fname
       File.delete @fname
