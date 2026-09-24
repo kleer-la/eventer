@@ -117,11 +117,22 @@ module Api
         contact_title: service_area.contact_title.presence,
         contact_cta_text: service_area.contact_cta_text.presence,
         recommended: service_area.recommended(lang:),
+        testimonies: area_testimonies(service_area),
         services: services2json(services, service_chg, req_slug, lang)
       }
     end
 
     private
+
+    # What clients said about the area's services, starred ones only, in the
+    # shape the course pages read (fname/lname, plain text) — like them, ten at most.
+    def area_testimonies(service_area)
+      service_area.testimonies.starred.includes(:rich_text_testimony).first(10).map do |testimony|
+        { fname: testimony.first_name, lname: testimony.last_name,
+          testimony: testimony.testimony.to_plain_text,
+          profile_url: testimony.profile_url, photo_url: testimony.photo_url }
+      end
+    end
 
     def services2json(services, service_chg, req_slug, lang)
       services.order(:ordering).map do |service|

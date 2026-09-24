@@ -258,6 +258,34 @@ describe Api::ServiceAreasController do
       end
     end
 
+    # The area page shows what clients said about its services: the starred
+    # testimonies, in the shape the course pages already read (fname/lname).
+    describe 'testimonies on the area page' do
+      render_views
+
+      it 'sends the starred testimonies of its services, and only those' do
+        sa = FactoryBot.create(:service_area)
+        service = FactoryBot.create(:service, service_area: sa, published: true)
+        FactoryBot.create(:testimony, :starred, testimonial: service, first_name: 'Ana', last_name: 'Pérez',
+                                                testimony: '<p>Nos ordenó el backlog.</p>')
+        FactoryBot.create(:testimony, testimonial: service, first_name: 'Sin', last_name: 'Estrella')
+
+        get :show, params: { id: sa.slug, format: 'json' }
+        testimonies = JSON.parse(response.body)['testimonies']
+
+        expect(testimonies.size).to eq(1)
+        expect(testimonies.first).to include('fname' => 'Ana', 'lname' => 'Pérez',
+                                             'testimony' => 'Nos ordenó el backlog.',
+                                             'profile_url' => 'https://linkedin.com/in/johndoe')
+      end
+
+      it 'sends an empty list when none is starred' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+
+        expect(JSON.parse(response.body)['testimonies']).to eq([])
+      end
+    end
+
     # The hero and contact texts come from one Page shared by every area; an
     # area can bring its own, and the site falls back to the Page when it does not.
     describe 'page texts of its own' do
