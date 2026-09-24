@@ -11,10 +11,12 @@ jobs:
       KEVENTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.KEVENTER_AWS_SECRET_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v4
+      # imagemagick: mini_magick shells out to the binary, so the library alone
+      # leaves every WebP conversion spec failing with "convert: not found".
       - name: Install ImageMagick
         run: |
           sudo apt-get update
-          sudo apt-get install -y libmagickwand-dev
+          sudo apt-get install -y libmagickwand-dev imagemagick
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
