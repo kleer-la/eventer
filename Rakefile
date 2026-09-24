@@ -18,7 +18,8 @@ task :ci do
 end
 
 task :slow_tests do
+  cmd = "rake spec SPEC_OPTS='--tag slow'"
   puts 'Starting to run slow tests...'
-  system("export DISPLAY=:99.0 && bundle exec rake spec SPEC_OPTS='--tag slow'")
+  system("export DISPLAY=:99.0 && bundle exec #{cmd}")
   raise "#{cmd} failed!" unless $CHILD_STATUS.exitstatus.zero?
 end

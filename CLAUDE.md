@@ -1,211 +1,92 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+KEventer is the backend for Kleer's public website (kleer.la, served by the
+separate `website17` repo): courses, calendars, registrations, content (articles,
+resources, services, podcasts, news, pages) and an MCP server that lets people
+edit that content from Claude. Rails 8.1, Ruby 3.4.7.
 
-## Project Overview
+## Where commands run
 
-KEventer is a comprehensive event management and training platform built with Rails 7.2.2 and Ruby 3.4.7. It serves as the backend for Kleer's public website, managing courses, calendars, registrations, and educational content delivery. The platform supports both online and classroom-based training with robust participant management, content delivery, and business intelligence capabilities.
+Claude Code runs on the **host**, which has no Ruby. Every Rails, bundle, rake,
+rubocop, brakeman and `bin/deploy` command goes through the devcontainer, which
+mounts this repo at `/app`:
 
-## Development Environment Setup
-
-**IMPORTANT**: All Rails commands must be executed inside the devcontainer, not on the host Ubuntu system.
-
-### Accessing the Devcontainer
-The Rails application runs inside a Docker devcontainer. You cannot execute Rails commands directly from the Ubuntu host.
-
-### Common Development Commands (Inside Devcontainer)
-
-### Setup and Dependencies
 ```bash
-bundle install                    # Install Ruby dependencies
-rails db:migrate                  # Run database migrations
-rails db:seed                     # Load initial data
-rails db:test:prepare             # Prepare test database
-```
-
-### Testing
-```bash
-bundle exec rake ci               # Run fast tests (exclude slow tests)
-bundle exec rake slow_tests       # Run slow tests only
-bundle exec rake spec             # Run all RSpec tests
-bundle exec rake spec SPEC=<path> # Run specific test file
-# Note: Cucumber was retired (Jun 2026); tests live in RSpec. JS-driven coverage
-# uses RSpec system specs with driven_by(:selenium, using: :headless_chrome).
-
-# Run tests inside Docker container (when using devcontainer)
 docker exec eventer_devcontainer-app-1 bundle exec rake ci
-docker exec eventer_devcontainer-app-1 bundle exec rake spec
-docker exec eventer_devcontainer-app-1 bundle exec rake spec SPEC=spec/system/admin/participants_spec.rb
+docker exec eventer_devcontainer-app-1 bundle exec rspec spec/models/event_spec.rb
+docker exec eventer_devcontainer-app-1 bundle exec rubocop
+docker exec eventer_devcontainer-app-1 bundle exec brakeman
+docker exec eventer_devcontainer-app-1 bin/rails db:migrate
 ```
 
-### Development Server
-```bash
-rails s -b 0                     # Development server without SSL
-rails s -b 'ssl://0:3000?key=localhost.key&cert=localhost.crt'  # With SSL
-./runserver.sh                   # Start with environment variables loaded
-```
+File operations (read, edit, git) happen on the host as usual. If the container
+is stopped: `docker start eventer_devcontainer-app-1`.
 
-### Database Operations
-```bash
-RAILS_ENV=test rails db:migrate   # Run migrations in test environment
-rails db:schema:dump             # Generate schema file
-```
+Databases: SQLite in development and test, PostgreSQL in QA and production — so
+don't rely on Postgres-only SQL passing locally. Environment variables come from
+`eventer.env` (template: `eventer.env.template`).
 
-### Code Quality
-```bash
-rubocop                          # Ruby linting
-brakeman                         # Security analysis
-```
+## Testing
 
-## Core Application Architecture
+- `rake ci` is what GitHub Actions runs (`.github/workflows/ci.yml`) and what
+  "the full CI" means when landing work. It runs RSpec excluding `slow`-tagged
+  specs. `rake slow_tests` runs only those (`slow: true`, 3 examples that hit
+  real S3 / webhooks); CI does not run them.
+- RSpec only; Cucumber was retired (Jun 2026). Browser coverage is system specs:
+  `driven_by(:selenium, using: :headless_chrome)` for JS, `:rack_test` otherwise.
+- **A new headless-Chrome system spec must call `ENV.delete('LD_PRELOAD')` before
+  `driven_by`.** The devcontainer preloads jemalloc for Rails; Chrome inherits it
+  and dies, and Selenium misreports that as `InvalidSessionIdError`. See
+  `spec/system/admin/event_pricing_visibility_spec.rb`.
+- Controller specs don't render views unless they use `render_views`, so an
+  ActionText `body.to_s` comes back `""` there.
+- Work test-first and outside-in: start from a request or system spec for the
+  behavior, then go down to model specs. Prefer the smallest increment that can
+  be verified end to end.
 
-### Business Domain: Event Management & Training Platform
+## Architecture map
 
-The application manages a complex event ecosystem with the following key components:
+The domain is conventional Rails; read the models for detail. Pointers to what
+isn't obvious from file names:
 
-#### Core Models and Relationships
+- **Events**: `Event` (a dated session, with early-bird / volume / coupon
+  pricing and up to three trainers) is an instance of `EventType` (the course
+  definition, multi-language, `platform` enum keventer/academia). `Participant`
+  moves New → Contacted → Confirmed → Attended → Certified and carries payment,
+  rating and certificate data.
+- **Content**: `Article`, `Resource`, `Service` / `ServiceArea`, `Podcast` /
+  `Episode`, `News`, `Page`. Content is Spanish/English via `lang` fields or
+  separate records. The `Recommendable` concern links EventTypes, Articles,
+  Resources and Services; `ImageReference` tracks where images are used.
+- **Admin**: ActiveAdmin (`app/admin`), Devise auth, CanCanCan `Ability`.
+- **Public API**: `app/controllers/api` (`v3` is the current namespace) — this
+  is what website17 consumes. Changing a response shape can break the site.
+- **MCP server**: `fast-mcp` tools in `app/tools` (one tool per entity with an
+  `operation` argument, not one tool per verb), authenticated with OAuth via
+  Doorkeeper. Specs in `spec/tools`.
+- **Integrations**: S3 for files (`kleer-images` bucket is in `sa-east-1`), Xero
+  for invoicing, reCAPTCHA shared with website17 (the secret here must match the
+  site key there).
 
-**Event Management (Primary Business Logic)**
-- **Event**: Central entity representing training sessions/courses
-  - Complex pricing with early bird discounts, volume pricing, and coupon system
-  - Multiple trainers support (primary, trainer2, trainer3)
-  - Multi-modal delivery (classroom, online, blended)
-  - Timezone support and sophisticated scheduling
+## Deployment
 
-- **EventType**: Course templates/definitions with multi-language support
-  - Categories system for content organization
-  - Recommendation engine integration via `Recommendable` concern
-  - Platform enum: keventer, academia
-
-- **Participant**: Registration and lifecycle management
-  - Status workflow: New → Contacted → Confirmed → Attended → Certified
-  - Payment tracking, ratings, and feedback collection
-  - Certificate generation and batch import capabilities
-
-**Content Management**
-- **Article**: Blog posts and educational content with SEO optimization
-- **Resource**: Educational materials (books, infographics, assessments, videos)
-- **Service**: Professional services offered beyond events
-- **Podcast**: Audio content with Spotify/YouTube integration
-
-**Geographic & Marketing**
-- **Country/InfluenceZone**: Geographic organization and participant segmentation
-- **Campaign/CampaignSource**: Marketing attribution and analytics
-- **Coupon**: Discount and promotion system
-
-**Assessment System**
-- **Assessment/Question/QuestionGroup**: Quiz and evaluation framework
-- Multi-level assessment structure for complex evaluations
-
-#### Key Architectural Patterns
-
-1. **Multi-language Support**: Spanish/English throughout (lang fields, separate content)
-2. **Recommendation Engine**: `Recommendable` concern connects EventTypes, Articles, Resources, Services
-3. **Image Management**: `ImageReference` concern tracks image usage across models
-4. **Geographic Segmentation**: Country → InfluenceZone hierarchy
-5. **Complex Pricing Logic**: Early bird, volume discounts, coupon integration
-6. **Event Lifecycle Management**: Full participant journey from registration to certification
-
-### Key Controllers and Features
-
-- **ActiveAdmin**: Admin interface for content management
-- **API**: RESTful endpoints for external integrations (v3 namespace for latest)
-- **Marketing Dashboard**: Campaign tracking and analytics
-- **Participant Management**: Registration, communication, and certification
-- **Content Delivery**: Multi-format educational content
-
-### Environment Configuration
-
-- Environment variables loaded from `eventer.env` (see `eventer.env.template`)
-- SSL certificates for HTTPS development (`localhost.key`, `localhost.crt`)
-- AWS S3 integration for file storage
-- New Relic monitoring
-- Xero integration for invoicing
-
-### Development Environment
-
-- **Host OS**: Windows with WSL2 (Ubuntu)
-- **Containerization**: Docker + devcontainer
-- **IDE**: VS Code with Remote-Containers extension
-- **Runtime**: Rails application runs inside Docker container
-- **Database**: SQLite (development), PostgreSQL (QA and production)
-
-### Deployment
-
-Kamal, on a Hetzner server (`5.78.92.152`) — **not Heroku**, which the project
-left. `bin/deploy` wraps `bundle exec kamal`, so like every other Rails command
-it runs inside the devcontainer: it sources `eventer.env` and strips the
-devcontainer `credsStore` that would otherwise fail `docker login`.
+Kamal on a Hetzner server (`5.78.92.152`) — not Heroku, which the project left.
+`bin/deploy` wraps `bundle exec kamal`: it sources `eventer.env` and strips the
+devcontainer `credsStore` that would otherwise fail `docker login`. Run it
+through the container:
 
 ```bash
-bin/deploy config -d qa          # what would be deployed; check :version:
-bin/deploy deploy -d qa          # QA → qa.eventos.kleer.la
-bin/deploy deploy                # production → eventos.kleer.la
-bin/deploy app logs -f -d qa     # any other kamal subcommand
+docker exec eventer_devcontainer-app-1 bin/deploy config -d qa   # check :version:
+docker exec eventer_devcontainer-app-1 bin/deploy deploy -d qa   # QA → qa.eventos.kleer.la
+docker exec eventer_devcontainer-app-1 bin/deploy deploy         # production → eventos.kleer.la
+docker exec eventer_devcontainer-app-1 bin/deploy app logs -f -d qa
 ```
 
-Each destination runs a `web` role and a `job` role (`rake jobs:work`) on that
-same server, and builds the image remotely over SSH there. QA takes its
-database from `DATABASE_URL_QA`; the two destinations are configured by
-`config/deploy.yml` plus `config/deploy.qa.yml`, and their secrets by
-`.kamal/secrets` and `.kamal/secrets.qa`.
+Deploy QA first and verify it (`curl https://qa.eventos.kleer.la/up` → 200, plus
+checking the actual change) before production. A production deploy needs an
+explicit request from the user each time.
 
-### Testing Strategy
-
-- RSpec for unit and integration tests
-- SimpleCov for test coverage
-- Separate fast/slow test suites for CI optimization
-- Factory Bot for test data generation
-- RSpec system specs for browser/JS coverage (`type: :system`, `driven_by(:selenium, using: :headless_chrome)` for JS; `:rack_test` otherwise). Cucumber was retired (Jun 2026).
-
-### Development Tools
-
-- **Debugging**: `debug` gem for interactive debugging
-- **Performance**: `derailed_benchmarks`, `stackprof`
-- **Code Quality**: `rubocop`, `brakeman`
-- **IDE Support**: `ruby-lsp`, `solargraph`
-
-## Development Recommendations
-
-### TDD Development Approach
-- **Test-First Development**: Write tests before implementing functionality
-- **Small Increments**: Make small, focused changes that can be easily tested and verified
-- **Step-by-Step Process**: Break down complex features into smaller, testable units
-- **Red-Green-Refactor Cycle**: Write failing test → Make it pass → Refactor code
-
-### Outside-In Development Strategy
-- **Start with Integration Tests**: Begin with high-level RSpec feature tests
-- **Work Inward**: Progress from controller tests to model tests to implementation
-- **Null Infrastructure**: Use test doubles and mocks to isolate business logic from external dependencies
-- **Focus on Behavior**: Test what the system does, not how it does it
-
-## Frontend Asset Management (website17)
-
-### Sass/SCSS Compilation
-website17 uses Sass for CSS preprocessing. Current setup uses deprecated Ruby Sass.
-
-**Current Build Process:**
-```bash
-# In website17 directory
-./sass.sh    # Compiles SCSS files in public/app/scss/ to CSS
-```
-
-**Migration Plan (Recommended):**
-1. **Current**: Ruby Sass (deprecated March 2019) - working but unsupported
-2. **Target**: Dart Sass (current official implementation)
-3. **Installation**: `npm install -g sass` or use standalone binary
-4. **Command**: Same syntax - `sass --watch scss/index.scss:css/index.css --style compressed`
-
-### Dependency Updates Completed
-- ✅ **oauth gem removed** (unused dependency)
-- ✅ **Ruby version aligned** to 3.3.9 across all environments
-- 🔄 **Sass migration planned** (Ruby Sass → Dart Sass)
-
-## Important Notes
-
-- The application uses ActiveRecord with sophisticated associations and concerns
-- Multi-tenant-like behavior through Country/InfluenceZone segmentation
-- Complex business logic around pricing, discounts, and participant lifecycle
-- Rich content management with recommendation algorithms
-- Extensive use of Rails conventions and patterns
-- Strong emphasis on internationalization and localization
+Each destination runs a `web` role and a `job` role (`rake jobs:work`) on the
+same server and builds the image remotely over SSH. QA takes its database from
+`DATABASE_URL_QA`; destinations are configured in `config/deploy.yml` +
+`config/deploy.qa.yml`, secrets in `.kamal/secrets` + `.kamal/secrets.qa`.
