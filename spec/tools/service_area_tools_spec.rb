@@ -105,6 +105,27 @@ describe 'service area MCP tools' do
       expect(service_area.brochure).to eq 'https://example.com/b.pdf'
     end
 
+    it 'reads back the hero and contact texts, nil where the area uses the shared ones' do
+      service_area.update!(hero_cta_text: 'Conversemos tu caso')
+
+      result = run(ServiceAreasTool, operation: 'get', id: service_area.slug)
+
+      expect(result['page_texts']).to include('hero_cta_text' => 'Conversemos tu caso', 'contact_title' => nil)
+    end
+
+    it 'writes the hero and contact texts of the area' do
+      run(ServiceAreasTool, operation: 'update', id: service_area.slug, confirm: true,
+                            hero_cta_text: 'Conversemos tu caso', hero_secondary_cta_text: 'Ver cómo trabajamos',
+                            hero_secondary_cta_target: '#como-trabajamos', hero_note: 'Dentro del equipo.',
+                            contact_title: 'Una conversación de 45 minutos', contact_cta_text: 'Agendar')
+
+      expect(service_area.reload).to have_attributes(
+        hero_cta_text: 'Conversemos tu caso', hero_secondary_cta_text: 'Ver cómo trabajamos',
+        hero_secondary_cta_target: '#como-trabajamos', hero_note: 'Dentro del equipo.',
+        contact_title: 'Una conversación de 45 minutos', contact_cta_text: 'Agendar'
+      )
+    end
+
     it 'can flip visible' do
       run(ServiceAreasTool, operation: 'update', id: service_area.slug, visible: true, confirm: true)
 

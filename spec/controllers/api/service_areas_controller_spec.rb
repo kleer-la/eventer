@@ -258,6 +258,42 @@ describe Api::ServiceAreasController do
       end
     end
 
+    # The hero and contact texts come from one Page shared by every area; an
+    # area can bring its own, and the site falls back to the Page when it does not.
+    describe 'page texts of its own' do
+      it 'exposes the hero and contact texts the area sets' do
+        sa = FactoryBot.create(:service_area,
+                               hero_cta_text: 'Conversemos tu caso',
+                               hero_secondary_cta_text: 'Ver cómo trabajamos',
+                               hero_secondary_cta_target: '#como-trabajamos',
+                               hero_note: 'Trabajamos dentro del equipo, no desde afuera.',
+                               contact_title: 'Una conversación de 45 minutos',
+                               contact_cta_text: 'Agendar')
+
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response).to include(
+          'hero_cta_text' => 'Conversemos tu caso',
+          'hero_secondary_cta_text' => 'Ver cómo trabajamos',
+          'hero_secondary_cta_target' => '#como-trabajamos',
+          'hero_note' => 'Trabajamos dentro del equipo, no desde afuera.',
+          'contact_title' => 'Una conversación de 45 minutos',
+          'contact_cta_text' => 'Agendar'
+        )
+      end
+
+      it 'answers nil for the texts the area leaves to the shared page' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        %w[hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
+           contact_title contact_cta_text].each do |field|
+          expect(json_response).to include(field => nil)
+        end
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)

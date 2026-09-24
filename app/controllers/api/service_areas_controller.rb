@@ -108,6 +108,14 @@ module Api
         pricing: service_area.pricing,
         faq: service_area.faq_list,
         brochure: service_area.brochure,
+        # Texts of its own for the hero and contact blocks; nil = the site uses
+        # the shared "service-area" Page.
+        hero_cta_text: service_area.hero_cta_text.presence,
+        hero_secondary_cta_text: service_area.hero_secondary_cta_text.presence,
+        hero_secondary_cta_target: service_area.hero_secondary_cta_target.presence,
+        hero_note: service_area.hero_note.presence,
+        contact_title: service_area.contact_title.presence,
+        contact_cta_text: service_area.contact_cta_text.presence,
         recommended: service_area.recommended(lang:),
         services: services2json(services, service_chg, req_slug, lang)
       }

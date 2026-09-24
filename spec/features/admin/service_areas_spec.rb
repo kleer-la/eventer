@@ -22,6 +22,31 @@ RSpec.describe 'Admin service areas', type: :feature do
     expect(area.brochure).to eq('https://example.com/adopcion-ia.pdf')
   end
 
+  it 'saves the hero and contact texts from the form' do
+    visit edit_admin_service_area_path(area)
+    fill_in 'Hero CTA text', with: 'Conversemos tu caso'
+    fill_in 'Hero secondary CTA text', with: 'Ver cómo trabajamos'
+    fill_in 'Hero secondary CTA target', with: '#como-trabajamos'
+    fill_in 'Hero note', with: 'Dentro del equipo.'
+    fill_in 'Contact title', with: 'Una conversación de 45 minutos'
+    fill_in 'Contact CTA text', with: 'Agendar'
+    find("input[type='submit']").click
+
+    expect(area.reload).to have_attributes(
+      hero_cta_text: 'Conversemos tu caso', hero_secondary_cta_text: 'Ver cómo trabajamos',
+      hero_secondary_cta_target: '#como-trabajamos', hero_note: 'Dentro del equipo.',
+      contact_title: 'Una conversación de 45 minutos', contact_cta_text: 'Agendar'
+    )
+  end
+
+  it 'shows the hero and contact texts it has' do
+    area.update!(hero_cta_text: 'Conversemos tu caso', contact_title: 'Una conversación de 45 minutos')
+
+    visit admin_service_area_path(area)
+
+    expect(page).to have_content('Conversemos tu caso').and have_content('Una conversación de 45 minutos')
+  end
+
   it 'offers the offering blocks and the recommended contents in the form' do
     visit new_admin_service_area_path
 

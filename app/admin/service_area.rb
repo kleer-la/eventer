@@ -9,6 +9,8 @@ ActiveAdmin.register ServiceArea do
                 :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program,
                 :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details,
                 :outcomes, :definitions, :program, :faq, :pricing, :brochure,
+                :hero_cta_text, :hero_secondary_cta_text, :hero_secondary_cta_target, :hero_note,
+                :contact_title, :contact_cta_text,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
   filter :name
 
@@ -96,6 +98,17 @@ ActiveAdmin.register ServiceArea do
         f.input :pricing
         f.input :faq, as: :rich_text_area, hint: hint_colapsable
         f.input :brochure
+      end
+
+      f.inputs 'Page texts of its own (empty = the shared "service-area" Page, then the site default)' do
+        f.input :hero_cta_text, label: 'Hero CTA text', hint: 'Main button in the hero'
+        f.input :hero_secondary_cta_text, label: 'Hero secondary CTA text',
+                                          hint: 'Second button in the hero; shown only with a target'
+        f.input :hero_secondary_cta_target, label: 'Hero secondary CTA target',
+                                            hint: 'Where it goes: a URL, or #anchor of a section of this page'
+        f.input :hero_note, label: 'Hero note', hint: 'One line under the hero buttons'
+        f.input :contact_title, label: 'Contact title', hint: 'Text of the contact block at the end of the page'
+        f.input :contact_cta_text, label: 'Contact CTA text', hint: 'Button of the contact block'
       end
 
       f.inputs 'Recommended Contents' do
@@ -220,6 +233,12 @@ ActiveAdmin.register ServiceArea do
       row :brochure do |service_area|
         link_to service_area.brochure, service_area.brochure, target: '_blank' if service_area.brochure.present?
       end
+      row :hero_cta_text
+      row :hero_secondary_cta_text
+      row :hero_secondary_cta_target
+      row :hero_note
+      row :contact_title
+      row :contact_cta_text
       row :seo_title
       row :seo_description
 

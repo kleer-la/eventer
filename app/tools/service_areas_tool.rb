@@ -9,6 +9,9 @@ class ServiceAreasTool < AuthenticatedTool
   OPERATIONS = %w[list get create update].freeze
   BLOCKS = %i[summary cta_message slogan subtitle description target value_proposition
               outcomes definitions program faq].freeze
+  # Plain texts an area may set to override the shared "service-area" Page.
+  PAGE_TEXTS = %i[hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
+                  contact_title contact_cta_text].freeze
 
   description <<~MD
     Service areas: the group a Service belongs to, each with its own page
@@ -16,7 +19,10 @@ class ServiceAreasTool < AuthenticatedTool
     message), palette and icon. An area can also be an offering in itself:
     it carries the same blocks a service has (outcomes, definitions, program,
     FAQ, pricing, brochure) and can recommend content, so the page presents
-    and sells it without a service underneath.
+    and sells it without a service underneath. The hero and contact texts
+    (hero_cta_text, hero_secondary_cta_text + _target, hero_note,
+    contact_title, contact_cta_text) are shared by every area unless the
+    area sets its own; a field left empty keeps the shared text.
 
     operation=list (default): summaries in display order, filtered by query
     (name), visible. Long texts are not included.
@@ -65,6 +71,14 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:faq).filled(:string).description('FAQ block (ol > li, ul > li for the answer); HTML accepted')
     optional(:pricing).filled(:string).description('Pricing note')
     optional(:brochure).filled(:string).description('Brochure URL')
+    optional(:hero_cta_text).filled(:string).description('Main hero button text; empty = the shared one')
+    optional(:hero_secondary_cta_text).filled(:string)
+                                      .description('Second hero button text; shown only with its target')
+    optional(:hero_secondary_cta_target).filled(:string)
+                                        .description('Second hero button target: a URL or #anchor on the page')
+    optional(:hero_note).filled(:string).description('One line under the hero buttons')
+    optional(:contact_title).filled(:string).description('Contact block text at the end; empty = the shared one')
+    optional(:contact_cta_text).filled(:string).description('Contact block button text; empty = the shared one')
     optional(:ordering).filled(:integer).description('Display order')
     optional(:is_training_program).filled(:bool).description('true = it is a training program area')
     optional(:seo_title).filled(:string).description('SEO title')
@@ -120,6 +134,7 @@ class ServiceAreasTool < AuthenticatedTool
       target_title: area.target_title, value_proposition_title: area.value_proposition_title,
       seo_title: area.seo_title, seo_description: area.seo_description,
       pricing: area.pricing, brochure: area.brochure,
+      page_texts: PAGE_TEXTS.index_with { |field| area.public_send(field) },
       blocks: BLOCKS.index_with { |field| area.public_send(field).body.to_s },
       recommended_way: { title: area.recommended_way_title, note: area.recommended_way_note,
                          summary: area.recommended_way_summary, details: area.recommended_way_details },
