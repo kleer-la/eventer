@@ -115,6 +115,7 @@ module Api
         hero_secondary_cta_target: service_area.hero_secondary_cta_target.presence,
         hero_note: service_area.hero_note.presence,
         contact_title: service_area.contact_title.presence,
+        contact_text: service_area.contact_text.presence,
         contact_cta_text: service_area.contact_cta_text.presence,
         recommended: service_area.recommended(lang:),
         testimonies: area_testimonies(service_area),

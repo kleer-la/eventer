@@ -295,7 +295,8 @@ describe Api::ServiceAreasController do
                                hero_secondary_cta_text: 'Ver cómo trabajamos',
                                hero_secondary_cta_target: '#como-trabajamos',
                                hero_note: 'Trabajamos dentro del equipo, no desde afuera.',
-                               contact_title: 'Una conversación de 45 minutos',
+                               contact_title: 'Empecemos por entender tu caso',
+                               contact_text: 'Una conversación de 45 minutos con quien va a acompañar al equipo.',
                                contact_cta_text: 'Agendar')
 
         get :show, params: { id: sa.slug, format: 'json' }
@@ -306,7 +307,8 @@ describe Api::ServiceAreasController do
           'hero_secondary_cta_text' => 'Ver cómo trabajamos',
           'hero_secondary_cta_target' => '#como-trabajamos',
           'hero_note' => 'Trabajamos dentro del equipo, no desde afuera.',
-          'contact_title' => 'Una conversación de 45 minutos',
+          'contact_title' => 'Empecemos por entender tu caso',
+          'contact_text' => 'Una conversación de 45 minutos con quien va a acompañar al equipo.',
           'contact_cta_text' => 'Agendar'
         )
       end
@@ -316,7 +318,7 @@ describe Api::ServiceAreasController do
         json_response = JSON.parse(response.body)
 
         %w[hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
-           contact_title contact_cta_text].each do |field|
+           contact_title contact_text contact_cta_text].each do |field|
           expect(json_response).to include(field => nil)
         end
       end

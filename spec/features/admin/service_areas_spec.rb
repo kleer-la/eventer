@@ -28,14 +28,16 @@ RSpec.describe 'Admin service areas', type: :feature do
     fill_in 'Hero secondary CTA text', with: 'Ver cómo trabajamos'
     fill_in 'Hero secondary CTA target', with: '#como-trabajamos'
     fill_in 'Hero note', with: 'Dentro del equipo.'
-    fill_in 'Contact title', with: 'Una conversación de 45 minutos'
+    fill_in 'Contact title', with: 'Empecemos por entender tu caso'
+    fill_in 'Contact text', with: 'Una conversación de 45 minutos.'
     fill_in 'Contact CTA text', with: 'Agendar'
     find("input[type='submit']").click
 
     expect(area.reload).to have_attributes(
       hero_cta_text: 'Conversemos tu caso', hero_secondary_cta_text: 'Ver cómo trabajamos',
       hero_secondary_cta_target: '#como-trabajamos', hero_note: 'Dentro del equipo.',
-      contact_title: 'Una conversación de 45 minutos', contact_cta_text: 'Agendar'
+      contact_title: 'Empecemos por entender tu caso', contact_text: 'Una conversación de 45 minutos.',
+      contact_cta_text: 'Agendar'
     )
   end
 

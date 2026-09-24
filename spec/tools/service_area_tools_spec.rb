@@ -110,19 +110,22 @@ describe 'service area MCP tools' do
 
       result = run(ServiceAreasTool, operation: 'get', id: service_area.slug)
 
-      expect(result['page_texts']).to include('hero_cta_text' => 'Conversemos tu caso', 'contact_title' => nil)
+      expect(result['page_texts']).to include('hero_cta_text' => 'Conversemos tu caso', 'contact_title' => nil,
+                                              'contact_text' => nil)
     end
 
     it 'writes the hero and contact texts of the area' do
       run(ServiceAreasTool, operation: 'update', id: service_area.slug, confirm: true,
                             hero_cta_text: 'Conversemos tu caso', hero_secondary_cta_text: 'Ver cómo trabajamos',
                             hero_secondary_cta_target: '#como-trabajamos', hero_note: 'Dentro del equipo.',
-                            contact_title: 'Una conversación de 45 minutos', contact_cta_text: 'Agendar')
+                            contact_title: 'Empecemos por entender tu caso', contact_text: 'Una conversación de 45 minutos.',
+                            contact_cta_text: 'Agendar')
 
       expect(service_area.reload).to have_attributes(
         hero_cta_text: 'Conversemos tu caso', hero_secondary_cta_text: 'Ver cómo trabajamos',
         hero_secondary_cta_target: '#como-trabajamos', hero_note: 'Dentro del equipo.',
-        contact_title: 'Una conversación de 45 minutos', contact_cta_text: 'Agendar'
+        contact_title: 'Empecemos por entender tu caso', contact_text: 'Una conversación de 45 minutos.',
+        contact_cta_text: 'Agendar'
       )
     end
 

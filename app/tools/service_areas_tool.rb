@@ -11,7 +11,7 @@ class ServiceAreasTool < AuthenticatedTool
               outcomes definitions program faq].freeze
   # Plain texts an area may set to override the shared "service-area" Page.
   PAGE_TEXTS = %i[hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
-                  contact_title contact_cta_text].freeze
+                  contact_title contact_text contact_cta_text].freeze
 
   description <<~MD
     Service areas: the group a Service belongs to, each with its own page
@@ -21,8 +21,10 @@ class ServiceAreasTool < AuthenticatedTool
     FAQ, pricing, brochure) and can recommend content, so the page presents
     and sells it without a service underneath. The hero and contact texts
     (hero_cta_text, hero_secondary_cta_text + _target, hero_note,
-    contact_title, contact_cta_text) are shared by every area unless the
-    area sets its own; a field left empty keeps the shared text.
+    contact_title, contact_text, contact_cta_text) are shared by every area
+    unless the area sets its own; a field left empty keeps the shared text.
+    With contact_text set, contact_title is the heading of the contact block
+    and contact_text the paragraph under it.
 
     operation=list (default): summaries in display order, filtered by query
     (name), visible. Long texts are not included.
@@ -77,7 +79,9 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:hero_secondary_cta_target).filled(:string)
                                         .description('Second hero button target: a URL or #anchor on the page')
     optional(:hero_note).filled(:string).description('One line under the hero buttons')
-    optional(:contact_title).filled(:string).description('Contact block text at the end; empty = the shared one')
+    optional(:contact_title).filled(:string)
+                            .description('Contact block at the end: its heading with contact_text, else its only line')
+    optional(:contact_text).filled(:string).description('Paragraph under contact_title in the contact block')
     optional(:contact_cta_text).filled(:string).description('Contact block button text; empty = the shared one')
     optional(:ordering).filled(:integer).description('Display order')
     optional(:is_training_program).filled(:bool).description('true = it is a training program area')

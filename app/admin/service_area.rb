@@ -10,7 +10,7 @@ ActiveAdmin.register ServiceArea do
                 :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details,
                 :outcomes, :definitions, :program, :faq, :pricing, :brochure,
                 :hero_cta_text, :hero_secondary_cta_text, :hero_secondary_cta_target, :hero_note,
-                :contact_title, :contact_cta_text,
+                :contact_title, :contact_text, :contact_cta_text,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
   filter :name
 
@@ -107,7 +107,11 @@ ActiveAdmin.register ServiceArea do
         f.input :hero_secondary_cta_target, label: 'Hero secondary CTA target',
                                             hint: 'Where it goes: a URL, or #anchor of a section of this page'
         f.input :hero_note, label: 'Hero note', hint: 'One line under the hero buttons'
-        f.input :contact_title, label: 'Contact title', hint: 'Text of the contact block at the end of the page'
+        f.input :contact_title, label: 'Contact title',
+                                hint: 'Contact block at the end of the page: its heading when Contact text is set, ' \
+                                      'otherwise its only line'
+        f.input :contact_text, label: 'Contact text', input_html: { rows: 3 },
+                               hint: 'The paragraph under the contact title — the promise that backs it'
         f.input :contact_cta_text, label: 'Contact CTA text', hint: 'Button of the contact block'
       end
 
@@ -238,6 +242,7 @@ ActiveAdmin.register ServiceArea do
       row :hero_secondary_cta_target
       row :hero_note
       row :contact_title
+      row :contact_text
       row :contact_cta_text
       row :seo_title
       row :seo_description

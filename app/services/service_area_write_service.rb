@@ -9,7 +9,7 @@ class ServiceAreaWriteService < ContentWriteService
                             target_title target value_proposition_title value_proposition ordering
                             outcomes definitions program faq pricing brochure
                             hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
-                            contact_title contact_cta_text
+                            contact_title contact_text contact_cta_text
                             seo_title seo_description
                             recommended_way_title recommended_way_note
                             recommended_way_summary recommended_way_details]
