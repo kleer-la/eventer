@@ -98,13 +98,20 @@ end
 describe 'GET api/event_type/1/testimonies', type: :request do
   it 'one testimony' do
     ev = FactoryBot.create(:event)
-    FactoryBot.create(:participant, event: ev, testimony: 'Hi!')
+    FactoryBot.create(:participant, event: ev, testimony: 'Hi!', selected: true)
     get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
 
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body)
     expect(json.size).to eq 1
+  end
+  it 'leaves out a participant testimony nobody selected' do
+    ev = FactoryBot.create(:event)
+    FactoryBot.create(:participant, event: ev, testimony: 'Hi!')
+    get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
+
+    expect(JSON.parse(response.body)).to eq []
   end
   it 'one empty testimony' do
     ev = FactoryBot.create(:event)
@@ -131,7 +138,7 @@ describe 'GET api/event_type/1/testimonies', type: :request do
 
   it 'leaves role and company empty for a legacy participant testimony' do
     ev = FactoryBot.create(:event)
-    FactoryBot.create(:participant, event: ev, testimony: 'Hi!')
+    FactoryBot.create(:participant, event: ev, testimony: 'Hi!', selected: true)
     get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
 
     expect(JSON.parse(response.body).first).to include('role' => nil, 'company' => nil)

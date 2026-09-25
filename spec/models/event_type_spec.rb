@@ -140,6 +140,29 @@ describe EventType do
     end
   end
 
+  # What the course page shows. A course with Testimony records shows the
+  # starred ones; one without falls back to its participants' testimonies,
+  # and only the selected ones: the fallback publishing every comment a
+  # participant typed put unreviewed feedback on 26 course pages (#211).
+  context '#api_testimonies' do
+    it 'sends only the selected participant testimonies when the course has no Testimony' do
+      ev = create(:event, event_type: @event_type)
+      create(:participant, event: ev, testimony: 'Nobody chose this one')
+      chosen = create(:participant, event: ev, testimony: 'Chosen', selected: true)
+
+      expect(@event_type.api_testimonies).to eq [chosen]
+    end
+
+    it 'prefers the starred Testimony records once the course has any' do
+      ev = create(:event, event_type: @event_type)
+      create(:participant, event: ev, testimony: 'Legacy', selected: true)
+      starred = create(:testimony, :starred, testimonial: @event_type)
+      create(:testimony, testimonial: @event_type)
+
+      expect(@event_type.api_testimonies).to eq [starred]
+    end
+  end
+
   context 'Testimonies (New Polymorphic Model)' do
     it 'can have testimonies associated' do
       testimony = create(:testimony, :for_event_type, testimonial: @event_type)

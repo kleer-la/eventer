@@ -52,18 +52,13 @@ class EventType < ApplicationRecord
                .order(selected: :desc, updated_at: :desc)
   end
 
-  # Returns testimonies for API - combines both new Testimony model and legacy participant testimonies
-  # This method maintains backward compatibility during the transition
+  # What the course page shows: the starred Testimony records, or, while a
+  # course has none, its participants' selected testimonies (the flag the
+  # import migration honoured; without it every comment went public, #211).
   def api_testimonies
-    # Use new Testimony model if available, otherwise fall back to participant testimonies
-    if testimonies.exists?
-      # Use stared field for new Testimony model (equivalent to selected)
-      testimonies.where(stared: true)
-    else
-      # Fall back to legacy participant testimonies
-      # Note: Not filtering by selected to maintain backward compatibility with existing tests/behavior
-      participant_testimonies
-    end
+    return testimonies.where(stared: true) if testimonies.exists?
+
+    participant_testimonies.where(selected: true)
   end
 
   def active_coupons(date)
