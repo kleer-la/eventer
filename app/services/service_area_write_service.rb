@@ -2,6 +2,7 @@
 
 class ServiceAreaWriteService < ContentWriteService
   include OfferingFormatWarnings
+  include SlugChangeWarning
 
   self.model = ServiceArea
   self.editable_fields = %i[name slug icon primary_color secondary_color primary_font_color secondary_font_color
@@ -25,5 +26,7 @@ class ServiceAreaWriteService < ContentWriteService
 
   private
 
-  def model_warnings = offering_format_warnings
+  def model_warnings
+    offering_format_warnings + slug_change_warnings(also: ', and every service URL under it moves with it')
+  end
 end

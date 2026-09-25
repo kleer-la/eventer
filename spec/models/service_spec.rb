@@ -171,4 +171,26 @@ RSpec.describe Service, type: :model do
       end
     end
   end
+
+  # The old URL of a renamed area or service keeps resolving, even when the
+  # history had no row for it (kleer-la/eventer#208).
+  describe 'renaming the slug' do
+    it 'keeps finding it by the slug it left' do
+      record = FactoryBot.create(:service, slug: 'agile-product-management')
+
+      record.update!(slug: 'producto-digital')
+
+      expect(Service.friendly.find('agile-product-management')).to eq record
+      expect(Service.friendly.find('producto-digital')).to eq record
+    end
+
+    it 'remembers the old slug even when the history did not have it' do
+      record = FactoryBot.create(:service, slug: 'agile-product-management')
+      record.slugs.delete_all
+
+      record.update!(slug: 'producto-digital')
+
+      expect(Service.friendly.find('agile-product-management')).to eq record
+    end
+  end
 end

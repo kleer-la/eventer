@@ -4,6 +4,7 @@ class Service < ApplicationRecord
   include Recommendable
   include RecommendedWayRenderable
   include ServiceOffering
+  include KeepsSlugHistory
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]

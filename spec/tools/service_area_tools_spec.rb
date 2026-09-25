@@ -136,6 +136,21 @@ describe 'service area MCP tools' do
       expect(result['warnings']).to include(a_string_matching(/faq.*ol > li/m))
     end
 
+    # Renaming moves every URL under the area; the preview says so (#208).
+    it 'warns when the slug changes that the old URL will redirect and hand-written links will not' do
+      result = run(ServiceAreasTool, operation: 'update', id: service_area.slug, slug: 'producto-digital')
+
+      expect(result['warnings']).to include(
+        a_string_matching(/slug changes from "ia-aplicada" to "producto-digital".*every service URL.*301.*by hand/)
+      )
+    end
+
+    it 'does not warn about the slug when it stays' do
+      result = run(ServiceAreasTool, operation: 'update', id: service_area.slug, name: 'IA Aplicada 2')
+
+      expect(result['warnings'].to_s).not_to include('slug changes')
+    end
+
     it 'can flip visible' do
       run(ServiceAreasTool, operation: 'update', id: service_area.slug, visible: true, confirm: true)
 
@@ -158,6 +173,17 @@ describe 'service area MCP tools' do
       result = run(ServiceAreasTool, operation: 'list', visible: true)
 
       expect(result['service_areas'].map { |a| a['name'] }).to eq [visible_area.name]
+    end
+  end
+
+  describe 'ServicesTool operation=update' do
+    let(:service) { FactoryBot.create(:service, service_area: service_area, slug: 'consultoria-coaching-producto') }
+
+    it 'warns when the slug changes that the old URL will redirect' do
+      result = run(ServicesTool, operation: 'update', id: service.slug,
+                                 slug: 'estrategia-descubrimiento-producto')
+
+      expect(result['warnings']).to include(a_string_matching(/slug changes from "consultoria-coaching-producto".*301/))
     end
   end
 end

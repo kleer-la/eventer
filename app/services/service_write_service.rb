@@ -2,6 +2,7 @@
 
 class ServiceWriteService < ContentWriteService
   include OfferingFormatWarnings
+  include SlugChangeWarning
 
   self.model = Service
   self.editable_fields = %i[name subtitle slug card_description pricing side_image brochure ordering
@@ -49,6 +50,6 @@ class ServiceWriteService < ContentWriteService
 
   def model_warnings
     area = @service_area.present? && @record.service_area ? ["Service area: #{@record.service_area.reference}."] : []
-    area + offering_format_warnings
+    area + offering_format_warnings + slug_change_warnings
   end
 end
