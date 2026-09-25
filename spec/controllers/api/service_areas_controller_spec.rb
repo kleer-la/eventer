@@ -49,6 +49,18 @@ describe Api::ServiceAreasController do
       expect(services.map { |s| s['id'] }).not_to include(unpublished.id)
     end
 
+    # The site reads testimonies only on the area page (the show endpoint);
+    # the list carried them all, with HTML bodies, in a shape the site cannot
+    # even read (#210).
+    it 'does not carry testimonies' do
+      service = FactoryBot.create(:service, service_area: @regular_service, published: true)
+      FactoryBot.create(:testimony, :starred, testimonial: service)
+
+      get :index, params: { format: 'json' }
+
+      expect(JSON.parse(response.body).first).not_to have_key('testimonies')
+    end
+
     it 'lists only published services of a training programme' do
       unpublished = FactoryBot.create(:service, service_area: @training_program, published: false)
 

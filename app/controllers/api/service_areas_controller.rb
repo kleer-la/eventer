@@ -38,18 +38,6 @@ module Api
               name: service.name,
               subtitle: service.subtitle
             }
-          end,
-          testimonies: service_area.testimonies.where(stared: true).map do |testimony|
-            {
-              first_name: testimony.first_name,
-              last_name: testimony.last_name,
-              role: testimony.role,
-              company: testimony.company,
-              profile_url: testimony.profile_url,
-              photo_url: testimony.photo_url,
-              service: testimony.testimonial.name,
-              testimony: testimony.testimony.body.to_s
-            }
           end
         }
       }
