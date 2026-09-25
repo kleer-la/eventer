@@ -33,6 +33,9 @@ RSpec.describe 'MCP server', type: :request do
                                              clientInfo: { name: 'claude', version: '1' } }), headers: headers
     expect(response).to have_http_status(:ok)
     expect(response.parsed_body['result']).to include('serverInfo', 'capabilities')
+    # fast-mcp 1.6 does not send initialize.instructions; the transport adds them
+    # so the model logs tool friction on its own (#197).
+    expect(response.parsed_body['result']['instructions']).to include('suggest_mcp_improvement')
 
     post '/mcp', params: { jsonrpc: '2.0', method: 'notifications/initialized' }.to_json, headers: headers
     expect(response).to have_http_status(:accepted)

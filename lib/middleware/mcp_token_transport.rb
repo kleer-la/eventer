@@ -30,7 +30,9 @@ class McpTokenTransport < FastMcp::Transports::AuthenticatedRackTransport
   # fast-mcp writes responses through send_message (an SSE broadcast); over plain
   # HTTP they are captured per thread and returned as the body instead. No
   # response at all (a notification) means 202.
+  # fast-mcp 1.6 does not send initialize.instructions: they are added here.
   def send_message(message)
+    message = with_server_instructions(message)
     capture = Thread.current[:mcp_http_capture]
     return capture << (message.is_a?(String) ? message : JSON.generate(message)) if capture
 
@@ -70,5 +72,18 @@ class McpTokenTransport < FastMcp::Transports::AuthenticatedRackTransport
     status, headers, body = super
     metadata = "#{request.base_url}/.well-known/oauth-protected-resource"
     [status, headers.merge('WWW-Authenticate' => %(Bearer resource_metadata="#{metadata}")), body]
+  end
+
+  # The initialize response is the one whose result carries serverInfo; it is
+  # the only message that gets instructions. Keys may be symbols or strings
+  # depending on whether fast-mcp already serialized the message.
+  def with_server_instructions(message)
+    obj = message.is_a?(String) ? JSON.parse(message) : message
+    result = obj.is_a?(Hash) ? (obj[:result] || obj['result']) : nil
+    return message unless result.is_a?(Hash) && (result[:serverInfo] || result['serverInfo'])
+
+    key = result.keys.first.is_a?(Symbol) ? :instructions : 'instructions'
+    result[key] ||= McpServerInstructions::TEXT
+    message.is_a?(String) ? JSON.generate(obj) : obj
   end
 end
