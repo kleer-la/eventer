@@ -6,7 +6,7 @@
 # rides the publication flag and its warnings.
 class TestimonyWriteService < ContentWriteService
   self.model = Testimony
-  self.editable_fields = %i[first_name last_name testimony profile_url photo_url]
+  self.editable_fields = %i[first_name last_name role company testimony profile_url photo_url]
   self.rich_text_fields = %i[testimony]
   self.publication_flag = :stared
   self.guarded_publication = false
@@ -65,5 +65,9 @@ class TestimonyWriteService < ContentWriteService
   # A new testimony starts unstarred; that is not "disappearing from the site".
   def unpublishing? = super && @record.persisted?
 
-  def label = [@record.first_name, @record.last_name].compact.join(' ')
+  def label
+    who = [@record.first_name, @record.last_name].compact.join(' ')
+    context = [@record.role, @record.company].compact_blank.join(' · ')
+    context.present? ? "#{who} (#{context})" : who
+  end
 end

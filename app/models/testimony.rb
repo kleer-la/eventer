@@ -19,8 +19,14 @@ class Testimony < ApplicationRecord
   scope :for_service, ->(service_id) { where(testimonial_type: 'Service', testimonial_id: service_id) }
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[created_at first_name id id_value last_name photo_url profile_url stared
+    %w[company created_at first_name id id_value last_name photo_url profile_url role stared
        testimonial_id testimonial_type updated_at]
+  end
+
+  # What the site reads: the legacy fname/lname names, plain text, and who speaks.
+  def api_json
+    { fname: first_name, lname: last_name, role: role, company: company,
+      testimony: testimony.to_plain_text, profile_url: profile_url, photo_url: photo_url }
   end
 
   def self.ransackable_associations(_auth_object = nil)

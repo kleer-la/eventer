@@ -19,6 +19,8 @@ class TestimoniesTool < AuthenticatedTool
     operation=get: one in full, by numeric id; the text comes as HTML.
     operation=create: needs first_name, last_name, and what it is about:
     service or event_type, exactly one. Not starred unless starred=true.
+    Give role and company when known: the site shows "Role · Company" under
+    the name, and who speaks is half the value for a decision maker.
     operation=update: edits testimony `id`; only the fields passed are
     touched. Pass service or event_type to move it. To change part of the
     text, prefer `replacements` on `testimony`.
@@ -38,6 +40,8 @@ class TestimoniesTool < AuthenticatedTool
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:first_name).filled(:string).description('First name of who said it')
     optional(:last_name).filled(:string).description('Last name of who said it')
+    optional(:role).filled(:string).description('Their role, e.g. "Responsable de producto"')
+    optional(:company).filled(:string).description('Their company, e.g. "Technisys"')
     optional(:testimony).filled(:string).description('What they said; HTML accepted')
     optional(:profile_url).filled(:string).description('LinkedIn or other profile URL')
     optional(:photo_url).filled(:string).description('Photo URL')
@@ -92,6 +96,7 @@ class TestimoniesTool < AuthenticatedTool
 
   def summary(testimony)
     { id: testimony.id, first_name: testimony.first_name, last_name: testimony.last_name,
+      role: testimony.role, company: testimony.company,
       starred: testimony.stared == true, about: about(testimony.testimonial),
       excerpt: testimony.testimony.to_plain_text.truncate(120) }
   end

@@ -56,6 +56,15 @@ describe TestimoniesTool do
     it 'says so when the id is unknown' do
       expect(run(operation: 'get', id: 999_999)['errors'].first).to include('No testimony with id 999999')
     end
+
+    # Who speaks is half the value for a decision maker (kleer-la/eventer#209).
+    it 'says the role and company of who said it' do
+      testimony = FactoryBot.create(:testimony, testimonial: service, role: 'Responsable de producto',
+                                                company: 'Technisys')
+
+      expect(run(operation: 'get', id: testimony.id)).to include('role' => 'Responsable de producto',
+                                                                 'company' => 'Technisys')
+    end
   end
 
   describe 'operation=create' do
@@ -114,6 +123,12 @@ describe TestimoniesTool do
           replacements: [{ field: 'testimony', find: 'tres meses', replace: 'seis semanas' }])
 
       expect(testimony.reload.testimony.to_s).to include('en seis semanas')
+    end
+
+    it 'sets the role and company' do
+      run(operation: 'update', id: testimony.id, role: 'CTO', company: 'Technisys', confirm: true)
+
+      expect(testimony.reload).to have_attributes(role: 'CTO', company: 'Technisys')
     end
 
     it 'can move it to another service' do

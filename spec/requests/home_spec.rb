@@ -116,4 +116,24 @@ describe 'GET api/event_type/1/testimonies', type: :request do
     json = JSON.parse(response.body)
     expect(json.size).to eq 0
   end
+
+  # A starred Testimony brings who speaks: role and company (kleer-la/eventer#209).
+  it 'says the role and company of who said it' do
+    et = FactoryBot.create(:event_type)
+    FactoryBot.create(:testimony, :starred, testimonial: et, first_name: 'Alejandro', last_name: 'Raiczyk',
+                                            role: 'Responsable de producto', company: 'Technisys')
+    get "/api/event_types/#{et.id}/testimonies", params: { format: 'json' }
+
+    expect(JSON.parse(response.body).first)
+      .to include('fname' => 'Alejandro', 'lname' => 'Raiczyk',
+                  'role' => 'Responsable de producto', 'company' => 'Technisys')
+  end
+
+  it 'leaves role and company empty for a legacy participant testimony' do
+    ev = FactoryBot.create(:event)
+    FactoryBot.create(:participant, event: ev, testimony: 'Hi!')
+    get "/api/event_types/#{ev.event_type.id}/testimonies", params: { format: 'json' }
+
+    expect(JSON.parse(response.body).first).to include('role' => nil, 'company' => nil)
+  end
 end

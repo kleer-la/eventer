@@ -43,6 +43,8 @@ module Api
             {
               first_name: testimony.first_name,
               last_name: testimony.last_name,
+              role: testimony.role,
+              company: testimony.company,
               profile_url: testimony.profile_url,
               photo_url: testimony.photo_url,
               service: testimony.testimonial.name,
@@ -128,11 +130,7 @@ module Api
     # What clients said about the area's services, starred ones only, in the
     # shape the course pages read (fname/lname, plain text) — like them, ten at most.
     def area_testimonies(service_area)
-      service_area.testimonies.starred.includes(:rich_text_testimony).first(10).map do |testimony|
-        { fname: testimony.first_name, lname: testimony.last_name,
-          testimony: testimony.testimony.to_plain_text,
-          profile_url: testimony.profile_url, photo_url: testimony.photo_url }
-      end
+      service_area.testimonies.starred.includes(:rich_text_testimony).first(10).map(&:api_json)
     end
 
     def services2json(services, service_chg, req_slug, lang)

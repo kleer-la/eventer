@@ -2,6 +2,7 @@
 
 module Api
   class EventTypesController < ApplicationController
+    include TestimoniesApi
     def event_by_event_type
       @events = Event.public_commercial_visible.select do |event|
         event.event_type.id == params[:id].to_i
@@ -74,31 +75,6 @@ module Api
         trainers: {},
         categories: {}
       }
-    end
-
-    # Formats testimonies for API response, handling both Testimony model and Participant model
-    def format_testimonies_for_api(testimonies)
-      testimonies.map do |testimony|
-        if testimony.is_a?(Testimony)
-          # New Testimony model - map first_name/last_name to fname/lname for API compatibility
-          {
-            fname: testimony.first_name,
-            lname: testimony.last_name,
-            testimony: testimony.testimony.to_plain_text,
-            profile_url: testimony.profile_url,
-            photo_url: testimony.photo_url
-          }
-        else
-          # Legacy Participant model - use existing fields
-          {
-            fname: testimony.fname,
-            lname: testimony.lname,
-            testimony: testimony.testimony,
-            profile_url: testimony.profile_url,
-            photo_url: testimony.photo_url
-          }
-        end
-      end
     end
   end
 end

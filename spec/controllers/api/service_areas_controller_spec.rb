@@ -279,6 +279,18 @@ describe Api::ServiceAreasController do
                                              'profile_url' => 'https://linkedin.com/in/johndoe')
       end
 
+      it 'says the role and company of who said it, so the site can show who speaks' do
+        sa = FactoryBot.create(:service_area)
+        service = FactoryBot.create(:service, service_area: sa, published: true)
+        FactoryBot.create(:testimony, :starred, testimonial: service, role: 'Responsable de producto',
+                                                company: 'Technisys')
+
+        get :show, params: { id: sa.slug, format: 'json' }
+
+        expect(JSON.parse(response.body)['testimonies'].first)
+          .to include('role' => 'Responsable de producto', 'company' => 'Technisys')
+      end
+
       it 'sends an empty list when none is starred' do
         get :show, params: { id: service_area.slug, format: 'json' }
 

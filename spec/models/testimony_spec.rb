@@ -96,8 +96,8 @@ RSpec.describe Testimony, type: :model do
   describe 'Ransack functionality' do
     describe '.ransackable_attributes' do
       it 'returns expected searchable attributes' do
-        expected_attributes = %w[created_at first_name id id_value last_name photo_url
-                                 profile_url stared testimonial_id testimonial_type updated_at]
+        expected_attributes = %w[company created_at first_name id id_value last_name photo_url
+                                 profile_url role stared testimonial_id testimonial_type updated_at]
 
         expect(Testimony.ransackable_attributes).to match_array(expected_attributes)
       end

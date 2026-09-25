@@ -3,7 +3,7 @@
 ActiveAdmin.register Testimony do
   menu parent: 'Services Mgnt'
 
-  permit_params :first_name, :last_name, :profile_url, :photo_url, :stared, :testimony,
+  permit_params :first_name, :last_name, :role, :company, :profile_url, :photo_url, :stared, :testimony,
                 :testimonial_type, :testimonial_id
 
   controller do
@@ -14,6 +14,7 @@ ActiveAdmin.register Testimony do
 
   filter :first_name
   filter :last_name
+  filter :company
   filter :stared
   filter :testimonial_type, as: :select, collection: %w[EventType Service]
   filter :testimonial_of_EventType_type_id, as: :select,
@@ -29,6 +30,8 @@ ActiveAdmin.register Testimony do
     id_column
     column :first_name
     column :last_name
+    column :role
+    column :company
     column :profile_url
     column :photo_url
     column :testimonial_type
@@ -46,6 +49,8 @@ ActiveAdmin.register Testimony do
     attributes_table do
       row :first_name
       row :last_name
+      row :role
+      row :company
       row :profile_url
       row :photo_url do |testimony|
         image_tag testimony.photo_url if testimony.photo_url.present?
@@ -70,6 +75,8 @@ ActiveAdmin.register Testimony do
     f.inputs do
       f.input :first_name
       f.input :last_name
+      f.input :role, hint: 'Shown under the name as "Role · Company" on the site'
+      f.input :company
       f.input :profile_url, as: :url
       f.input :photo_url, as: :url
 

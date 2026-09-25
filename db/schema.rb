@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -788,11 +788,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_180000) do
   end
 
   create_table "testimonies", force: :cascade do |t|
+    t.string "company"
     t.datetime "created_at", null: false
     t.string "first_name"
     t.string "last_name"
     t.string "photo_url"
     t.string "profile_url"
+    t.string "role"
     t.boolean "stared"
     t.integer "testimonial_id"
     t.string "testimonial_type"
