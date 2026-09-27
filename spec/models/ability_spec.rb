@@ -108,6 +108,8 @@ describe Ability do
       expect(ability).not_to be_able_to(:set_include_in_catalog, EventType)
       expect(ability).not_to be_able_to(:set_published, Article)
       expect(ability).not_to be_able_to(:set_published, Resource)
+      expect(ability).not_to be_able_to(:set_published, News)
+      expect(ability).not_to be_able_to(:set_published, Episode)
     end
 
     it 'cannot destroy resources' do
@@ -145,6 +147,8 @@ describe Ability do
       expect(ability).to be_able_to(:set_include_in_catalog, EventType)
       expect(ability).to be_able_to(:set_published, Article)
       expect(ability).to be_able_to(:set_published, Resource)
+      expect(ability).to be_able_to(:set_published, News)
+      expect(ability).to be_able_to(:set_published, Episode)
     end
 
     it 'cannot destroy resources' do

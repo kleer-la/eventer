@@ -40,7 +40,12 @@ ActiveAdmin.register Episode do
       f.input :spotify_url
       f.input :thumbnail_url
       f.input :released_at, as: :datepicker
-      f.input :published
+      if current_user.ability.can?(:set_published, Episode)
+        f.input :published
+      else
+        f.input :published, input_html: { disabled: true },
+                            hint: 'Only publishers can modify this field'
+      end
     end
     f.actions
   end

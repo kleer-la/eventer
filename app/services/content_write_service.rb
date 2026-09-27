@@ -3,12 +3,13 @@
 # Shared machinery for the MCP write tools: assign the given fields, validate,
 # return a preview that persists nothing, and only save on confirm.
 #
-# It also carries the publishing guard. For Article and Resource, `published` is
-# the one rule ability.rb expresses outside plain CRUD (`cannot :set_published`),
-# so it never travels with the rest of the fields: a content user can draft and
-# edit but not publish, the same line the admin forms draw. News and Service are
-# published without that guard, and Page, Podcast and Episode have no such flag
-# at all — `publication_flag` and `guarded_publication` say which is which.
+# It also carries the publishing guard. For what the content role edits
+# (Ability::PUBLISHED_MODELS), `published` is the one rule ability.rb expresses
+# outside plain CRUD (`cannot :set_published`), so it never travels with the
+# rest of the fields: a content user can draft and edit but not publish, the
+# same line the admin forms draw. Service and ServiceArea are not content-role
+# models and go unguarded; Page, Podcast and MailTemplate have no such flag at
+# all — `publication_flag` and `guarded_publication` say which is which.
 class ContentWriteService
   # Subclasses declare what they write: the model, the fields a tool may set,
   # which of those are long enough to summarise instead of echoing, which are

@@ -18,6 +18,8 @@ class ServiceAreaWriteService < ContentWriteService
                              outcomes definitions program faq]
   self.long_fields = %w[recommended_way_summary recommended_way_details]
   self.publication_flag = :visible
+  # Not a content-role model (see Ability::CONTENT_MODELS): whoever may edit an
+  # area may show it.
   self.guarded_publication = false
 
   def initialize(visible: nil, **args)

@@ -12,6 +12,10 @@ class Ability
   # Content role models (Courses Mgnt + We Publish + Testimony + Images)
   CONTENT_MODELS = (COURSES_MGNT_MODELS + WE_PUBLISH_MODELS + [Testimony]).freeze
 
+  # What the content role edits and carries a publication flag: publishing is
+  # one permission, the same for all of them (#195).
+  PUBLISHED_MODELS = [Article, Resource, News, Episode].freeze
+
   def initialize(user)
     user ||= User.new
 
@@ -39,7 +43,7 @@ class Ability
 
       # Cannot set publishing fields
       cannot :set_include_in_catalog, EventType
-      cannot :set_published, [Article, Resource]
+      cannot :set_published, PUBLISHED_MODELS
     end
 
     # Publisher: same as content + can set publishing fields
@@ -48,7 +52,7 @@ class Ability
       can :manage, ActiveAdmin::Page, name: 'Images', namespace_name: 'admin'
       can :manage, :images
       can :set_include_in_catalog, EventType
-      can :set_published, [Article, Resource]
+      can :set_published, PUBLISHED_MODELS
     end
 
     # Marketing: read, create, update all

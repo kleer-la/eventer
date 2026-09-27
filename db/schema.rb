@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_26_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -69,7 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
     t.integer "industry"
     t.integer "lang", default: 0, null: false
     t.boolean "noindex", default: false, null: false
-    t.boolean "published", default: false
+    t.boolean "published", default: false, null: false
     t.boolean "selected", default: false, null: false
     t.string "slug", null: false
     t.datetime "substantive_change_at"
@@ -137,7 +137,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
     t.string "tagline"
     t.string "tagline_en"
     t.datetime "updated_at", precision: nil
-    t.boolean "visible"
+    t.boolean "visible", default: false, null: false
   end
 
   create_table "categories_event_types", id: false, force: :cascade do |t|
@@ -454,7 +454,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
     t.date "event_date"
     t.string "img"
     t.integer "lang", default: 0, null: false
-    t.boolean "published", default: true, null: false
+    t.boolean "published", default: false, null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.string "url"
@@ -640,7 +640,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
     t.text "long_description_es"
     t.string "preview_en"
     t.string "preview_es"
-    t.boolean "published"
+    t.boolean "published", default: false, null: false
     t.string "seo_description_en"
     t.string "seo_description_es"
     t.string "share_link_en"
@@ -739,7 +739,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_140000) do
     t.string "target_title"
     t.datetime "updated_at", null: false
     t.string "value_proposition_title"
-    t.boolean "visible"
+    t.boolean "visible", default: false, null: false
     t.index ["slug"], name: "index_service_areas_on_slug", unique: true
   end
 

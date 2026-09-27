@@ -11,14 +11,6 @@ class News < ApplicationRecord
   scope :published, -> { where(published: true) }
   scope :unpublished, -> { where(published: false) }
 
-  after_initialize :set_default_published, if: :new_record?
-
-  private
-
-  def set_default_published
-    self.published = false if published.nil?
-  end
-
   def self.ransackable_attributes(auth_object = nil)
     %w[audio created_at description event_date id id_value img lang published title updated_at url
        video where]

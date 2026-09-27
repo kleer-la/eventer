@@ -42,7 +42,12 @@ ActiveAdmin.register News do
     f.inputs do
       f.input :lang, as: :select, collection: News.langs.keys
       f.input :title
-      f.input :published
+      if current_user.ability.can?(:set_published, News)
+        f.input :published
+      else
+        f.input :published, input_html: { disabled: true },
+                            hint: 'Only publishers can modify this field'
+      end
       f.input :where
       f.input :description
       f.input :url, hint: 'Link to more information or external article'

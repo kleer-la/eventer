@@ -51,17 +51,8 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(News.last.published).to be(true)
     end
 
-    context 'as a content user' do
-      let(:user) { create(:content_user) }
-
-      it 'may publish a news item: unlike articles, that carries no separate permission' do
-        item = create(:news, published: false)
-        result = call_tool('news', { operation: 'update', id: item.id, published: true, confirm: true })
-
-        expect(result['status']).to eq('saved')
-        expect(item.reload.published).to be(true)
-      end
-    end
+    # Who may publish a news item follows the same rule as articles: see
+    # mcp_news_publishing_spec.rb.
   end
 
   describe 'podcasts and episodes' do

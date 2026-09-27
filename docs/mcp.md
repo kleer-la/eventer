@@ -165,11 +165,15 @@ Valen las reglas de `app/models/ability.rb`, las mismas que las pantallas:
 | comercial | sí | no | no |
 | content | sí | sí | **no** |
 | publisher | sí | sí | sí |
-| marketing | sí | sí | sí |
+| marketing | sí | sí | **no** |
 | administrator | sí | sí | sí |
 
-Un usuario `content` que pida publicar recibe un error y no se guarda nada, igual
-que si intentara hacerlo desde el formulario. Para cambiar esto se toca
+Publicar es un permiso propio del rol `publisher`. Los roles se suman en la
+persona: quien edita y además publica lleva `content` (o `marketing`) más
+`publisher`. Un usuario sin `publisher` que pida publicar recibe un error y no
+se guarda nada, igual que si intentara hacerlo desde el formulario. Vale para
+artículos, recursos, news y episodios; servicios y áreas no pasan por el rol
+`content` y los publica quien puede editarlos. Para cambiar esto se toca
 `ability.rb`, no los tools.
 
 ## Revocar una conexión
