@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_26_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -70,6 +70,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_120000) do
     t.integer "lang", default: 0, null: false
     t.boolean "noindex", default: false, null: false
     t.boolean "published", default: false, null: false
+    t.string "redirect_url"
     t.boolean "selected", default: false, null: false
     t.string "slug", null: false
     t.datetime "substantive_change_at"

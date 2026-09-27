@@ -22,6 +22,9 @@ class ArticlesTool < AuthenticatedTool
     operation=update: edits article `id`; only the fields passed are touched.
     To change part of the body, prefer `replacements` (body is the only field
     it patches) over sending the whole body back.
+    To merge an article into another or retire it towards an area page, set
+    `redirect_url` and unpublish it: the site keeps answering its URL with a
+    301 to the new place.
 
     Writes take two steps: confirm=false (the default) validates and returns a
     preview without saving — show it to the user; call again with confirm=true
@@ -49,6 +52,10 @@ class ArticlesTool < AuthenticatedTool
     optional(:industry).filled(:string).description(INDUSTRIES)
     optional(:noindex).filled(:bool).description('true = ask search engines not to index it')
     optional(:selected).filled(:bool).description('true = feature it on the blog')
+    optional(:redirect_url).filled(:string)
+                           .description('Where the article URL sends the visitor with a 301 instead of showing it: ' \
+                                        'a path (/es/blog/otro-articulo, /es/servicios/area) or a full URL. ' \
+                                        'Works even when unpublished. Empty string clears it')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
   end
@@ -93,14 +100,10 @@ class ArticlesTool < AuthenticatedTool
   end
 
   def get(article)
-    {
-      id: article.id, slug: article.slug, title: article.title, tabtitle: article.tabtitle,
-      lang: article.lang, published: article.published, selected: article.selected,
-      noindex: article.noindex, industry: article.industry, category: article.category_name,
-      description: article.description, cover: article.cover, header: article.header,
-      body: article.body, trainers: article.trainers.map(&:name),
-      substantive_change_at: article.substantive_change_at, updated_at: article.updated_at
-    }.to_json
+    article.slice(:id, :slug, :title, :tabtitle, :lang, :published, :selected, :noindex, :industry,
+                  :redirect_url, :description, :cover, :header, :body, :substantive_change_at, :updated_at)
+           .merge(category: article.category_name, trainers: article.trainers.map(&:name))
+           .to_json
   end
 
   def write(article, confirm:, **fields)

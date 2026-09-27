@@ -20,8 +20,15 @@ class Article < ApplicationRecord
   validates :body, presence: true
   # validates :published, presence: true
   validates :description, presence: true, length: { maximum: 160 }
+  # Where the article's URL sends the visitor instead of showing it: another
+  # article it was merged into, or the area page that replaces it. A path
+  # (/es/blog/otro) or an absolute URL; the site answers 301 with it whether
+  # the article is published or not.
+  validates :redirect_url, format: { with: %r{\A(/|https?://)}, message: :must_be_path_or_url },
+                           allow_blank: true
 
   before_save :strip_image_urls
+  before_validation :blank_redirect_url_to_nil
   before_save :update_substantive_change_at
   after_commit :enqueue_audio_generation, on: %i[create update]
 
@@ -62,7 +69,8 @@ class Article < ApplicationRecord
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[body category_id cover header created_at description id lang published selected slug tabtitle title updated_at industry substantive_change_at]
+    %w[body category_id cover header created_at description id lang published redirect_url selected slug tabtitle title
+       updated_at industry substantive_change_at]
   end
 
   def self.ransackable_associations(_auth_object = nil)
@@ -74,6 +82,12 @@ class Article < ApplicationRecord
   def strip_image_urls
     self.cover = cover&.strip
     self.header = header&.strip
+  end
+
+  # The admin form sends "" for an empty field; the site asks "is there one?"
+  # and a NULL answers that without a second check for the empty string.
+  def blank_redirect_url_to_nil
+    self.redirect_url = redirect_url&.strip.presence
   end
 
   def update_substantive_change_at

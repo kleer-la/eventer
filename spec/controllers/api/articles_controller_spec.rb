@@ -36,6 +36,18 @@ describe Api::ArticlesController do
       expect(recommended_item['type']).to eq('article')
     end
   end
+  # The site answers the article URL with a 301 to redirect_url even after the
+  # article was unpublished to drop it from the blog list (kleer-la/eventer#212),
+  # so the field must come back for an unpublished article too.
+  it 'returns redirect_url for an unpublished article' do
+    article = create(:article, published: false, redirect_url: '/es/blog/otro-articulo')
+
+    get :show, params: { id: article.slug, format: 'json' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body['redirect_url']).to eq('/es/blog/otro-articulo')
+  end
+
   describe "GET 'Articles' (/api/articles.<format>)" do
     it 'Articles list w/o body' do
       create(:article)

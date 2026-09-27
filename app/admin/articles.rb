@@ -3,8 +3,8 @@
 ActiveAdmin.register Article do
   menu parent: 'We Publish'
 
-  permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :header, :body,
-                :industry, :noindex, :substantive_change_at, :audio,
+  permit_params :lang, :published, :selected, :category_id, :title, :tabtitle, :description, :slug, :cover, :header,
+                :body, :industry, :noindex, :substantive_change_at, :audio, :redirect_url,
                 trainer_ids: [], recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
   scope :all
@@ -103,6 +103,13 @@ ActiveAdmin.register Article do
         article.category ? link_to(article.category.name, admin_category_path(article.category)) : 'None'
       end
       row :slug
+      row :redirect_url do |article|
+        if article.redirect_url.present?
+          link_to article.redirect_url, article.redirect_url, target: '_blank'
+        else
+          em 'None: the URL shows the article'
+        end
+      end
       row :cover
       row :header
       row :body do
@@ -168,6 +175,10 @@ ActiveAdmin.register Article do
       f.input :tabtitle
       f.input :description
       f.input :slug
+      f.input :redirect_url,
+              hint: 'Set it to send this URL elsewhere with a 301 (a path like /es/blog/otro-articulo or a full URL). ' \
+                    'It works even when the article is unpublished: unpublish to hide it from the blog list ' \
+                    'and keep the redirect'
       f.input :cover
       f.input :header, hint: 'Image displayed at the top of the article page (cover is used for thumbnails in listings)'
       f.input :body, input_html: { rows: 20 }

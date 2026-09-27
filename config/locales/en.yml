@@ -54,6 +54,10 @@ en:
                 trainer3_without_trainer2: Tertiary trainer cannot be assigned before secondary trainer
               base:
                 duplicate_trainer: A trainer cannot be assigned multiple times
+          article:
+            attributes:
+              redirect_url:
+                must_be_path_or_url: "must be a path (/es/blog/other) or a full URL (https://...)"
         messages:
           inclusion: "no está incluido en la lista"
           exclusion: "no está disponible"

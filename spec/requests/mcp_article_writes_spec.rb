@@ -71,6 +71,26 @@ RSpec.describe 'MCP article writes', type: :request do
       expect(article.reload.body).to eq('Cuerpo nuevo y más largo')
     end
 
+    # Merging or retiring an article: set where it goes, unpublish it, and the
+    # site keeps answering its URL with a 301 (kleer-la/eventer#212).
+    it 'sets redirect_url and reads it back' do
+      result = call_tool('articles', { operation: 'update', id: article.slug,
+                                       redirect_url: '/es/blog/otro-articulo', confirm: true })
+      expect(result['status']).to eq('saved')
+      expect(article.reload.redirect_url).to eq('/es/blog/otro-articulo')
+
+      expect(call_tool('articles', { operation: 'get', id: article.slug })['redirect_url'])
+        .to eq('/es/blog/otro-articulo')
+    end
+
+    it 'refuses a redirect_url the site could not follow' do
+      result = call_tool('articles', { operation: 'update', id: article.slug,
+                                       redirect_url: 'otro-articulo', confirm: true })
+      expect(result['status']).to eq('error')
+      expect(result['errors'].join).to include('Redirect url')
+      expect(article.reload.redirect_url).to be_nil
+    end
+
     it 'answers an error for an unknown article' do
       expect(call_tool('articles',
                        { operation: 'update', id: 'no-such-article' })['errors'].join).to include('no-such-article')

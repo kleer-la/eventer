@@ -2,7 +2,8 @@
 
 class ArticleWriteService < ContentWriteService
   self.model = Article
-  self.editable_fields = %i[title tabtitle description body lang slug cover header industry noindex selected]
+  self.editable_fields = %i[title tabtitle description body lang slug cover header industry noindex selected
+                            redirect_url]
   self.long_fields = %w[body]
 
   private

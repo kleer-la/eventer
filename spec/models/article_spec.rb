@@ -159,4 +159,22 @@ RSpec.describe Article, type: :model do
       end
     end
   end
+  # Where a merged or retired article sends its visitors (kleer-la/eventer#212).
+  describe 'redirect_url' do
+    it 'accepts a site path or an absolute URL' do
+      expect(build(:article, redirect_url: '/es/blog/otro-articulo')).to be_valid
+      expect(build(:article, redirect_url: 'https://www.kleer.la/es/servicios/agilidad')).to be_valid
+    end
+
+    it 'rejects anything the site could not redirect to' do
+      article = build(:article, redirect_url: 'otro-articulo')
+      expect(article).not_to be_valid
+      expect(article.errors[:redirect_url]).to be_present
+    end
+
+    it 'stores an empty admin field as no redirect' do
+      article = create(:article, redirect_url: '  ')
+      expect(article.reload.redirect_url).to be_nil
+    end
+  end
 end
