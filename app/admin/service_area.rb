@@ -9,6 +9,7 @@ ActiveAdmin.register ServiceArea do
                 :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program,
                 :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details,
                 :outcomes, :definitions, :program, :faq, :pricing, :brochure,
+                :hero_highlight, :hero_highlight_text,
                 :hero_cta_text, :hero_secondary_cta_text, :hero_secondary_cta_target, :hero_note,
                 :contact_title, :contact_text, :contact_cta_text,
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
@@ -65,6 +66,8 @@ ActiveAdmin.register ServiceArea do
                             hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
       f.input :side_image, as: :url
       f.input :hero_image, as: :url, hint: 'Picture beside the hero text; empty = the hero in one column'
+      f.input :hero_highlight, label: 'Hero highlight', hint: 'Big figure over the hero picture, e.g. "2 semanas"'
+      f.input :hero_highlight_text, label: 'Hero highlight text', hint: 'The line under the figure'
       f.input :slogan, as: :rich_text_area
       f.input :subtitle, as: :rich_text_area
       f.input :description, as: :rich_text_area
@@ -204,6 +207,8 @@ ActiveAdmin.register ServiceArea do
       rich_row :summary
       rich_row :cta_message
       row :side_image
+      row :hero_highlight
+      row :hero_highlight_text
       rich_row :slogan
       rich_row :subtitle
       rich_row :description

@@ -54,6 +54,8 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:icon).filled(:string).description('Icon image URL')
     optional(:side_image).filled(:string).description('Side image URL')
     optional(:hero_image).filled(:string).description('Picture beside the hero text; empty = hero in one column')
+    optional(:hero_highlight).filled(:string).description('Big figure over the hero picture, e.g. "2 semanas"')
+    optional(:hero_highlight_text).filled(:string).description('The line under the hero highlight figure')
     optional(:primary_color).filled(:string).description('Primary color, e.g. "#68CEF2"')
     optional(:secondary_color).filled(:string).description('Secondary color, e.g. "#68CEF2"')
     optional(:primary_font_color).filled(:string).description('Primary button text color')
@@ -134,6 +136,7 @@ class ServiceAreasTool < AuthenticatedTool
     { id: area.id, slug: area.slug, name: area.name, lang: area.lang, visible: area.visible,
       is_training_program: area.is_training_program, ordering: area.ordering,
       icon: area.icon, side_image: area.side_image, hero_image: area.hero_image,
+      hero_highlight: area.hero_highlight, hero_highlight_text: area.hero_highlight_text,
       primary_color: area.primary_color, secondary_color: area.secondary_color,
       primary_font_color: area.primary_font_color, secondary_font_color: area.secondary_font_color,
       target_title: area.target_title, value_proposition_title: area.value_proposition_title,

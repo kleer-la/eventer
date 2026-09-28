@@ -6,6 +6,7 @@ class ServiceWriteService < ContentWriteService
 
   self.model = Service
   self.editable_fields = %i[name subtitle slug card_description pricing side_image hero_image brochure ordering
+                            hero_highlight hero_highlight_text
                             value_proposition outcomes definitions program target faq
                             seo_title seo_description
                             recommended_way_title recommended_way_note

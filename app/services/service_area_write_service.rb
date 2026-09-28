@@ -9,7 +9,8 @@ class ServiceAreaWriteService < ContentWriteService
                             lang is_training_program summary cta_message side_image slogan subtitle description
                             target_title target value_proposition_title value_proposition ordering
                             outcomes definitions program faq pricing brochure
-                            hero_image hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
+                            hero_image hero_highlight hero_highlight_text
+                            hero_cta_text hero_secondary_cta_text hero_secondary_cta_target hero_note
                             contact_title contact_text contact_cta_text
                             seo_title seo_description
                             recommended_way_title recommended_way_note

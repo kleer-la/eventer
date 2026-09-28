@@ -138,6 +138,15 @@ describe 'service area MCP tools' do
       expect(result['hero_image']).to eq 'https://example.com/hero.webp'
     end
 
+    it 'writes and reads back the hero highlight' do
+      run(ServiceAreasTool, operation: 'update', id: service_area.slug, confirm: true,
+                            hero_highlight: '2 semanas', hero_highlight_text: 'de diagnóstico')
+
+      result = run(ServiceAreasTool, operation: 'get', id: service_area.slug)
+
+      expect(result).to include('hero_highlight' => '2 semanas', 'hero_highlight_text' => 'de diagnóstico')
+    end
+
     it 'warns when the FAQ would not show on the page' do
       result = run(ServiceAreasTool, operation: 'update', id: service_area.slug,
                                      faq: '<h4>¿Cuánto dura?</h4><div>Tres meses</div>')
@@ -201,6 +210,15 @@ describe 'service area MCP tools' do
       result = run(ServicesTool, operation: 'get', id: service.slug)
 
       expect(result['hero_image']).to eq 'https://example.com/hero.webp'
+    end
+
+    it 'writes and reads back the hero highlight' do
+      run(ServicesTool, operation: 'update', id: service.slug, confirm: true,
+                        hero_highlight: '3 meses', hero_highlight_text: 'con revisión cada 4 semanas')
+
+      result = run(ServicesTool, operation: 'get', id: service.slug)
+
+      expect(result).to include('hero_highlight' => '3 meses', 'hero_highlight_text' => 'con revisión cada 4 semanas')
     end
   end
 end

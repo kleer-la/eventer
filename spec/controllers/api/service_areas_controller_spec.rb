@@ -375,6 +375,34 @@ describe Api::ServiceAreasController do
       end
     end
 
+    # A fact over the hero picture: a big figure and the line under it.
+    describe 'hero highlight' do
+      it 'exposes the one the area and each service set' do
+        sa = FactoryBot.create(:service_area, hero_highlight: '2 semanas',
+                                              hero_highlight_text: 'de diagnóstico para encontrar el cuello de botella')
+        FactoryBot.create(:service, service_area: sa, published: true,
+                                    hero_highlight: '3 meses', hero_highlight_text: 'con revisión cada 4 semanas')
+
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response).to include('hero_highlight' => '2 semanas',
+                                         'hero_highlight_text' => 'de diagnóstico para encontrar el cuello de botella')
+        expect(json_response['services'].first)
+          .to include('hero_highlight' => '3 meses', 'hero_highlight_text' => 'con revisión cada 4 semanas')
+      end
+
+      it 'answers nil when there is none' do
+        FactoryBot.create(:service, service_area: service_area, published: true, hero_highlight: '')
+
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response).to include('hero_highlight' => nil, 'hero_highlight_text' => nil)
+        expect(json_response['services'].first).to include('hero_highlight' => nil, 'hero_highlight_text' => nil)
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)

@@ -5,6 +5,7 @@ ActiveAdmin.register Service do
 
   permit_params %i[created_at id name slug service_area_id subtitle card_description updated_at value_proposition
                    outcomes program target faq definitions pricing brochure side_image hero_image
+                   hero_highlight hero_highlight_text
                    ordering published
                    seo_title seo_description recommended_way_title recommended_way_note recommended_way_summary recommended_way_details],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
@@ -63,6 +64,8 @@ ActiveAdmin.register Service do
       f.input :target, as: :rich_text_area
       f.input :side_image, as: :url
       f.input :hero_image, as: :url, hint: 'Picture beside the hero text; empty = the hero in one column'
+      f.input :hero_highlight, label: 'Hero highlight', hint: 'Big figure over the hero picture, e.g. "2 semanas"'
+      f.input :hero_highlight_text, label: 'Hero highlight text', hint: 'The line under the figure'
       f.input :pricing
       f.input :faq, as: :rich_text_area, hint: hint_colapsable
       f.input :brochure
@@ -120,6 +123,8 @@ ActiveAdmin.register Service do
         service.card_description.to_s.html_safe if service.card_description.present?
       end
       row :side_image
+      row :hero_highlight
+      row :hero_highlight_text
       row :pricing
       row :value_proposition do |service|
         service.value_proposition.to_s.html_safe if service.value_proposition.present?
