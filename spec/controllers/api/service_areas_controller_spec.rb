@@ -348,6 +348,33 @@ describe Api::ServiceAreasController do
       end
     end
 
+    # The picture beside the hero text; without one the site keeps the hero in
+    # a single column.
+    describe 'hero image' do
+      it 'exposes the one the area and each service set' do
+        sa = FactoryBot.create(:service_area, hero_image: 'https://kleer-images.s3.sa-east-1.amazonaws.com/area-hero.webp')
+        FactoryBot.create(:service, service_area: sa, published: true,
+                                    hero_image: 'https://kleer-images.s3.sa-east-1.amazonaws.com/service-hero.webp')
+
+        get :show, params: { id: sa.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['hero_image']).to eq 'https://kleer-images.s3.sa-east-1.amazonaws.com/area-hero.webp'
+        expect(json_response['services'].first['hero_image'])
+          .to eq 'https://kleer-images.s3.sa-east-1.amazonaws.com/service-hero.webp'
+      end
+
+      it 'answers nil when there is none' do
+        FactoryBot.create(:service, service_area: service_area, published: true, hero_image: '')
+
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['hero_image']).to be_nil
+        expect(json_response['services'].first['hero_image']).to be_nil
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)

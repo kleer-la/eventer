@@ -41,6 +41,15 @@ RSpec.describe 'Admin service areas', type: :feature do
     )
   end
 
+  it 'saves the hero image from the form and shows it' do
+    visit edit_admin_service_area_path(area)
+    fill_in 'Hero image', with: 'https://example.com/hero.webp'
+    find("input[type='submit']").click
+
+    expect(area.reload.hero_image).to eq 'https://example.com/hero.webp'
+    expect(page).to have_css("img[src='https://example.com/hero.webp']")
+  end
+
   it 'shows the hero and contact texts it has' do
     area.update!(hero_cta_text: 'Conversemos tu caso', contact_title: 'Una conversación de 45 minutos')
 

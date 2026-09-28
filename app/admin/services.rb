@@ -4,7 +4,8 @@ ActiveAdmin.register Service do
   menu parent: 'Services Mgnt'
 
   permit_params %i[created_at id name slug service_area_id subtitle card_description updated_at value_proposition
-                   outcomes program target faq definitions pricing brochure side_image ordering published
+                   outcomes program target faq definitions pricing brochure side_image hero_image
+                   ordering published
                    seo_title seo_description recommended_way_title recommended_way_note recommended_way_summary recommended_way_details],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
@@ -61,6 +62,7 @@ ActiveAdmin.register Service do
       f.input :program, as: :rich_text_area, hint: hint_colapsable
       f.input :target, as: :rich_text_area
       f.input :side_image, as: :url
+      f.input :hero_image, as: :url, hint: 'Picture beside the hero text; empty = the hero in one column'
       f.input :pricing
       f.input :faq, as: :rich_text_area, hint: hint_colapsable
       f.input :brochure
@@ -125,6 +127,13 @@ ActiveAdmin.register Service do
       row :definitions do |service|
         service.definitions.to_s.html_safe if service.definitions.present?
       end
+      if service.hero_image.present?
+        div 'Hero Image '
+        div do
+          image_tag service.hero_image
+        end
+      end
+
       if service.side_image.present?
         div 'Side Image '
         div do

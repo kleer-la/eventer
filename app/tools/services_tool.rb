@@ -48,6 +48,7 @@ class ServicesTool < AuthenticatedTool
     optional(:card_description).filled(:string).description('Short text for the listing card')
     optional(:pricing).filled(:string).description('Pricing note')
     optional(:side_image).filled(:string).description('Side image URL')
+    optional(:hero_image).filled(:string).description('Picture beside the hero text; empty = hero in one column')
     optional(:brochure).filled(:string).description('Brochure URL')
     optional(:ordering).filled(:integer).description('Display order within the area')
     optional(:seo_title).filled(:string).description('SEO title')
@@ -98,7 +99,7 @@ class ServicesTool < AuthenticatedTool
     { id: service.id, slug: service.slug, name: service.name, subtitle: service.subtitle,
       service_area: service.service_area&.to_mcp, published: service.published, ordering: service.ordering,
       card_description: service.card_description, pricing: service.pricing,
-      side_image: service.side_image, brochure: service.brochure,
+      side_image: service.side_image, hero_image: service.hero_image, brochure: service.brochure,
       seo_title: service.seo_title, seo_description: service.seo_description,
       blocks: BLOCKS.index_with { |field| service.public_send(field).body.to_s },
       recommended_way: { title: service.recommended_way_title, note: service.recommended_way_note,

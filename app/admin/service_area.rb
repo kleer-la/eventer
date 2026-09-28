@@ -5,7 +5,7 @@ ActiveAdmin.register ServiceArea do
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :primary_font_color, :secondary_font_color,
                 :visible, :summary, :cta_message, :lang,
-                :side_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
+                :side_image, :hero_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
                 :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program,
                 :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details,
                 :outcomes, :definitions, :program, :faq, :pricing, :brochure,
@@ -64,6 +64,7 @@ ActiveAdmin.register ServiceArea do
       f.input :cta_message, as: :rich_text_area,
                             hint: 'This text is shown just before the buttons. Example: <span style="font-style: normal;">Learn more of the <b>Your Service Name</b></span>'.html_safe
       f.input :side_image, as: :url
+      f.input :hero_image, as: :url, hint: 'Picture beside the hero text; empty = the hero in one column'
       f.input :slogan, as: :rich_text_area
       f.input :subtitle, as: :rich_text_area
       f.input :description, as: :rich_text_area
@@ -275,6 +276,13 @@ ActiveAdmin.register ServiceArea do
               div resource.recommended_way_details_html.html_safe
             end
           end
+        end
+      end
+
+      if service_area.hero_image.present?
+        div 'Hero Image '
+        div do
+          image_tag service_area.hero_image
         end
       end
 

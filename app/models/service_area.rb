@@ -10,7 +10,7 @@ class ServiceArea < ApplicationRecord
   friendly_id :name, use: %i[slugged history]
 
   include ImageReference
-  references_images_in :icon, :side_image
+  references_images_in :icon, :side_image, :hero_image
 
   enum :lang, { es: 0, en: 1 }
   has_many :services, dependent: :destroy

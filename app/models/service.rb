@@ -10,7 +10,7 @@ class Service < ApplicationRecord
   friendly_id :name, use: %i[slugged history]
 
   include ImageReference
-  references_images_in :brochure, :side_image
+  references_images_in :brochure, :side_image, :hero_image
 
   belongs_to :service_area
 

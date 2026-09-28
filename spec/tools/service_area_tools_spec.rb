@@ -129,6 +129,15 @@ describe 'service area MCP tools' do
       )
     end
 
+    it 'writes and reads back the hero image' do
+      run(ServiceAreasTool, operation: 'update', id: service_area.slug, confirm: true,
+                            hero_image: 'https://example.com/hero.webp')
+
+      result = run(ServiceAreasTool, operation: 'get', id: service_area.slug)
+
+      expect(result['hero_image']).to eq 'https://example.com/hero.webp'
+    end
+
     it 'warns when the FAQ would not show on the page' do
       result = run(ServiceAreasTool, operation: 'update', id: service_area.slug,
                                      faq: '<h4>¿Cuánto dura?</h4><div>Tres meses</div>')
@@ -184,6 +193,14 @@ describe 'service area MCP tools' do
                                  slug: 'estrategia-descubrimiento-producto')
 
       expect(result['warnings']).to include(a_string_matching(/slug changes from "consultoria-coaching-producto".*301/))
+    end
+
+    it 'writes and reads back the hero image' do
+      run(ServicesTool, operation: 'update', id: service.slug, confirm: true, hero_image: 'https://example.com/hero.webp')
+
+      result = run(ServicesTool, operation: 'get', id: service.slug)
+
+      expect(result['hero_image']).to eq 'https://example.com/hero.webp'
     end
   end
 end

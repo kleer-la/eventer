@@ -53,6 +53,7 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:lang).filled(:string).description("Language: 'es' or 'en'")
     optional(:icon).filled(:string).description('Icon image URL')
     optional(:side_image).filled(:string).description('Side image URL')
+    optional(:hero_image).filled(:string).description('Picture beside the hero text; empty = hero in one column')
     optional(:primary_color).filled(:string).description('Primary color, e.g. "#68CEF2"')
     optional(:secondary_color).filled(:string).description('Secondary color, e.g. "#68CEF2"')
     optional(:primary_font_color).filled(:string).description('Primary button text color')
@@ -132,7 +133,7 @@ class ServiceAreasTool < AuthenticatedTool
   def get(area)
     { id: area.id, slug: area.slug, name: area.name, lang: area.lang, visible: area.visible,
       is_training_program: area.is_training_program, ordering: area.ordering,
-      icon: area.icon, side_image: area.side_image,
+      icon: area.icon, side_image: area.side_image, hero_image: area.hero_image,
       primary_color: area.primary_color, secondary_color: area.secondary_color,
       primary_font_color: area.primary_font_color, secondary_font_color: area.secondary_font_color,
       target_title: area.target_title, value_proposition_title: area.value_proposition_title,
