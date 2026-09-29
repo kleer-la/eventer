@@ -40,7 +40,7 @@ RSpec.describe Service, type: :model do
   end
   describe '#recommended' do
     let(:service) { FactoryBot.create(:service) }
-    let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended', subtitle: 'For sure') }
+    let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended', subtitle: 'For sure', published: true) }
 
     before do
       FactoryBot.create(:recommended_content, source: service, target: recommended_service, relevance_order: 2)

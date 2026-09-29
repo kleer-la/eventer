@@ -218,7 +218,7 @@ ActiveAdmin.register Resource do
     end
 
     panel 'Recommended Content' do
-      table_for resource.recommended do
+      table_for resource.recommended(include_unpublished: true) do
         column :relevance_order do |recommendation|
           recommendation['relevance_order']
         end

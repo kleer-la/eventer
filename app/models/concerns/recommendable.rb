@@ -30,9 +30,19 @@ module Recommendable
     result
   end
 
-  def recommended(lang: 'es')
+  # Whether the site can show this as a recommendation card. Models with a
+  # publication flag override it: a card to something the site won't serve
+  # links to a 404 or a redirect (kleer-la/eventer#213).
+  def servable_as_recommendation?
+    true
+  end
+
+  # The admin passes include_unpublished: the link still exists and must stay
+  # visible there while the site hides it.
+  def recommended(lang: 'es', include_unpublished: false)
     recommended_contents.preload(:target).order(:relevance_order).map do |content|
       next unless content.target.present? # Skip if target is nil
+      next unless include_unpublished || content.target.servable_as_recommendation?
 
       content.target.as_recommendation(lang:).merge('relevance_order' => content.relevance_order,
                                                     'level' => calculate_level(content.relevance_order))

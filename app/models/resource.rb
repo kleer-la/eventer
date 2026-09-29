@@ -54,6 +54,10 @@ class Resource < ApplicationRecord
       .merge('downloadable' => downloadable)
   end
 
+  def servable_as_recommendation?
+    published
+  end
+
   def title
     title_es
   end

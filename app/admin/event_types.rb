@@ -194,7 +194,7 @@ ActiveAdmin.register EventType do
       row :updated_at
 
       panel 'Recommended Content' do
-        table_for resource.recommended do
+        table_for resource.recommended(include_unpublished: true) do
           column :relevance_order do |recommendation|
             recommendation['relevance_order']
           end

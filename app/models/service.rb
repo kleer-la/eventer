@@ -52,6 +52,10 @@ class Service < ApplicationRecord
       .merge('is_training_program' => service_area&.is_training_program || false)
   end
 
+  def servable_as_recommendation?
+    published
+  end
+
   private
 
   def strip_slug

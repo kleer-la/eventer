@@ -66,6 +66,12 @@ class Article < ApplicationRecord
       .merge('slug' => slug)
   end
 
+  # With a redirect_url the site answers the article's URL with a 301, so a
+  # card to it would lead somewhere else than what it announces.
+  def servable_as_recommendation?
+    published && redirect_url.blank?
+  end
+
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)

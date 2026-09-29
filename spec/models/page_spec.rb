@@ -83,7 +83,7 @@ RSpec.describe Page, type: :model do
 
   describe '#recommended' do
     let(:page) { FactoryBot.create(:page) }
-    let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended', subtitle: 'For sure') }
+    let(:recommended_service) { FactoryBot.create(:service, name: 'Recomended', subtitle: 'For sure', published: true) }
 
     before do
       FactoryBot.create(:recommended_content, source: page, target: recommended_service, relevance_order: 2)

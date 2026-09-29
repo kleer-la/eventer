@@ -12,7 +12,7 @@ describe Api::ArticlesController do
 
     it 'fetches an article with recommended content' do
       article = create(:article)
-      recommended_article = create(:article)
+      recommended_article = create(:article, published: true)
 
       # Create a related content
       RecommendedContent.create(source: article, target: recommended_article, relevance_order: 50)
@@ -34,6 +34,19 @@ describe Api::ArticlesController do
       expect(recommended_item['subtitle']).to eq(recommended_article.description)
       expect(recommended_item['cover']).to eq(recommended_article.cover)
       expect(recommended_item['type']).to eq('article')
+    end
+
+    # kleer-la/eventer#213: the site renders these as cards, so an unpublished
+    # or redirected article would be a card to a 404 or to another article.
+    it 'leaves out recommended articles the site does not serve' do
+      article = create(:article, published: true)
+      RecommendedContent.create!(source: article, target: create(:article, published: false), relevance_order: 1)
+      RecommendedContent.create!(source: article, relevance_order: 2,
+                                 target: create(:article, published: true, redirect_url: '/es/blog/otro'))
+
+      get :show, params: { id: article.id, format: 'json' }
+
+      expect(JSON.parse(response.body)['recommended']).to eq([])
     end
   end
   # The site answers the article URL with a 301 to redirect_url even after the

@@ -46,7 +46,7 @@ RSpec.describe ServiceArea, type: :model do
 
     it 'recommends content like a service does' do
       area = FactoryBot.create(:service_area)
-      article = FactoryBot.create(:article)
+      article = FactoryBot.create(:article, published: true)
       FactoryBot.create(:recommended_content, source: area, target: article, relevance_order: 5)
 
       recommended = area.recommended

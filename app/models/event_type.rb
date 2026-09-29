@@ -126,6 +126,10 @@ class EventType < ApplicationRecord
       .merge('external_url' => external_site_url)
   end
 
+  def servable_as_recommendation?
+    !deleted
+  end
+
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)

@@ -224,7 +224,7 @@ ActiveAdmin.register Service do
         end
       end
       panel 'Recommended Content' do
-        table_for resource.recommended do
+        table_for resource.recommended(include_unpublished: true) do
           column :level do |recommendation|
             recommendation['level']
           end

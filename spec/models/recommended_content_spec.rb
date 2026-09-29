@@ -55,6 +55,55 @@ RSpec.describe RecommendedContent, type: :model do
       expect(recommended_content.errors[:relevance_order]).to include('debe ser mayor o igual a 1')
     end
 
+    # The site renders `recommended` as cards, so a target it would not serve
+    # (unpublished, or answered with a 301 elsewhere) must not become a card.
+    # The link itself stays: the admin still lists it (kleer-la/eventer#213).
+    describe 'what the source serves as recommended' do
+      let(:source) { create(:article, published: true) }
+
+      def recommend(target)
+        RecommendedContent.create!(source:, target:, relevance_order: 1)
+      end
+
+      it 'skips an unpublished article' do
+        recommend(create(:article, published: false))
+
+        expect(source.recommended).to be_empty
+      end
+
+      it 'skips a published article that redirects elsewhere' do
+        recommend(create(:article, published: true, redirect_url: '/es/blog/otro'))
+
+        expect(source.recommended).to be_empty
+      end
+
+      it 'skips an unpublished resource and an unpublished service' do
+        recommend(create(:resource, published: false))
+        recommend(create(:service, published: false))
+
+        expect(source.recommended).to be_empty
+      end
+
+      it 'skips a deleted event type' do
+        recommend(create(:event_type, deleted: true))
+
+        expect(source.recommended).to be_empty
+      end
+
+      it 'serves what is published' do
+        target = create(:article, published: true)
+        recommend(target)
+
+        expect(source.recommended.map { |card| card['id'] }).to eq([target.id])
+      end
+
+      it 'still lists everything for the admin' do
+        recommend(create(:article, published: false))
+
+        expect(source.recommended(include_unpublished: true).size).to eq(1)
+      end
+    end
+
     it 'allows different types of sources and targets' do
       article = create(:article) # Assuming you have an Article model
       recommended_content = RecommendedContent.new(

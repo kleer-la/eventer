@@ -67,7 +67,7 @@ RSpec.describe Article, type: :model do
 
   describe '#recommended' do
     let(:article) { FactoryBot.create(:article) }
-    let(:recommended_article) { FactoryBot.create(:article, description: 'One descr') }
+    let(:recommended_article) { FactoryBot.create(:article, description: 'One descr', published: true) }
     let(:recommended_event_type) { FactoryBot.create(:event_type) }
 
     before do
