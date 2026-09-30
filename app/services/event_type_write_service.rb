@@ -14,32 +14,13 @@ class EventTypeWriteService < ContentWriteService
   self.long_fields = %w[description program recipients goal learnings takeaways faq]
   self.publication_flag = nil
 
-  def initialize(trainers: nil, **args)
-    super(**args)
-    @trainer_names = trainers
-  end
+  include TrainerAssignment
 
   private
 
   def assign
     super
     @record.include_in_catalog = false if @record.new_record?
-    assign_trainers
-  end
-
-  def assign_trainers
-    return if @trainer_names.blank?
-
-    found = Trainer.where(name: @trainer_names)
-    missing = @trainer_names - found.map(&:name)
-    return errors << unknown_trainers(missing) if missing.any?
-
-    @record.trainers = found
-  end
-
-  def unknown_trainers(missing)
-    "Unknown trainer#{'s' if missing.size > 1} #{missing.map(&:inspect).join(', ')}. " \
-      "Existing ones: #{Trainer.order(:name).pluck(:name).join(', ')}"
   end
 
   def model_warnings

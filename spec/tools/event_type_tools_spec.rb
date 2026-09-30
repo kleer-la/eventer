@@ -60,6 +60,41 @@ describe 'event type MCP tools' do
       expect(event_type.reload.subtitle).to eq 'Nuevo subtítulo'
     end
 
+    # Trainers are a has_and_belongs_to_many: assigning them to a saved record
+    # writes the join rows at once, so they must wait for confirm like the rest.
+    describe 'trainers' do
+      let(:other) { Trainer.create!(name: 'Otro Entrenador') }
+
+      it 'previews a trainer change without saving it' do
+        result = run(EventTypesTool, operation: 'update', id: event_type.slug, trainers: [other.name])
+
+        expect(result['status']).to eq 'preview'
+        expect(result['changes']['trainers']).to eq('from' => ['Ana Prueba'], 'to' => ['Otro Entrenador'])
+        expect(event_type.reload.trainers).to eq [trainer]
+      end
+
+      it 'saves nothing when the rest of the record does not validate' do
+        run(EventTypesTool, operation: 'update', id: event_type.slug, trainers: [other.name],
+                            elevator_pitch: 'x' * 200, confirm: true)
+
+        expect(event_type.reload.trainers).to eq [trainer]
+      end
+
+      # A course with no trainers and an over-long pitch (DevOps Leader, 241)
+      # fails validation on either field alone: both go in one call.
+      it 'repairs a course that fails validation on two fields at once' do
+        event_type.update_columns(elevator_pitch: 'x' * 200)
+        event_type.trainers.clear
+
+        result = run(EventTypesTool, operation: 'update', id: event_type.slug, trainers: [other.name],
+                                     elevator_pitch: 'Un taller corto', confirm: true)
+
+        expect(result['status']).to eq 'saved'
+        expect(event_type.reload.trainers).to eq [other]
+        expect(event_type.elevator_pitch).to eq 'Un taller corto'
+      end
+    end
+
     # The reason these tools exist: patching a link inside a long block without
     # resending the whole thing.
     it 'patches a link inside a long block' do
