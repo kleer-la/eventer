@@ -11,6 +11,8 @@
 # models and go unguarded; Page, Podcast and MailTemplate have no such flag at
 # all — `publication_flag` and `guarded_publication` say which is which.
 class ContentWriteService
+  prepend WriteInSavepoint
+
   # Subclasses declare what they write: the model, the fields a tool may set,
   # which of those are long enough to summarise instead of echoing, which are
   # ActionText (those never reach record.changes), and whether it has a
@@ -38,21 +40,7 @@ class ContentWriteService
     @applied = {}
   end
 
-  # Runs in a savepoint that only survives a confirmed save. Assigning an
-  # association to a saved record (trainers, a has_and_belongs_to_many) writes
-  # at once, so a preview or a failed validation has to roll it back.
   def call(confirm: false)
-    result = nil
-    self.class.model.transaction(requires_new: true) do
-      result = write(confirm)
-      raise ActiveRecord::Rollback unless result[:status] == 'saved'
-    end
-    result
-  end
-
-  private
-
-  def write(confirm)
     assign
     return failure if errors.any? || !@record.valid?
 
@@ -64,6 +52,8 @@ class ContentWriteService
       published: publication_value, admin_path: admin_path, warnings: saved_warnings }
       .compact.merge(saved_extras)
   end
+
+  private
 
   def assign
     @rich_text_before = self.class.rich_text_fields.to_h { |f| [f.to_s, @record.public_send(f).to_s] }
