@@ -141,10 +141,54 @@ describe 'event type MCP tools' do
       expect(event_type.reload.external_site_url).to be_blank
     end
 
-    # Putting a course on sale is a decision about what Kleer sells, and
-    # ability.rb keeps it away from the content role. It is not an argument.
-    it 'does not take include_in_catalog' do
-      expect(EventTypesTool.input_schema.key_map.map(&:name)).not_to include 'include_in_catalog'
+    # Putting a course on sale is a decision about what Kleer sells: ability.rb
+    # keeps it for the publisher role (set_include_in_catalog), the same line
+    # the admin form draws.
+    describe 'in_catalog' do
+      it 'refuses it to the content role' do
+        result = run(EventTypesTool, operation: 'update', id: event_type.slug, in_catalog: true, confirm: true)
+
+        expect(result['status']).to eq 'error'
+        expect(result['errors'].join).to include 'catalog'
+        expect(event_type.reload.include_in_catalog).to be_falsey
+      end
+
+      context 'as a publisher' do
+        let(:user) { FactoryBot.create(:publisher_user) }
+
+        it 'previews putting the course on sale without saving it' do
+          result = run(EventTypesTool, operation: 'update', id: event_type.slug, in_catalog: true)
+
+          expect(result['status']).to eq 'preview'
+          expect(result['changes']['include_in_catalog']).to eq('from' => nil, 'to' => true)
+          expect(result['warnings'].join).to include 'catalog'
+          expect(event_type.reload.include_in_catalog).to be_falsey
+        end
+
+        it 'puts the course on sale on confirm' do
+          run(EventTypesTool, operation: 'update', id: event_type.slug, in_catalog: true, confirm: true)
+
+          expect(event_type.reload.include_in_catalog).to be true
+        end
+
+        it 'takes the course off sale, and points at external_site_url' do
+          event_type.update!(include_in_catalog: true)
+
+          result = run(EventTypesTool, operation: 'update', id: event_type.slug, in_catalog: false, confirm: true)
+
+          expect(result['warnings'].join).to include 'external_site_url'
+          expect(event_type.reload.include_in_catalog).to be false
+        end
+
+        it 'still creates the course out of the catalog' do
+          result = run(EventTypesTool, operation: 'create', name: 'Otro Taller', description: 'D',
+                                       recipients: 'R', program: 'P', elevator_pitch: 'E',
+                                       trainers: [trainer.name], in_catalog: true, confirm: true)
+
+          expect(EventType.find(result['id']).include_in_catalog).to be false
+          expect(result['warnings'].join).not_to include 'taken out'
+        end
+      end
     end
   end
 end

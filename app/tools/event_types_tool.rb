@@ -20,12 +20,12 @@ class EventTypesTool < AuthenticatedTool
     that make up its page (description, recipients, program, goal, learnings,
     takeaways, faq), what the certificate says, and who teaches it.
     operation=create: needs name, description, recipients, program,
-    elevator_pitch and trainers. Always created out of the public catalog:
-    putting a course on sale is done from the admin, on purpose.
+    elevator_pitch and trainers. Always created out of the public catalog.
     operation=update: edits course type `id`; only the fields passed are
     touched. To change part of a block, prefer `replacements` (it patches the
     blocks) — which is how a stale link inside a course page gets fixed.
-    Whether a course is on sale is not an argument here. A course that leaves
+    `in_catalog` puts the course on sale on the site (true) or takes it off
+    (false); only users allowed to publish can change it. A course that leaves
     the catalog gets `external_site_url`: the site then answers its page with a
     301 to that path or URL, so the traffic lands on what replaces it.
 
@@ -38,7 +38,8 @@ class EventTypesTool < AuthenticatedTool
     optional(:id).filled(:string).description('get/update: course slug (preferred) or numeric id')
     optional(:query).filled(:string).description('list: substring matched against the name')
     optional(:lang).filled(:string).description("Language: 'es' or 'en' (list: filter; create: default es)")
-    optional(:in_catalog).filled(:bool).description('list: true = only the ones on sale on the site')
+    optional(:in_catalog).filled(:bool).description('list: true = only the ones on sale on the site; ' \
+                                                  'update: true/false puts it on sale or takes it off')
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:name).filled(:string).description('Course name, as it should read on the certificate')
     optional(:description).filled(:string).description('What the course is')
@@ -72,7 +73,7 @@ class EventTypesTool < AuthenticatedTool
     when 'list' then list(limit: limit, **fields.slice(:query, :lang, :in_catalog))
     when 'get' then get(find(id))
     when 'create' then write(nil, confirm: confirm, **fields.except(:query, :in_catalog))
-    when 'update' then write(find(id), confirm: confirm, **fields.except(:query, :in_catalog))
+    when 'update' then write(find(id), confirm: confirm, **fields.except(:query))
     else unknown_operation(operation)
     end
   rescue ActiveRecord::RecordNotFound

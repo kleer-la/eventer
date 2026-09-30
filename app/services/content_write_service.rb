@@ -10,6 +10,8 @@
 # same line the admin forms draw. Service and ServiceArea are not content-role
 # models and go unguarded; Page, Podcast and MailTemplate have no such flag at
 # all — `publication_flag` and `guarded_publication` say which is which.
+# EventType's flag is `include_in_catalog`, guarded by its own rule
+# (`set_include_in_catalog`) — `publication_permission` names it.
 class ContentWriteService
   prepend WriteInSavepoint
 
@@ -19,12 +21,13 @@ class ContentWriteService
   # `published` flag at all. class_attribute so a subclass inherits the defaults
   # and overrides only what differs.
   class_attribute :model, :editable_fields, :publication_flag, :guarded_publication,
-                  :long_fields, :rich_text_fields
+                  :publication_permission, :long_fields, :rich_text_fields
 
   self.long_fields = []
   self.rich_text_fields = []
   self.publication_flag = :published
   self.guarded_publication = true
+  self.publication_permission = :set_published
 
   def self.long_field_names = (long_fields + rich_text_fields).map(&:to_s)
 
@@ -81,8 +84,8 @@ class ContentWriteService
     flag = self.class.publication_flag
     return if @published.nil? || flag.nil? || @published == @record.public_send(flag)
 
-    if self.class.guarded_publication && !@ability.can?(:set_published, self.class.model)
-      return errors << 'You are not allowed to change whether this is published'
+    if self.class.guarded_publication && !@ability.can?(self.class.publication_permission, self.class.model)
+      return errors << publication_refusal
     end
 
     @record.public_send("#{flag}=", @published)
@@ -127,12 +130,15 @@ class ContentWriteService
   def warnings
     @warnings ||= [].tap do |list|
       list.concat(model_warnings)
-      list << 'It is being published and will become publicly visible.' if publishing?
+      list << publishing_warning if publishing?
       list << unpublishing_warning if unpublishing?
     end
   end
 
-  # Subclasses whose records can outlive unpublishing say what happens instead.
+  # Subclasses whose flag means something narrower than "published" say what
+  # it means instead.
+  def publication_refusal = 'You are not allowed to change whether this is published'
+  def publishing_warning = 'It is being published and will become publicly visible.'
   def unpublishing_warning = 'It is being unpublished and will disappear from the site.'
 
   # Subclasses add whatever is worth saying about their own fields.
