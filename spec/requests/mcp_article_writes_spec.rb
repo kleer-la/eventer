@@ -190,6 +190,34 @@ RSpec.describe 'MCP article writes', type: :request do
         expect(result['warnings'].join).to include('publicly visible')
         expect(article.reload.published).to be(true)
       end
+
+      # kleer-la/eventer#214: an unpublished article with redirect_url does not
+      # disappear, the site answers its URL with a 301 (#212).
+      describe 'unpublishing' do
+        before { article.update!(published: true) }
+
+        it 'warns that the article disappears when nothing redirects it' do
+          result = call_tool('articles', { operation: 'update', id: article.slug, published: false })
+
+          expect(result['warnings'].join).to include('will disappear from the site')
+        end
+
+        it 'says where the URL keeps sending the visitor when it redirects' do
+          article.update!(redirect_url: '/es/blog/otro-articulo')
+
+          result = call_tool('articles', { operation: 'update', id: article.slug, published: false })
+
+          expect(result['warnings'].join).not_to include('disappear')
+          expect(result['warnings'].join).to include('301', '/es/blog/otro-articulo')
+        end
+
+        it 'counts the redirect_url given in the same call' do
+          result = call_tool('articles', { operation: 'update', id: article.slug, published: false,
+                                           redirect_url: '/es/servicios/okrs', confirm: true })
+
+          expect(result['warnings'].join).to include('301', '/es/servicios/okrs')
+        end
+      end
     end
   end
 end

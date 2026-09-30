@@ -13,4 +13,12 @@ class ArticleWriteService < ContentWriteService
 
     ['The body changed: the spoken-audio version will be regenerated.']
   end
+
+  # With redirect_url the site answers the article's URL with a 301 whether it
+  # is published or not (kleer-la/eventer#212, #214).
+  def unpublishing_warning
+    return super if @record.redirect_url.blank?
+
+    "It is being unpublished: it leaves the blog listing, and its URL answers with a 301 to #{@record.redirect_url}."
+  end
 end

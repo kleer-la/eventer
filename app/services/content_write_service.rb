@@ -126,9 +126,12 @@ class ContentWriteService
     @warnings ||= [].tap do |list|
       list.concat(model_warnings)
       list << 'It is being published and will become publicly visible.' if publishing?
-      list << 'It is being unpublished and will disappear from the site.' if unpublishing?
+      list << unpublishing_warning if unpublishing?
     end
   end
+
+  # Subclasses whose records can outlive unpublishing say what happens instead.
+  def unpublishing_warning = 'It is being unpublished and will disappear from the site.'
 
   # Subclasses add whatever is worth saying about their own fields.
   def model_warnings = []
