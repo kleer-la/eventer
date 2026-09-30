@@ -48,6 +48,7 @@ class PodcastsTool < AuthenticatedTool
     optional(:published).filled(:bool).description('episodes: shown on the site or not')
     optional(:confirm).filled(:bool).description('writes: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   # The operation is looked up in OPERATIONS before `send`, so only these six

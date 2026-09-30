@@ -47,6 +47,7 @@ class TestimoniesTool < AuthenticatedTool
     optional(:photo_url).filled(:string).description('Photo URL')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, starred: nil, **fields)

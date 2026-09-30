@@ -66,6 +66,7 @@ class EventTypesTool < AuthenticatedTool
                                              'For a course that leaves the catalog.')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, **fields)

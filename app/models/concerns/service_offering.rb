@@ -23,23 +23,31 @@ module ServiceOffering
   end
 
   def program_list
-    field_list(program)
+    field_list(:program)
   end
 
   def faq_list
-    field_list(faq)
+    field_list(:faq)
   end
+
+  # The ol > li items of the program or FAQ block, as the site reads them.
+  def list_items(block)
+    field = public_send(block)
+    return [] unless field.present?
+
+    Nokogiri::HTML(field.body.to_html).css('ol > li')
+  end
+
+  # What the site shows as an item's step or question: its first bare text.
+  # Text inside markup (a <strong>, a link) is not part of it.
+  def self.item_title(item) = item.at_css('> text()').to_s.strip
 
   private
 
-  def field_list(field)
-    return [] unless field.present?
-
-    doc = Nokogiri::HTML(field.body.to_html)
-    doc.css('ol > li').map do |li|
-      main_item = li.at_css('> text()').to_s.strip
+  def field_list(block)
+    list_items(block).map do |li|
       collapsible_items = li.css('ul > li').map { |item| item.inner_html.strip }
-      [main_item, collapsible_items[0]]
+      [ServiceOffering.item_title(li), collapsible_items[0]]
     end
   end
 end

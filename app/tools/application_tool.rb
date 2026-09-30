@@ -30,6 +30,15 @@ class ApplicationTool < ActionTool::Base
     )
   end
 
+  # Emptying a field: the text arguments are filled(:string), so an empty
+  # string is not a value a caller can send. Spliced in next to REPLACEMENTS.
+  CLEAR = lambda do
+    optional(:clear).array(:string).description(
+      'update: names of fields to empty (e.g. ["card_description", "faq"]). A field cannot be both given ' \
+      'a value and cleared; one the record requires fails validation like any other change.'
+    )
+  end
+
   # The envelope every list_* tool answers with. `total` is the whole point: a
   # caller that sees 25 of 137 can narrow the search, while a bare list of 25
   # reads as the whole world — and "not in the first 25" comes back to the user

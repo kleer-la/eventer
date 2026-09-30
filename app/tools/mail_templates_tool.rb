@@ -57,6 +57,7 @@ class MailTemplatesTool < AuthenticatedTool
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:confirm).filled(:bool).description('update/create: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, **fields)

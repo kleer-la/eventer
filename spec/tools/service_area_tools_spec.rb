@@ -220,5 +220,103 @@ describe 'service area MCP tools' do
 
       expect(result).to include('hero_highlight' => '3 meses', 'hero_highlight_text' => 'con revisión cada 4 semanas')
     end
+
+    # An empty string is not a value the tools accept, so emptying a field needs
+    # its own argument (#217): a stale teaser and a placeholder FAQ had to be
+    # removed from the admin.
+    describe 'clear' do
+      before do
+        service.update!(card_description: 'Un teaser viejo', faq: '<ol><li>¿Algo?<ul><li>Sí</li></ul></li></ol>')
+      end
+
+      it 'previews emptying a field and a block without saving' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, clear: %w[card_description faq])
+
+        expect(result['status']).to eq 'preview'
+        expect(result['changes']['card_description']).to include('from_length' => 15, 'to_length' => 0)
+        expect(result['changes']['faq']).to include('to_length' => 0)
+        expect(service.reload.card_description).to eq 'Un teaser viejo'
+      end
+
+      it 'empties them on confirm' do
+        run(ServicesTool, operation: 'update', id: service.slug, clear: %w[card_description faq], confirm: true)
+
+        service.reload
+        expect(service.card_description).to be_nil
+        expect(service.faq.to_plain_text).to be_blank
+      end
+
+      it 'refuses a field the tool does not write, naming the ones it can empty' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, clear: %w[published], confirm: true)
+
+        expect(result['status']).to eq 'error'
+        expect(result['errors'].join).to include('published').and include('card_description')
+      end
+
+      it 'refuses a field that is also given a value' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, clear: %w[card_description],
+                                   card_description: 'Otro', confirm: true)
+
+        expect(result['status']).to eq 'error'
+        expect(service.reload.card_description).to eq 'Un teaser viejo'
+      end
+    end
+
+    # The site shows card_description only when it is HTML, an authored card
+    # that replaces the generated one (#219); plain text is ignored.
+    describe 'card_description' do
+      it 'warns that plain text is not shown' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, card_description: 'Un teaser')
+
+        expect(result['warnings'].join).to match(/card_description has no HTML.*ignores it/)
+      end
+
+      it 'takes an authored card without a warning' do
+        result = run(ServicesTool, operation: 'update', id: service.slug,
+                                   card_description: '<h2 class="rw-details-title">Frente 01</h2>')
+
+        expect(result['warnings'].join).not_to include('card_description')
+      end
+
+      it 'says how the site uses it' do
+        expect(ServicesTool.description).to include('generated card')
+      end
+    end
+
+    # A FAQ with items the site misreads used to pass because it was not empty
+    # (#218): the question in <strong> left ": Respuesta 1ra pregunta" as the
+    # accordion title, with no answer under it.
+    describe 'FAQ and program items the site shows broken' do
+      it 'warns about a question the site cuts and an answer that is missing' do
+        result = run(ServicesTool, operation: 'update', id: service.slug,
+                                   faq: '<ol><li><strong>Primera pregunta</strong>: Respuesta 1ra pregunta</li></ol>')
+
+        warnings = result['warnings'].join("\n")
+        expect(warnings).to include('": Respuesta 1ra pregunta"')
+        expect(warnings).to include('Primera pregunta: Respuesta 1ra pregunta')
+        expect(warnings).to match(/faq item 1 has no answer/)
+      end
+
+      it 'says nothing about a FAQ the site reads whole' do
+        result = run(ServicesTool, operation: 'update', id: service.slug,
+                                   faq: '<ol><li>¿Cuánto dura?<ul><li>Tres meses</li></ul></li></ol>')
+
+        expect(result['warnings'].join).not_to include('faq')
+      end
+
+      it 'takes a program step without detail as it is' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, program: '<ol><li>Diagnóstico</li></ol>')
+
+        expect(result['warnings'].join).not_to include('program')
+      end
+    end
+  end
+
+  # Every tool that edits long text in place can also empty a field (#217).
+  it 'offers clear wherever replacements is offered' do
+    tools = ApplicationTool.descendants.select { |tool| tool.input_schema.key_map.map(&:name).include?('replacements') }
+
+    expect(tools).not_to be_empty
+    tools.each { |tool| expect(tool.input_schema.key_map.map(&:name)).to include('clear'), tool.name }
   end
 end

@@ -14,6 +14,7 @@
 # (`set_include_in_catalog`) — `publication_permission` names it.
 class ContentWriteService
   prepend WriteInSavepoint
+  prepend ClearableFields
 
   # Subclasses declare what they write: the model, the fields a tool may set,
   # which of those are long enough to summarise instead of echoing, which are
@@ -60,6 +61,7 @@ class ContentWriteService
 
   def assign
     @rich_text_before = self.class.rich_text_fields.to_h { |f| [f.to_s, @record.public_send(f).to_s] }
+    apply_clear
     apply_replacements
     @record.assign_attributes(@fields)
     assign_category

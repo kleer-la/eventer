@@ -53,6 +53,17 @@ class ServiceWriteService < ContentWriteService
 
   def model_warnings
     area = @service_area.present? && @record.service_area ? ["Service area: #{@record.service_area.reference}."] : []
-    area + offering_format_warnings + slug_change_warnings
+    area + offering_format_warnings + slug_change_warnings + card_warnings
+  end
+
+  # website17 shows card_description only when it carries markup: an authored
+  # card that replaces the generated one. Plain text — the one-line teaser of
+  # the old listing — is ignored, and the service gets the generated card.
+  def card_warnings
+    card = @fields[:card_description].to_s
+    return [] if card.blank? || card.match?(/<[a-z][^>]*>/i)
+
+    ['card_description has no HTML, so the site ignores it and shows the generated card (name, subtitle ' \
+     'and a link to the page). Only an authored card in HTML replaces it.']
   end
 end

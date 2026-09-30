@@ -76,6 +76,7 @@ class ResourcesTool < AuthenticatedTool
     optional(:tabtitle_en).value(:string).description('English browser tab title')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   LIST_FILTERS = %i[query format published category].freeze

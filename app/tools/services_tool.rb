@@ -23,6 +23,9 @@ class ServicesTool < AuthenticatedTool
     A block passed whole replaces the whole block — read it first. To change
     part of one, prefer `replacements`, matched against that HTML (it patches
     the blocks, card_description, recommended_way_summary and _details).
+    In the area page each service gets a generated card — name, subtitle and
+    a link — unless card_description holds an authored card in HTML, which
+    replaces it. `clear` empties a field.
 
     Writes take two steps: confirm=false (the default) previews without saving.
   MD
@@ -45,7 +48,10 @@ class ServicesTool < AuthenticatedTool
     optional(:program).filled(:string).description('Program block (ol > li, ul > li for the detail); HTML accepted')
     optional(:target).filled(:string).description('Who it is for; HTML accepted')
     optional(:faq).filled(:string).description('FAQ block (ol > li, ul > li for the answer); HTML accepted')
-    optional(:card_description).filled(:string).description('Short text for the listing card')
+    optional(:card_description).filled(:string)
+                               .description('An authored card in HTML (.rw-* kit) that replaces the generated card ' \
+                                            'in the area page. Plain text is ignored. Clear it to go back to ' \
+                                            'the generated card')
     optional(:pricing).filled(:string).description('Pricing note')
     optional(:side_image).filled(:string).description('Side image URL')
     optional(:hero_image).filled(:string).description('Picture beside the hero text; empty = hero in one column')
@@ -61,6 +67,7 @@ class ServicesTool < AuthenticatedTool
     optional(:recommended_way_details).filled(:string).description('Recommended-way details')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   # The operation is looked up in OPERATIONS before `send`, so only these four

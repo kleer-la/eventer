@@ -60,6 +60,7 @@ class ArticlesTool < AuthenticatedTool
                                                    'they are in the admin; replaces the current ones')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   LIST_FILTERS = %i[query lang published category].freeze

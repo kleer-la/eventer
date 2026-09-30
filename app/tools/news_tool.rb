@@ -42,6 +42,7 @@ class NewsTool < AuthenticatedTool
     optional(:audio).filled(:string).description('Audio URL')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
   def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, published: nil, **fields)
