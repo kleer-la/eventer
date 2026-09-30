@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ArticleWriteService < ContentWriteService
+  include TrainerAssignment
+
   self.model = Article
   self.editable_fields = %i[title tabtitle description body lang slug cover header industry noindex selected
                             redirect_url]

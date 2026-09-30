@@ -56,6 +56,8 @@ class ArticlesTool < AuthenticatedTool
                            .description('Where the article URL sends the visitor with a 301 instead of showing it: ' \
                                         'a path (/es/blog/otro-articulo, /es/servicios/area) or a full URL. ' \
                                         'Works even when unpublished. Empty string clears it')
+    optional(:trainers).array(:string).description('Authors, shown as "Creado por:". Trainer names exactly as ' \
+                                                   'they are in the admin; replaces the current ones')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
   end

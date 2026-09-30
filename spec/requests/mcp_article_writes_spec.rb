@@ -91,6 +91,28 @@ RSpec.describe 'MCP article writes', type: :request do
       expect(article.reload.redirect_url).to be_nil
     end
 
+    # kleer-la/eventer#215: the author is what the site shows as "Creado por:".
+    describe 'trainers' do
+      let!(:author) { Trainer.create!(name: 'Carlos Peix') }
+
+      it 'previews the author and sets it on confirm' do
+        result = call_tool('articles', { operation: 'update', id: article.slug, trainers: ['Carlos Peix'] })
+        expect(result['changes']['trainers']).to eq('from' => [], 'to' => ['Carlos Peix'])
+        expect(article.reload.trainers).to be_empty
+
+        call_tool('articles', { operation: 'update', id: article.slug, trainers: ['Carlos Peix'], confirm: true })
+        expect(call_tool('articles', { operation: 'get', id: article.slug })['trainers']).to eq(['Carlos Peix'])
+      end
+
+      it 'refuses an unknown name and lists the existing ones' do
+        result = call_tool('articles', { operation: 'update', id: article.slug, trainers: ['Nadie'], confirm: true })
+
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('Nadie', 'Carlos Peix')
+        expect(article.reload.trainers).to be_empty
+      end
+    end
+
     it 'answers an error for an unknown article' do
       expect(call_tool('articles',
                        { operation: 'update', id: 'no-such-article' })['errors'].join).to include('no-such-article')
