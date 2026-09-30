@@ -86,6 +86,26 @@ describe 'event type MCP tools' do
       expect(result['errors'].first).to include 'no-existe'
     end
 
+    # A course that leaves the catalog sends its traffic to the service that
+    # replaces it (kleer-marketing#28). external_site_url is a path or an
+    # absolute URL, and the site answers the course page with a 301 to it.
+    it 'sends the course page elsewhere with external_site_url' do
+      run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
+                          external_site_url: '/es/servicios/producto-digital/desarrollo-productos-digitales-agentes-ia')
+
+      expect(event_type.reload.external_site_url)
+        .to eq '/es/servicios/producto-digital/desarrollo-productos-digitales-agentes-ia'
+    end
+
+    it 'rejects an external_site_url that is neither a path nor a URL' do
+      result = run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
+                                   external_site_url: 'servicios/otro')
+
+      expect(result['status']).to eq 'error'
+      expect(result['errors'].join).to include 'external_site_url'
+      expect(event_type.reload.external_site_url).to be_blank
+    end
+
     # Putting a course on sale is a decision about what Kleer sells, and
     # ability.rb keeps it away from the content role. It is not an argument.
     it 'does not take include_in_catalog' do

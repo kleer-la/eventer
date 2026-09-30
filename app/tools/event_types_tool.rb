@@ -25,7 +25,9 @@ class EventTypesTool < AuthenticatedTool
     operation=update: edits course type `id`; only the fields passed are
     touched. To change part of a block, prefer `replacements` (it patches the
     blocks) — which is how a stale link inside a course page gets fixed.
-    Whether a course is on sale is not an argument here.
+    Whether a course is on sale is not an argument here. A course that leaves
+    the catalog gets `external_site_url`: the site then answers its page with a
+    301 to that path or URL, so the traffic lands on what replaces it.
 
     Writes take two steps: confirm=false (the default) validates and returns a
     preview without saving; call again with confirm=true once the user agrees.
@@ -57,6 +59,10 @@ class EventTypesTool < AuthenticatedTool
     optional(:kleer_cert_seal_image).filled(:string).description('Seal image file name for the certificate')
     optional(:csd_eligible).filled(:bool).description('true = counts towards Scrum Alliance CSD')
     optional(:new_version).filled(:bool).description('update: true = the newer edition of the course')
+    optional(:external_site_url).filled(:string)
+                                .description('Where the course page sends its visitors instead (a path like ' \
+                                             '/es/servicios/... or an absolute URL): the site answers 301 with it. ' \
+                                             'For a course that leaves the catalog.')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
   end

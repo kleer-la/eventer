@@ -25,6 +25,11 @@ class EventType < ApplicationRecord
   scope :ordered, -> { order(:ordering) }
 
   validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
+  # Where the course page sends its visitors once the course leaves the
+  # catalog: a path (/es/servicios/...) or an absolute URL. The site answers
+  # 301 with it (same shape as Article#redirect_url).
+  validates :external_site_url, format: { with: %r{\A(/|https?://)}, message: :must_be_path_or_url },
+                                allow_blank: true
   validates :elevator_pitch, length: { maximum: 160,
                                        too_long: '%<count>s characters is the maximum allowed' }
   validate :certification_requires_seal
