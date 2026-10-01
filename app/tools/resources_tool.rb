@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 # Resources (books, infographics, canvases, guides, games, videos…): one tool,
-# four operations, so the connector lists one permission.
+# five operations, so the connector lists one permission.
 class ResourcesTool < AuthenticatedTool
   tool_name 'resources'
   requires_permission :read, Resource
 
-  OPERATIONS = %w[list get create update].freeze
-  FORMATS = 'card | book | infographic | canvas | guide | game | assessment | video | other'
+  OPERATIONS = %w[list get create update concepts].freeze
+  FORMATS = 'card | book | infographic | canvas | guide | game | assessment | video | concepts | other'
 
   description <<~MD
     Resources: books, infographics, canvases, guides, games, videos…
@@ -16,8 +16,9 @@ class ResourcesTool < AuthenticatedTool
     whether it is published, category, whether it can be downloaded — filtered
     by query, format, published, category. Long texts are not included.
     operation=get: one resource in full — both languages, links, tags, credits
-    and the contents it recommends — by id (slug or numeric). Read it before
-    editing, so the change is made against what is actually there.
+    and the contents it recommends — by id (slug or numeric); a 'concepts'
+    resource also lists its cards. Read it before editing, so the change is
+    made against what is actually there.
     operation=create: title_es, description_es and format are required; the
     slug is derived from the Spanish title when omitted; unpublished unless
     published=true. Only the Spanish side is required; an empty English side
@@ -26,6 +27,16 @@ class ResourcesTool < AuthenticatedTool
     and any text field but the Spanish title and description can be emptied
     with "". To change part of a long text, prefer `replacements` (it patches
     long_description_es/en and comments_es/en).
+    operation=concepts: loads the cards of resource `id` (format 'concepts': a
+    glossary shown as a map of stages, one page per card). `concepts` is a
+    list; each card is matched by slug + lang (lang defaults to 'es', slug to
+    the name made into a slug) and created or updated with only the fields
+    given; `_destroy: true` deletes it. A new card needs name, stage and
+    definition, and goes last unless it has a position. Stages are free text,
+    ordered by the first position of their cards. related_slugs must be cards
+    of the same resource and language (cards created in the same call count).
+    `media` takes Markdown or HTML for a visual and only administrators set it.
+    One bad card saves nothing.
 
     Fields ending in _es and _en are the Spanish and English sides of the same
     thing. Writes take two steps: confirm=false (the default) validates and
@@ -34,8 +45,8 @@ class ResourcesTool < AuthenticatedTool
   MD
 
   arguments do
-    optional(:operation).filled(:string).description("'list' (default), 'get', 'create' or 'update'")
-    optional(:id).filled(:string).description('get/update: resource slug (preferred) or numeric id')
+    optional(:operation).filled(:string).description("'list' (default), 'get', 'create', 'update' or 'concepts'")
+    optional(:id).filled(:string).description('get/update/concepts: resource slug (preferred) or numeric id')
     optional(:query).filled(:string).description('list: substring matched against either title')
     optional(:format).filled(:string).description("#{FORMATS} (list: filter)")
     optional(:published).filled(:bool)
@@ -74,6 +85,22 @@ class ResourcesTool < AuthenticatedTool
     optional(:seo_description_en).value(:string).description('English SEO description')
     optional(:tabtitle_es).value(:string).description('Spanish browser tab title')
     optional(:tabtitle_en).value(:string).description('English browser tab title')
+    optional(:concepts).array(:hash) do
+      optional(:slug).filled(:string).description('Card slug, its URL on the site; key with lang')
+      optional(:lang).filled(:string).description("'es' (default) or 'en'")
+      optional(:position).filled(:integer).description('Reading order within the language')
+      optional(:name).filled(:string).description("Concept name, e.g. 'Token'")
+      optional(:question).value(:string).description("The question it answers, e.g. '¿Qué es un token?'")
+      optional(:stage).filled(:string).description("Stage of the map, e.g. 'Cómo se fabrica'")
+      optional(:definition).filled(:string).description('What it is, in plain words')
+      optional(:analogy).value(:string).description('An image to remember it')
+      optional(:misconception).value(:string).description('The common misunderstanding (shown struck through)')
+      optional(:correction).value(:string).description('What is true instead')
+      optional(:practice).value(:string).description('What changes in practice')
+      optional(:media).value(:string).description('Optional visual, Markdown or HTML (administrators only)')
+      optional(:related_slugs).array(:string).description('Slugs of related cards; [] empties it')
+      optional(:_destroy).filled(:bool).description('true deletes the card')
+    end.description('concepts: the cards to create, update or delete')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
     instance_exec(&ApplicationTool::CLEAR)
@@ -87,6 +114,7 @@ class ResourcesTool < AuthenticatedTool
     when 'get' then get(find(id))
     when 'create' then write(nil, confirm: confirm, **fields)
     when 'update' then write(find(id), confirm: confirm, **fields)
+    when 'concepts' then write_concepts(find(id), confirm: confirm, concepts: fields[:concepts])
     else unknown_operation(operation)
     end
   rescue ActiveRecord::RecordNotFound
@@ -133,6 +161,7 @@ class ResourcesTool < AuthenticatedTool
       es: side(resource, 'es'), en: side(resource, 'en'), updated_at: resource.updated_at }
       .merge(credits(resource))
       .merge(recommends: resource.recommended_contents.includes(:target).map { |content| recommendation(content) })
+      .merge(resource.concepts? ? { concepts: resource.concepts.map(&:as_api_json) } : {})
       .to_json
   end
 
@@ -158,7 +187,12 @@ class ResourcesTool < AuthenticatedTool
     action = resource ? :update : :create
     return unauthorized(action, Resource) unless ability.can?(action, Resource)
 
-    ResourceWriteService.new(ability: ability, record: resource, **fields.except(:query))
+    ResourceWriteService.new(ability: ability, record: resource, **fields.except(:query, :concepts))
                         .call(confirm: confirm).to_json
+  end
+
+  def write_concepts(resource, confirm:, concepts:)
+    ResourceConceptsWriteService.new(ability: ability, resource: resource, concepts: concepts)
+                                .call(confirm: confirm).to_json
   end
 end

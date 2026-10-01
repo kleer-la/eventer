@@ -36,7 +36,22 @@ RSpec.describe 'Admin screens', type: :feature do
     ActiveAdmin.application.namespaces[:admin].resources
                .reject { |resource| comments?(resource) }
                .select { |resource| resource.respond_to?(:route_collection_path) }
-               .map(&:route_collection_path)
+               .map { |resource| resource.route_collection_path(nested_params(resource)) }
+  end
+
+  # A screen nested under a required parent (concepts under a resource) needs
+  # that parent in the URL; optional nesting also renders at the top level.
+  def nested_params(resource)
+    return {} unless resource.belongs_to? && !resource.belongs_to_config.optional?
+
+    { resource.belongs_to_param => parent_of(resource.resource_class.name).to_param }
+  end
+
+  def parent_of(model)
+    case model
+    when 'ResourceConcept' then create(:resource_concept, resource: create(:resource, format: :concepts)).resource
+    else raise "Give the nested admin screen of #{model} a parent in #{__FILE__}"
+    end
   end
 
   # ActiveAdmin registers a Comment resource in every namespace whatever

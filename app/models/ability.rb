@@ -7,7 +7,7 @@ class Ability
   COURSES_MGNT_MODELS = [Event, EventType, Participant, Coupon].freeze
 
   # Models under "We Publish" menu
-  WE_PUBLISH_MODELS = [Article, Resource, Podcast, Episode, Assessment, News, RecommendedContent].freeze
+  WE_PUBLISH_MODELS = [Article, Resource, ResourceConcept, Podcast, Episode, Assessment, News, RecommendedContent].freeze
 
   # Content role models (Courses Mgnt + We Publish + Testimony + Images)
   CONTENT_MODELS = (COURSES_MGNT_MODELS + WE_PUBLISH_MODELS + [Testimony]).freeze

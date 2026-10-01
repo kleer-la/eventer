@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_28_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_01_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -620,6 +620,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_160000) do
     t.index ["target_type", "target_id"], name: "index_recommended_contents_on_target"
   end
 
+  create_table "resource_concepts", force: :cascade do |t|
+    t.text "analogy"
+    t.text "correction"
+    t.datetime "created_at", null: false
+    t.text "definition"
+    t.string "lang", default: "es", null: false
+    t.text "media"
+    t.text "misconception"
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.text "practice"
+    t.string "question"
+    t.string "related_slugs"
+    t.integer "resource_id", null: false
+    t.string "slug", null: false
+    t.string "stage", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id", "lang", "slug"], name: "index_resource_concepts_on_resource_id_and_lang_and_slug", unique: true
+    t.index ["resource_id"], name: "index_resource_concepts_on_resource_id"
+  end
+
   create_table "resources", force: :cascade do |t|
     t.string "buyit_en"
     t.string "buyit_es"
@@ -912,6 +933,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_160000) do
   add_foreign_key "question_groups", "assessments"
   add_foreign_key "questions", "assessments"
   add_foreign_key "questions", "question_groups"
+  add_foreign_key "resource_concepts", "resources"
   add_foreign_key "resources", "categories"
   add_foreign_key "responses", "answers"
   add_foreign_key "responses", "contacts"

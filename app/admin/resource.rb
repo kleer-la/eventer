@@ -207,6 +207,19 @@ ActiveAdmin.register Resource do
       end
     end
 
+    if resource.concepts?
+      panel 'Concepts' do
+        div { link_to 'Edit concepts', admin_resource_resource_concepts_path(resource), class: 'button' }
+        table_for resource.concepts do
+          column :position
+          column :lang
+          column :stage
+          column(:name) { |concept| link_to concept.name, admin_resource_resource_concept_path(resource, concept) }
+          column :question
+        end
+      end
+    end
+
     panel 'Additional Info' do
       attributes_table_for resource do
         row :authors

@@ -11,35 +11,35 @@ module Api
     end
 
     def resources_with_associations
-      Resource.includes(:authors, :translators, :illustrators, :assessments)
+      Resource.includes(:authors, :translators, :illustrators, :assessments, :concepts)
+    end
+
+    # The site's sitemap needs one URL per concept, so concepts resources carry
+    # their slugs here; the cards themselves come from show.
+    def index_json(resources)
+      resources.map do |resource|
+        json = resource.as_json(
+          methods: %i[category_name],
+          include: {
+            authors: { only: trainer_index_fields },
+            translators: { only: trainer_index_fields },
+            illustrators: { only: trainer_index_fields }
+          }
+        )
+        next json unless resource.concepts?
+
+        json.merge('concepts' => resource.concepts.map { |c| c.as_json(only: %i[slug lang updated_at]) })
+      end
     end
 
     public
 
     def index
-      resources = resources_with_associations.where(published: true).order(created_at: :desc)
-      render(
-        json: resources,
-        methods: %i[category_name],
-        include: {
-          authors: { only: trainer_index_fields },
-          translators: { only: trainer_index_fields },
-          illustrators: { only: trainer_index_fields }
-        }
-      )
+      render json: index_json(resources_with_associations.where(published: true).order(created_at: :desc))
     end
 
     def preview
-      resources = resources_with_associations.order(created_at: :desc)
-      render(
-        json: resources,
-        methods: %i[category_name],
-        include: {
-          authors: { only: trainer_index_fields },
-          translators: { only: trainer_index_fields },
-          illustrators: { only: trainer_index_fields }
-        }
-      )
+      render json: index_json(resources_with_associations.order(created_at: :desc))
     end
 
     def show
@@ -70,6 +70,8 @@ module Api
           language: assessment_data.language
         }
       end
+
+      resource_json['concepts'] = resource.concepts.where(lang:).map(&:as_api_json) if resource.concepts?
 
       render json: resource_json.merge(
         recommended: resource.recommended(lang:)

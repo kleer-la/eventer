@@ -14,7 +14,8 @@ class Resource < ApplicationRecord
   belongs_to :category, optional: true
 
   enum :format, { card: 0, book: 1, infographic: 2, canvas: 3,
-                  guide: 4, game: 5, assessment: 6, video: 7, other: 8 }
+                  guide: 4, game: 5, assessment: 6, video: 7, other: 8,
+                  concepts: 9 }
 
   has_many  :authorships, -> { order(updated_at: :desc) }
   has_many  :authors, through: :authorships, source: :trainer
@@ -23,6 +24,8 @@ class Resource < ApplicationRecord
   has_many :illustrations
   has_many :illustrators, through: :illustrations, source: :trainer
   has_many :assessments, dependent: :nullify
+  has_many :concepts, -> { order(:position, :id) }, class_name: 'ResourceConcept', dependent: :destroy,
+                      inverse_of: :resource
 
   validates :format, presence: true
   validates :title_es, presence: true, length: { minimum: 2, maximum: 100 }
@@ -62,6 +65,11 @@ class Resource < ApplicationRecord
     title_es
   end
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
+
+  # ActiveAdmin's nested concepts find their parent by the slug in the URL.
+  def self.find_by_slug_or_id(id)
+    friendly.find(id.to_s.strip)
+  end
 
   def self.ransackable_associations(_auth_object = nil)
     %w[authors authorships category illustrations illustrators recommended_contents
