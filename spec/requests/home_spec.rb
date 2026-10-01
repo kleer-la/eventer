@@ -16,6 +16,16 @@ describe 'GET catalog', type: :request do
     json = JSON.parse(response.body)
     expect(json.size).to eq 1
   end
+  # The site's sitemap leaves out noindex courses, but the catalog never said
+  # which they were, so one marked noindex was declared anyway (website17#440).
+  it 'says whether each course is noindex' do
+    FactoryBot.create(:event_type, include_in_catalog: true, noindex: true)
+
+    get '/api/catalog', params: { format: 'json' }
+
+    expect(JSON.parse(response.body).first['noindex']).to be true
+  end
+
   it 'one event one event_type in catalog' do
     FactoryBot.create(:event)
 

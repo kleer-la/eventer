@@ -103,6 +103,7 @@ class HomeController < ApplicationController
       csd_eligible: et.csd_eligible,
       is_kleer_certification: et.is_kleer_certification,
       external_site_url: et.external_site_url,
+      noindex: et.noindex,
       platform: et.platform,
       percent_off: codeless_coupon&.percent_off,
       coupon_icon: codeless_coupon&.icon,
