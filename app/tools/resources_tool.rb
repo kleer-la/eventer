@@ -35,6 +35,10 @@ class ResourcesTool < AuthenticatedTool
     definition, and goes last unless it has a position. Stages are free text,
     ordered by the first position of their cards. related_slugs must be cards
     of the same resource and language (cards created in the same call count).
+    In definition, analogy, misconception, correction and practice, [[slug]]
+    links to another card (the site shows its name) and [[slug|texto]] shows
+    `texto` instead, e.g. [[arnes|arneses]]; the same rule applies to those
+    slugs, and the error names the card, the field and the slug.
     `media` takes Markdown or HTML for a visual and only administrators set it.
     One bad card saves nothing.
 

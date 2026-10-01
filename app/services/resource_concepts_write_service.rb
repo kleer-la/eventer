@@ -5,8 +5,9 @@
 # Everything runs in a savepoint that only survives a confirmed, error-free
 # call, so a preview or one bad card saves nothing.
 #
-# related_slugs are assigned in a second pass, once every card of the call
-# exists, so new cards can point at each other.
+# related_slugs and the links marked in the text ([[slug]]) are checked in a
+# second pass, once every card of the call exists, so new cards can point at
+# each other.
 class ResourceConceptsWriteService
   FIELDS = %i[position name question stage definition analogy misconception correction practice media].freeze
   LONG = %w[definition analogy misconception correction practice media].freeze
@@ -62,10 +63,11 @@ class ResourceConceptsWriteService
     action = concept.new_record? ? 'create' : 'update'
     concept.assign_attributes(entry.slice(*FIELDS))
     concept.position = next_position(concept.lang) if concept.new_record? && entry[:position].nil?
+    concept.defer_link_check = true
     return invalid(concept) unless concept.save
 
     @results << { slug: concept.slug, lang: concept.lang, action:, changes: shown(concept.saved_changes) }
-    [concept, entry] if entry.key?(:related_slugs)
+    [concept, entry]
   end
 
   def find_concept(entry)
@@ -74,7 +76,8 @@ class ResourceConceptsWriteService
   end
 
   def relate(concept, entry)
-    concept.related_slugs = Array(entry[:related_slugs]).join(',')
+    concept.defer_link_check = false
+    concept.related_slugs = Array(entry[:related_slugs]).join(',') if entry.key?(:related_slugs)
     return invalid(concept) unless concept.save
 
     result = @results.find { |r| r[:slug] == concept.slug && r[:lang] == concept.lang }
@@ -114,13 +117,14 @@ class ResourceConceptsWriteService
     warnings + dangling_relations
   end
 
-  # A card deleted in this call may still be listed as related by another one.
+  # A card deleted in this call may still be related to, or linked from the
+  # text of, another one.
   def dangling_relations
     @resource.concepts.reload.group_by(&:lang).flat_map do |lang, cards|
       slugs = cards.map(&:slug)
       cards.filter_map do |card|
-        missing = card.related - slugs
-        "#{card.slug} (#{lang}) still relates to #{missing.join(', ')}, which does not exist" if missing.any?
+        missing = (card.related | card.linked_slugs) - slugs
+        "#{card.slug} (#{lang}) still relates or links to #{missing.join(', ')}, which does not exist" if missing.any?
       end
     end
   end

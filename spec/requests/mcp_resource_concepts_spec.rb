@@ -91,6 +91,39 @@ RSpec.describe 'MCP resources: concepts operation', type: :request do
     expect(ResourceConcept.count).to eq(0)
   end
 
+  # Links marked in the text follow the related_slugs rule: cards created in
+  # the same call count, and one bad slug saves nothing (#226).
+  describe 'links marked in the text' do
+    it 'links cards created in the same call to each other' do
+      result = concepts([token.merge(definition: 'Lo que entra en el [[contexto|contexto]].'),
+                         contexto.merge(practice: 'Se mide en [[token|tokens]].')], confirm: true)
+
+      expect(result['status']).to eq('saved')
+      expect(resource.concepts.find_by(slug: 'contexto').practice).to eq('Se mide en [[token|tokens]].')
+    end
+
+    it 'saves nothing and says which card, field and slug when a link goes nowhere' do
+      result = concepts([token.merge(analogy: 'Como una [[ficha-inexistente|ficha]].'), contexto], confirm: true)
+
+      expect(result['status']).to eq('invalid')
+      expect(result['errors'].join).to include('token', 'Analogy', 'ficha-inexistente')
+      expect(ResourceConcept.count).to eq(0)
+    end
+
+    it 'warns about a card still linking in its text to one deleted in the call' do
+      create(:resource_concept, resource:, slug: 'contexto')
+      create(:resource_concept, resource:, slug: 'token', definition: 'Ver [[contexto]].')
+
+      result = concepts([{ slug: 'contexto', _destroy: true }], confirm: true)
+
+      expect(result['warnings'].join).to include('token', 'contexto')
+    end
+
+    it 'documents the mark in the tool' do
+      expect(ResourcesTool.description).to include('[[slug|')
+    end
+  end
+
   it 'reports a new card missing what it needs' do
     result = concepts([{ slug: 'vacio', name: 'Vacío' }])
 

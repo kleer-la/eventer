@@ -74,11 +74,11 @@ ActiveAdmin.register ResourceConcept do
       f.input :slug, hint: 'Empty -> automatic from the name. It is the URL of the card on the site'
       f.input :question
       f.input :stage, input_html: { list: 'concept-stages' }, hint: 'Pick one already used or write a new one'
-      f.input :definition, input_html: { rows: 3 }
-      f.input :analogy, hint: 'Una imagen para recordarlo', input_html: { rows: 2 }
-      f.input :misconception, hint: 'El malentendido (se muestra tachado)', input_html: { rows: 2 }
-      f.input :correction, hint: 'Lo que es cierto en su lugar', input_html: { rows: 2 }
-      f.input :practice, hint: 'Qué cambia en la práctica', input_html: { rows: 2 }
+      f.input :definition, hint: ResourceConcept::LINK_HINT, input_html: { rows: 3 }
+      f.input :analogy, hint: "Una imagen para recordarlo. #{ResourceConcept::LINK_HINT}", input_html: { rows: 2 }
+      f.input :misconception, hint: "El malentendido (se muestra tachado). #{ResourceConcept::LINK_HINT}", input_html: { rows: 2 }
+      f.input :correction, hint: "Lo que es cierto en su lugar. #{ResourceConcept::LINK_HINT}", input_html: { rows: 2 }
+      f.input :practice, hint: "Qué cambia en la práctica. #{ResourceConcept::LINK_HINT}", input_html: { rows: 2 }
       if current_user.ability.can?(:set_media, ResourceConcept)
         f.input :media, input_html: { rows: 6 }, hint: 'Optional visual: Markdown or HTML'
       end

@@ -41,6 +41,38 @@ RSpec.describe ResourceConcept do
     expect(concept.errors[:related_slugs].join).not_to include('token')
   end
 
+  # [[slug]] and [[slug|texto]] in the text of a card link to another card;
+  # a slug that is not one fails here, not on the site (#226).
+  describe 'links marked in the text' do
+    before do
+      create(:resource_concept, resource:, slug: 'arnes')
+      create(:resource_concept, resource:, slug: 'agente', lang: 'en')
+    end
+
+    it 'takes links to cards of the same resource and language, with or without their own text' do
+      concept = build(:resource_concept, resource:, definition: 'Un [[arnes]] y varios [[arnes|arneses]].',
+                                         practice: 'Se enlaza a sí mismo: [[token]].', slug: 'token')
+
+      expect(concept).to be_valid
+    end
+
+    it 'names the field and the slugs that are not cards of this resource and language' do
+      concept = build(:resource_concept, resource:, definition: 'Ver [[agente]] y [[ nada | otra cosa ]].',
+                                         analogy: 'Como un [[arnes]].', correction: 'Ver [[tampoco]].')
+
+      expect(concept).not_to be_valid
+      expect(concept.errors[:definition].join).to include('agente', 'nada')
+      expect(concept.errors[:analogy]).to be_empty
+      expect(concept.errors[:correction].join).to include('tampoco')
+    end
+
+    it 'lists the slugs a card links to' do
+      concept = described_class.new(definition: '[[a]] y [[b|be]]', practice: '[[a]]')
+
+      expect(concept.linked_slugs).to eq(%w[a b])
+    end
+  end
+
   it 'reads related slugs as a list' do
     expect(described_class.new(related_slugs: ' token,contexto ,, ').related).to eq(%w[token contexto])
   end

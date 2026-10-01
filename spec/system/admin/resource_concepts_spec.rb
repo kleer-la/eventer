@@ -66,4 +66,15 @@ RSpec.describe 'Admin concepts of a resource', type: :system do
 
     within('#titlebar_right') { expect(page).not_to have_link('Concepts') }
   end
+
+  it 'explains the link mark on the text fields and rejects a link that goes nowhere' do
+    visit edit_admin_resource_resource_concept_path(resource, resource.concepts.first)
+    expect(page).to have_content('[[slug|texto]]')
+
+    fill_in 'Practice', with: 'Ver [[nada]].'
+    find('input[type=submit]').click
+
+    expect(page).to have_content('nada')
+    expect(resource.concepts.first.practice).to be_blank
+  end
 end
