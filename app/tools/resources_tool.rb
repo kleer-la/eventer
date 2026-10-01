@@ -64,6 +64,8 @@ class ResourcesTool < AuthenticatedTool
     optional(:description_es).filled(:string).description('Spanish summary, at most 220 characters')
     optional(:description_en).value(:string).description('English summary')
     optional(:slug).filled(:string).description('URL slug; derived from the Spanish title when omitted')
+    optional(:slug_en).value(:string).description('Its own slug for the English page (/en/resources/<slug_en>); ' \
+                                                  'without it English uses `slug`. May equal `slug`; "" empties it')
     optional(:long_description_es).value(:string).description('Spanish long description')
     optional(:long_description_en).value(:string).description('English long description')
     optional(:comments_es).value(:string).description('Spanish notes shown on the page')
@@ -150,7 +152,7 @@ class ResourcesTool < AuthenticatedTool
   def find(id)
     raise ActiveRecord::RecordNotFound if id.blank?
 
-    Resource.friendly.find(id)
+    Resource.find_by_any_slug(id)
   end
 
   def list(limit:, format: nil, **filters)
@@ -174,14 +176,15 @@ class ResourcesTool < AuthenticatedTool
   end
 
   def summary(resource)
-    { id: resource.id, slug: resource.slug, title_es: resource.title_es, title_en: resource.title_en,
+    { id: resource.id, slug: resource.slug, slug_en: resource.slug_en,
+      title_es: resource.title_es, title_en: resource.title_en,
       format: resource.format, published: resource.published, category: resource.category_name,
       downloadable: resource.downloadable, updated_at: resource.updated_at }
   end
 
   def get(resource)
-    { id: resource.id, slug: resource.slug, format: resource.format, published: resource.published,
-      category: resource.category_name, downloadable: resource.downloadable,
+    { id: resource.id, slug: resource.slug, slug_en: resource.slug_en, format: resource.format,
+      published: resource.published, category: resource.category_name, downloadable: resource.downloadable,
       es: side(resource, 'es'), en: side(resource, 'en'), updated_at: resource.updated_at }
       .merge(credits(resource))
       .merge(recommends: resource.recommended_contents.includes(:target).map { |content| recommendation(content) })

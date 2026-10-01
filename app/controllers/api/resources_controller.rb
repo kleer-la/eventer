@@ -46,7 +46,9 @@ module Api
       lang = params[:lang] || 'es'
       return render json: { error: 'Invalid language' }, status: :bad_request unless %w[es en].include?(lang)
 
-      resource = resources_with_associations.friendly.find(params[:id].downcase)
+      # Any slug finds it — Spanish, English or an old one — and `slug` answers
+      # the one of the language asked for; the site redirects when they differ.
+      resource = resources_with_associations.find_by_any_slug(params[:id].downcase)
 
       # Find the assessment for the correct language
       assessment_data = resource.assessments.find_by(language: lang)
@@ -71,6 +73,7 @@ module Api
         }
       end
 
+      resource_json['slug'] = resource.slug_for(lang)
       resource_json['concepts'] = resource.concepts.where(lang:).map(&:as_api_json) if resource.concepts?
 
       render json: resource_json.merge(

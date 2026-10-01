@@ -56,6 +56,8 @@ es:
               redirect_url:
                 must_be_path_or_url: "debe ser una ruta (/es/blog/otro) o una URL completa (https://...)"
         messages:
+          slug_format: "solo minúsculas, números y guiones"
+          taken_by: "%{slug} ya es un slug de otro recurso: %{resource}"
           must_be_path_or_url: "debe ser una ruta (/es/blog/otro) o una URL completa (https://...)"
           inclusion: "no está incluido en la lista"
           exclusion: "no está disponible"

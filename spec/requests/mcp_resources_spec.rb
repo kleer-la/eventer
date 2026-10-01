@@ -193,6 +193,33 @@ RSpec.describe 'MCP resource tools', type: :request do
       end
     end
 
+    # Its own English slug (#227): set, emptied with "", read back, and found by.
+    describe 'slug_en' do
+      it 'sets it, finds the resource by it and reads it back in get and list' do
+        call_tool('resources', { operation: 'update', id: resource.slug, slug_en: 'old-one', confirm: true })
+
+        expect(call_tool('resources', { operation: 'get', id: 'old-one' })['slug_en']).to eq('old-one')
+        expect(call_tool('resources')['resources'].first['slug_en']).to eq('old-one')
+      end
+
+      it 'empties it with an empty string' do
+        resource.update!(slug_en: 'old-one')
+
+        call_tool('resources', { operation: 'update', id: resource.slug, slug_en: '', confirm: true })
+
+        expect(resource.reload.slug_en).to be_nil
+      end
+
+      it 'says which resource already has the slug' do
+        create(:resource, title_es: 'Kartas', slug: 'kartas')
+
+        result = call_tool('resources', { operation: 'update', id: resource.slug, slug_en: 'kartas', confirm: true })
+
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('kartas', 'Kartas')
+      end
+    end
+
     it 'tells what the site does with each link' do
       post '/mcp', params: { jsonrpc: '2.0', method: 'tools/list', id: 1 }.to_json, headers: headers
       tools = response.parsed_body.dig('result', 'tools').index_by { |t| t['name'] }

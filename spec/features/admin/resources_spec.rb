@@ -203,4 +203,16 @@ RSpec.describe 'Admin Resources', type: :feature do
       expect(resource.slug).to eq('test-resource')
     end
   end
+
+  # Its own English slug sits next to the English title (#227).
+  it 'saves the English slug from the form and shows it' do
+    resource = create(:resource, title_es: 'Kartas', slug: 'kartas')
+
+    visit edit_admin_resource_path(resource)
+    fill_in 'Slug en', with: 'agile-kards'
+    find("input[type='submit']").click
+
+    expect(resource.reload.slug_en).to eq('agile-kards')
+    expect(page).to have_content('agile-kards')
+  end
 end

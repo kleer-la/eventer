@@ -210,7 +210,8 @@ module Api
       }
 
       if contact_params[:resource_slug].present?
-        resource = Resource.find_by!(slug: contact_params[:resource_slug])
+        # Any of its slugs: an English page may carry the English one (#227).
+        resource = Resource.find_by_any_slug(contact_params[:resource_slug])
         form_data.merge!(
           resource_title_es: resource.title_es,
           resource_getit_es: resource.getit_es,

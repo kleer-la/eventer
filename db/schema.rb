@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_01_170000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -670,6 +670,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_150000) do
     t.string "share_text_en"
     t.string "share_text_es"
     t.string "slug", null: false
+    t.string "slug_en"
     t.string "tabtitle_en"
     t.string "tabtitle_es"
     t.string "tags_en"
@@ -679,6 +680,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_150000) do
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_resources_on_category_id"
     t.index ["slug"], name: "index_resources_on_slug", unique: true
+    t.index ["slug_en"], name: "index_resources_on_slug_en", unique: true
   end
 
   create_table "responses", force: :cascade do |t|

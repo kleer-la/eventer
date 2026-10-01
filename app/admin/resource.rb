@@ -1,7 +1,7 @@
 ActiveAdmin.register Resource do
   menu parent: 'We Publish'
 
-  permit_params :title_es, :title_en, :format, :slug, :landing_es, :landing_en,
+  permit_params :title_es, :title_en, :format, :slug, :slug_en, :landing_es, :landing_en,
                 :published,
                 :getit_es, :getit_en, :buyit_es, :buyit_en, :cover_es, :cover_en,
                 :description_es, :description_en, :comments_es, :comments_en,
@@ -110,6 +110,8 @@ ActiveAdmin.register Resource do
 
     f.inputs 'English Details' do
       f.input :title_en
+      f.input :slug_en, hint: 'Optional: the URL of the English page (/en/resources/<slug en>). Empty -> the ' \
+                              'Spanish slug. It may be the same as the Spanish one'
       f.input :tabtitle_en
       f.input :seo_description_en
       f.input :landing_en
@@ -163,6 +165,7 @@ ActiveAdmin.register Resource do
             row :title_en
             row :format
             row :slug
+            row :slug_en
             row :category
             row :published
           end

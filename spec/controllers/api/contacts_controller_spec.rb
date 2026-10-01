@@ -192,6 +192,17 @@ RSpec.describe Api::ContactsController, type: :controller do
         expect(JSON.parse(response.body)).to have_key('error')
       end
 
+      # The English page of a resource may carry its own slug (#227): the
+      # download keeps working, and the contact keeps the Spanish one, which is
+      # what mail templates are keyed by.
+      it 'takes the English slug of a resource and keeps the Spanish one' do
+        resource.update!(slug_en: 'agile-basics')
+
+        post :create, params: valid_contact_params.merge(resource_slug: 'agile-basics', language: 'en')
+
+        expect(Contact.last.resource_slug).to eq('agile-fundamentals')
+      end
+
       it 'returns error when resource_slug is invalid' do
         post :create, params: valid_contact_params.merge(resource_slug: 'non-existent')
         expect(response).to have_http_status(:unprocessable_content)

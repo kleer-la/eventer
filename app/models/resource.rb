@@ -5,6 +5,7 @@ class Resource < ApplicationRecord
   include FileSizeChecker
   extend FriendlyId
   friendly_id :title_es, use: %i[slugged history]
+  include EnglishSlug
 
   include ImageReference
 
@@ -55,6 +56,7 @@ class Resource < ApplicationRecord
       .merge('subtitle' => is_en ? description_en : description_es)
       .merge('cover' => is_en ? cover_en : cover_es)
       .merge('downloadable' => downloadable)
+      .merge('slug' => slug_for(lang))
   end
 
   def servable_as_recommendation?

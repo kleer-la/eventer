@@ -2,7 +2,7 @@
 
 class ResourceWriteService < ContentWriteService
   self.model = Resource
-  self.editable_fields = %i[title_es title_en description_es description_en format slug
+  self.editable_fields = %i[title_es title_en description_es description_en format slug slug_en
                             long_description_es long_description_en comments_es comments_en
                             cover_es cover_en getit_es getit_en buyit_es buyit_en
                             landing_es landing_en preview_es preview_en

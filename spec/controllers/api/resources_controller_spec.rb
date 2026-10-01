@@ -124,6 +124,51 @@ describe Api::ResourcesController do
       json_response = JSON.parse(response.body)
       expect(json_response['id']).to eq(resource.id)
     end
+    # The site redirects when the slug asked for is not the one show answers,
+    # so show answers the slug of the language asked for (#227).
+    describe 'with an English slug' do
+      let!(:resource) { create(:resource, title_es: 'Kartas', slug: 'kartas', slug_en: 'agile-kards') }
+
+      it 'is found by either slug, and answers the slug of the language' do
+        %w[kartas agile-kards].each do |asked|
+          get :show, params: { id: asked, lang: 'en', format: 'json' }
+          expect(JSON.parse(response.body))
+            .to include('id' => resource.id, 'slug' => 'agile-kards', 'slug_en' => 'agile-kards')
+
+          get :show, params: { id: asked, lang: 'es', format: 'json' }
+          expect(JSON.parse(response.body)).to include('slug' => 'kartas')
+        end
+      end
+
+      it 'is found by an old English slug' do
+        resource.update!(slug_en: 'evolution-kards')
+
+        get :show, params: { id: 'agile-kards', lang: 'en', format: 'json' }
+
+        expect(JSON.parse(response.body)['slug']).to eq('evolution-kards')
+      end
+
+      it 'answers the Spanish slug in English for one without its own, and when both are equal' do
+        plain = create(:resource, title_es: 'Plano', slug: 'plano')
+        same = create(:resource, title_es: 'Igual', slug: 'igual', slug_en: 'igual')
+
+        get :show, params: { id: 'plano', lang: 'en', format: 'json' }
+        expect(JSON.parse(response.body)['slug']).to eq('plano')
+        get :show, params: { id: 'igual', lang: 'en', format: 'json' }
+        expect(JSON.parse(response.body)['slug']).to eq('igual')
+        expect(plain.id).not_to eq(same.id)
+      end
+
+      it 'carries slug_en in the lists' do
+        resource.update!(published: true)
+
+        get :index, params: { format: 'json' }
+        expect(JSON.parse(response.body).first).to include('slug' => 'kartas', 'slug_en' => 'agile-kards')
+        get :preview, params: { format: 'json' }
+        expect(JSON.parse(response.body).first).to include('slug_en' => 'agile-kards')
+      end
+    end
+
     it 'includes long_description and preview in the response' do
       resource = create(:resource,
                         long_description_es: 'Descripción extendida del recurso en español',

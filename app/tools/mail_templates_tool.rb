@@ -113,7 +113,7 @@ class MailTemplatesTool < AuthenticatedTool
   def sample_contact(resource_slug)
     form_data = SAMPLE_CONTACT.dup
     if resource_slug.present?
-      resource = Resource.friendly.find(resource_slug)
+      resource = Resource.find_by_any_slug(resource_slug)
       form_data.merge!('resource_slug' => resource.slug, 'resource_title_es' => resource.title_es,
                        'resource_title_en' => resource.title_en, 'resource_getit_es' => resource.getit_es,
                        'resource_getit_en' => resource.getit_en, 'page' => "/es/recursos/#{resource.slug}")
