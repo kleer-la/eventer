@@ -4,6 +4,8 @@ require 'aws-sdk-s3'
 require 'ostruct'
 
 class FileStoreService
+  include IncomingUploads
+
   @current = nil
 
   def self.create_null(exists: {}, files: nil)
@@ -103,7 +105,7 @@ class FileStoreService
     bucket, folder = self.class.image_location(image_type)
     result = @store.list_objects(bucket:).contents
     result = result.select { |img| img.key.to_s.start_with? folder } unless folder.nil?
-    result
+    result.reject { |img| img.key.to_s.start_with?(IncomingUploads::INCOMING) }
   end
 
   def background_list
@@ -179,6 +181,10 @@ class NullFileStore
     true
   end
 
+  def presigned_url(key, bucket_name, method, _expires_in)
+    "https://#{bucket_name}.s3.sa-east-1.amazonaws.com/#{key}?X-Amz-Signature=null-#{method}"
+  end
+
   private
 
   def null_object(file)
@@ -207,6 +213,8 @@ class NullStoreObject
   end
 
   def upload_file(file, **_options); end
+
+  def delete; end
 
   def exists?
     @exists[@key].nil? ? true : @exists[@key]
@@ -249,6 +257,10 @@ class S3FileStore
 
   def list_objects(bucket:)
     client_for(bucket).list_objects(bucket:)
+  end
+
+  def presigned_url(key, bucket_name, method, expires_in)
+    objects(key, bucket_name).presigned_url(method, expires_in:)
   end
 
   def copy(source_key, target_key, bucket_name)

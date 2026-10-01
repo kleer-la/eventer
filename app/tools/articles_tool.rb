@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-# Blog articles: one tool, four operations, so the connector lists one permission.
+# Blog articles: one tool, five operations, so the connector lists one permission.
 class ArticlesTool < AuthenticatedTool
   tool_name 'articles'
   requires_permission :read, Article
 
-  OPERATIONS = %w[list get create update].freeze
+  OPERATIONS = %w[list get create update copy_from_production].freeze
   INDUSTRIES = 'finantial | technology | public_services | consumer_goods | energy'
 
   description <<~MD
@@ -25,6 +25,11 @@ class ArticlesTool < AuthenticatedTool
     To merge an article into another or retire it towards an area page, set
     `redirect_url` and unpublish it: the site keeps answering its URL with a
     301 to the new place.
+    operation=copy_from_production (QA only): copies article `id` (its slug)
+    from production into this environment, creating it or updating the one
+    with that slug: texts, images, published, category, authors and
+    recommendations. What this environment lacks (an author, a recommended
+    resource) is left out and listed. Preview first; confirm=true copies.
 
     Writes take two steps: confirm=false (the default) validates and returns a
     preview without saving — show it to the user; call again with confirm=true
@@ -33,7 +38,8 @@ class ArticlesTool < AuthenticatedTool
   MD
 
   arguments do
-    optional(:operation).filled(:string).description("'list' (default), 'get', 'create' or 'update'")
+    optional(:operation).filled(:string)
+                        .description("'list' (default), 'get', 'create', 'update' or 'copy_from_production'")
     optional(:id).filled(:string).description('get/update: article slug (preferred) or numeric id')
     optional(:query).filled(:string).description('list: substring matched against the title')
     optional(:lang).filled(:string).description("Language: 'es' or 'en' (list: filter; create: default es)")
@@ -71,6 +77,7 @@ class ArticlesTool < AuthenticatedTool
     when 'get' then get(find(id))
     when 'create' then write(nil, confirm: confirm, **fields)
     when 'update' then write(find(id), confirm: confirm, **fields)
+    when 'copy_from_production' then copy_from_production(id, confirm:)
     else unknown_operation(operation)
     end
   rescue ActiveRecord::RecordNotFound
@@ -107,6 +114,13 @@ class ArticlesTool < AuthenticatedTool
                   :redirect_url, :description, :cover, :header, :body, :substantive_change_at, :updated_at)
            .merge(category: article.category_name, trainers: article.trainers.map(&:name))
            .to_json
+  end
+
+  def copy_from_production(slug, confirm:)
+    return error('id is required: the slug of the article in production') if slug.blank?
+    return unauthorized(:create, Article) unless ability.can?(:create, Article) && ability.can?(:update, Article)
+
+    ArticleProductionCopy.new(ability:, slug:).call(confirm:).to_json
   end
 
   def write(article, confirm:, **fields)

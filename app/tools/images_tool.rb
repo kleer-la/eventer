@@ -5,7 +5,7 @@ class ImagesTool < AuthenticatedTool
   tool_name 'images'
   requires_permission :read, :images
 
-  OPERATIONS = %w[list find_usage upload].freeze
+  OPERATIONS = %w[list find_usage upload upload_slot].freeze
   DEFAULT_LIMIT = 50
   MAX_LIMIT = 200
 
@@ -20,10 +20,15 @@ class ImagesTool < AuthenticatedTool
     across the site — articles, resources, event types, and anything else that
     references images — matching the dedicated image fields and mentions
     inside bodies. Answer it before deleting or replacing an image.
-    operation=upload: stores an image that already lives at a public `url` — a
-    GIF, PNG, JPEG, WebP or SVG — and returns the URL it gets on our side. This
-    is the only way to add an image through this server: a file that only
-    exists on your device has to go through the admin Images screen. Two
+    operation=upload_slot: for a file that only exists on your machine. Give
+    the file name in `path`; it answers a presigned `put_url` to PUT the file
+    to within #{FileStoreService::SLOT_MINUTES} minutes (the `upload_with` command does it,
+    if you can run a shell), and in `then` the arguments of the upload that
+    takes it from there. Without a shell, use the admin Images screen.
+    operation=upload: stores an image that lives at a `url` — a GIF, PNG,
+    JPEG, WebP or SVG, at a public URL or put through upload_slot — and returns
+    the URL it gets on our side. A file put through upload_slot is dropped
+    from its staging place once stored. Two
     steps: confirm=false (the default) fetches it, checks type and size and
     reports what would be stored; confirm=true uploads. Replacing an existing
     name needs overwrite=true, and replacing an image in use changes it
@@ -33,14 +38,15 @@ class ImagesTool < AuthenticatedTool
   MD
 
   arguments do
-    optional(:operation).filled(:string).description("'list' (default), 'find_usage' or 'upload'")
+    optional(:operation).filled(:string).description("'list' (default), 'find_usage', 'upload' or 'upload_slot'")
     optional(:query).filled(:string).description('list: substring matched against the file name')
     optional(:extension).filled(:string).description("list: file extension without the dot, e.g. 'gif' or 'webp'")
     optional(:min_size_kb).filled(:integer).description('list: only images at least this big, in KB')
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:image).filled(:string).description('find_usage: public URL of the image, or its file name')
     optional(:url).filled(:string).description('upload: public http/https URL of the image to fetch')
-    optional(:path).filled(:string).description('upload: file name to store it under; taken from the URL when omitted')
+    optional(:path).filled(:string).description('upload: file name to store it under; taken from the URL when ' \
+                                                'omitted. upload_slot: the name of the file (required)')
     optional(:overwrite).filled(:bool).description('upload: true = allow replacing an image with that name')
     optional(:convert_to_webp).filled(:bool).description('upload: also store a WebP twin of a PNG/JPEG (default true)')
     optional(:confirm).filled(:bool).description('upload: false (default) = check only; true = store it')
@@ -88,7 +94,26 @@ class ImagesTool < AuthenticatedTool
     return unauthorized(:manage, :images) unless ability.can?(:manage, :images)
     return error('url is required: the public URL of the image to fetch') if url.blank?
 
-    ImageImportService.new(url: url, path: path, overwrite: overwrite, convert_to_webp: convert_to_webp)
-                      .call(confirm: confirm).to_json
+    result = ImageImportService.new(url: url, path: path, overwrite: overwrite, convert_to_webp: convert_to_webp)
+                               .call(confirm: confirm)
+    drop_staging_copy(url) if result[:status] == 'saved'
+    result.to_json
+  end
+
+  def upload_slot(path: nil, **)
+    return unauthorized(:manage, :images) unless ability.can?(:manage, :images)
+    return error('path is required: the name of the file, e.g. portada.png') if path.blank?
+
+    slot = FileStoreService.current.upload_slot(path)
+    { status: 'ready', put_url: slot[:put_url], expires_in_minutes: FileStoreService::SLOT_MINUTES,
+      upload_with: "curl -sS --fail -T <local file> '#{slot[:put_url]}'",
+      then: { operation: 'upload', url: slot[:get_url], path: File.basename(path) },
+      note: 'PUT the file to put_url, then call images with the arguments in `then` (confirm=false to check it, ' \
+            'then confirm=true to store it).' }.to_json
+  end
+
+  def drop_staging_copy(url)
+    key = FileStoreService.current.incoming_key(url)
+    FileStoreService.current.delete(key) if key
   end
 end

@@ -13,3 +13,5 @@ env:
     RAILS_ENV: production
     RAILS_LOG_LEVEL: info
     WEB_CONCURRENCY: 1
+    # Where MCP articles copy_from_production reads from (#216); only QA has it.
+    PRODUCTION_API_URL: https://eventos.kleer.la

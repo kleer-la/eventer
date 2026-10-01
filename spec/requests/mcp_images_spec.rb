@@ -179,6 +179,58 @@ RSpec.describe 'MCP image tools', type: :request do
     end
   end
 
+  # A file that only exists on the caller's machine (#216): the tool hands out
+  # a presigned S3 URL to PUT it to, and `upload` takes it from there with the
+  # same checks as any other URL, then drops the staging copy.
+  describe 'upload_slot' do
+    let(:png) do
+      Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5' \
+                      'ErkJggg==')
+    end
+
+    before do
+      FileStoreService.create_null(exists: { 'portada.png' => false, 'portada.webp' => false })
+      allow(Resolv).to receive(:getaddresses).and_call_original
+      allow(Resolv).to receive(:getaddresses).with('kleer-images.s3.sa-east-1.amazonaws.com')
+                                             .and_return(['52.95.164.10'])
+    end
+
+    it 'hands out where to PUT the file and how to go on' do
+      slot = call_tool('images', { operation: 'upload_slot', path: 'portada.png' })
+
+      expect(slot['status']).to eq('ready')
+      expect(slot['put_url']).to match(%r{\Ahttps://kleer-images\.s3\.sa-east-1\.amazonaws\.com/incoming/[\w-]+/portada\.png\?})
+      expect(slot['upload_with']).to include('curl', '-T', slot['put_url'])
+      expect(slot['then']).to include('operation' => 'upload', 'path' => 'portada.png')
+      expect(slot['then']['url']).to include('/incoming/')
+    end
+
+    it 'needs a file name' do
+      expect(call_tool('images', { operation: 'upload_slot' })['errors'].join).to include('path')
+    end
+
+    it 'stores the file put there and drops the staging copy, only on confirm' do
+      slot = call_tool('images', { operation: 'upload_slot', path: 'portada.png' })
+      stub_request(:get, slot['then']['url']).to_return(body: png, headers: { 'Content-Type' => 'binary/octet-stream' })
+      staging = slot['put_url'][%r{/(incoming/[^?]+)}, 1]
+      allow(FileStoreService.current).to receive(:delete).and_call_original
+
+      preview = call_tool('images', slot['then'])
+      expect(preview).to include('status' => 'preview', 'file_name' => 'portada.png')
+      expect(FileStoreService.current).not_to have_received(:delete)
+
+      saved = call_tool('images', slot['then'].merge('confirm' => true))
+      expect(saved['url']).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/portada.png')
+      expect(FileStoreService.current).to have_received(:delete).with(staging)
+    end
+
+    it 'leaves staging copies out of the image list' do
+      FileStoreService.create_null(files: ['portada.webp', 'incoming/abc/portada.png'])
+
+      expect(call_tool('images')['images'].pluck('name')).to eq(['portada.webp'])
+    end
+  end
+
   describe 'permissions' do
     let(:user) { create(:comercial) }
 
@@ -187,6 +239,7 @@ RSpec.describe 'MCP image tools', type: :request do
       expect(call_tool('images')['returned']).to eq(1)
       expect(call_tool('images', { operation: 'upload', url: 'https://images.example.com/x.gif' }).to_s)
         .to include('Unauthorized')
+      expect(call_tool('images', { operation: 'upload_slot', path: 'x.png' }).to_s).to include('Unauthorized')
     end
   end
 end
