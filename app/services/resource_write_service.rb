@@ -10,6 +10,9 @@ class ResourceWriteService < ContentWriteService
                             seo_description_es seo_description_en tabtitle_es tabtitle_en]
   self.long_fields = %w[long_description_es long_description_en comments_es comments_en]
 
+  include TrainerAssignment
+  self.trainer_associations = %i[authors translators illustrators]
+
   private
 
   def model_warnings

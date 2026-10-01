@@ -136,6 +136,63 @@ RSpec.describe 'MCP resource tools', type: :request do
       expect(resource.reload.title_es).to eq('Viejo')
     end
 
+    # Authors, translators and illustrators: trainers by name, as the admin
+    # shows them; the list replaces the current one and [] empties it.
+    describe 'credits' do
+      let!(:ana) { create(:trainer, name: 'Ana Autora') }
+      let!(:tito) { create(:trainer, name: 'Tito Traductor') }
+      let!(:ilse) { create(:trainer, name: 'Ilse Ilustradora') }
+
+      before { resource.authors << tito }
+
+      it 'previews the change of each list without saving it' do
+        result = call_tool('resources', { operation: 'update', id: resource.slug, authors: ['Ana Autora'],
+                                          translators: ['Tito Traductor'], illustrators: ['Ilse Ilustradora'] })
+
+        expect(result['status']).to eq('preview')
+        expect(result['changes']).to include('authors' => { 'from' => ['Tito Traductor'], 'to' => ['Ana Autora'] },
+                                             'translators' => { 'from' => [], 'to' => ['Tito Traductor'] },
+                                             'illustrators' => { 'from' => [], 'to' => ['Ilse Ilustradora'] })
+        expect(resource.reload.authors).to eq [tito]
+        expect(resource.translators).to be_empty
+      end
+
+      it 'saves them on confirm and reads them back' do
+        call_tool('resources', { operation: 'update', id: resource.slug, authors: ['Ana Autora', 'Tito Traductor'],
+                                 translators: ['Tito Traductor'], confirm: true })
+
+        credits = call_tool('resources', { operation: 'get', id: resource.slug })
+        expect(credits['authors']).to contain_exactly('Ana Autora', 'Tito Traductor')
+        expect(credits['translators']).to eq ['Tito Traductor']
+        expect(credits['illustrators']).to eq []
+      end
+
+      it 'empties a list with [] and leaves the ones not given alone' do
+        call_tool('resources', { operation: 'update', id: resource.slug, illustrators: ['Ilse Ilustradora'],
+                                 confirm: true })
+        call_tool('resources', { operation: 'update', id: resource.slug, authors: [], confirm: true })
+
+        expect(resource.reload.authors).to be_empty
+        expect(resource.illustrators).to eq [ilse]
+      end
+
+      it 'refuses an unknown name, listing the existing ones, and saves nothing' do
+        result = call_tool('resources', { operation: 'update', id: resource.slug, translators: ['Nadie'],
+                                          title_en: 'New', confirm: true })
+
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('Nadie', 'Ana Autora')
+        expect(resource.reload.title_en).not_to eq('New')
+      end
+
+      it 'takes them on create too' do
+        result = call_tool('resources', { operation: 'create', title_es: 'Con créditos', description_es: 'D',
+                                          format: 'book', authors: ['Ana Autora'], confirm: true })
+
+        expect(Resource.find(result['id']).authors).to eq [ana]
+      end
+    end
+
     it 'tells what the site does with each link' do
       post '/mcp', params: { jsonrpc: '2.0', method: 'tools/list', id: 1 }.to_json, headers: headers
       tools = response.parsed_body.dig('result', 'tools').index_by { |t| t['name'] }

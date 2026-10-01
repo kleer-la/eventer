@@ -26,7 +26,9 @@ class ResourcesTool < AuthenticatedTool
     operation=update: edits resource `id`; only the fields passed are touched,
     and any text field but the Spanish title and description can be emptied
     with "". To change part of a long text, prefer `replacements` (it patches
-    long_description_es/en and comments_es/en).
+    long_description_es/en and comments_es/en). The credits — authors,
+    translators, illustrators — are trainer names; a list given replaces the
+    current one and [] empties it.
     operation=concepts: loads the cards of resource `id` (format 'concepts': a
     glossary shown as a map of stages, one page per card). `concepts` is a
     list; each card is matched by slug + lang (lang defaults to 'es', slug to
@@ -89,6 +91,10 @@ class ResourcesTool < AuthenticatedTool
     optional(:seo_description_en).value(:string).description('English SEO description')
     optional(:tabtitle_es).value(:string).description('Spanish browser tab title')
     optional(:tabtitle_en).value(:string).description('English browser tab title')
+    optional(:authors).array(:string).description('create/update: authors, trainer names exactly as in the admin. ' \
+                                                  'Replaces the list; [] empties it')
+    optional(:translators).array(:string).description('create/update: translators, as authors')
+    optional(:illustrators).array(:string).description('create/update: illustrators, as authors')
     optional(:concepts).array(:hash) do
       optional(:slug).filled(:string).description('Card slug, its URL on the site; key with lang')
       optional(:lang).filled(:string).description("'es' (default) or 'en'")
