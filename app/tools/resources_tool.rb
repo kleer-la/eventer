@@ -108,6 +108,12 @@ class ResourcesTool < AuthenticatedTool
 
   LIST_FILTERS = %i[query format published category].freeze
 
+  # A client holding a schema from before `concepts` existed sends the list as
+  # its JSON text; read it as the list it is instead of refusing it. fast-mcp
+  # validates the arguments twice, in authorized? and before call.
+  def authorized?(**args) = super(**listed_concepts(args))
+  def call_with_schema_validation!(**args) = super(**listed_concepts(args))
+
   def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, **fields)
     case operation
     when 'list' then list(limit: limit, **fields.slice(*LIST_FILTERS))
@@ -122,6 +128,14 @@ class ResourcesTool < AuthenticatedTool
   end
 
   private
+
+  def listed_concepts(args)
+    return args unless args[:concepts].is_a?(String)
+
+    args.merge(concepts: JSON.parse(args[:concepts]))
+  rescue JSON::ParserError
+    args
+  end
 
   def find(id)
     raise ActiveRecord::RecordNotFound if id.blank?

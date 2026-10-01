@@ -52,6 +52,12 @@ RSpec.describe 'MCP resources: concepts operation', type: :request do
       .to eq([['token', 'es', 1, ['contexto']], ['contexto', 'es', 2, ['token']]])
   end
 
+  it 'takes the list as JSON text, as a client with an older schema sends it' do
+    result = call_tool({ operation: 'concepts', id: resource.slug, concepts: [token, contexto].to_json })
+
+    expect(result['concepts'].pluck('slug')).to eq(%w[token contexto])
+  end
+
   it 'updates only the fields given, keyed by slug and language' do
     create(:resource_concept, resource:, slug: 'token', name: 'Token', practice: 'Viejo', position: 3)
     create(:resource_concept, resource:, slug: 'token', lang: 'en', name: 'Token', practice: 'Old')
