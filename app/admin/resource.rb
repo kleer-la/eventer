@@ -65,6 +65,11 @@ ActiveAdmin.register Resource do
   action_item :edit, only: :show do
     link_to 'Edit Resource', edit_admin_resource_path(resource)
   end
+  # The concepts screen is out of the menu and its panel sits at the bottom of
+  # the page; the title bar reaches it from view and edit.
+  action_item :concepts, only: %i[show edit], if: proc { resource.concepts? } do
+    link_to 'Concepts', admin_resource_resource_concepts_path(resource)
+  end
   action_item :destroy, only: :show do
     link_to 'Delete Resource', admin_resource_path(resource),
             method: :delete, 

@@ -47,4 +47,23 @@ RSpec.describe 'Admin concepts of a resource', type: :system do
 
     expect(resource.concepts.find_by(slug: 'datos').practice).to eq('Pasale la fuente.')
   end
+
+  # The concepts screen is out of the menu, and the panel that links to it sits
+  # at the bottom of the page: the title bar reaches it from view and edit.
+  it 'reaches the concepts from the title bar of the resource view and edit' do
+    [admin_resource_path(resource), edit_admin_resource_path(resource)].each do |path|
+      visit path
+      within('#titlebar_right') { click_link 'Concepts' }
+
+      expect(page).to have_current_path(admin_resource_resource_concepts_path(resource))
+    end
+  end
+
+  it 'offers no Concepts button on a resource of another format' do
+    card = create(:resource, format: :card)
+
+    visit admin_resource_path(card)
+
+    within('#titlebar_right') { expect(page).not_to have_link('Concepts') }
+  end
 end
