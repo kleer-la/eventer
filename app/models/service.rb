@@ -5,6 +5,7 @@ class Service < ApplicationRecord
   include RecommendedWayRenderable
   include ServiceOffering
   include KeepsSlugHistory
+  include RedirectsElsewhere
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]
@@ -52,8 +53,9 @@ class Service < ApplicationRecord
       .merge('is_training_program' => service_area&.is_training_program || false)
   end
 
+  # A redirected service answers 301: a card to it leads somewhere else.
   def servable_as_recommendation?
-    published
+    published && !redirected?
   end
 
   private

@@ -137,7 +137,7 @@ describe 'event type MCP tools' do
                                    external_site_url: 'servicios/otro')
 
       expect(result['status']).to eq 'error'
-      expect(result['errors'].join).to include 'external_site_url'
+      expect(result['errors'].join).to include('External site url must be a path')
       expect(event_type.reload.external_site_url).to be_blank
     end
 

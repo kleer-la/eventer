@@ -3,6 +3,7 @@
 class ServiceAreaWriteService < ContentWriteService
   include OfferingFormatWarnings
   include SlugChangeWarning
+  include RedirectWarnings
 
   self.model = ServiceArea
   self.editable_fields = %i[name slug icon primary_color secondary_color primary_font_color secondary_font_color
@@ -14,7 +15,7 @@ class ServiceAreaWriteService < ContentWriteService
                             contact_title contact_text contact_cta_text
                             seo_title seo_description
                             recommended_way_title recommended_way_note
-                            recommended_way_summary recommended_way_details]
+                            recommended_way_summary recommended_way_details redirect_url]
   self.rich_text_fields = %i[summary cta_message slogan subtitle description target value_proposition
                              outcomes definitions program faq]
   self.long_fields = %w[recommended_way_summary recommended_way_details]
@@ -30,6 +31,16 @@ class ServiceAreaWriteService < ContentWriteService
   private
 
   def model_warnings
-    offering_format_warnings + slug_change_warnings(also: ', and every service URL under it moves with it')
+    offering_format_warnings + slug_change_warnings(also: ', and every service URL under it moves with it') +
+      redirect_warnings
+  end
+
+  # An area that leaves takes its services along, except the ones that have
+  # a redirect of their own.
+  def redirect_reach
+    following = @record.persisted? ? @record.services.not_redirected.count : 0
+    services = following == 1 ? '1 service' : "#{following} services"
+    ", and so will the pages of its #{services} without a redirect_url of their own; " \
+      'it leaves the menus and the sitemap'
   end
 end

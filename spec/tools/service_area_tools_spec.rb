@@ -169,6 +169,35 @@ describe 'service area MCP tools' do
       expect(result['warnings'].to_s).not_to include('slug changes')
     end
 
+    # An area that leaves takes its services with it, unless one has a
+    # redirect of its own (#224).
+    describe 'redirect_url' do
+      it 'warns that the area and its services without a redirect of their own answer 301' do
+        FactoryBot.create(:service, service_area: service_area, published: true)
+
+        result = run(ServiceAreasTool, operation: 'update', id: service_area.slug, redirect_url: '/es/servicios/otra')
+
+        expect(result['status']).to eq 'preview'
+        expect(result['warnings'].join).to match(%r{301 to /es/servicios/otra.*1 service})
+      end
+
+      it 'saves it and reads it back' do
+        run(ServiceAreasTool, operation: 'update', id: service_area.slug, redirect_url: '/es/servicios/otra',
+                              confirm: true)
+
+        expect(run(ServiceAreasTool, operation: 'get', id: service_area.slug)['redirect_url'])
+          .to eq '/es/servicios/otra'
+      end
+
+      it 'suggests one when the area is hidden without it' do
+        service_area.update!(visible: true)
+
+        result = run(ServiceAreasTool, operation: 'update', id: service_area.slug, visible: false)
+
+        expect(result['warnings'].join).to include('redirect_url')
+      end
+    end
+
     it 'can flip visible' do
       run(ServiceAreasTool, operation: 'update', id: service_area.slug, visible: true, confirm: true)
 
@@ -219,6 +248,45 @@ describe 'service area MCP tools' do
       result = run(ServicesTool, operation: 'get', id: service.slug)
 
       expect(result).to include('hero_highlight' => '3 meses', 'hero_highlight_text' => 'con revisión cada 4 semanas')
+    end
+
+    describe 'redirect_url' do
+      it 'warns that the page answers 301 and leaves the area page' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, redirect_url: '/es/servicios/otra/otro')
+
+        expect(result['status']).to eq 'preview'
+        expect(result['warnings'].join).to match(%r{301 to /es/servicios/otra/otro.*area page})
+      end
+
+      it 'saves it and reads it back' do
+        run(ServicesTool, operation: 'update', id: service.slug, redirect_url: 'https://example.com/x', confirm: true)
+
+        expect(run(ServicesTool, operation: 'get', id: service.slug)['redirect_url']).to eq 'https://example.com/x'
+      end
+
+      it 'rejects one that is neither a path nor a URL' do
+        result = run(ServicesTool, operation: 'update', id: service.slug, redirect_url: 'servicios/otro',
+                                   confirm: true)
+
+        expect(result['status']).to eq 'error'
+        expect(result['errors'].join).to include('Redirect url')
+      end
+
+      it 'takes it away with clear' do
+        service.update!(redirect_url: '/es/otro')
+
+        run(ServicesTool, operation: 'update', id: service.slug, clear: %w[redirect_url], confirm: true)
+
+        expect(service.reload.redirect_url).to be_nil
+      end
+
+      it 'suggests one when the service is unpublished without it' do
+        service.update!(published: true)
+
+        result = run(ServicesTool, operation: 'update', id: service.slug, published: false)
+
+        expect(result['warnings'].join).to include('redirect_url')
+      end
     end
 
     # An empty string is not a value the tools accept, so emptying a field needs

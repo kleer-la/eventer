@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_01_150000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -755,6 +755,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_120000) do
     t.string "recommended_way_note"
     t.text "recommended_way_summary"
     t.string "recommended_way_title"
+    t.string "redirect_url"
     t.string "secondary_color"
     t.string "secondary_font_color", default: "#000000"
     t.string "seo_description"
@@ -788,6 +789,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_120000) do
     t.string "recommended_way_note"
     t.text "recommended_way_summary"
     t.string "recommended_way_title"
+    t.string "redirect_url"
     t.text "seo_description"
     t.string "seo_title"
     t.integer "service_area_id"

@@ -4,7 +4,7 @@ ActiveAdmin.register ServiceArea do
   menu parent: 'Services Mgnt'
 
   permit_params :name, :slug, :icon, :primary_color, :secondary_color, :primary_font_color, :secondary_font_color,
-                :visible, :summary, :cta_message, :lang,
+                :visible, :redirect_url, :summary, :cta_message, :lang,
                 :side_image, :hero_image, :slogan, :subtitle, :description, :target, :value_proposition, :ordering,
                 :target_title, :value_proposition_title, :seo_title, :seo_description, :is_training_program,
                 :recommended_way_title, :recommended_way_note, :recommended_way_summary, :recommended_way_details,
@@ -55,6 +55,9 @@ ActiveAdmin.register ServiceArea do
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :lang, as: :radio
       f.input :visible, as: :boolean
+      f.input :redirect_url,
+              hint: 'Set it to send this area elsewhere with a 301 (a path like /es/servicios/otra or a full URL). ' \
+                    'Its services go there too, unless they have a redirect url of their own.'
       f.input :is_training_program, as: :boolean
       f.input :icon, as: :url
       f.input :primary_color, as: :color, input_html: { style: 'width: 100%;' }
@@ -169,6 +172,9 @@ ActiveAdmin.register ServiceArea do
       row :slug
       row :lang
       row :visible
+      row :redirect_url do |service_area|
+        link_to service_area.redirect_url, service_area.redirect_url, target: '_blank' if service_area.redirected?
+      end
       row :is_training_program
       row :icon do |service_area|
         if service_area.icon.present?

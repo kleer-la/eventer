@@ -3,6 +3,7 @@
 class ServiceWriteService < ContentWriteService
   include OfferingFormatWarnings
   include SlugChangeWarning
+  include RedirectWarnings
 
   self.model = Service
   self.editable_fields = %i[name subtitle slug card_description pricing side_image hero_image brochure ordering
@@ -10,7 +11,7 @@ class ServiceWriteService < ContentWriteService
                             value_proposition outcomes definitions program target faq
                             seo_title seo_description
                             recommended_way_title recommended_way_note
-                            recommended_way_summary recommended_way_details]
+                            recommended_way_summary recommended_way_details redirect_url]
   self.rich_text_fields = %i[value_proposition outcomes definitions program target faq]
   self.long_fields = %w[card_description recommended_way_summary recommended_way_details]
   # Not a content-role model (see Ability::CONTENT_MODELS): whoever may edit a
@@ -53,8 +54,10 @@ class ServiceWriteService < ContentWriteService
 
   def model_warnings
     area = @service_area.present? && @record.service_area ? ["Service area: #{@record.service_area.reference}."] : []
-    area + offering_format_warnings + slug_change_warnings + card_warnings
+    area + offering_format_warnings + slug_change_warnings + card_warnings + redirect_warnings
   end
+
+  def redirect_reach = ', and it leaves the area page, the menus and the sitemap'
 
   # website17 shows card_description only when it carries markup: an authored
   # card that replaces the generated one. Plain text — the one-line teaser of

@@ -37,7 +37,9 @@ class ServiceAreasTool < AuthenticatedTool
     operation=update: edits area `id`; only the fields passed are touched. A
     block passed whole replaces the whole block — read it first. To change
     part of one, prefer `replacements`, matched against that HTML (it patches
-    the blocks, recommended_way_summary and _details).
+    the blocks, recommended_way_summary and _details). An area that leaves
+    gets `redirect_url`: its URL answers 301 there, and so do its services
+    that have no redirect_url of their own.
 
     Writes take two steps: confirm=false (the default) previews without saving.
   MD
@@ -95,6 +97,10 @@ class ServiceAreasTool < AuthenticatedTool
     optional(:recommended_way_summary).filled(:string).description('Recommended-way summary')
     optional(:recommended_way_details).filled(:string).description('Recommended-way details')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
+    optional(:redirect_url).filled(:string)
+                           .description('Where this page sends its visitors instead (a path like /es/servicios/... ' \
+                                        'or an absolute URL): the site answers 301 with it. For one that leaves or ' \
+                                        'is merged into another; `clear` takes it away.')
     instance_exec(&ApplicationTool::REPLACEMENTS)
     instance_exec(&ApplicationTool::CLEAR)
   end
@@ -141,7 +147,7 @@ class ServiceAreasTool < AuthenticatedTool
       primary_color: area.primary_color, secondary_color: area.secondary_color,
       primary_font_color: area.primary_font_color, secondary_font_color: area.secondary_font_color,
       target_title: area.target_title, value_proposition_title: area.value_proposition_title,
-      seo_title: area.seo_title, seo_description: area.seo_description,
+      seo_title: area.seo_title, seo_description: area.seo_description, redirect_url: area.redirect_url,
       pricing: area.pricing, brochure: area.brochure,
       page_texts: PAGE_TEXTS.index_with { |field| area.public_send(field) },
       blocks: BLOCKS.index_with { |field| area.public_send(field).body.to_s },

@@ -5,6 +5,7 @@ class ServiceArea < ApplicationRecord
   include RecommendedWayRenderable
   include ServiceOffering
   include KeepsSlugHistory
+  include RedirectsElsewhere
   before_save :strip_slug
   extend FriendlyId
   friendly_id :name, use: %i[slugged history]

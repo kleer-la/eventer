@@ -56,6 +56,7 @@ es:
               redirect_url:
                 must_be_path_or_url: "debe ser una ruta (/es/blog/otro) o una URL completa (https://...)"
         messages:
+          must_be_path_or_url: "debe ser una ruta (/es/blog/otro) o una URL completa (https://...)"
           inclusion: "no está incluido en la lista"
           exclusion: "no está disponible"
           invalid: "no es válido"

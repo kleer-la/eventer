@@ -25,7 +25,8 @@ class ServicesTool < AuthenticatedTool
     the blocks, card_description, recommended_way_summary and _details).
     In the area page each service gets a generated card — name, subtitle and
     a link — unless card_description holds an authored card in HTML, which
-    replaces it. `clear` empties a field.
+    replaces it. `clear` empties a field. A service that leaves gets
+    `redirect_url`: its URL answers 301 there, published or not.
 
     Writes take two steps: confirm=false (the default) previews without saving.
   MD
@@ -66,6 +67,10 @@ class ServicesTool < AuthenticatedTool
     optional(:recommended_way_summary).filled(:string).description('Recommended-way summary')
     optional(:recommended_way_details).filled(:string).description('Recommended-way details')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
+    optional(:redirect_url).filled(:string)
+                           .description('Where this page sends its visitors instead (a path like /es/servicios/... ' \
+                                        'or an absolute URL): the site answers 301 with it. For one that leaves or ' \
+                                        'is merged into another; `clear` takes it away.')
     instance_exec(&ApplicationTool::REPLACEMENTS)
     instance_exec(&ApplicationTool::CLEAR)
   end
@@ -111,7 +116,7 @@ class ServicesTool < AuthenticatedTool
       side_image: service.side_image, hero_image: service.hero_image,
       hero_highlight: service.hero_highlight, hero_highlight_text: service.hero_highlight_text,
       brochure: service.brochure,
-      seo_title: service.seo_title, seo_description: service.seo_description,
+      seo_title: service.seo_title, seo_description: service.seo_description, redirect_url: service.redirect_url,
       blocks: BLOCKS.index_with { |field| service.public_send(field).body.to_s },
       recommended_way: { title: service.recommended_way_title, note: service.recommended_way_note,
                          summary: service.recommended_way_summary, details: service.recommended_way_details },

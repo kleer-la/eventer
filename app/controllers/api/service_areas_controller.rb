@@ -3,12 +3,16 @@
 module Api
   class ServiceAreasController < ApplicationController
     # GET /api/service_areas
+    # The lists feed the site's menus and sitemap: an area or a service with a
+    # redirect_url answers 301 and has no place in them (#224).
     def index
-      list ServiceArea.where(visible: true, is_training_program: false).order(:ordering).includes(:services)
+      list ServiceArea.where(visible: true, is_training_program: false).not_redirected.order(:ordering)
+                      .includes(:services)
     end
 
     def programs
-      list ServiceArea.where(visible: true, is_training_program: true).order(:ordering).includes(:services)
+      list ServiceArea.where(visible: true, is_training_program: true).not_redirected.order(:ordering)
+                      .includes(:services)
     end
 
     def list(service_areas)
@@ -31,7 +35,7 @@ module Api
           # Only what is published: the show endpoint has always filtered these,
           # and the list not doing it put an unpublished service into the
           # sitemap, which then declared a URL answering 404.
-          services: service_area.services.where(published: true).order(:ordering).map do |service|
+          services: service_area.services.where(published: true).not_redirected.order(:ordering).map do |service|
             {
               id: service.id,
               slug: service.slug,
@@ -60,12 +64,14 @@ module Api
       lang = service_area.lang
 
       services = service_area.services
-      services = services.where(published: true) if visible
+      services = services.where(published: true).not_redirected if visible
 
       render json: {
         id: service_area.id,
         slug: service_area.slug,
         slug_old: service_area_chg,
+        redirect_url: service_area.redirect_url,
+        service_redirects: service_redirects(service_area),
         lang: service_area.lang,
         name: service_area.name,
         icon: service_area.icon,
@@ -117,6 +123,15 @@ module Api
     end
 
     private
+
+    # Where each redirected service of the area sends its URL, published or not
+    # and under every slug it has had: an unpublished one is not in `services`,
+    # and without this the site could not tell where it went.
+    def service_redirects(service_area)
+      service_area.services.where.not(redirect_url: nil).includes(:slugs).each_with_object({}) do |service, map|
+        (service.slugs.map(&:slug) | [service.slug]).each { |slug| map[slug] = service.redirect_url }
+      end
+    end
 
     # What clients said about the area's services, starred ones only, in the
     # shape the course pages read (fname/lname, plain text) — like them, ten at most.

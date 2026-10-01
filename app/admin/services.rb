@@ -6,7 +6,7 @@ ActiveAdmin.register Service do
   permit_params %i[created_at id name slug service_area_id subtitle card_description updated_at value_proposition
                    outcomes program target faq definitions pricing brochure side_image hero_image
                    hero_highlight hero_highlight_text
-                   ordering published
+                   ordering published redirect_url
                    seo_title seo_description recommended_way_title recommended_way_note recommended_way_summary recommended_way_details],
                 recommended_contents_attributes: %i[id target_type target_id relevance_order _destroy]
 
@@ -50,6 +50,9 @@ ActiveAdmin.register Service do
       f.input :slug, hint: 'The URL-friendly version of the name. (Empty to auto generete)'
       f.input :ordering
       f.input :published
+      f.input :redirect_url,
+              hint: 'Set it to send this page elsewhere with a 301 (a path like /es/servicios/otra/otro or a full ' \
+                    'URL), published or not. The service leaves the area page, the menus and the sitemap.'
       f.input :seo_title
       f.input :seo_description
       f.input :subtitle, as: :rich_text_area
@@ -116,6 +119,9 @@ ActiveAdmin.register Service do
       row :slug
       row :ordering
       row :published
+      row :redirect_url do |service|
+        link_to service.redirect_url, service.redirect_url, target: '_blank' if service.redirected?
+      end
       row :seo_title
       row :seo_description
       row :subtitle

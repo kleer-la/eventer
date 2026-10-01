@@ -28,4 +28,13 @@ RSpec.describe 'Admin services', type: :feature do
     expect(service.reload.hero_image).to eq 'https://example.com/hero.webp'
     expect(page).to have_css("img[src='https://example.com/hero.webp']")
   end
+
+  it 'saves the redirect url from the form and shows it' do
+    visit edit_admin_service_path(service)
+    fill_in 'Redirect url', with: '/es/servicios/otra/otro'
+    find("input[type='submit']").click
+
+    expect(service.reload.redirect_url).to eq '/es/servicios/otra/otro'
+    expect(page).to have_link('/es/servicios/otra/otro')
+  end
 end

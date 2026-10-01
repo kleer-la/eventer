@@ -89,4 +89,13 @@ RSpec.describe 'Admin service areas', type: :feature do
     expect(page).to have_content('Desde USD 5.000')
     expect(page).to have_link('https://example.com/adopcion-ia.pdf')
   end
+
+  it 'saves the redirect url from the form and shows it' do
+    visit edit_admin_service_area_path(area)
+    fill_in 'Redirect url', with: '/es/servicios/otra'
+    find("input[type='submit']").click
+
+    expect(area.reload.redirect_url).to eq '/es/servicios/otra'
+    expect(page).to have_link('/es/servicios/otra')
+  end
 end

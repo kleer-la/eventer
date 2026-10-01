@@ -403,6 +403,69 @@ describe Api::ServiceAreasController do
       end
     end
 
+    # A service or an area that leaves sends its traffic to what replaces it
+    # (#224): the site answers its URL with a 301 to redirect_url.
+    describe 'redirect_url' do
+      it 'exposes the area one, nil when it has none' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        expect(JSON.parse(response.body)['redirect_url']).to be_nil
+
+        service_area.update!(redirect_url: '/es/servicios/otra-area')
+        get :show, params: { id: service_area.slug, format: 'json' }
+        expect(JSON.parse(response.body)['redirect_url']).to eq '/es/servicios/otra-area'
+      end
+
+      it 'takes a redirected service out of the services and into service_redirects, published or not' do
+        visible_service.update!(redirect_url: '/es/servicios/otra-area/otro-servicio')
+        invisible_service.update!(redirect_url: 'https://example.com/fuera')
+
+        get :show, params: { id: service_area.slug, format: 'json' }
+        json = JSON.parse(response.body)
+
+        expect(json['services'].map { |s| s['id'] }).not_to include(visible_service.id)
+        expect(json['service_redirects']).to eq(visible_service.slug => '/es/servicios/otra-area/otro-servicio',
+                                                invisible_service.slug => 'https://example.com/fuera')
+      end
+
+      it 'redirects the old slugs of a redirected service too' do
+        old_slug = invisible_service.slug
+        invisible_service.update!(slug: 'nuevo-slug', redirect_url: '/es/servicios/otra-area')
+
+        get :show, params: { id: old_slug, format: 'json' }
+
+        expect(JSON.parse(response.body)['service_redirects'])
+          .to include(old_slug => '/es/servicios/otra-area', 'nuevo-slug' => '/es/servicios/otra-area')
+      end
+
+      it 'sends an empty service_redirects when no service redirects' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+
+        expect(JSON.parse(response.body)['service_redirects']).to eq({})
+      end
+
+      # The lists feed the menus and the sitemap, which must not declare a URL
+      # that answers 301.
+      it 'leaves redirected areas and services out of the lists' do
+        listed = FactoryBot.create(:service_area, visible: true)
+        gone = FactoryBot.create(:service_area, visible: true, redirect_url: '/es/servicios/otra')
+        program = FactoryBot.create(:service_area, visible: true, is_training_program: true,
+                                                  redirect_url: '/es/catalogo')
+        stays = FactoryBot.create(:service, service_area: listed, published: true)
+        leaves = FactoryBot.create(:service, service_area: listed, published: true, redirect_url: '/es/otro')
+
+        get :index, params: { format: 'json' }
+        areas = JSON.parse(response.body)
+        expect(areas.map { |a| a['slug'] }).to include(listed.slug)
+        expect(areas.map { |a| a['slug'] }).not_to include(gone.slug)
+        services = areas.find { |a| a['slug'] == listed.slug }['services'].map { |s| s['id'] }
+        expect(services).to include(stays.id)
+        expect(services).not_to include(leaves.id)
+
+        get :programs, params: { format: 'json' }
+        expect(JSON.parse(response.body).map { |a| a['slug'] }).not_to include(program.slug)
+      end
+    end
+
     describe 'Redirect' do
       before do
         @service_area = FactoryBot.create(:service_area)
