@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-# Site pages and their sections: one tool, six operations. A page is either an 'overlay' —
+# Site pages and their sections: one tool, seven operations. A page is either an 'overlay' —
 # section overrides for an existing static template, like home or contact — or
 # a 'flagship', a standalone page rendered at /:lang/:slug.
 class PagesTool < AuthenticatedTool
   tool_name 'pages'
   requires_permission :read, Page
 
-  OPERATIONS = %w[list get create update create_section update_section].freeze
+  OPERATIONS = %w[list get create update create_section update_section delete_section].freeze
 
   description <<~MD
     Site pages. A page is either an 'overlay' — section overrides for an
@@ -32,14 +32,18 @@ class PagesTool < AuthenticatedTool
     `replacements` on the field 'content'. In a flagship, a hero `cta_url`
     that is empty, '#contact' or '#newsletter-subscription' opens the
     contact form.
+    operation=delete_section: removes section `id` from its page. The
+    preview shows which section it is; it cannot be undone.
 
     Writes take two steps: confirm=false (the default) previews without saving.
   MD
 
   arguments do
     optional(:operation).filled(:string)
-                        .description("'list' (default), 'get', 'create', 'update', 'create_section', 'update_section'")
-    optional(:id).filled(:integer).description('get/update: numeric id of the page. update_section: id of the section')
+                        .description("'list' (default), 'get', 'create', 'update', 'create_section', " \
+                                     "'update_section', 'delete_section'")
+    optional(:id).filled(:integer)
+                 .description('get/update: numeric id of the page. update_section/delete_section: id of the section')
     optional(:page_id).filled(:integer).description('create_section: the page it belongs to')
     optional(:query).filled(:string).description('list: substring matched against the name')
     optional(:lang).filled(:string).description("Language: 'es' or 'en' (list: filter; create: required)")
@@ -69,7 +73,7 @@ class PagesTool < AuthenticatedTool
   SECTION_ONLY = %i[title content cta_text cta_url position].freeze
   SECTION_FIELDS = SECTION_ONLY + %i[slug replacements clear]
 
-  # The operation is looked up in OPERATIONS before `send`, so only these six
+  # The operation is looked up in OPERATIONS before `send`, so only these seven
   # methods are reachable from a client.
   def call(operation: 'list', **args)
     return unknown_operation(operation) unless OPERATIONS.include?(operation)
@@ -91,6 +95,22 @@ class PagesTool < AuthenticatedTool
 
   def update_section(id: nil, confirm: false, **fields)
     write_section(find_section(id), confirm: confirm, **fields)
+  end
+
+  # Deleting takes its own permission, as removing a resource's concepts does:
+  # marketing edits pages but deletes nothing.
+  def delete_section(id: nil, confirm: false, **)
+    section = find_section(id)
+    return unauthorized(:destroy, Section) unless ability.can?(:destroy, Section)
+
+    summary = section_summary(section).except(:content).merge(page_id: section.page_id)
+    unless confirm
+      return { status: 'preview', section: summary,
+               note: 'Nothing was deleted. Call again with confirm=true to delete this section.' }.to_json
+    end
+
+    section.destroy!
+    { status: 'deleted', section: summary, admin_path: "/admin/pages/#{section.page_id}" }.to_json
   end
 
   def find(id)

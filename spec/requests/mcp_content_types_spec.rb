@@ -331,6 +331,29 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
         expect(page.sections.count).to eq(1)
       end
 
+      it 'previews which section it would delete, and deletes it on confirm' do
+        result = call_tool('pages', { operation: 'delete_section', id: hero.id })
+        expect(result['status']).to eq('preview')
+        expect(result['section']).to include('slug' => 'hero', 'title' => 'Membresía')
+        expect(Section.exists?(hero.id)).to be(true)
+
+        result = call_tool('pages', { operation: 'delete_section', id: hero.id, confirm: true })
+        expect(result['status']).to eq('deleted')
+        expect(Section.exists?(hero.id)).to be(false)
+        expect(page.reload).to be_present
+      end
+
+      context 'as marketing, who edits pages but deletes nothing' do
+        let(:user) { create(:marketing_user) }
+
+        it 'refuses to delete a section' do
+          result = call_tool('pages', { operation: 'delete_section', id: hero.id, confirm: true })
+
+          expect(result['errors'].join).to include('not allowed')
+          expect(Section.exists?(hero.id)).to be(true)
+        end
+      end
+
       it 'says so when the section does not exist' do
         expect(call_tool('pages', { operation: 'update_section', id: 0, title: 'x' })['errors'].join)
           .to include('No section with id 0')
