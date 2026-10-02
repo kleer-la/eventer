@@ -274,5 +274,67 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(result['status']).to eq('saved')
       expect(Page.where(slug: 'contacto').count).to eq(2)
     end
+
+    it 'says whether a page is kept out of the index when read' do
+      page = create(:page, name: 'Landing', lang: :es, template: 'flagship', noindex: true)
+
+      expect(call_tool('pages', { operation: 'get', id: page.id })).to include('noindex' => true)
+    end
+
+    # Sections were read-only here: a flagship is made of them, so changing a
+    # button or a paragraph meant going to the admin.
+    context 'sections' do
+      let(:page) { create(:page, name: 'Membresía IA', lang: :es, template: 'flagship') }
+      let!(:hero) do
+        page.sections.create!(slug: 'hero', title: 'Membresía', position: 1, cta_text: 'Agendar',
+                              cta_url: '#newsletter-subscription', content: '<h2>La IA</h2><p>Falla.</p>')
+      end
+
+      it 'previews a change to a section and saves it on confirm' do
+        result = call_tool('pages', { operation: 'update_section', id: hero.id, cta_url: '#contact' })
+        expect(result['status']).to eq('preview')
+        expect(result['changes']['cta_url']).to include('to' => '#contact')
+        expect(hero.reload.cta_url).to eq('#newsletter-subscription')
+
+        result = call_tool('pages', { operation: 'update_section', id: hero.id, cta_url: '#contact', confirm: true })
+        expect(result['status']).to eq('saved')
+        expect(hero.reload.cta_url).to eq('#contact')
+      end
+
+      it 'patches the HTML of a section in place' do
+        call_tool('pages', { operation: 'update_section', id: hero.id, confirm: true,
+                             replacements: [{ field: 'content', find: 'Falla.', replace: 'Funciona.' }] })
+
+        expect(hero.reload.content).to eq('<h2>La IA</h2><p>Funciona.</p>')
+      end
+
+      it 'empties a field of a section' do
+        call_tool('pages', { operation: 'update_section', id: hero.id, clear: ['cta_url'], confirm: true })
+
+        expect(hero.reload.cta_url).to be_nil
+      end
+
+      it 'adds a section to a page, which then reads it back' do
+        result = call_tool('pages', { operation: 'create_section', page_id: page.id, slug: 'faq', title: 'Preguntas',
+                                      position: 5, content: '<p>¿Cuánto dura?</p>', confirm: true })
+        expect(result['status']).to eq('saved')
+
+        read = call_tool('pages', { operation: 'get', id: page.id })
+        expect(read['sections'].pluck('slug')).to eq(%w[hero faq])
+      end
+
+      it 'refuses a slug the page already uses' do
+        result = call_tool('pages', { operation: 'create_section', page_id: page.id, slug: 'hero', title: 'Otro',
+                                      position: 2, confirm: true })
+
+        expect(result['status']).to eq('error')
+        expect(page.sections.count).to eq(1)
+      end
+
+      it 'says so when the section does not exist' do
+        expect(call_tool('pages', { operation: 'update_section', id: 0, title: 'x' })['errors'].join)
+          .to include('No section with id 0')
+      end
+    end
   end
 end

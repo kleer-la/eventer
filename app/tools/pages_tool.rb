@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-# Site pages: one tool, four operations. A page is either an 'overlay' —
+# Site pages and their sections: one tool, six operations. A page is either an 'overlay' —
 # section overrides for an existing static template, like home or contact — or
 # a 'flagship', a standalone page rendered at /:lang/:slug.
 class PagesTool < AuthenticatedTool
   tool_name 'pages'
   requires_permission :read, Page
 
-  OPERATIONS = %w[list get create update].freeze
+  OPERATIONS = %w[list get create update create_section update_section].freeze
 
   description <<~MD
     Site pages. A page is either an 'overlay' — section overrides for an
@@ -17,25 +17,37 @@ class PagesTool < AuthenticatedTool
     numeric id.
 
     operation=list (default): filtered by query (name), lang, template.
-    operation=get: one page with its sections in position order. Sections are
-    read-only here: they are edited in the admin.
+    operation=get: one page with its sections in position order, each with
+    its id.
     operation=create: name and lang are required; the slug is derived from the
     name when omitted. The page is created without sections; a 'flagship' with
     no sections renders empty, and the preview says so.
     operation=update: edits page `id`; only the fields passed are touched.
+    operation=create_section: adds a section to `page_id`. The slug names
+    its role: in a flagship 'hero' is the top band and 'contact' the closing
+    banner; any other slug is a body block, shown in `position` order, and
+    becomes its HTML anchor. The slug is derived from the title when omitted.
+    operation=update_section: edits section `id`; only the fields passed are
+    touched. `content` is raw HTML; to change part of it, prefer
+    `replacements` on the field 'content'. In a flagship, a hero `cta_url`
+    that is empty, '#contact' or '#newsletter-subscription' opens the
+    contact form.
 
     Writes take two steps: confirm=false (the default) previews without saving.
   MD
 
   arguments do
-    optional(:operation).filled(:string).description("'list' (default), 'get', 'create' or 'update'")
-    optional(:id).filled(:integer).description('get/update: numeric id of the page')
+    optional(:operation).filled(:string)
+                        .description("'list' (default), 'get', 'create', 'update', 'create_section', 'update_section'")
+    optional(:id).filled(:integer).description('get/update: numeric id of the page. update_section: id of the section')
+    optional(:page_id).filled(:integer).description('create_section: the page it belongs to')
     optional(:query).filled(:string).description('list: substring matched against the name')
     optional(:lang).filled(:string).description("Language: 'es' or 'en' (list: filter; create: required)")
     optional(:template).filled(:string).description('overlay (default) | flagship (list: filter)')
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
     optional(:name).filled(:string).description('Page name')
-    optional(:slug).filled(:string).description('URL slug, unique within the language')
+    optional(:slug).filled(:string)
+                   .description('Page: URL slug, unique within the language. Section: its role, unique within the page')
     optional(:cover).filled(:string).description('Cover image URL')
     optional(:canonical).filled(:string).description('Canonical URL, if it points elsewhere')
     optional(:seo_title).filled(:string).description('SEO title')
@@ -43,30 +55,55 @@ class PagesTool < AuthenticatedTool
     optional(:show_in_footer).filled(:bool).description('true = link it from the footer')
     optional(:noindex).filled(:bool)
                       .description('true = keep it out of search results. The page stays reachable at its URL')
-    optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
+    optional(:title).filled(:string).description('sections: heading')
+    optional(:content).filled(:string).description('sections: raw HTML')
+    optional(:cta_text).filled(:string).description('sections: button label')
+    optional(:cta_url).filled(:string).description('sections: button address')
+    optional(:position).filled(:integer).description('sections: order within the page')
+    optional(:confirm).filled(:bool).description('writes: false (default) = preview only; true = save')
+    instance_exec(&ApplicationTool::REPLACEMENTS)
+    instance_exec(&ApplicationTool::CLEAR)
   end
 
-  def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, **fields)
-    case operation
-    when 'list' then list(limit: limit, **fields.slice(:query, :lang, :template))
-    when 'get' then get(find(id))
-    when 'create' then write(nil, confirm: confirm, **fields.except(:query))
-    when 'update' then write(find(id), confirm: confirm, **fields.except(:query))
-    else unknown_operation(operation)
-    end
-  rescue ActiveRecord::RecordNotFound
-    error("No page with id #{id.inspect}")
+  # What only a section takes; `slug`, `replacements` and `clear` serve both.
+  SECTION_ONLY = %i[title content cta_text cta_url position].freeze
+  SECTION_FIELDS = SECTION_ONLY + %i[slug replacements clear]
+
+  # The operation is looked up in OPERATIONS before `send`, so only these six
+  # methods are reachable from a client.
+  def call(operation: 'list', **args)
+    return unknown_operation(operation) unless OPERATIONS.include?(operation)
+
+    send(operation, **args)
+  rescue ActiveRecord::RecordNotFound => e
+    error(e.message)
   end
 
   private
 
-  def find(id)
-    raise ActiveRecord::RecordNotFound if id.blank?
+  def get(id: nil, **) = show(find(id))
+  def create(confirm: false, **fields) = write(nil, confirm: confirm, **page_fields(fields))
+  def update(id: nil, confirm: false, **fields) = write(find(id), confirm: confirm, **page_fields(fields))
 
-    Page.find(id)
+  def create_section(page_id: nil, confirm: false, **fields)
+    write_section(find(page_id).sections.build, confirm: confirm, **fields)
   end
 
-  def list(limit:, query: nil, lang: nil, template: nil)
+  def update_section(id: nil, confirm: false, **fields)
+    write_section(find_section(id), confirm: confirm, **fields)
+  end
+
+  def find(id)
+    Page.find_by(id: id) || raise(ActiveRecord::RecordNotFound, "No page with id #{id.inspect}")
+  end
+
+  def find_section(id)
+    Section.find_by(id: id) || raise(ActiveRecord::RecordNotFound, "No section with id #{id.inspect}")
+  end
+
+  def page_fields(fields) = fields.except(:query, :limit, :page_id, *SECTION_ONLY)
+
+  def list(limit: DEFAULT_LIMIT, query: nil, lang: nil, template: nil, **)
     return unknown_template(template) if template.present? && Page.templates.exclude?(template)
 
     scope = Page.includes(:sections).order(:lang, :name)
@@ -87,9 +124,9 @@ class PagesTool < AuthenticatedTool
       sections: page.sections.size, show_in_footer: page.show_in_footer }
   end
 
-  def get(page)
+  def show(page)
     { id: page.id, slug: page.slug, name: page.name, lang: page.lang, template: page.template,
-      cover: page.cover, canonical: page.canonical, show_in_footer: page.show_in_footer,
+      cover: page.cover, canonical: page.canonical, show_in_footer: page.show_in_footer, noindex: page.noindex,
       seo_title: page.seo_title, seo_description: page.seo_description,
       sections: page.sections.order(:position).map { |section| section_summary(section) },
       updated_at: page.updated_at }.to_json
@@ -105,5 +142,13 @@ class PagesTool < AuthenticatedTool
     return unauthorized(action, Page) unless ability.can?(action, Page)
 
     PageWriteService.new(ability: ability, record: page, **fields).call(confirm: confirm).to_json
+  end
+
+  # A section is part of its page: changing one is changing the page.
+  def write_section(section, confirm:, **fields)
+    return unauthorized(:update, Page) unless ability.can?(:update, Page)
+
+    SectionWriteService.new(ability: ability, record: section, **fields.slice(*SECTION_FIELDS))
+                       .call(confirm: confirm).to_json
   end
 end
