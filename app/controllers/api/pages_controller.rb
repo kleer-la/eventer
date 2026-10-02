@@ -19,6 +19,14 @@ module Api
       render json: pages, only: %i[name slug lang]
     end
 
+    # Lists the standalone pages, with what website17's sitemap needs to
+    # decide whether to list each one: where it lives, whether it asks to stay
+    # out of the index, and when it last changed.
+    def flagships
+      pages = Page.flagship.order(:lang, :slug)
+      render json: pages, only: %i[slug lang noindex canonical updated_at]
+    end
+
     private
 
     def record_not_found

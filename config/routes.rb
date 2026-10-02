@@ -45,6 +45,7 @@ Rails.application.routes.draw do
     end
     resources :pages, only: %i[show] do
       get :footer, on: :collection
+      get :flagships, on: :collection
     end
     resources :contacts, only: %i[create show] do
       get ':contact_id/status', on: :collection, to: 'contacts#status'

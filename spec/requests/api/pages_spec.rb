@@ -69,7 +69,7 @@ RSpec.describe 'Api::Pages', type: :request do
       end
 
       it 'handles sections without cta_url' do
-        section_without_url = Section.create!(
+        Section.create!(
           page: page,
           title: 'Third Section',
           content: 'Third section content',
@@ -116,6 +116,32 @@ RSpec.describe 'Api::Pages', type: :request do
       get "/api/pages/es-#{normal.slug}"
 
       expect(response.parsed_body).to include('noindex' => false)
+    end
+  end
+
+  # The site's sitemap lists the flagship pages: it needs where each one lives
+  # and whether it wants to be indexed, not its sections.
+  describe 'GET /api/pages/flagships' do
+    let!(:flagship) do
+      Page.create!(name: 'Membresía IA', slug: 'membresia-ia', lang: 'es', template: 'flagship')
+    end
+    let!(:hidden) do
+      Page.create!(name: 'Preview', slug: 'preview', lang: 'en', template: 'flagship', noindex: true,
+                   canonical: '/other')
+    end
+
+    before { Page.create!(name: 'Home overlay', slug: 'home-overlay', lang: 'es') }
+
+    it 'lists only flagship pages, with what a sitemap needs' do
+      get '/api/pages/flagships'
+
+      expect(response).to have_http_status(:success)
+      json = response.parsed_body
+      expect(json.map { |p| p['slug'] }).to contain_exactly('membresia-ia', 'preview')
+      membership = json.find { |p| p['slug'] == 'membresia-ia' }
+      expect(membership.keys).to contain_exactly('slug', 'lang', 'noindex', 'canonical', 'updated_at')
+      expect(membership).to include('lang' => 'es', 'noindex' => false, 'canonical' => nil)
+      expect(json.find { |p| p['slug'] == 'preview' }).to include('noindex' => true, 'canonical' => '/other')
     end
   end
 end
