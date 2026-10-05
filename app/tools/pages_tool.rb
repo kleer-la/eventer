@@ -13,16 +13,22 @@ class PagesTool < AuthenticatedTool
     Site pages. A page is either an 'overlay' — section overrides for an
     existing static template, like home or contact — or a 'flagship', a
     standalone page rendered at /:lang/:slug. Slugs are unique per language, so
-    the same page exists once in Spanish and once in English; look pages up by
-    numeric id.
+    the same page exists once in Spanish and once in English. Ids differ between
+    QA and production, so look a page up by `slug` + `lang` rather than by a
+    remembered id.
 
-    operation=list (default): filtered by query (name), lang, template.
-    operation=get: one page with its sections in position order, each with
-    its id.
+    operation=list (default): filtered by query (name), slug, lang, template.
+    Each row says whether the page is noindex and whether it has an SEO title.
+    operation=get: one page, by `id` or by `slug` + `lang`, with its sections
+    in position order, each with its id. `other_language` is the page with the
+    same slug in the other language (null if there is none), with its noindex:
+    a page indexed in one language only is usually a mistake.
     operation=create: name and lang are required; the slug is derived from the
     name when omitted. The page is created without sections; a 'flagship' with
     no sections renders empty, and the preview says so.
     operation=update: edits page `id`; only the fields passed are touched.
+    Changing noindex moves the page in or out of the sitemap, and the preview
+    says so.
     operation=create_section: adds a section to `page_id`. The slug names
     its role: in a flagship 'hero' is the top band and 'contact' the closing
     banner; any other slug is a body block, shown in `position` order, and
@@ -85,7 +91,10 @@ class PagesTool < AuthenticatedTool
 
   private
 
-  def get(id: nil, **) = show(find(id))
+  def get(id: nil, slug: nil, lang: nil, **)
+    show(slug.present? && id.nil? ? find_by_slug(slug, lang) : find(id))
+  end
+
   def create(confirm: false, **fields) = write(nil, confirm: confirm, **page_fields(fields))
   def update(id: nil, confirm: false, **fields) = write(find(id), confirm: confirm, **page_fields(fields))
 
@@ -117,22 +126,33 @@ class PagesTool < AuthenticatedTool
     Page.find_by(id: id) || raise(ActiveRecord::RecordNotFound, "No page with id #{id.inspect}")
   end
 
+  def find_by_slug(slug, lang)
+    pages = Page.where(slug: slug).where(lang.present? ? { lang: lang } : {}).to_a
+    return pages.first if pages.one?
+
+    where = lang.present? ? " in #{lang}" : ''
+    raise ActiveRecord::RecordNotFound, "No page with slug #{slug.inspect}#{where}" if pages.empty?
+
+    raise ActiveRecord::RecordNotFound, "Slug #{slug.inspect} exists in several languages; pass lang"
+  end
+
   def find_section(id)
     Section.find_by(id: id) || raise(ActiveRecord::RecordNotFound, "No section with id #{id.inspect}")
   end
 
   def page_fields(fields) = fields.except(:query, :limit, :page_id, *SECTION_ONLY)
 
-  def list(limit: DEFAULT_LIMIT, query: nil, lang: nil, template: nil, **)
+  def list(limit: DEFAULT_LIMIT, template: nil, **filters)
     return unknown_template(template) if template.present? && Page.templates.exclude?(template)
 
-    scope = Page.includes(:sections).order(:lang, :name)
-    scope = scope.where('name LIKE ?', "%#{query}%") if query.present?
-    scope = scope.where(lang: lang) if lang.present?
-    scope = scope.where(template: template) if template.present?
-
+    scope = filtered(template: template, **filters)
     pages = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |page| summary(page) }
-    listing(:pages, pages, total: scope.count, narrow: 'query, lang or template')
+    listing(:pages, pages, total: scope.count, narrow: 'query, slug, lang or template')
+  end
+
+  def filtered(query: nil, **columns)
+    scope = Page.includes(:sections).order(:lang, :name).where(columns.slice(:slug, :lang, :template).compact_blank)
+    query.present? ? scope.where('name LIKE ?', "%#{query}%") : scope
   end
 
   def unknown_template(template)
@@ -141,15 +161,22 @@ class PagesTool < AuthenticatedTool
 
   def summary(page)
     { id: page.id, slug: page.slug, name: page.name, lang: page.lang, template: page.template,
-      sections: page.sections.size, show_in_footer: page.show_in_footer }
+      sections: page.sections.size, show_in_footer: page.show_in_footer,
+      noindex: page.noindex, seo_title: page.seo_title.present? }
   end
 
   def show(page)
     { id: page.id, slug: page.slug, name: page.name, lang: page.lang, template: page.template,
       cover: page.cover, canonical: page.canonical, show_in_footer: page.show_in_footer, noindex: page.noindex,
       seo_title: page.seo_title, seo_description: page.seo_description,
+      other_language: other_language(page),
       sections: page.sections.order(:position).map { |section| section_summary(section) },
       updated_at: page.updated_at }.to_json
+  end
+
+  def other_language(page)
+    other = Page.where(slug: page.slug).where.not(id: page.id).where.not(lang: page.lang).first
+    other && { id: other.id, lang: other.lang, noindex: other.noindex }
   end
 
   def section_summary(section)

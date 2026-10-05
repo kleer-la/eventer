@@ -10,8 +10,22 @@ class PageWriteService < ContentWriteService
   private
 
   def model_warnings
-    return [] unless @record.changed.include?('template')
+    [template_warning, noindex_warning].compact
+  end
 
-    ['Changing the template changes how the whole page is rendered; check it before publishing links to it.']
+  def template_warning
+    return unless @record.changed.include?('template')
+
+    'Changing the template changes how the whole page is rendered; check it before publishing links to it.'
+  end
+
+  def noindex_warning
+    return unless @record.persisted? && @record.changed.include?('noindex')
+
+    if @record.noindex
+      'noindex on: the page leaves the sitemap and search results (it stays reachable at its URL).'
+    else
+      'noindex off: the page enters the sitemap and search results. Check the other language too.'
+    end
   end
 end

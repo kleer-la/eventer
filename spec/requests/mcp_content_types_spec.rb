@@ -241,7 +241,7 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
       expect(result['pages'].size).to eq(2)
       expect(result).to include('returned' => 2, 'total' => 3, 'truncated' => true)
-      expect(result['note']).to include('3 matched').and include('query, lang or template')
+      expect(result['note']).to include('3 matched').and include('query, slug, lang or template')
     end
 
     it 'keeps a page out of the index without hiding it' do
@@ -279,6 +279,64 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       page = create(:page, name: 'Landing', lang: :es, template: 'flagship', noindex: true)
 
       expect(call_tool('pages', { operation: 'get', id: page.id })).to include('noindex' => true)
+    end
+
+    # Ids differ between QA and production, so a page is found by what it is called in the URL.
+    it 'finds a page by slug, narrowed by language' do
+      es = create(:page, name: 'Membresía IA', lang: :es, slug: 'membresia-ia', template: 'flagship')
+      create(:page, name: 'Membership', lang: :en, slug: 'membresia-ia', template: 'flagship')
+      create(:page, name: 'Otra', lang: :es, slug: 'otra', template: 'flagship')
+
+      expect(call_tool('pages', { operation: 'list', slug: 'membresia-ia' })['pages'].size).to eq(2)
+      expect(call_tool('pages', { operation: 'list', slug: 'membresia-ia', lang: 'es' })['pages'].pluck('id'))
+        .to eq([es.id])
+      expect(call_tool('pages', { operation: 'get', slug: 'membresia-ia', lang: 'es' })).to include('id' => es.id)
+    end
+
+    it 'asks for the language when a slug alone is ambiguous, and reports a slug that does not exist' do
+      create(:page, name: 'Membresía IA', lang: :es, slug: 'membresia-ia')
+      create(:page, name: 'Membership', lang: :en, slug: 'membresia-ia')
+
+      expect(call_tool('pages', { operation: 'get', slug: 'membresia-ia' })['errors'].join).to include('lang')
+      expect(call_tool('pages', { operation: 'get', slug: 'nada', lang: 'es' })['errors'].join).to include('nada')
+    end
+
+    it 'shows noindex and whether there is an SEO title in the listing' do
+      create(:page, name: 'Oculta', lang: :es, noindex: true, seo_title: 'Oculta')
+      create(:page, name: 'Visible', lang: :es)
+
+      pages = call_tool('pages', { operation: 'list' })['pages'].index_by { |p| p['name'] }
+
+      expect(pages['Oculta']).to include('noindex' => true, 'seo_title' => true)
+      expect(pages['Visible']).to include('noindex' => false, 'seo_title' => false)
+    end
+
+    it 'warns in the preview that changing noindex moves the page in or out of the sitemap' do
+      page = create(:page, name: 'Landing', lang: :es, template: 'flagship', noindex: true)
+
+      result = call_tool('pages', { operation: 'update', id: page.id, noindex: false })
+
+      expect(result['status']).to eq('preview')
+      expect(result['warnings'].join).to include('sitemap').and include('noindex')
+      expect(page.reload.noindex).to be(true)
+    end
+
+    it 'does not warn about noindex when it is not being changed' do
+      page = create(:page, name: 'Landing', lang: :es, template: 'flagship')
+
+      result = call_tool('pages', { operation: 'update', id: page.id, name: 'Landing 2' })
+
+      expect(result['warnings'].join).not_to include('noindex')
+    end
+
+    it 'shows the same page in the other language so a one-language noindex stands out' do
+      es = create(:page, name: 'Membresía IA', lang: :es, slug: 'membresia-ia', noindex: false)
+      en = create(:page, name: 'Membership', lang: :en, slug: 'membresia-ia', noindex: true)
+
+      expect(call_tool('pages', { operation: 'get', id: es.id })['other_language'])
+        .to eq('id' => en.id, 'lang' => 'en', 'noindex' => true)
+      expect(call_tool('pages', { operation: 'get', id: create(:page, name: 'Sola', lang: :es, slug: 'sola').id }))
+        .to include('other_language' => nil)
     end
 
     # Sections were read-only here: a flagship is made of them, so changing a
