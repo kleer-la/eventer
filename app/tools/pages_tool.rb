@@ -20,7 +20,9 @@ class PagesTool < AuthenticatedTool
     operation=list (default): filtered by query (name), slug, lang, template.
     Each row says whether the page is noindex and whether it has an SEO title.
     operation=get: one page, by `id` or by `slug` + `lang`, with its sections
-    in position order, each with its id. `other_language` is the page with the
+    in position order, each with its id. A flagship's `rendered_title` is what
+    its browser tab says: the site adds ' | Kleer' after the SEO title (or the
+    name) unless the title already says Kleer somewhere. `other_language` is the page with the
     same slug in the other language (null if there is none), with its noindex:
     a page indexed in one language only is usually a mistake.
     operation=create: name and lang are required; the slug is derived from the
@@ -168,10 +170,14 @@ class PagesTool < AuthenticatedTool
   def show(page)
     { id: page.id, slug: page.slug, name: page.name, lang: page.lang, template: page.template,
       cover: page.cover, canonical: page.canonical, show_in_footer: page.show_in_footer, noindex: page.noindex,
-      seo_title: page.seo_title, seo_description: page.seo_description,
-      other_language: other_language(page),
+      **seo(page), other_language: other_language(page),
       sections: page.sections.order(:position).map { |section| section_summary(section) },
       updated_at: page.updated_at }.to_json
+  end
+
+  def seo(page)
+    { seo_title: page.seo_title, seo_description: page.seo_description,
+      rendered_title: (page.tab_title if page.flagship?) }
   end
 
   def other_language(page)

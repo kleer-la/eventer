@@ -31,6 +31,16 @@ class Page < ApplicationRecord
   before_validation :normalize_slug
   before_save :strip_slug
 
+  # website17 (lib/metatags.rb) puts its name last in the <title> of every page,
+  # unless the title already says it somewhere.
+  TAB_TITLE_SUFFIX = 'Kleer'
+
+  # What a flagship's browser tab says: the SEO title, or the name without one.
+  def tab_title
+    title = seo_title.presence || name
+    title.downcase.include?(TAB_TITLE_SUFFIX.downcase) ? title : "#{title} | #{TAB_TITLE_SUFFIX}"
+  end
+
   def self.find_by_param!(param_id)
     lang, *slug_parts = param_id.split('-')
     slug = slug_parts.join('-')

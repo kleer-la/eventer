@@ -339,6 +339,29 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
         .to include('other_language' => nil)
     end
 
+    # The site puts its name last ('Title | Kleer'), unless the title already
+    # says Kleer somewhere.
+    it 'shows the title the browser tab will have, with the site name added last' do
+      page = create(:page, name: 'Membresía IA', lang: :es, template: 'flagship',
+                           seo_title: 'Membresía de Adopción de IA')
+      bare = create(:page, name: 'Sin SEO', lang: :es, template: 'flagship')
+      branded = create(:page, name: 'Marca', lang: :es, template: 'flagship', seo_title: 'Membresía IA - Kleer')
+      inside = create(:page, name: 'Otra', lang: :es, template: 'flagship', seo_title: 'Kleer Lab')
+
+      titles = [page, bare, branded, inside].map do |p|
+        call_tool('pages', { operation: 'get', id: p.id })['rendered_title']
+      end
+
+      expect(titles).to eq(['Membresía de Adopción de IA | Kleer', 'Sin SEO | Kleer',
+                            'Membresía IA - Kleer', 'Kleer Lab'])
+    end
+
+    it 'gives no rendered title for an overlay, whose title comes from the site' do
+      page = create(:page, name: 'Home', lang: :es, template: 'overlay')
+
+      expect(call_tool('pages', { operation: 'get', id: page.id })['rendered_title']).to be_nil
+    end
+
     # Sections were read-only here: a flagship is made of them, so changing a
     # button or a paragraph meant going to the admin.
     context 'sections' do
