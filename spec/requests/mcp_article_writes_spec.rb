@@ -83,6 +83,37 @@ RSpec.describe 'MCP article writes', type: :request do
         .to eq('/es/blog/otro-articulo')
     end
 
+    describe 'substantive_change_at' do
+      include ActiveSupport::Testing::TimeHelpers
+
+      it 'sets it to the given moment and reads it back' do
+        result = call_tool('articles', { operation: 'update', id: article.slug,
+                                         substantive_change_at: '2026-10-01T12:00:00Z', confirm: true })
+        expect(result['status']).to eq('saved')
+        expect(article.reload.substantive_change_at).to eq(Time.utc(2026, 10, 1, 12))
+
+        expect(call_tool('articles', { operation: 'get', id: article.slug })['substantive_change_at'])
+          .to start_with('2026-10-01T12:00:00')
+      end
+
+      it "takes 'now' as the moment of the call" do
+        freeze_time do
+          call_tool('articles', { operation: 'update', id: article.slug, substantive_change_at: 'now',
+                                  confirm: true })
+          expect(article.reload.substantive_change_at).to eq(Time.current)
+        end
+      end
+
+      it 'refuses a value that is not a date instead of clearing the field' do
+        before = article.substantive_change_at
+        result = call_tool('articles', { operation: 'update', id: article.slug,
+                                         substantive_change_at: 'ayer', confirm: true })
+        expect(result['status']).to eq('error')
+        expect(result['errors'].join).to include('substantive_change_at')
+        expect(article.reload.substantive_change_at).to eq(before)
+      end
+    end
+
     it 'refuses a redirect_url the site could not follow' do
       result = call_tool('articles', { operation: 'update', id: article.slug,
                                        redirect_url: 'otro-articulo', confirm: true })

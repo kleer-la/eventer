@@ -22,6 +22,8 @@ class ArticlesTool < AuthenticatedTool
     operation=update: edits article `id`; only the fields passed are touched.
     To change part of the body, prefer `replacements` (body is the only field
     it patches) over sending the whole body back.
+    Set `substantive_change_at` when an edit changes the article in substance
+    (not for a typo): it moves the article up the blog listing.
     To merge an article into another or retire it towards an area page, set
     `redirect_url` and unpublish it: the site keeps answering its URL with a
     301 to the new place.
@@ -62,6 +64,10 @@ class ArticlesTool < AuthenticatedTool
                            .description('Where the article URL sends the visitor with a 301 instead of showing it: ' \
                                         'a path (/es/blog/otro-articulo, /es/servicios/area) or a full URL. ' \
                                         'Works even when unpublished. Empty string clears it')
+    optional(:substantive_change_at).filled(:string)
+                                    .description('update: when the article last changed in substance, ISO 8601 ' \
+                                                 "(2026-10-01T12:00:00Z) or 'now'. Orders the blog listing; " \
+                                                 'minor edits do not move it')
     optional(:trainers).array(:string).description('Authors, shown as "Creado por:". Trainer names exactly as ' \
                                                    'they are in the admin; replaces the current ones')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')

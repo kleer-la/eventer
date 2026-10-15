@@ -5,10 +5,27 @@ class ArticleWriteService < ContentWriteService
 
   self.model = Article
   self.editable_fields = %i[title tabtitle description body lang slug cover header industry noindex selected
-                            redirect_url]
+                            redirect_url substantive_change_at]
   self.long_fields = %w[body]
 
+  # Rails would cast an unparseable string to nil and silently clear the
+  # field, so the moment is parsed here and a bad one fails the call.
+  def initialize(**args)
+    super
+    parse_substantive_change_at
+  end
+
   private
+
+  def parse_substantive_change_at
+    value = @fields[:substantive_change_at]
+    return if value.nil?
+
+    @fields[:substantive_change_at] = value == 'now' ? Time.current : Time.iso8601(value.to_s)
+  rescue ArgumentError
+    @fields.delete(:substantive_change_at)
+    errors << "substantive_change_at must be an ISO 8601 date-time (2026-10-01T12:00:00Z) or 'now'"
+  end
 
   def model_warnings
     return [] unless @record.changed.include?('body')
