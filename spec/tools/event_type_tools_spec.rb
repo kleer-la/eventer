@@ -46,6 +46,19 @@ describe 'event type MCP tools' do
     end
   end
 
+  describe 'operation=list' do
+    it 'filters by noindex and reports it in each summary' do
+      event_type
+      hidden = EventType.create!(name: 'Taller Oculto', description: 'd', recipients: 'r', program: 'p',
+                                 elevator_pitch: 'e', trainers: [trainer], lang: 'es', duration: 4, noindex: true)
+
+      result = run(EventTypesTool, operation: 'list', noindex: true)
+
+      expect(result['event_types'].pluck('id')).to eq [hidden.id]
+      expect(result['event_types'].first['noindex']).to be true
+    end
+  end
+
   describe 'operation=update' do
     it 'previews without saving' do
       result = run(EventTypesTool, operation: 'update', id: event_type.slug, subtitle: 'Nuevo subtítulo')
@@ -124,6 +137,13 @@ describe 'event type MCP tools' do
     # A course that leaves the catalog sends its traffic to the service that
     # replaces it (kleer-marketing#28). external_site_url is a path or an
     # absolute URL, and the site answers the course page with a 301 to it.
+    it 'sets noindex without touching the catalog' do
+      run(EventTypesTool, operation: 'update', id: event_type.slug, noindex: true, confirm: true)
+
+      expect(event_type.reload.noindex).to be true
+      expect(event_type.include_in_catalog).to eq(EventType.new.include_in_catalog)
+    end
+
     it 'sends the course page elsewhere with external_site_url' do
       run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
                           external_site_url: '/es/servicios/producto-digital/desarrollo-productos-digitales-agentes-ia')

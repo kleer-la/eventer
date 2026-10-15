@@ -14,7 +14,7 @@ class EventTypesTool < AuthenticatedTool
     and seal that end up printed on the certificate. A course given twice is
     two events of one type, not two types — look for an existing one first.
 
-    operation=list (default): filtered by query (name), lang, in_catalog. Use it
+    operation=list (default): filtered by query (name), lang, in_catalog, noindex. Use it
     to find the id an event needs.
     operation=get: one course type in full, by id (slug or numeric): the blocks
     that make up its page (description, recipients, program, goal, learnings,
@@ -60,6 +60,8 @@ class EventTypesTool < AuthenticatedTool
     optional(:kleer_cert_seal_image).filled(:string).description('Seal image file name for the certificate')
     optional(:csd_eligible).filled(:bool).description('true = counts towards Scrum Alliance CSD')
     optional(:new_version).filled(:bool).description('update: true = the newer edition of the course')
+    optional(:noindex).filled(:bool).description('list: filter. update: true = ask search engines not to index ' \
+                                                 'the course page (it stays on sale)')
     optional(:external_site_url).filled(:string)
                                 .description('Where the course page sends its visitors instead (a path like ' \
                                              '/es/servicios/... or an absolute URL): the site answers 301 with it. ' \
@@ -71,7 +73,7 @@ class EventTypesTool < AuthenticatedTool
 
   def call(operation: 'list', id: nil, confirm: false, limit: DEFAULT_LIMIT, **fields)
     case operation
-    when 'list' then list(limit: limit, **fields.slice(:query, :lang, :in_catalog))
+    when 'list' then list(limit: limit, **fields.slice(:query, :lang, :in_catalog, :noindex))
     when 'get' then get(find(id))
     when 'create' then write(nil, confirm: confirm, **fields.except(:query, :in_catalog))
     when 'update' then write(find(id), confirm: confirm, **fields.except(:query))
@@ -89,19 +91,21 @@ class EventTypesTool < AuthenticatedTool
     EventType.find(id.to_s[/\A\d+/] || id)
   end
 
-  def list(limit:, query: nil, lang: nil, in_catalog: nil)
+  def list(limit:, query: nil, lang: nil, in_catalog: nil, noindex: nil)
     scope = EventType.includes(:trainers).order(:name)
     scope = scope.where('name LIKE ?', "%#{query}%") if query.present?
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(include_in_catalog: in_catalog) unless in_catalog.nil?
+    scope = scope.where(noindex: noindex) unless noindex.nil?
 
     types = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |type| summary(type) }
-    listing(:event_types, types, total: scope.count, narrow: 'query, lang or in_catalog')
+    listing(:event_types, types, total: scope.count, narrow: 'query, lang, in_catalog or noindex')
   end
 
   def summary(type)
     { id: type.id, name: type.name, lang: type.lang, duration: type.duration,
-      include_in_catalog: type.include_in_catalog, is_kleer_certification: type.is_kleer_certification,
+      include_in_catalog: type.include_in_catalog, noindex: type.noindex,
+      is_kleer_certification: type.is_kleer_certification,
       trainers: type.trainers.map(&:name) }
   end
 
