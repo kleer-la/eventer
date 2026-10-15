@@ -32,12 +32,13 @@ module Api
     end
 
     def create
-      beats = briefing_beats
+      # Validated before admission: a malformed body is a 422 that spends no quota.
+      briefing = briefing_from_params
 
-      @usage = TtsUsage.admit!(beats_count: beats.size, chars: narration_chars(beats), client: client_hash,
-                               owner: token_owner)
+      @usage = TtsUsage.admit!(beats_count: briefing.beats.size, chars: briefing.narration_chars,
+                               client: client_hash, owner: token_owner)
       @started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      mp3 = synthesize(beats)
+      mp3 = synthesize(briefing)
 
       @usage.finish!(:ok, synthesis_ms: elapsed_ms)
       send_data mp3, type: 'audio/mpeg', filename: 'briefing.mp3', disposition: 'attachment'
@@ -53,18 +54,24 @@ module Api
       TtsUsage.client_hash_for(request.remote_ip)
     end
 
-    def synthesize(beats)
+    # The service enforces its own per-tool deadlines; this is the backstop.
+    def synthesize(briefing)
       Timeout.timeout(MAX_SYNTHESIS_SECONDS) do
-        TtsBriefingService.call(beats: beats, voice: params[:voice], rate: params[:rate])
+        TtsBriefingService.call(beats: briefing.beats, voice: params[:voice], rate: params[:rate])
       end
     end
 
-    def briefing_beats
-      params.require(:beats).map { |beat| beat.permit(:narration, :duration).to_h }
+    def briefing_from_params
+      TtsBriefingService::Briefing.new(beats: permitted_beats, voice: params[:voice], rate: params[:rate]).validate!
     end
 
-    def narration_chars(beats)
-      beats.sum { |beat| beat['narration'].to_s.length }
+    # Anything that is not a list of objects is passed through as it came, so the
+    # briefing rejects it by shape (422) instead of this raising on `permit`.
+    def permitted_beats
+      beats = params.require(:beats)
+      return beats unless beats.is_a?(Array)
+
+      beats.map { |beat| beat.is_a?(ActionController::Parameters) ? beat.permit(:narration, :duration).to_h : beat }
     end
 
     def elapsed_ms

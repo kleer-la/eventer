@@ -33,9 +33,10 @@ class TtsUsage < ApplicationRecord
   DEFAULT_MAX_CHARS_PER_DAY = 60_000
   DEFAULT_MAX_CONCURRENCY = 2
   DEFAULT_MAX_BRIEFINGS_PER_MONTH_PER_USER = 30
-  # A synthesis is cut off well before this; a `running` row older than it belongs
-  # to a request that died, and must not hold a concurrency slot forever.
-  STALE_AFTER = 2.minutes
+  # A synthesis is cut off after TtsBriefingService::MAX_SYNTHESIS_SECONDS; a
+  # `running` row older than twice that belongs to a request that died, and must
+  # not hold a concurrency slot forever.
+  STALE_AFTER = (TtsBriefingService::MAX_SYNTHESIS_SECONDS * 2).seconds
   CONCURRENCY_RETRY_SECONDS = 5
 
   validates :status, inclusion: { in: STATUSES }

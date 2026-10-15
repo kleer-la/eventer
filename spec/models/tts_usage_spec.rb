@@ -202,4 +202,8 @@ describe TtsUsage do
       expect(usage.reload.status).to eq 'error'
     end
   end
+
+  it 'keeps a running row in flight for longer than a synthesis may take' do
+    expect(described_class::STALE_AFTER).to be > TtsBriefingService::MAX_SYNTHESIS_SECONDS.seconds
+  end
 end

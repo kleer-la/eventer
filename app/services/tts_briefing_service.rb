@@ -14,67 +14,56 @@ require 'tmpdir'
 class TtsBriefingService
   Error = Class.new(StandardError)
 
-  MAX_BEATS = 40
   # Wall-clock budget a caller gives one briefing (the controller and the MCP tool both use it).
   MAX_SYNTHESIS_SECONDS = 60
-  MAX_TOTAL_CHARS = 6000
   MAX_BEAT_SECONDS = 60
   BREATH_SECONDS = 0.35
-  DEFAULT_VOICES = { 'es' => 'es-AR-ElenaNeural', 'en' => 'en-US-JennyNeural' }.freeze
-  DEFAULT_VOICE = DEFAULT_VOICES['es']
-  DEFAULT_RATE = '+8%'
-  VOICE_FORMAT = /\A[a-z]{2}-[A-Z]{2}-[A-Za-z]+\z/
+  MAX_BEATS = Briefing::MAX_BEATS
+  MAX_TOTAL_CHARS = Briefing::MAX_TOTAL_CHARS
+  DEFAULT_VOICES = Briefing::DEFAULT_VOICES
+  DEFAULT_VOICE = Briefing::DEFAULT_VOICE
+  DEFAULT_RATE = Briefing::DEFAULT_RATE
+  # Seconds each tool may run, whatever is left of the overall budget. They run
+  # under coreutils `timeout`: a Timeout.timeout around Open3.capture3 does not
+  # cut a child that holds the pipes open (measured: a 2 s timeout fired at 6 s).
+  TOOL_TIMEOUTS = { 'edge-tts' => 25, 'ffprobe' => 5, 'ffmpeg' => 20 }.freeze
+  # After the timeout's TERM, how long before it sends KILL. Reserved out of the budget.
+  KILL_GRACE_SECONDS = 2
+  TIMEOUT_EXIT_STATUSES = [124, 137].freeze
 
   def self.call(...) = new(...).call
 
   def initialize(beats:, voice: nil, rate: nil)
-    @beats = beats
-    @voice = voice.presence || DEFAULT_VOICE
-    @rate = rate.presence || DEFAULT_RATE
+    @briefing = Briefing.new(beats: beats, voice: voice, rate: rate)
   end
 
   def call
-    validate!
+    @briefing.validate!
+    @deadline = monotonic_now + MAX_SYNTHESIS_SECONDS
 
     Dir.mktmpdir('tts-briefing') do |dir|
-      segments = narrated_beats.each_with_index.map { |beat, index| synthesize_segment(beat, index, dir) }
+      segments = @briefing.narrated_beats.each_with_index.map { |beat, index| synthesize_segment(beat, index, dir) }
       concatenate(segments, dir)
     end
   end
 
   private
 
-  def narrated_beats
-    @narrated_beats ||= @beats.select { |beat| beat['narration'].to_s.strip.present? }
-  end
-
-  def validate!
-    validate_beats!
-    validate_narration!
-    raise Error, "invalid voice #{@voice.inspect}" unless @voice.match?(VOICE_FORMAT)
-  end
-
-  def validate_beats!
-    raise Error, 'beats must be a non-empty array' if @beats.blank? || !@beats.is_a?(Array)
-    raise Error, "at most #{MAX_BEATS} beats" if @beats.size > MAX_BEATS
-  end
-
-  def validate_narration!
-    raise Error, 'no beat has narration' if narrated_beats.empty?
-
-    total_chars = narrated_beats.sum { |beat| beat['narration'].to_s.length }
-    raise Error, "narration too long (#{total_chars} chars, max #{MAX_TOTAL_CHARS})" if total_chars > MAX_TOTAL_CHARS
-  end
-
   def synthesize_segment(beat, index, dir)
     audio_path = File.join(dir, format('%<i>02d.mp3', i: index))
-    run!('edge-tts', '--voice', @voice, '--rate', @rate, '--text', beat['narration'].to_s,
+    # --opt=value, so a narration or rate that starts with a dash is not read as an option.
+    run!('edge-tts', "--voice=#{@briefing.voice}", "--rate=#{@briefing.rate}", "--text=#{beat['narration']}",
          '--write-media', audio_path)
     unless File.exist?(audio_path) && File.size(audio_path).positive?
       raise Error, "edge-tts produced no audio for beat #{index + 1}"
     end
 
-    pad_segment(audio_path, floor: beat['duration'].to_f.clamp(0, MAX_BEAT_SECONDS), dir: dir, index: index)
+    pad_segment(audio_path, floor: duration_floor(beat), dir: dir, index: index)
+  end
+
+  def duration_floor(beat)
+    seconds = Float(beat['duration'], exception: false)
+    seconds&.finite? ? seconds.clamp(0, MAX_BEAT_SECONDS) : 0
   end
 
   def pad_segment(audio_path, floor:, dir:, index:)
@@ -90,7 +79,9 @@ class TtsBriefingService
 
   def audio_duration(path)
     stdout, = run!('ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path)
-    Float(stdout)
+    Float(stdout.strip)
+  rescue ArgumentError, TypeError
+    raise Error, 'could not read the audio duration'
   end
 
   def concatenate(segments, dir)
@@ -104,9 +95,29 @@ class TtsBriefingService
   end
 
   def run!(*args)
-    stdout, stderr, status = Open3.capture3(*args)
-    raise Error, "#{args.first} failed: #{stderr.presence || stdout}" unless status.success?
+    tool = args.first
+    stdout, stderr, status = Open3.capture3('timeout', '-k', KILL_GRACE_SECONDS.to_s, tool_timeout(tool).to_s, *args)
+    return [stdout, stderr] if status.success?
 
-    [stdout, stderr]
+    log_failure(tool, status, stderr)
+    raise Error, "#{tool} timed out" if TIMEOUT_EXIT_STATUSES.include?(status.exitstatus)
+
+    raise Error, "#{tool} failed"
+  end
+
+  def tool_timeout(tool)
+    left = (@deadline - monotonic_now - KILL_GRACE_SECONDS).floor
+    raise Error, 'synthesis took too long' if left < 1
+
+    [TOOL_TIMEOUTS.fetch(tool), left].min
+  end
+
+  def monotonic_now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+  # The tool's stderr stays in the log, never in the response, and without the narration
+  # (edge-tts can echo its --text argument).
+  def log_failure(tool, status, stderr)
+    scrubbed = @briefing.narrated_beats.reduce(stderr.to_s) { |text, beat| text.gsub(beat['narration'], '[narration]') }
+    Rails.logger.error("TTS #{tool} failed (exit #{status.exitstatus}): #{scrubbed.truncate(500)}")
   end
 end

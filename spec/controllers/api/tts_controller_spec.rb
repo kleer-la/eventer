@@ -36,6 +36,35 @@ RSpec.describe Api::TtsController, type: :controller do
       expect(JSON.parse(response.body)['error']).to be_present
     end
 
+    it 'fails closed when TTS_API_SECRET is not defined' do
+      allow(ENV).to receive(:[]).with('TTS_API_SECRET').and_return(nil)
+      request.headers['Authorization'] = 'Bearer '
+      post :create, params: { beats: [{ narration: 'Hola' }] }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    context 'with a malformed body' do
+      before { authorize! }
+
+      {
+        'beats as a string' => { beats: 'Hola' },
+        'beats as a hash' => { beats: { narration: 'Hola' } },
+        'a beat that is a string' => { beats: ['Hola'] },
+        'a narration that is a list' => { beats: [{ narration: %w[Hola Mundo] }] },
+        'a voice that is a list' => { beats: [{ narration: 'Hola' }], voice: %w[es-AR-ElenaNeural] },
+        'a rate that is a hash' => { beats: [{ narration: 'Hola' }], rate: { a: '1' } },
+        'a rate that is an option' => { beats: [{ narration: 'Hola' }], rate: '--help' }
+      }.each do |name, params|
+        it "answers 422, not 500, for #{name}, and spends no quota" do
+          expect { post :create, params: params }.not_to change(TtsUsage, :count)
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(JSON.parse(response.body)['error']).to be_present
+        end
+      end
+    end
+
     context 'with a valid request' do
       before do
         authorize!

@@ -42,7 +42,7 @@ class BriefingAudioTool < HandoffTool
   private
 
   def admit(beats)
-    TtsUsage.admit!(beats_count: beats.size, chars: beats.sum { |beat| beat['narration'].to_s.length },
+    TtsUsage.admit!(beats_count: beats.size, chars: TtsBriefingService::Briefing.new(beats: beats).narration_chars,
                     owner: current_handoff_user)
   end
 

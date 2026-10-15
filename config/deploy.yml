@@ -16,6 +16,9 @@ proxy:
     - eventos.kleer.la
     - handoff.kleer.la # session-handoff accounts and MCP connector (#203); DNS A record → this server
   ssl: true
+  # kamal-proxy answers 504 after 30 s by default; a briefing may synthesize for up
+  # to TtsBriefingService::MAX_SYNTHESIS_SECONDS (60 s) plus the tools' kill grace (#200).
+  response_timeout: 75
   app_port: 3000
   healthcheck:
     path: /up
