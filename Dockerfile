@@ -49,7 +49,10 @@ RUN apt-get update -qq && \
 # edge-tts: free, key-less text-to-speech CLI used by GenerateArticleAudioJob and
 # TtsBriefingService. ffmpeg (ffmpeg + ffprobe) is TtsBriefingService's own: padding
 # and concatenating beats into one MP3.
-RUN pip3 install --no-cache-dir --break-system-packages edge-tts
+# Pinned: edge-tts talks to an undocumented Microsoft endpoint, and 7.2.8 got a 403 on
+# the websocket handshake (QA, 2026-10-15) while the unpinned layer sat in the build cache.
+# When it breaks again, bump the version here — that also busts the cache.
+RUN pip3 install --no-cache-dir --break-system-packages edge-tts==7.3.1
 
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 ENV MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
