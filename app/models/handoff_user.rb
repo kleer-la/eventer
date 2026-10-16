@@ -51,6 +51,14 @@ class HandoffUser < ApplicationRecord
     locale.to_s == 'en' ? "#{site}/en/resources/#{RESOURCE_SLUG}" : "#{site}/es/recursos/#{RESOURCE_SLUG}"
   end
 
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id email name locale created_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    []
+  end
+
   def active_token
     handoff_tokens.active.order(:created_at).last
   end
