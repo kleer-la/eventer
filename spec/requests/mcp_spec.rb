@@ -47,6 +47,19 @@ RSpec.describe 'MCP server', type: :request do
     expect(response).to have_http_status(:method_not_allowed)
   end
 
+  # The query reaches the title in whatever case, and the slug too: a title
+  # typed in lowercase used to find nothing on PostgreSQL.
+  it 'finds an article by its title in another case, or by its slug' do
+    create(:article, title: 'Cómo crear una Estrategia de Producto', slug: 'como-crear-estrategia-producto')
+    create(:article, title: 'Otro artículo', slug: 'otro-articulo')
+
+    ['estrategia de producto', 'ESTRATEGIA', 'como-crear-estrategia'].each do |query|
+      found = JSON.parse(call_tool('articles', { operation: 'list', query: query }).dig('result', 'content', 0, 'text'))
+
+      expect(found['articles'].pluck('title')).to eq(['Cómo crear una Estrategia de Producto'])
+    end
+  end
+
   it 'lists articles with filters and reads one in full' do
     create(:article, title: 'Kanban en equipos', lang: 'es', published: true)
     create(:article, title: 'Draft about Scrum', lang: 'en', published: false)

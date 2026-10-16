@@ -164,7 +164,7 @@ class ResourcesTool < AuthenticatedTool
   end
 
   def filtered(scope, query: nil, format: nil, published: nil, category: nil)
-    scope = scope.where('title_es LIKE :q OR title_en LIKE :q', q: "%#{query}%") if query.present?
+    scope = scope.matching(query, :title_es, :title_en) if query.present?
     scope = scope.where(format: format) if format.present?
     scope = scope.where(published: published) unless published.nil?
     scope = scope.joins(:category).where(categories: { name: category }) if category.present?

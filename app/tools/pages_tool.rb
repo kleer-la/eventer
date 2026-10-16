@@ -154,7 +154,7 @@ class PagesTool < AuthenticatedTool
 
   def filtered(query: nil, **columns)
     scope = Page.includes(:sections).order(:lang, :name).where(columns.slice(:slug, :lang, :template).compact_blank)
-    query.present? ? scope.where('name LIKE ?', "%#{query}%") : scope
+    query.present? ? scope.matching(query, :name) : scope
   end
 
   def unknown_template(template)

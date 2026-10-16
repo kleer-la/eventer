@@ -75,10 +75,7 @@ class EventsTool < AuthenticatedTool
 
   def filtered(query, event_type_id, from, to)
     scope = Event.includes(:event_type, :country, :trainer, :participants).order(date: :desc)
-    if query.present?
-      scope = scope.joins(:event_type)
-                   .where('event_types.name LIKE :t OR events.city LIKE :t', t: "%#{query}%")
-    end
+    scope = scope.joins(:event_type).matching(query, EventType.arel_table[:name], :city) if query.present?
     scope = scope.where(event_type_id: event_type_id) if event_type_id.present?
     scope = scope.where(date: Date.parse(from)..) if from.present?
     scope = scope.where(date: ..Date.parse(to)) if to.present?

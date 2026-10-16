@@ -95,7 +95,7 @@ class ServicesTool < AuthenticatedTool
 
   def list(limit: DEFAULT_LIMIT, query: nil, service_area: nil, published: nil, **)
     scope = Service.includes(:service_area).order(:ordering, :name)
-    scope = scope.where('name LIKE ?', "%#{query}%") if query.present?
+    scope = scope.matching(query, :name) if query.present?
     scope = scope.where(service_area: ServiceArea.referenced_by(service_area)) if service_area.present?
     scope = scope.where(published: published) unless published.nil?
 

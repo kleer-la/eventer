@@ -75,7 +75,7 @@ class TestimoniesTool < AuthenticatedTool
     return error(scope) if scope.is_a?(String)
 
     scope = scope.where(stared: starred ? true : [false, nil]) unless starred.nil?
-    scope = scope.where('first_name LIKE :q OR last_name LIKE :q', q: "%#{query}%") if query.present?
+    scope = scope.matching(query, :first_name, :last_name) if query.present?
 
     items = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |testimony| summary(testimony) }
     listing(:testimonies, items, total: scope.count, narrow: 'service, event_type, service_area, starred or query')

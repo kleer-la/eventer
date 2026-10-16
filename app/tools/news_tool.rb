@@ -67,7 +67,7 @@ class NewsTool < AuthenticatedTool
 
   def list(limit:, query: nil, lang: nil, published: nil)
     scope = News.order(event_date: :desc, created_at: :desc)
-    scope = scope.where('title LIKE ?', "%#{query}%") if query.present?
+    scope = scope.matching(query, :title) if query.present?
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(published: published) unless published.nil?
 

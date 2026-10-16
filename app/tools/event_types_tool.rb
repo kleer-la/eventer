@@ -98,7 +98,7 @@ class EventTypesTool < AuthenticatedTool
 
   def list(limit:, query: nil, lang: nil, in_catalog: nil, noindex: nil)
     scope = EventType.includes(:trainers).order(:name)
-    scope = scope.where('name LIKE ?', "%#{query}%") if query.present?
+    scope = scope.matching(query, :name) if query.present?
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(include_in_catalog: in_catalog) unless in_catalog.nil?
     scope = scope.where(noindex: noindex) unless noindex.nil?

@@ -127,7 +127,7 @@ class ServiceAreasTool < AuthenticatedTool
 
   def list(limit:, query: nil, visible: nil)
     scope = ServiceArea.order(:ordering, :name)
-    scope = scope.where('name LIKE ?', "%#{query}%") if query.present?
+    scope = scope.matching(query, :name) if query.present?
     scope = scope.where(visible: visible) unless visible.nil?
 
     areas = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |area| summary(area) }

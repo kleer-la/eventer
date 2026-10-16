@@ -65,7 +65,7 @@ class PodcastsTool < AuthenticatedTool
 
   def list(limit: DEFAULT_LIMIT, query: nil, **)
     scope = Podcast.includes(:episodes).order(:title)
-    scope = scope.where('title LIKE ?', "%#{query}%") if query.present?
+    scope = scope.matching(query, :title) if query.present?
 
     podcasts = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |podcast| summary(podcast) }
     listing(:podcasts, podcasts, total: scope.count, narrow: 'query')

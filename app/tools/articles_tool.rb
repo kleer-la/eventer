@@ -43,7 +43,7 @@ class ArticlesTool < AuthenticatedTool
     optional(:operation).filled(:string)
                         .description("'list' (default), 'get', 'create', 'update' or 'copy_from_production'")
     optional(:id).filled(:string).description('get/update: article slug (preferred) or numeric id')
-    optional(:query).filled(:string).description('list: substring matched against the title')
+    optional(:query).filled(:string).description('list: substring of the title or slug, any case')
     optional(:lang).filled(:string).description("Language: 'es' or 'en' (list: filter; create: default es)")
     optional(:published).filled(:bool)
                         .description('list: filter. create/update: publish (or unpublish). Needs publishing rights')
@@ -100,7 +100,7 @@ class ArticlesTool < AuthenticatedTool
 
   def list(limit:, query: nil, lang: nil, published: nil, category: nil)
     scope = Article.includes(:category).order(substantive_change_at: :desc, created_at: :desc)
-    scope = scope.where('title LIKE ?', "%#{query}%") if query.present?
+    scope = scope.matching(query, :title, :slug) if query.present?
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(published: published) unless published.nil?
     scope = scope.joins(:category).where(categories: { name: category }) if category.present?
