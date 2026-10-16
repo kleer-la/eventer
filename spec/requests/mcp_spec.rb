@@ -60,6 +60,19 @@ RSpec.describe 'MCP server', type: :request do
     end
   end
 
+  # Slugs carry no accents and join words with hyphens, so a search typed without
+  # accents and with spaces reaches an accented title through its slug.
+  it 'finds an accented title from a query typed without accents' do
+    create(:article, title: 'La creación de un Producto', slug: 'la-creacion-de-un-producto')
+    create(:article, title: 'Otro artículo', slug: 'otro-articulo')
+
+    ['creacion', 'la creacion de un producto', 'La Creación de un producto'].each do |query|
+      found = JSON.parse(call_tool('articles', { operation: 'list', query: query }).dig('result', 'content', 0, 'text'))
+
+      expect(found['articles'].pluck('title')).to eq(['La creación de un Producto'])
+    end
+  end
+
   it 'lists articles with filters and reads one in full' do
     create(:article, title: 'Kanban en equipos', lang: 'es', published: true)
     create(:article, title: 'Draft about Scrum', lang: 'en', published: false)

@@ -100,13 +100,21 @@ class ArticlesTool < AuthenticatedTool
 
   def list(limit:, query: nil, lang: nil, published: nil, category: nil)
     scope = Article.includes(:category).order(substantive_change_at: :desc, created_at: :desc)
-    scope = scope.matching(query, :title, :slug) if query.present?
+    scope = matching_query(scope, query) if query.present?
     scope = scope.where(lang: lang) if lang.present?
     scope = scope.where(published: published) unless published.nil?
     scope = scope.joins(:category).where(categories: { name: category }) if category.present?
 
     articles = scope.limit(limit.clamp(1, MAX_LIMIT)).map { |article| summary(article) }
     listing(:articles, articles, total: scope.count, narrow: 'query, lang, published or category')
+  end
+
+  # The title or slug as typed, or the query as a slug: slugs have no accents and
+  # join words with hyphens, so "la creacion de" reaches "La creación de".
+  def matching_query(scope, query)
+    as_typed = scope.matching(query, :title, :slug)
+    slugified = query.parameterize
+    slugified.empty? ? as_typed : as_typed.or(scope.matching(slugified, :slug))
   end
 
   def summary(article)
