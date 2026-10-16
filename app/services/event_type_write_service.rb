@@ -11,7 +11,8 @@ class EventTypeWriteService < ContentWriteService
   self.model = EventType
   self.editable_fields = %i[name description recipients program elevator_pitch goal learnings takeaways
                             faq duration lang tag_name subtitle is_kleer_certification
-                            kleer_cert_seal_image csd_eligible new_version external_site_url noindex]
+                            kleer_cert_seal_image csd_eligible new_version external_site_url noindex
+                            seo_title side_image]
   self.long_fields = %w[description program recipients goal learnings takeaways faq]
   self.publication_flag = :include_in_catalog
   self.publication_permission = :set_include_in_catalog

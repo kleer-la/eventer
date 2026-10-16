@@ -45,7 +45,8 @@ class EventTypesTool < AuthenticatedTool
     optional(:description).filled(:string).description('What the course is')
     optional(:recipients).filled(:string).description('Who it is for')
     optional(:program).filled(:string).description('Contents')
-    optional(:elevator_pitch).filled(:string).description('One-line pitch, at most 160 characters')
+    optional(:elevator_pitch).filled(:string).description('One-line pitch, at most 160 characters; it is also ' \
+                                                          'the meta description of the course page')
     optional(:trainers).array(:string).description('Trainer names, exactly as they are in the admin')
     optional(:duration).filled(:integer).description('Hours, the number printed on the certificate')
     optional(:goal).filled(:string).description('Objective')
@@ -66,6 +67,10 @@ class EventTypesTool < AuthenticatedTool
                                 .description('Where the course page sends its visitors instead (a path like ' \
                                              '/es/servicios/... or an absolute URL): the site answers 301 with it. ' \
                                              'For a course that leaves the catalog.')
+    optional(:seo_title).filled(:string).description('Browser-tab and search title of the course page ' \
+                                                     '(falls back to the name)')
+    optional(:side_image).filled(:string).description('Image shown beside the description on the course page ' \
+                                                      '(a URL; without it the site uses a generic one)')
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
     instance_exec(&ApplicationTool::CLEAR)
@@ -127,7 +132,8 @@ class EventTypesTool < AuthenticatedTool
     { in_catalog: event_type.include_in_catalog, deleted: event_type.deleted, noindex: event_type.noindex,
       is_kleer_certification: event_type.is_kleer_certification, csd_eligible: event_type.csd_eligible,
       kleer_cert_seal_image: event_type.kleer_cert_seal_image, new_version: event_type.new_version,
-      seo_title: event_type.seo_title, external_site_url: event_type.external_site_url }
+      seo_title: event_type.seo_title, side_image: event_type.side_image,
+      external_site_url: event_type.external_site_url }
   end
 
   def write(event_type, confirm:, **fields)

@@ -144,6 +144,25 @@ describe 'event type MCP tools' do
       expect(event_type.include_in_catalog).to eq(EventType.new.include_in_catalog)
     end
 
+    it 'sets the page title and the side image, and clears them' do
+      run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
+                          seo_title: 'Scrum Master | Kleer', side_image: 'https://example.com/side.png')
+
+      expect(event_type.reload).to have_attributes(seo_title: 'Scrum Master | Kleer',
+                                                   side_image: 'https://example.com/side.png')
+
+      run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true, clear: %w[seo_title side_image])
+
+      expect(event_type.reload).to have_attributes(seo_title: nil, side_image: nil)
+    end
+
+    it 'reports side_image in get' do
+      event_type.update!(side_image: 'https://example.com/side.png')
+
+      expect(run(EventTypesTool, operation: 'get', id: event_type.slug)['side_image'])
+        .to eq 'https://example.com/side.png'
+    end
+
     it 'sends the course page elsewhere with external_site_url' do
       run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
                           external_site_url: '/es/servicios/producto-digital/desarrollo-productos-digitales-agentes-ia')
