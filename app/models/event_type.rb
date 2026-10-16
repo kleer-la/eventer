@@ -24,7 +24,10 @@ class EventType < ApplicationRecord
   scope :included_in_catalog, -> { where(include_in_catalog: true, deleted: false) }
   scope :ordered, -> { order(:ordering) }
 
-  validates :name, :description, :recipients, :program, :trainers, :elevator_pitch, presence: true
+  validates :name, :description, :trainers, :elevator_pitch, presence: true
+  # A course out of the catalog may lose its program and audience: its page stays
+  # up as a notice, and the site hides the sections that have no content.
+  validates :recipients, :program, presence: true, if: -> { new_record? || include_in_catalog }
   # Where the course page sends its visitors once the course leaves the
   # catalog: a path (/es/servicios/...) or an absolute URL. The site answers
   # 301 with it (same shape as Article#redirect_url).

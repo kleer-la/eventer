@@ -63,16 +63,32 @@ describe EventType do
       expect(@event_type.valid?).to be false
     end
 
-    it 'should require its recipients' do
+    it 'should require its recipients while it is in the catalog' do
+      @event_type.include_in_catalog = true
       @event_type.recipients = ''
 
       expect(@event_type.valid?).to be false
     end
 
-    it 'should require its program' do
+    it 'may lose its recipients once it is out of the catalog' do
+      @event_type.include_in_catalog = false
+      @event_type.recipients = ''
+
+      expect(@event_type.valid?).to be true
+    end
+
+    it 'should require its program while it is in the catalog' do
+      @event_type.include_in_catalog = true
       @event_type.program = ''
 
       expect(@event_type.valid?).to be false
+    end
+
+    it 'may lose its program once it is out of the catalog' do
+      @event_type.include_in_catalog = false
+      @event_type.program = ''
+
+      expect(@event_type.valid?).to be true
     end
 
     it 'should require its duration' do

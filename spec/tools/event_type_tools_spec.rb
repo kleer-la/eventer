@@ -163,6 +163,26 @@ describe 'event type MCP tools' do
         .to eq 'https://example.com/side.png'
     end
 
+    # A course that stopped being sold keeps its page up as a notice: it has no
+    # program or audience any more, and the site hides the sections it lacks.
+    it 'empties program and recipients once the course is out of the catalog' do
+      allow(Ability).to receive(:new).and_return(Ability.new(FactoryBot.create(:publisher_user)))
+      result = run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true, in_catalog: false,
+                                   clear: %w[program recipients])
+
+      expect(result['status']).to eq 'saved'
+      expect(event_type.reload).to have_attributes(program: nil, recipients: nil)
+    end
+
+    it 'does not empty the program of a course that is on sale' do
+      event_type.update!(include_in_catalog: true)
+
+      result = run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true, clear: %w[program])
+
+      expect(result['status']).to eq 'error'
+      expect(result['errors'].join).to include 'Program'
+    end
+
     it 'sends the course page elsewhere with external_site_url' do
       run(EventTypesTool, operation: 'update', id: event_type.slug, confirm: true,
                           external_site_url: '/es/servicios/producto-digital/desarrollo-productos-digitales-agentes-ia')
