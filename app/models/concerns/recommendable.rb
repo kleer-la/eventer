@@ -50,11 +50,12 @@ module Recommendable
   end
 
   class_methods do
-    def recommended_content_targets
+    def recommended_content_targets # rubocop:disable Metrics/AbcSize
       {
         'Article' => Article.all.order(:title).pluck(:title, :id),
         'EventType' => EventType.included_in_catalog.order(:name).map { |et| [et.unique_name, et.id] },
         'Service' => Service.all.order(:name).pluck(:name, :id),
+        'ServiceArea' => ServiceArea.order(:name).pluck(:name, :id),
         'Resource' => Resource.all.order(:title_es).pluck(:title_es, :id),
         # Only flagship pages: an overlay is section overrides for a template
         # that already has its own URL, so recommending one would point at a

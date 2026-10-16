@@ -33,6 +33,20 @@ class ServiceArea < ApplicationRecord
 
   accepts_nested_attributes_for :recommended_contents, allow_destroy: true
 
+  # The card an area gets when another content recommends it.
+  def as_recommendation(lang: 'es')
+    super
+      .merge('title' => name)
+      .merge('subtitle' => summary.to_plain_text)
+      .merge('cover' => side_image)
+      .merge('is_training_program' => is_training_program)
+  end
+
+  # A redirected area answers 301: a card to it leads somewhere else.
+  def servable_as_recommendation?
+    !redirected?
+  end
+
   def should_generate_new_friendly_id?
     slug.blank?
   end

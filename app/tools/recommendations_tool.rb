@@ -10,7 +10,7 @@ class RecommendationsTool < AuthenticatedTool
 
   description <<~MD
     What one entity recommends: the cross references an article, resource,
-    service, course type or page points at, in relevance order. Relevance
+    service, service area, course type or page points at, in relevance order. Relevance
     decides both the order shown and the level the reader sees: under 100 is
     'initial', 100 to 199 'intermediate', 200 and up 'advanced'.
 
@@ -31,7 +31,8 @@ class RecommendationsTool < AuthenticatedTool
     optional(:operation).filled(:string).description("'list' (default), 'add' or 'remove'")
     required(:source_type).filled(:string).description('Article | Resource | EventType | Service | ServiceArea | Page')
     required(:source_id).filled(:string).description('Slug, numeric id, or name/title of the recommending entity')
-    optional(:target_type).filled(:string).description('add/remove: Article | Resource | EventType | Service | Page')
+    optional(:target_type).filled(:string)
+                          .description('add/remove: Article | Resource | EventType | Service | ServiceArea | Page')
     optional(:target_id).filled(:string).description('add/remove: slug, id, or name/title of the recommended entity')
     optional(:relevance_order).filled(:integer).description('add: order and level; 1 or more, defaults to 50')
     optional(:confirm).filled(:bool).description('add/remove: false (default) = preview only; true = save')

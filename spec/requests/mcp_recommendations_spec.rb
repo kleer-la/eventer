@@ -55,6 +55,29 @@ RSpec.describe 'MCP recommendation tools', type: :request do
       expect(area.reload.recommended_contents.first.target).to eq(resource)
     end
 
+    it 'lets a service area be the target' do
+      area = create(:service_area, name: 'Cambio Organizacional')
+
+      result = call_tool('recommendations', { operation: 'add', source_type: 'Article', source_id: article.slug,
+                                              target_type: 'ServiceArea', target_id: area.slug, confirm: true })
+
+      expect(result['status']).to eq('saved')
+      expect(result['recommendation']).to include('target' => 'Cambio Organizacional')
+      expect(article.reload.recommended_contents.first.target).to eq(area)
+    end
+
+    it 'serves an area as a card the site can link, unless it was redirected away' do
+      area = create(:service_area, name: 'Cambio Organizacional', lang: :es, is_training_program: true)
+      card = area.as_recommendation
+
+      expect(card).to include('type' => 'service_area', 'title' => 'Cambio Organizacional', 'slug' => area.slug,
+                              'lang' => 'es', 'is_training_program' => true)
+      expect(area.servable_as_recommendation?).to be true
+
+      area.redirect_url = '/es/servicios/otra'
+      expect(area.servable_as_recommendation?).to be false
+    end
+
     it 'defaults to relevance 50, which reads as the initial level' do
       call_tool('recommendations', { operation: 'add', source_type: 'Article', source_id: article.slug,
                                      target_type: 'Resource', target_id: resource.slug, confirm: true })
