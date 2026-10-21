@@ -15,6 +15,9 @@ class HandoffUser < ApplicationRecord
   devise :omniauthable, :trackable, omniauth_providers: %i[google_oauth2]
 
   has_many :handoff_tokens, dependent: :destroy
+  has_many :handoff_briefings, dependent: :destroy
+  # Usage rows carry no content; they stay for the books, detached from the person.
+  has_many :tts_usages, foreign_key: :owner_id, inverse_of: false, dependent: :nullify
 
   validates :email, :google_uid, presence: true
   validates :locale, inclusion: { in: LOCALES }

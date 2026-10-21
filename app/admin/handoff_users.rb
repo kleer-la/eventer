@@ -2,11 +2,12 @@
 
 # Who has a session-handoff account and token (#201). Read-only: the account is
 # born from Google sign-in and the token is issued from the person's own page.
-# The one thing operators can do is revoke a token.
+# Operators can revoke a token or delete the account (tokens and pending
+# briefings go with it).
 ActiveAdmin.register HandoffUser do
   menu label: 'Handoff Users', parent: 'Others', priority: 103
 
-  actions :index, :show
+  actions :index, :show, :destroy
   config.sort_order = 'created_at_desc'
 
   filter :email

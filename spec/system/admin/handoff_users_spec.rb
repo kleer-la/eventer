@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 # Who has a session-handoff account and a token (#201). Read-only, apart from
-# revoking a token: the account is born from Google and the token is issued
-# from the account's own page, never from here.
+# revoking a token and deleting the account: the account is born from Google
+# and the token is issued from the account's own page, never from here.
 RSpec.describe 'Admin handoff users', type: :system do
   include Devise::Test::IntegrationHelpers
 
@@ -44,5 +44,28 @@ RSpec.describe 'Admin handoff users', type: :system do
 
     expect(page).to have_content('ana@example.com')
     expect(page).not_to have_link('Revoke token')
+  end
+
+  it 'lets an administrator delete the account with its tokens and briefings, keeping usage anonymous' do
+    usage = TtsUsage.create!(status: 'ok', beats_count: 2, chars: 50, synthesis_ms: 100, owner_id: handoff_user.id)
+    HandoffBriefing.create!(handoff_user: handoff_user, audio: 'mp3', expires_at: 1.hour.from_now)
+    sign_in create(:admin_user)
+
+    visit admin_handoff_user_path(handoff_user)
+    click_link 'Delete Handoff User'
+
+    expect(page).to have_content('Handoff user was successfully destroyed')
+    expect(HandoffUser.exists?(handoff_user.id)).to be false
+    expect(HandoffToken.where(handoff_user_id: handoff_user.id)).to be_empty
+    expect(HandoffBriefing.where(handoff_user_id: handoff_user.id)).to be_empty
+    expect(usage.reload.owner_id).to be_nil
+  end
+
+  it 'shows a content user no delete button' do
+    sign_in create(:content_user)
+
+    visit admin_handoff_user_path(handoff_user)
+
+    expect(page).not_to have_link('Delete Handoff User')
   end
 end
