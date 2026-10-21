@@ -61,6 +61,12 @@ module Api
       service_area, service_area_chg, service_chg = find_area_or_service(req_slug)
       return render(json: { error: 'ServiceArea not found' }, status: :not_found) unless service_area.present?
 
+      # A hidden area is out of the site, not only out of its lists; one that
+      # forwards visitors stays, because the site needs its redirect_url.
+      if visible && !service_area.visible && service_area.redirect_url.blank?
+        return render(json: { error: 'ServiceArea not found' }, status: :not_found)
+      end
+
       lang = service_area.lang
 
       services = service_area.services

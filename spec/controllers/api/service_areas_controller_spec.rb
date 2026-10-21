@@ -106,6 +106,34 @@ describe Api::ServiceAreasController do
         expect(service_ids).not_to include(invisible_service.id)
       end
     end
+    # A hidden area is out of the site: its URL answered 200 with its content
+    # while only the lists skipped it. The preview still shows it to the team.
+    context 'hidden area' do
+      before { service_area.update!(visible: false) }
+
+      it 'is not found' do
+        get :show, params: { id: service_area.slug, format: 'json' }
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'is not found through one of its services either' do
+        get :show, params: { id: visible_service.slug, format: 'json' }
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'is still found when it forwards visitors elsewhere' do
+        service_area.update!(redirect_url: '/es/servicios/otra-area')
+        get :show, params: { id: service_area.slug, format: 'json' }
+        expect(response).to have_http_status(:success)
+        expect(JSON.parse(response.body)['redirect_url']).to eq '/es/servicios/otra-area'
+      end
+
+      it 'is shown by the preview' do
+        get :preview, params: { id: service_area.slug, format: 'json' }
+        expect(response).to have_http_status(:success)
+      end
+    end
+
     context 'preview endpoint' do
       it 'shows all services regardless of visibility' do
         get :preview, params: { id: service_area.slug, format: 'json' }

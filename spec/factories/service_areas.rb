@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :service_area do
     name            { 'Default Service Area Name' }
+    visible         { true }
     summary         { 'summary' }
     cta_message     { 'cta_message' }
     icon            { 'https://exampe.com/icon.png' }
