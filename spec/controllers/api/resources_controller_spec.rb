@@ -188,6 +188,16 @@ describe Api::ResourcesController do
     end
   end
 
+  describe 'redirect_url' do
+    it 'comes with the resource, which the site answers with a 301 whether published or not' do
+      resource = create(:resource, published: false, redirect_url: '/es/recursos/otro')
+
+      get :show, params: { id: resource.to_param, format: 'json' }
+
+      expect(JSON.parse(response.body)).to include('published' => false, 'redirect_url' => '/es/recursos/otro')
+    end
+  end
+
   describe 'GET #preview' do
     before do
       @published_resource = create(:resource, title_es: 'Published Resource', published: true)

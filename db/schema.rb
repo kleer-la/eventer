@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -663,6 +663,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_170000) do
     t.string "preview_en"
     t.string "preview_es"
     t.boolean "published", default: false, null: false
+    t.string "redirect_url"
     t.string "seo_description_en"
     t.string "seo_description_es"
     t.string "share_link_en"

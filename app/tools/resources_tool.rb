@@ -47,6 +47,9 @@ class ResourcesTool < AuthenticatedTool
     Fields ending in _es and _en are the Spanish and English sides of the same
     thing. Writes take two steps: confirm=false (the default) validates and
     previews without saving; call again with confirm=true once the user agrees.
+    `redirect_url` (a path like /es/recursos/otro or a full URL): the resource's
+    URL answers 301 there, published or not — set it when something replaces it,
+    otherwise an unpublished resource answers 404; "" removes it.
     Changing `published` needs publishing rights, as in the admin screens.
   MD
 
@@ -63,6 +66,7 @@ class ResourcesTool < AuthenticatedTool
     optional(:title_en).value(:string).description('English title')
     optional(:description_es).filled(:string).description('Spanish summary, at most 220 characters')
     optional(:description_en).value(:string).description('English summary')
+    optional(:redirect_url).value(:string).description('Where its URL answers 301: a path or a full URL; "" removes it')
     optional(:slug).filled(:string).description('URL slug; derived from the Spanish title when omitted')
     optional(:slug_en).value(:string).description('Its own slug for the English page (/en/resources/<slug_en>); ' \
                                                   'without it English uses `slug`. May equal `slug`; "" empties it')
@@ -178,13 +182,14 @@ class ResourcesTool < AuthenticatedTool
   def summary(resource)
     { id: resource.id, slug: resource.slug, slug_en: resource.slug_en,
       title_es: resource.title_es, title_en: resource.title_en,
-      format: resource.format, published: resource.published, category: resource.category_name,
-      downloadable: resource.downloadable, updated_at: resource.updated_at }
+      format: resource.format, published: resource.published, redirect_url: resource.redirect_url,
+      category: resource.category_name, downloadable: resource.downloadable, updated_at: resource.updated_at }
   end
 
   def get(resource)
     { id: resource.id, slug: resource.slug, slug_en: resource.slug_en, format: resource.format,
-      published: resource.published, category: resource.category_name, downloadable: resource.downloadable,
+      published: resource.published, redirect_url: resource.redirect_url, category: resource.category_name,
+      downloadable: resource.downloadable,
       es: side(resource, 'es'), en: side(resource, 'en'), updated_at: resource.updated_at }
       .merge(credits(resource))
       .merge(recommends: resource.recommended_contents.includes(:target).map { |content| recommendation(content) })

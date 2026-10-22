@@ -2,7 +2,7 @@ ActiveAdmin.register Resource do
   menu parent: 'We Publish'
 
   permit_params :title_es, :title_en, :format, :slug, :slug_en, :landing_es, :landing_en,
-                :published,
+                :published, :redirect_url,
                 :getit_es, :getit_en, :buyit_es, :buyit_en, :cover_es, :cover_en,
                 :description_es, :description_en, :comments_es, :comments_en,
                 :share_text_es, :share_text_en, :tags_es, :tags_en,
@@ -93,6 +93,9 @@ ActiveAdmin.register Resource do
         f.input :published, input_html: { disabled: true },
                             hint: 'Only publishers can modify this field'
       end
+      f.input :redirect_url,
+              hint: 'Set it to send this page elsewhere with a 301 (a path like /es/recursos/otro or a full URL), ' \
+                    'published or not. Without it an unpublished resource answers 404.'
       f.input :tabtitle_es
       f.input :seo_description_es
       f.input :landing_es
@@ -168,6 +171,9 @@ ActiveAdmin.register Resource do
             row :slug_en
             row :category
             row :published
+            row :redirect_url do |resource|
+              link_to resource.redirect_url, resource.redirect_url, target: '_blank' if resource.redirected?
+            end
           end
         end
       end

@@ -35,7 +35,7 @@ cada tool como un permiso por usuario, así que son 17 y no 49.
 | Tool | Operaciones |
 |---|---|
 | `articles` | `list` (default), `get`, `create`, `update` |
-| `resources` | `list`, `get`, `create`, `update` |
+| `resources` | `list`, `get`, `create`, `update` — `redirect_url` manda su URL a un reemplazo con 301, publicado o no |
 | `pages` | `list`, `get`, `create`, `update` (las secciones se editan en el admin) |
 | `news` | `list`, `get`, `create`, `update` |
 | `podcasts` | `list`, `get`, `create`, `update`, `create_episode`, `update_episode` |
