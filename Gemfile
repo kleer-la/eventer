@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.4.12'
+ruby '~> 4.0.9'
 gem 'rails', '~> 8.0'
 
 group :development do
@@ -56,6 +56,8 @@ gem 'cancancan'
 gem 'devise', '~> 5.0'
 
 gem 'comma'
+gem 'benchmark' # delayed_job requires it; no longer a default gem in Ruby 4.0
+gem 'ostruct' # FileStoreService requires it; no longer a default gem in Ruby 4.0
 gem 'delayed_job_active_record'
 gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'formtastic'

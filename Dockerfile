@@ -1,5 +1,5 @@
 # Build stage
-FROM ruby:3.4.12-slim AS build
+FROM ruby:4.0.9-slim AS build
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
@@ -29,7 +29,7 @@ RUN SECRET_KEY_BASE=dummy RAILS_ENV=production \
     bundle exec rails assets:precompile || true
 
 # Runtime stage
-FROM ruby:3.4.12-slim
+FROM ruby:4.0.9-slim
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \

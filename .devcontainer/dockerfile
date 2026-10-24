@@ -1,4 +1,4 @@
-FROM ruby:3.4.12
+FROM ruby:4.0.9
 
 # Update args in docker-compose.yaml to set the UID/GID of the "vscode" user.
 ARG USER_NAME=vscode
