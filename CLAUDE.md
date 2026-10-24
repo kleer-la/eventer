@@ -3,7 +3,7 @@
 KEventer is the backend for Kleer's public website (kleer.la, served by the
 separate `website17` repo): courses, calendars, registrations, content (articles,
 resources, services, podcasts, news, pages) and an MCP server that lets people
-edit that content from Claude. Rails 8.1, Ruby 3.4.7.
+edit that content from Claude. Rails 8.1, Ruby 3.4.12.
 
 ## Where commands run
 

@@ -4,7 +4,7 @@ on:
 
 jobs:
   CI:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: keventer
     env:
       KEVENTER_AWS_ACCESS_KEY_ID: ${{ secrets.KEVENTER_AWS_ACCESS_KEY_ID }}
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.7
+          ruby-version: 3.4.12
       - name: Install dependencies
         run: bundle install
       - name: Run tests
