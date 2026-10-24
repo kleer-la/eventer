@@ -50,19 +50,17 @@ gem 'haml'
 gem 'haml-rails'
 gem 'jquery-rails'
 
-gem 'eventmachine', '1.2.7'
 gem 'nokogiri'
 # Gemas para idetificación y autorización de usuarios
 gem 'cancancan'
 gem 'devise', '~> 5.0'
 
 gem 'comma'
-gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'dimensions' # knowing the heigt of an image - for certificates pdf
 gem 'formtastic'
 gem 'formtastic-bootstrap'
-gem 'gruff' # For generating charts like the radar chart - assessments
+gem 'gruff', require: false # radar chart for assessments; required by CustomSpider
 gem 'importmap-rails'
 gem 'liquid'
 gem 'matrix', '~> 0.4' # needed to solve an error when migrating to ruby 3.1 (prawn related)
@@ -88,7 +86,7 @@ gem 'friendly_id' # slug for blog Articles
 # Xero API
 gem 'jwt'
 gem 'sprockets-rails'
-gem 'xero-ruby'
+gem 'xero-ruby', require: false # required by XeroClientService
 
 gem 'activeadmin'
 gem 'activeadmin_addons'
@@ -104,6 +102,3 @@ gem 'aws-sdk-s3', '~> 1.0'
 gem 'mini_magick'
 
 gem 'addressable', '~> 2.8'
-
-# Google Calendar API for consultant booking
-gem 'google-apis-calendar_v3'

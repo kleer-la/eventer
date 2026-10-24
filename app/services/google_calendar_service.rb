@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'google/apis/calendar_v3'
 require 'net/http'
 require 'json'
 
