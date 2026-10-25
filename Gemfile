@@ -8,6 +8,7 @@ gem 'rails', '~> 8.0'
 group :development do
   gem 'kamal', '~> 2.0'
   gem 'brakeman'
+  gem 'bundler-audit', require: false
   gem 'debug', '>= 1.0.0'
   gem 'derailed_benchmarks'
   gem 'listen'

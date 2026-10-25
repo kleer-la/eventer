@@ -1,0 +1,23 @@
+# Fails when a gem in Gemfile.lock has a known vulnerability (ruby-advisory-db).
+# Weekly as well as on push: advisories appear without anyone committing (#237).
+name: Bundler Audit
+
+on:
+  push:
+    branches: ['*']
+  schedule:
+    - cron: '0 12 * * 1' # Mondays, 12:00 UTC
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 4.0.9
+          bundler-cache: true
+      - name: Check gems against the advisory database
+        run: bundle exec bundle-audit check --update
