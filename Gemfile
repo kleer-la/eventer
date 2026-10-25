@@ -66,7 +66,7 @@ gem 'gruff', require: false # radar chart for assessments; required by CustomSpi
 gem 'importmap-rails'
 gem 'liquid'
 gem 'matrix', '~> 0.4' # needed to solve an error when migrating to ruby 3.1 (prawn related)
-gem 'money'
+gem 'money', '~> 7.1'
 gem 'prawn'
 gem 'prawn_rails'
 gem 'redcarpet'
