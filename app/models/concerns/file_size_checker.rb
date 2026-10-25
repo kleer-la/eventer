@@ -17,12 +17,7 @@ module FileSizeChecker
       port = uri.scheme == 'https' ? 443 : 80
       http = Net::HTTP.new(uri.host, port)
 
-      http.use_ssl = (uri.scheme == 'https')
-      if uri.scheme == 'https'
-        http.use_ssl = true
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        http.max_retries = 3 # Add retries
-      end
+      http.use_ssl = (uri.scheme == 'https') # verifies the certificate by default
 
       # Add these lines to match wget's behavior better
       http.keep_alive_timeout = 30

@@ -160,78 +160,12 @@ class EventTypesController < ApplicationController
     @events = @event_type.events.order(date: :desc)
   end
 
-  def load_preview_default(param_values)
-    param_values[:certificate_background_image_url] ||= @event.event_type.kleer_cert_seal_image.presence || ParticipantsHelper::DEFAULT_BACKGROUND_IMAGE
-    param_values[:certificate_city] ||= 'Bogotá'
-    param_values[:certificate_name] ||= 'Camilo Leonardo Padilla Restrepo'
-    param_values[:certificate_date] ||= Date.today.prev_day.to_s
-    param_values[:certificate_finish_date] ||= Date.today.to_s
-    param_values[:certificate_new_version] ||= '1'
-    param_values
-  end
-
   def participants
     @event_type = EventType.find(params[:id])
     @participants = @event_type.events.includes(:participants).flat_map(&:participants)
     respond_to do |format|
       format.html { render }
       format.csv { send_data Participant.to_csv(@participants), filename: 'participants.csv' }
-    end
-  end
-
-  def certificate_preview
-    @event = Event.new
-    @event.event_type = EventType.find(params[:id])
-    @participant = Participant.new
-    @participant.event = @event
-    @certificate_values = load_preview_default(params.permit!.to_h[:event_type] || {})
-
-    @page_size = 'LETTER'
-
-    @certificate_store = FileStoreService.create_s3
-
-    @images = @certificate_store.background_list
-
-    respond_to do |format|
-      format.html do
-        @trainers = Trainer.where.not(signature_image: [nil, ''])
-
-        render :certificate_preview
-      end
-      format.pdf do
-        @event.trainer = Trainer.find(@certificate_values[:certificate_trainer1].to_i)
-        if @certificate_values[:certificate_trainer2].to_i.positive?
-          @event.trainer2 = Trainer.find(@certificate_values[:certificate_trainer2].to_i)
-        end
-        @event.country = Country.find(@certificate_values[:certificate_country].to_i)
-        @event.date = Date.strptime @certificate_values[:certificate_date]
-        @event.finish_date = Date.strptime @certificate_values[:certificate_finish_date]
-        @event.mode = Country.find(@certificate_values[:certificate_country].to_i).iso_code == 'OL' ? 'ol' : 'cl'
-        @event.event_type.new_version = (@certificate_values[:certificate_new_version] == '1')
-        @event.event_type.kleer_cert_seal_image = if @event.event_type.new_version
-                                                    @certificate_values[:certificate_background_image_url]
-                                                  else
-                                                    @certificate_values[:certificate_background_image_url].sub(
-                                                      /-(A4|LETTER)/, ''
-                                                    )
-                                                  end
-        @participant.attend!
-        if @certificate_values[:certificate_kleer_cert] == '1'
-          @event.event_type.is_kleer_certification = true
-          @participant.certify!
-        end
-        @event.city = @certificate_values[:certificate_city]
-        @participant.fname = @certificate_values[:certificate_name]
-        begin
-          I18n.with_locale(@participant.event.event_type.lang) do
-            @certificate = ParticipantsHelper::Certificate.new(@participant)
-            render
-          end
-        rescue Aws::Errors::MissingCredentialsError
-          flash.now[:error] = 'Missing AWS credentials - call support'
-          return redirect_to event_types_url
-        end
-      end
     end
   end
 

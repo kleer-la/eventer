@@ -1,28 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Mass Assignment",
-      "warning_code": 70,
-      "fingerprint": "d6cd20524839fc99ae33e7f24dd814c7631ed6dcf5f4491df1679f3dcb647d25",
-      "check_name": "MassAssignment",
-      "message": "Specify exact keys allowed for mass assignment instead of using `permit!` which allows any keys",
-      "file": "app/controllers/api/v3/participants_controller.rb",
-      "line": 81,
-      "confidence": "Medium",
-      "note": "Pre-existing (found 2026-10-25). To fix in #237: the interest action is marked unused; remove it or permit explicit keys."
-    },
-    {
-      "warning_type": "Mass Assignment",
-      "warning_code": 70,
-      "fingerprint": "e6eb8fc149fce6faac6f821b18f0d548d5c3e2527c906c29147b70a933a9fe0f",
-      "check_name": "MassAssignment",
-      "message": "Specify exact keys allowed for mass assignment instead of using `permit!` which allows any keys",
-      "file": "app/controllers/event_types_controller.rb",
-      "line": 187,
-      "confidence": "Medium",
-      "note": "Pre-existing (found 2026-10-25). To fix in #237: certificate_preview only reads params[:event_type]; permit those keys."
-    },
-    {
       "warning_type": "Format Validation",
       "warning_code": 30,
       "fingerprint": "3bd743b0c9712ceef232c360daef94a79fed59912eca60c9205b21811ffe9572",
@@ -32,17 +10,6 @@
       "line": 27,
       "confidence": "High",
       "note": "By design: redirect_url must start with / or http(s)://, a prefix check (which also rules out javascript:). website17 answers 301 with it."
-    },
-    {
-      "warning_type": "SSL Verification Bypass",
-      "warning_code": 71,
-      "fingerprint": "9c884fd8878bc0e7eb8c157b76a03eec2f9837da7f42d0df500f2afa64d98ee8",
-      "check_name": "SSLVerify",
-      "message": "SSL certificate verification was bypassed",
-      "file": "app/models/concerns/file_size_checker.rb",
-      "line": 23,
-      "confidence": "High",
-      "note": "Pre-existing (found 2026-10-25). To fix in #237: verify certificates on the HEAD request that reads a file's size."
     },
     {
       "warning_type": "Format Validation",
@@ -64,18 +31,7 @@
       "file": "app/views/participants/confirm.html.haml",
       "line": 17,
       "confidence": "Weak",
-      "note": "Weak confidence. To review in #237: the href is the participant's Xero online invoice URL."
-    },
-    {
-      "warning_type": "Remote Code Execution",
-      "warning_code": 110,
-      "fingerprint": "9ae68e59cfee3e5256c0540dadfeb74e6b72c91997fdb60411063a6e8518144a",
-      "check_name": "CookieSerialization",
-      "message": "Use of unsafe cookie serialization strategy `:hybrid` might lead to remote code execution",
-      "file": "config/initializers/cookies_serializer.rb",
-      "line": 7,
-      "confidence": "Medium",
-      "note": "Pre-existing (found 2026-10-25). To fix in #237: move from :hybrid to :json; the Marshal-to-JSON migration window is long over."
+      "note": "False positive: participant_params does not permit online_invoice_url, so a visitor cannot set it; the value is the Xero invoice link stored server-side."
     }
   ],
   "brakeman_version": "8.0.4"

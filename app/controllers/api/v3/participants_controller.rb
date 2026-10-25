@@ -78,7 +78,6 @@ module Api
 
       # TODO: remove - not used
       def interest
-        params.permit!
         event_id = params[:event_id].to_i
         event_type_id = params[:event_type_id].to_i
         # p params.inspect
