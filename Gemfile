@@ -22,8 +22,7 @@ group :development, :test do
   gem 'pdf-inspector', require: 'pdf/inspector'
   gem 'rspec-mocks'
   gem 'rspec-rails'
-  gem 'simplecov'
-  gem 'simplecov-lcov', '~> 0.8.0'
+  gem 'simplecov', '~> 1.3'
   gem 'sqlite3', '~> 2.0'
 end
 
