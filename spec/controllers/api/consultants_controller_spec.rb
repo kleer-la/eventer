@@ -131,7 +131,7 @@ RSpec.describe Api::ConsultantsController, type: :controller do
         end: '2026-05-20'
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -209,7 +209,7 @@ RSpec.describe Api::ConsultantsController, type: :controller do
     it 'returns 422 on bad secret' do
       post :create_booking, params: valid_params.merge(secret: 'wrong-secret')
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(Booking.count).to eq(0)
     end
 
@@ -236,7 +236,7 @@ RSpec.describe Api::ConsultantsController, type: :controller do
 
       post :create_booking, params: valid_params
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       json = JSON.parse(response.body)
       expect(json['error']).to include('no longer available')
     end
@@ -244,7 +244,7 @@ RSpec.describe Api::ConsultantsController, type: :controller do
     it 'returns 422 when required fields are missing' do
       post :create_booking, params: valid_params.except(:visitor_name)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'stores qualifying_answers as JSON' do

@@ -32,7 +32,7 @@ RSpec.describe Api::TtsController, type: :controller do
       authorize!
       post :create, params: {}
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(JSON.parse(response.body)['error']).to be_present
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Api::TtsController, type: :controller do
         it "answers 422, not 500, for #{name}, and spends no quota" do
           expect { post :create, params: params }.not_to change(TtsUsage, :count)
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(JSON.parse(response.body)['error']).to be_present
         end
       end
@@ -101,7 +101,7 @@ RSpec.describe Api::TtsController, type: :controller do
       it 'answers 422 with the error message' do
         post :create, params: { beats: [{ narration: 'Hola' }] }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)['error']).to eq 'narration too long'
       end
     end

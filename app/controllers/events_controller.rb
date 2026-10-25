@@ -97,7 +97,7 @@ class EventsController < ApplicationController
   def create_error(format, errors, action)
     flash.now[:error] = t('flash.failure')
     format.html { render action: }
-    format.json { render json: errors, status: :unprocessable_entity }
+    format.json { render json: errors, status: :unprocessable_content }
   end
 
   # PUT /events/1

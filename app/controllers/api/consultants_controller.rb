@@ -27,18 +27,18 @@ module Api
 
       if (end_date - start_date).to_i > GoogleCalendarService::MAX_DAYS_AHEAD
         return render json: { error: "Range cannot exceed #{GoogleCalendarService::MAX_DAYS_AHEAD} days" },
-                      status: :unprocessable_entity
+                      status: :unprocessable_content
       end
 
       timezone = params[:timezone] || 'America/Argentina/Buenos_Aires'
       service = GoogleCalendarService.new(trainer)
       refresh_result = service.refresh_token_if_needed!
       if refresh_result&.failure?
-        return render json: { error: refresh_result.message }, status: :unprocessable_entity
+        return render json: { error: refresh_result.message }, status: :unprocessable_content
       end
 
       result = service.compute_available_slots(start_date, end_date, timezone)
-      return render(json: { error: result.message }, status: :unprocessable_entity) if result.failure?
+      return render(json: { error: result.message }, status: :unprocessable_content) if result.failure?
 
       render json: {
         consultant_id: trainer.id,
@@ -55,14 +55,14 @@ module Api
     def create_booking
       local_secret = ENV['CONTACT_US_SECRET'].to_s
       if local_secret.present? && local_secret != params[:secret]
-        return render json: { error: 'Authentication failed' }, status: :unprocessable_entity
+        return render json: { error: 'Authentication failed' }, status: :unprocessable_content
       end
 
       trainer = Trainer.active.booking_enabled.find(params[:id])
       service = GoogleCalendarService.new(trainer)
       refresh_result = service.refresh_token_if_needed!
       if refresh_result&.failure?
-        return render json: { error: refresh_result.message }, status: :unprocessable_entity
+        return render json: { error: refresh_result.message }, status: :unprocessable_content
       end
 
       starts_at = Time.parse(params[:start])
@@ -71,11 +71,11 @@ module Api
       # Re-check availability via FreeBusy
       freebusy_result = service.fetch_freebusy(starts_at, ends_at)
       if freebusy_result.failure?
-        return render json: { error: freebusy_result.message }, status: :unprocessable_entity
+        return render json: { error: freebusy_result.message }, status: :unprocessable_content
       end
 
       if freebusy_result.data[:busy_periods].any?
-        return render json: { error: 'Slot is no longer available' }, status: :unprocessable_entity
+        return render json: { error: 'Slot is no longer available' }, status: :unprocessable_content
       end
 
       # Create Google Calendar event
@@ -93,12 +93,12 @@ module Api
       )
 
       unless booking.valid?
-        return render json: { error: booking.errors.full_messages.join(', ') }, status: :unprocessable_entity
+        return render json: { error: booking.errors.full_messages.join(', ') }, status: :unprocessable_content
       end
 
       event_result = service.create_event(booking, context: params[:visitor_context], language: params[:language])
       if event_result.failure?
-        return render json: { error: event_result.message }, status: :unprocessable_entity
+        return render json: { error: event_result.message }, status: :unprocessable_content
       end
 
       booking.google_event_id = event_result.data[:google_event_id]

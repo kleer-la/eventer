@@ -200,7 +200,7 @@ class ParticipantsController < ApplicationController
         format.json { render json: @participant, status: :created, location: @participant }
       else
         format.html { render action: 'new', layout: 'empty_layout' }
-        format.json { render json: @participant.errors, status: :unprocessable_entity }
+        format.json { render json: @participant.errors, status: :unprocessable_content }
       end
     end
   end
@@ -220,7 +220,7 @@ class ParticipantsController < ApplicationController
         end
       else
         format.html { render action: 'edit' }
-        # format.json { render json: @participant.errors, status: :unprocessable_entity }
+        # format.json { render json: @participant.errors, status: :unprocessable_content }
       end
       format.json { render json: @participant }
     end

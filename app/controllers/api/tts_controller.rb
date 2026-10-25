@@ -25,7 +25,7 @@ module Api
       render json: { error: e.message }, status: e.status
     end
     rescue_from ActionController::ParameterMissing, TtsBriefingService::Error do |e|
-      render json: { error: e.message }, status: :unprocessable_entity
+      render json: { error: e.message }, status: :unprocessable_content
     end
     rescue_from Timeout::Error do
       render json: { error: 'Synthesis took too long' }, status: :gateway_timeout

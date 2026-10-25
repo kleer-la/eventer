@@ -1,4 +1,5 @@
-@import 'activeadmin_addons/all';
+@use 'sass:meta';
+@use 'activeadmin_addons/all';
 
 // Sass variable overrides must be declared before loading up Active Admin's styles.
 //
@@ -9,7 +10,9 @@
 // For example, to change the sidebar width:
 // $sidebar-width: 242px;
 
-// Active Admin's got SASS!
+// Active Admin's got SASS! These two stay @import while we are on ActiveAdmin 3:
+// its base uses the mixins without loading them, so they must be global.
+// ActiveAdmin 4 drops Sass altogether.
 @import "active_admin/mixins";
 @import "active_admin/base";
 
@@ -30,7 +33,8 @@
 // $skinTextTable: #7f8c8d;
 // $skinHeaderBck: #1e2a33;
 
-@import "active_admin_kleer";
+// After ActiveAdmin, so our rules win; load-css emits it right here.
+@include meta.load-css("active_admin_kleer");
 
 .select2-selection__clear {
   color: #f00;

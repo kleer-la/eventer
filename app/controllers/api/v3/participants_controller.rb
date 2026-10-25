@@ -66,7 +66,7 @@ module Api
           else
             render json: {
               errors: participant.errors.full_messages
-            }, status: :unprocessable_entity
+            }, status: :unprocessable_content
           end
         end
       rescue ActiveRecord::RecordNotFound
