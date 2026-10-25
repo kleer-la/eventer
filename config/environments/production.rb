@@ -24,6 +24,10 @@ Rails.application.configure do
 
   # Serve static files from `public/` since Puma is the only server (no Nginx).
   config.public_file_server.enabled = true
+  # Precompiled assets carry a digest in their name, so they can be cached for
+  # a year. This also covers the few undigested files in public/: rename one
+  # when it changes, or browsers keep the old copy.
+  config.public_file_server.headers = { 'cache-control' => "public, max-age=#{1.year.to_i}" }
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
