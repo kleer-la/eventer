@@ -88,7 +88,7 @@ gem 'friendly_id' # slug for blog Articles
 # Xero API
 gem 'jwt'
 gem 'sprockets-rails'
-gem 'xero-ruby', require: false # required by XeroClientService
+gem 'xero-ruby', '~> 18.2', require: false # required by XeroClientService
 
 gem 'activeadmin'
 gem 'activeadmin_addons'
