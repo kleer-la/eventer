@@ -37,9 +37,6 @@ module Eventer
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.short_url_base = ENV['SHORT_URL_BASE'] || 'https://kleer.la'
-
-    if defined?(RubyVM::YJIT.enable)
-      RubyVM::YJIT.enable
-    end
+    # YJIT: Rails turns it on after boot (config.yjit, on by default since 7.2).
   end
 end
