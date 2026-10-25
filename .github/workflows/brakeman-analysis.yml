@@ -1,44 +1,35 @@
-# This workflow integrates Brakeman with GitHub's Code Scanning feature
-# Brakeman is a static analysis security vulnerability scanner for Ruby on Rails applications
-
+# Brakeman: static security analysis for Rails. Fails on any warning that is
+# not in config/brakeman.ignore, and uploads the results to GitHub code scanning.
+# Uses the Brakeman version in Gemfile.lock, so CI and `bundle exec brakeman`
+# report the same thing (#237).
 name: Brakeman Scan
 
-# This section configures the trigger for the workflow. Feel free to customize depending on your convention
 on:
   push:
-    branches: [ master ]
- # pull_request:
- #   branches: [ master ]
+    branches: ['*']
+  workflow_dispatch:
 
 jobs:
   brakeman-scan:
     name: Brakeman Scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      security-events: write
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    # Customize the ruby version depending on your needs
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.3'
-
-    - name: Setup Brakeman
-      env:
-        BRAKEMAN_VERSION: '5.4' # SARIF support is provided in Brakeman version 4.10+
-      run: |
-        gem install brakeman --version $BRAKEMAN_VERSION
-
-    # Execute Brakeman CLI and generate a SARIF output with the security issues identified during the analysis
-    - name: Scan
-      continue-on-error: true
-      run: |
-        brakeman -f sarif -o output.sarif.json .
-
-    # Upload the SARIF file generated in the previous step
-    - name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: output.sarif.json
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 4.0.9
+      # Brakeman parses the source and needs none of the app's gems (rmagick
+      # needs ImageMagick headers); same version as Gemfile.lock.
+      - name: Install Brakeman
+        run: gem install brakeman --no-document -v "$(grep -oP '^    brakeman \(\K[^)]+' Gemfile.lock)"
+      - name: Scan
+        run: brakeman --no-pager -o /dev/stdout -o brakeman.sarif
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: brakeman.sarif
