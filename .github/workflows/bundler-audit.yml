@@ -18,6 +18,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 4.0.9
-          bundler-cache: true
+      # Only the lockfile is audited, so the app's gems (rmagick needs
+      # ImageMagick headers) are not installed; same version as Gemfile.lock.
+      - name: Install bundler-audit
+        run: gem install bundler-audit --no-document -v "$(grep -oP '^    bundler-audit \(\K[^)]+' Gemfile.lock)"
       - name: Check gems against the advisory database
-        run: bundle exec bundle-audit check --update
+        run: bundle-audit check --update
