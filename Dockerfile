@@ -22,11 +22,13 @@ RUN bundle config set --local without 'development test' && \
 
 COPY . .
 
-# Asset precompilation fails without a DB (ActiveAdmin loads models via routes).
-# Assets compile at runtime via config.assets.compile = true in production.rb.
-RUN SECRET_KEY_BASE=dummy RAILS_ENV=production \
+# Precompile here so a broken stylesheet fails the build instead of the first
+# admin request. There is no database during the build: ASSETS_PRECOMPILE skips
+# the ActiveAdmin routes (config/routes.rb), which read model columns.
+RUN ASSETS_PRECOMPILE=1 SECRET_KEY_BASE=dummy RAILS_ENV=production \
     DATABASE_URL="postgresql://dummy:dummy@localhost/dummy" \
-    bundle exec rails assets:precompile || true
+    bundle exec rails assets:precompile && \
+    rm -rf tmp/cache/assets
 
 # Runtime stage
 FROM ruby:4.0.9-slim

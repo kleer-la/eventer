@@ -3,7 +3,9 @@
 Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  ActiveAdmin.routes(self)
+  # The Docker build precompiles assets with no database, and ActiveAdmin's
+  # resources read model columns when their routes are drawn.
+  ActiveAdmin.routes(self) unless ENV['ASSETS_PRECOMPILE']
 
   # OAuth 2.1 for MCP clients: Doorkeeper + dynamic client registration + metadata
   use_doorkeeper do
