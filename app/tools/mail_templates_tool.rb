@@ -85,6 +85,8 @@ class MailTemplatesTool < AuthenticatedTool
   def get(id, resource_slug:)
     template = find(id)
     contact = sample_contact(resource_slug)
+    return error("No resource with slug #{resource_slug.inspect}") unless contact
+
     template.slice(:id, :identifier, :trigger_type, :lang, :resource_slug, :subject, :to, :cc, :content, :active,
                    :delivery_schedule, :updated_at)
             .merge(rendered: { subject: template.render_field(:subject, contact),
@@ -119,5 +121,7 @@ class MailTemplatesTool < AuthenticatedTool
                        'resource_getit_en' => resource.getit_en, 'page' => "/es/recursos/#{resource.slug}")
     end
     Contact.new(trigger_type: :download_form, email: form_data['email'], form_data: form_data)
+  rescue ActiveRecord::RecordNotFound # unknown resource slug; get says so instead of blaming the template
+    nil
   end
 end

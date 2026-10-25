@@ -84,11 +84,9 @@ describe MailTemplatesTool do
       expect(run(operation: 'get')['errors']).to eq(['No mail template with identifier or id nil'])
     end
 
-    # Resource.find_by_any_slug raises RecordNotFound for an unknown slug, and
-    # the tool's rescue reports it as the template not existing.
+    # Resource.find_by_any_slug raises RecordNotFound for an unknown slug; it
+    # used to fall into the tool's rescue and blame the template.
     it 'names the resource, not the template, when the resource slug is unknown' do
-      pending 'an unknown resource_slug is reported as "No mail template with identifier or id ..."'
-
       expect(run(operation: 'get', id: 'descarga_en', resource_slug: 'no-existe')['errors'].join)
         .to include('no-existe')
     end

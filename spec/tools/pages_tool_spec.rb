@@ -117,11 +117,9 @@ describe PagesTool do
       expect(Page.count).to eq(0)
     end
 
-    # The tool's description promises it ("a 'flagship' with no sections
-    # renders empty, and the preview says so"); PageWriteService has no such warning.
+    # The tool's description promises it: "a 'flagship' with no sections
+    # renders empty, and the preview says so".
     it 'warns that a flagship without sections renders empty' do
-      pending 'PageWriteService does not warn about an empty flagship, though the tool description says it does'
-
       expect(run(**fields)['warnings'].join).to match(/section/i)
     end
   end

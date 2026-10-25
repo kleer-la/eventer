@@ -10,7 +10,14 @@ class PageWriteService < ContentWriteService
   private
 
   def model_warnings
-    [template_warning, noindex_warning].compact
+    [template_warning, noindex_warning, empty_flagship_warning].compact
+  end
+
+  # Pages are created without sections, and a flagship has nothing else to show.
+  def empty_flagship_warning
+    return unless @record.new_record? && @record.flagship?
+
+    'A flagship renders empty until it has sections: add them with operation=create_section.'
   end
 
   def template_warning
