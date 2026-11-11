@@ -283,7 +283,7 @@ ActiveAdmin.register EventType do
     f.inputs 'Recommended Contents' do
       f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
         rc.input :target_type, as: :select,
-                               collection: %w[Article EventType Service Resource],
+                               collection: Recommendable::TARGET_TYPES,
                                input_html: { class: 'target-type-select' }
         rc.input :target_id, label: 'Target', as: :select,
                              collection: [],
@@ -298,12 +298,7 @@ ActiveAdmin.register EventType do
     end
     f.actions
 
-    targets = {
-      'Article' => Article.all.order(:title).pluck(:title, :id),
-      'EventType' => EventType.included_in_catalog.order(:name).map { |et| [et.unique_name, et.id] },
-      'Service' => Service.all.order(:name).pluck(:name, :id),
-      'Resource' => Resource.all.order(:title_es).pluck(:title_es, :id)
-    }
+    targets = EventType.recommended_content_targets
     script do
       raw <<~JS
         $(document).ready(function() {

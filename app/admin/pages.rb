@@ -122,7 +122,7 @@ ActiveAdmin.register Page do
     f.inputs 'Recommended Contents' do
       f.has_many :recommended_contents, allow_destroy: true, new_record: true do |rc|
         rc.input :target_type, as: :select,
-                               collection: %w[Article EventType Service Resource],
+                               collection: Recommendable::TARGET_TYPES,
                                input_html: { class: 'target-type-select' }
         rc.input :target_id, label: 'Target', as: :select,
                              collection: [],

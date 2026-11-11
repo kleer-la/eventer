@@ -3,6 +3,9 @@
 module Recommendable
   extend ActiveSupport::Concern
 
+  # What a recommendation can point at; the admin forms offer exactly these.
+  TARGET_TYPES = %w[Article EventType Service ServiceArea Resource Page].freeze
+
   included do
     has_many :recommended_contents, as: :source
     has_many :recommended_items, lambda {
