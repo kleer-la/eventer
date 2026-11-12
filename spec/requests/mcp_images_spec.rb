@@ -386,6 +386,17 @@ RSpec.describe 'MCP image tools', type: :request do
       expect(FileStoreService.current).not_to have_received(:delete)
     end
 
+    # QA shares the image bucket with production but not its content: an image
+    # unused in QA may still be on a production page.
+    it 'refuses on QA, where it cannot see what production uses' do
+      stub_const('ENV', ENV.to_h.merge('PRODUCTION_API_URL' => 'https://eventos.kleer.la'))
+
+      result = call_tool('images', { operation: 'delete', image: 'news/vieja portada.jpg', confirm: true })
+
+      expect(result['errors'].join).to include('production')
+      expect(FileStoreService.current).not_to have_received(:delete)
+    end
+
     it 'needs to know which image, and only touches the image bucket' do
       expect(call_tool('images', { operation: 'delete' })['errors'].join).to include('image is required')
       expect(call_tool('images', { operation: 'delete', image: 'https://otro.example.com/x.png' })['errors'].join)

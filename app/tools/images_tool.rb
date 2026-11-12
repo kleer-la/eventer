@@ -6,6 +6,10 @@ class ImagesTool < AuthenticatedTool
   requires_permission :read, :images
 
   OPERATIONS = %w[list find_usage upload upload_slot delete].freeze
+  # QA (the environment that copies from production) stores its images in the
+  # production bucket, but only sees its own content.
+  SHARED_BUCKET = 'Not on QA: it shares the image bucket with production, and an image unused here may be ' \
+                  'on a production page. Delete it from production, where its usage can be checked.'
   DEFAULT_LIMIT = 50
   MAX_LIMIT = 200
 
@@ -41,7 +45,8 @@ class ImagesTool < AuthenticatedTool
     operation=delete: removes the stored `image` (file name or URL). It is
     refused while anything uses it — the answer says where, as find_usage
     would. Two steps: confirm=false (the default) says what would go;
-    confirm=true deletes it. A WebP twin is a file of its own.
+    confirm=true deletes it. A WebP twin is a file of its own. Production
+    only: QA shares the bucket but not the content that uses it.
   MD
 
   arguments do
@@ -107,14 +112,21 @@ class ImagesTool < AuthenticatedTool
 
   def delete(image: nil, confirm: false, **)
     return unauthorized(:manage, :images) unless ability.can?(:manage, :images)
-    return error('image is required: the public URL or the file name') if image.blank?
 
     key = FileStoreService.image_key(image)
-    return error("#{image} is not in the image bucket") if key.blank? || key.end_with?('/')
-    return error("#{key} does not exist, so there is nothing to delete") unless FileStoreService.current.exists?(key)
+    refusal = delete_refusal(image, key)
+    return error(refusal) if refusal
 
     usage = usage_of(key, image)
     usage.any? ? in_use(key, usage) : deletion(key, confirm)
+  end
+
+  def delete_refusal(image, key)
+    if ArticleProductionCopy.source then SHARED_BUCKET
+    elsif image.blank? then 'image is required: the public URL or the file name'
+    elsif key.blank? || key.end_with?('/') then "#{image} is not in the image bucket"
+    elsif !FileStoreService.current.exists?(key) then "#{key} does not exist, so there is nothing to delete"
+    end
   end
 
   def in_use(key, usage)
