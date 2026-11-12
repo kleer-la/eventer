@@ -16,20 +16,26 @@ class ImageImportService
   MAX_REDIRECTS = 3
   EXTENSIONS = { 'image/gif' => '.gif', 'image/png' => '.png', 'image/jpeg' => '.jpg',
                  'image/webp' => '.webp', 'image/svg+xml' => '.svg' }.freeze
+  # Other extensions that name the same type: an existing photo.jpeg keeps its
+  # name instead of turning into photo.jpg next to it.
+  SAME_TYPE = { 'image/jpeg' => %w[.jpeg] }.freeze
+  SAFE_CHARS = /[^a-zA-Z0-9._ -]/
 
   class FetchError < StandardError; end
 
   CONVERTIBLE = %w[image/png image/jpeg].freeze
-
-  def initialize(url:, path: nil, overwrite: false, convert_to_webp: true)
+  def initialize(url:, path: nil, overwrite: false, convert_to_webp: true, max_width: nil)
     @url = url.to_s.strip
     @path = path
     @overwrite = overwrite
     @convert_to_webp = convert_to_webp
+    @max_width = max_width
   end
 
   def call(confirm: false)
     body, content_type = fetch
+    body = ImageSizing.shrink(body, content_type, @max_width)
+    @size = ImageSizing.dimensions(body, content_type)
     file_name = target_name(content_type)
     replacing = store.exists?(file_name)
 
@@ -41,7 +47,7 @@ class ImageImportService
     return preview(file_name, content_type, body.bytesize, replacing) unless confirm
 
     { status: 'saved', file_name: file_name, url: upload(body, file_name),
-      bytes: body.bytesize, content_type: content_type, replaced: replacing }
+      bytes: body.bytesize, content_type: content_type, replaced: replacing, **@size }
       .merge(webp_twin(body, file_name, content_type))
   rescue FetchError => e
     { status: 'error', errors: [e.message] }
@@ -55,11 +61,15 @@ class ImageImportService
 
   def preview(file_name, content_type, bytes, replacing)
     warnings = []
-    warnings << "#{file_name} already exists and would be replaced." if replacing
+    if replacing
+      warnings << "#{file_name} already exists and would be replaced. Pages that load it through the CDN " \
+                  '(d3vnsn21cv5bcd.cloudfront.net) may show the previous version for up to 24 h.'
+    end
     if content_type == 'image/gif'
       warnings << 'Animated GIFs are stored as-is: no WebP conversion, so the file stays heavy.'
     end
-    { status: 'preview', file_name: file_name, content_type: content_type, bytes: bytes,
+    warnings.concat(ImageSizing.warnings(bytes, @size[:width], content_type))
+    { status: 'preview', file_name: file_name, content_type: content_type, bytes: bytes, **@size,
       url: FileStoreService.image_url(file_name, 'image'), warnings: warnings,
       also_stores: (webp_name(file_name) if converts?(content_type)),
       note: 'Nothing was stored. Call again with confirm=true to upload it.' }.compact
@@ -107,13 +117,33 @@ class ImageImportService
 
   def store = FileStoreService.current
 
+  # The name comes from `path`, folders included (some images live in one, and
+  # replacing them needs it), or else from the last part of the URL.
   def target_name(content_type)
-    name = @path.presence || File.basename(URI.parse(@url).path.to_s)
-    name = File.basename(name.to_s).gsub(/[^a-zA-Z0-9._ -]/, '-').delete_prefix('.')
+    *folders, name = @path.present? ? path_segments(@path) : [File.basename(URI.parse(@url).path.to_s)]
+    name = name.to_s.gsub(SAFE_CHARS, '-').delete_prefix('.')
     raise FetchError, 'Could not work out a file name; pass path explicitly' if name.blank?
 
+    [*folders, with_extension(name, content_type)].join('/')
+  end
+
+  def with_extension(name, content_type)
     extension = EXTENSIONS[content_type]
-    File.extname(name).downcase == extension ? name : "#{File.basename(name, '.*')}#{extension}"
+    return name if [extension, *SAME_TYPE[content_type]].include?(File.extname(name).downcase)
+
+    "#{File.basename(name, '.*')}#{extension}"
+  end
+
+  # Folders stay inside the image bucket, and out of the staging area.
+  def path_segments(path)
+    segments = path.to_s.strip.split('/', -1)
+    if path.to_s.start_with?('/') || segments.any? { |s| s.blank? || s.start_with?('.') } ||
+       "#{segments.first}/" == IncomingUploads::INCOMING
+      raise FetchError, "#{path.inspect} is not a valid path: use folder/name, without '..', " \
+                        "a leading '/' or the #{IncomingUploads::INCOMING} folder"
+    end
+
+    segments[0...-1].map { |folder| folder.gsub(SAFE_CHARS, '-') } + [segments.last]
   end
 
   def fetch(url = @url, redirects_left = MAX_REDIRECTS)

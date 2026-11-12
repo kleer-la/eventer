@@ -35,6 +35,9 @@ class ImagesTool < AuthenticatedTool
     everywhere at once — check with find_usage first. A PNG or JPEG also gets
     a WebP twin (same name, .webp) unless convert_to_webp=false; GIFs are stored
     as they are, so an animated one keeps its animation and its weight.
+    `path` may include folders (news/foto.png). The preview gives width and
+    height and warns about an image over 300 KB or 1600 px wide: max_width
+    scales a PNG, JPEG or WebP down before it is stored.
   MD
 
   arguments do
@@ -49,6 +52,8 @@ class ImagesTool < AuthenticatedTool
                                                 'omitted. upload_slot: the name of the file (required)')
     optional(:overwrite).filled(:bool).description('upload: true = allow replacing an image with that name')
     optional(:convert_to_webp).filled(:bool).description('upload: also store a WebP twin of a PNG/JPEG (default true)')
+    optional(:max_width).filled(:integer).description('upload: scale a wider PNG, JPEG or WebP down to this ' \
+                                                      'many pixels before storing it (1600 suits any page)')
     optional(:confirm).filled(:bool).description('upload: false (default) = check only; true = store it')
   end
 
@@ -84,18 +89,19 @@ class ImagesTool < AuthenticatedTool
   def find_usage(image: nil, **)
     return error('image is required: the public URL or the file name') if image.blank?
 
-    url = image.start_with?('http') ? image : FileStoreService.image_url(image, 'image')
-    usage = ImageUsageService.find_usage(url)
+    key = FileStoreService.image_key(image)
+    url = key ? FileStoreService.image_url(key, 'image') : image
+    usage = ImageUsageService.find_usage(key ? FileStoreService.image_url_variants(key) : [image])
     { image: url, used: usage.any?, usage: usage,
       models_searched: ImageUsageService.registered_models.map(&:name).compact.sort }.to_json
   end
 
-  def upload(url: nil, path: nil, overwrite: false, convert_to_webp: true, confirm: false, **)
+  def upload(url: nil, path: nil, overwrite: false, convert_to_webp: true, max_width: nil, confirm: false, **)
     return unauthorized(:manage, :images) unless ability.can?(:manage, :images)
     return error('url is required: the public URL of the image to fetch') if url.blank?
 
-    result = ImageImportService.new(url: url, path: path, overwrite: overwrite, convert_to_webp: convert_to_webp)
-                               .call(confirm: confirm)
+    result = ImageImportService.new(url: url, path: path, overwrite: overwrite, convert_to_webp: convert_to_webp,
+                                    max_width: max_width).call(confirm: confirm)
     drop_staging_copy(url) if result[:status] == 'saved'
     result.to_json
   end
@@ -107,7 +113,7 @@ class ImagesTool < AuthenticatedTool
     slot = FileStoreService.current.upload_slot(path)
     { status: 'ready', put_url: slot[:put_url], expires_in_minutes: FileStoreService::SLOT_MINUTES,
       upload_with: "curl -sS --fail -T <local file> '#{slot[:put_url]}'",
-      then: { operation: 'upload', url: slot[:get_url], path: File.basename(path) },
+      then: { operation: 'upload', url: slot[:get_url], path: path },
       note: 'PUT the file to put_url, then call images with the arguments in `then` (confirm=false to check it, ' \
             'then confirm=true to store it).' }.to_json
   end

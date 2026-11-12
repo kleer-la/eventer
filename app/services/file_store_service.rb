@@ -32,8 +32,39 @@ class FileStoreService
     [bucket, folder]
   end
 
+  # Where content has pointed at the image bucket over the years: the bucket's
+  # own host, the CDN in front of it, and the old path-style S3 hosts.
+  IMAGE_HOSTS = %w[kleer-images.s3.sa-east-1.amazonaws.com/ d3vnsn21cv5bcd.cloudfront.net/
+                   s3-sa-east-1.amazonaws.com/kleer-images/ s3.sa-east-1.amazonaws.com/kleer-images/
+                   s3.amazonaws.com/kleer-images/].freeze
+
+  # The stored name (key) of an image given its name or any of its URLs; nil
+  # for a URL somewhere else.
+  def self.image_key(url_or_name)
+    value = url_or_name.to_s.strip
+    return value unless value.match?(%r{\Ahttps?://})
+
+    rest = value.sub(%r{\Ahttps?://}, '').split(/[?#]/).first.to_s
+    host = IMAGE_HOSTS.find { |prefix| rest.start_with?(prefix) }
+    URI.decode_www_form_component(rest.delete_prefix(host)) if host
+  end
+
+  def self.encoded_key(key, encoder = URI.method(:encode_www_form_component))
+    key.to_s.split('/').map { |part| encoder.call(part) }.join('/')
+  end
+
+  # Every URL content may use for the stored image `key`: each host, with or
+  # without https, and a space written as '+', '%20' or as is.
+  def self.image_url_variants(key)
+    paths = [encoded_key(key), encoded_key(key, ERB::Util.method(:url_encode)),
+             URI.encode_www_form_component(key), key].uniq
+    paths.product(IMAGE_HOSTS, %w[https http]).map { |path, host, scheme| "#{scheme}://#{host}#{path}" }
+  end
+
   def self.image_url(image_name, image_type)
-    return "https://kleer-images.s3.sa-east-1.amazonaws.com/#{URI.encode_www_form_component(image_name)}" if image_type == 'image'
+    # Folders stay as folders in the URL: an encoded slash (%2F) works on S3 but
+    # not behind the CDN, and reads worse in content.
+    return "https://#{IMAGE_HOSTS.first}#{encoded_key(image_name)}" if image_type == 'image'
 
     bucket = 'Keventer'
     folder = {

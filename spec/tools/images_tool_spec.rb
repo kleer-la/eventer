@@ -95,16 +95,17 @@ describe ImagesTool do
 
       expect(run(operation: 'upload', url: source)).to eq('status' => 'preview', 'file_name' => 'foto.png')
       expect(ImageImportService).to have_received(:new)
-        .with(url: source, path: nil, overwrite: false, convert_to_webp: true)
+        .with(url: source, path: nil, overwrite: false, convert_to_webp: true, max_width: nil)
     end
 
-    it 'passes path, overwrite, convert_to_webp and confirm through' do
+    it 'passes path, overwrite, convert_to_webp, max_width and confirm through' do
       allow(import).to receive(:call).with(confirm: true).and_return(status: 'saved', url: "#{bucket}/x.png")
 
-      run(operation: 'upload', url: source, path: 'x.png', overwrite: true, convert_to_webp: false, confirm: true)
+      run(operation: 'upload', url: source, path: 'x.png', overwrite: true, convert_to_webp: false, max_width: 1600,
+          confirm: true)
 
       expect(ImageImportService).to have_received(:new)
-        .with(url: source, path: 'x.png', overwrite: true, convert_to_webp: false)
+        .with(url: source, path: 'x.png', overwrite: true, convert_to_webp: false, max_width: 1600)
     end
 
     it 'drops the staging copy once a file put through upload_slot is stored, and only then' do
@@ -148,7 +149,7 @@ describe ImagesTool do
       expect(result).to include('status' => 'ready', 'expires_in_minutes' => 15)
       expect(result['put_url']).to match(%r{\A#{bucket}/incoming/[\w-]+/portada\.png\?.*put\z})
       expect(result['upload_with']).to eq("curl -sS --fail -T <local file> '#{result['put_url']}'")
-      expect(result['then']).to include('operation' => 'upload', 'path' => 'portada.png')
+      expect(result['then']).to include('operation' => 'upload', 'path' => 'fotos/portada.png')
       expect(result['then']['url']).to match(%r{\A#{bucket}/incoming/[\w-]+/portada\.png\?.*get\z})
     end
 

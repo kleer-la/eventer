@@ -72,6 +72,32 @@ RSpec.describe 'MCP image tools', type: :request do
     it 'says so when nobody uses it' do
       expect(call_tool('images', { operation: 'find_usage', image: 'huerfana.png' })['used']).to be(false)
     end
+
+    # Content written over the years points at the same stored file in several
+    # ways: the CDN host, the old path-style S3 host, a folder, and '+', '%20'
+    # or a plain space for a space. Missing one made an image in use look unused.
+    it 'finds an image however its URL was written' do
+      cdn = create(:article, title: 'CDN', cover: 'https://d3vnsn21cv5bcd.cloudfront.net/que+mejorar.webp')
+      spaced = create(:article, title: 'Espacio', body: '![x](https://kleer-images.s3.sa-east-1.amazonaws.com/que%20mejorar.webp)')
+      old = create(:article, title: 'Viejo', cover: 'https://s3-sa-east-1.amazonaws.com/kleer-images/Kleer-casos-sura1.png')
+      news = create(:news, img: 'https://kleer-images.s3.sa-east-1.amazonaws.com/news/leo-agudelo.png')
+
+      found = ->(image) { call_tool('images', { operation: 'find_usage', image: image })['usage'].to_s }
+
+      expect(found.call('que mejorar.webp')).to include(cdn.id.to_s, spaced.id.to_s)
+      expect(found.call('https://kleer-images.s3.sa-east-1.amazonaws.com/que+mejorar.webp')).to include(cdn.id.to_s)
+      expect(found.call('Kleer-casos-sura1.png')).to include(old.id.to_s)
+      expect(found.call('https://kleer-images.s3.sa-east-1.amazonaws.com/news%2Fleo-agudelo.png'))
+        .to include(news.id.to_s)
+      expect(call_tool('images', { operation: 'find_usage', image: 'news/leo-agudelo.png' })['image'])
+        .to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/news/leo-agudelo.png')
+    end
+
+    it 'does not take another file that only shares the end of the name' do
+      create(:article, title: 'Otra', cover: 'https://kleer-images.s3.sa-east-1.amazonaws.com/mi-dol.png')
+
+      expect(call_tool('images', { operation: 'find_usage', image: 'dol.png' })['used']).to be(false)
+    end
   end
 
   describe 'upload_image_from_url' do
@@ -80,7 +106,7 @@ RSpec.describe 'MCP image tools', type: :request do
     before do
       # The null store answers exists? => true for anything not named here
       FileStoreService.create_null(exists: { 'animado.gif' => false, 'animado.png' => false,
-                                             'demo del producto.gif' => false, 'ya-esta.gif' => true })
+                                             'blog/demo del producto.gif' => false, 'ya-esta.gif' => true })
       allow(Resolv).to receive(:getaddresses).and_call_original
       allow(Resolv).to receive(:getaddresses).with('images.example.com').and_return(['93.184.216.34'])
       stub_request(:get, source).to_return(body: "GIF89a\x01\x00\x01\x00 bytes",
@@ -142,9 +168,44 @@ RSpec.describe 'MCP image tools', type: :request do
       end
     end
 
-    it 'takes the stored name from path when given' do
+    it 'takes the stored name from path when given, folder included' do
       result = call_tool('images', { operation: 'upload', url: source, path: 'blog/demo del producto' })
-      expect(result['file_name']).to eq('demo del producto.gif')
+      expect(result['file_name']).to eq('blog/demo del producto.gif')
+      expect(result['url']).to eq('https://kleer-images.s3.sa-east-1.amazonaws.com/blog/demo+del+producto.gif')
+    end
+
+    # Some stored images live in folders (training/COMCOL/cover.webp, news/...):
+    # dropping the folder stored a new file at the root instead of replacing it.
+    it 'replaces an image inside a folder' do
+      FileStoreService.create_null(exists: { 'training/COMCOL/cover.gif' => true })
+
+      result = call_tool('images', { operation: 'upload', url: source, path: 'training/COMCOL/cover.gif',
+                                     overwrite: true })
+
+      expect(result).to include('status' => 'preview', 'file_name' => 'training/COMCOL/cover.gif')
+      expect(result['warnings'].join).to include('training/COMCOL/cover.gif already exists')
+    end
+
+    it 'refuses a path that climbs out of the bucket or into the staging area' do
+      ['../fuera.gif', 'blog/../../fuera.gif', '/raiz.gif', 'incoming/abc/x.gif'].each do |path|
+        result = call_tool('images', { operation: 'upload', url: source, path: path })
+        expect(result['status']).to eq('error'), path
+        expect(result['errors'].join).to include('path'), path
+      end
+    end
+
+    # The bytes say JPEG either way: renaming .jpeg to .jpg stored a new file
+    # next to the one meant to be replaced.
+    it 'keeps a .jpeg name as it is' do
+      jpeg = "\xFF\xD8\xFF\xE0".b + ('x' * 40)
+      stub_request(:get, source).to_return(body: jpeg)
+      FileStoreService.create_null(exists: { 'portada vieja.jpeg' => true })
+
+      result = call_tool('images', { operation: 'upload', url: source, path: 'portada vieja.jpeg',
+                                     overwrite: true, convert_to_webp: false })
+
+      expect(result).to include('status' => 'preview', 'file_name' => 'portada vieja.jpeg')
+      expect(result['warnings'].join).to include('would be replaced')
     end
 
     it 'refuses to replace an existing name unless told to' do
@@ -154,7 +215,7 @@ RSpec.describe 'MCP image tools', type: :request do
 
       result = call_tool('images', { operation: 'upload', url: source, path: 'ya-esta.gif', overwrite: true })
       expect(result['status']).to eq('preview')
-      expect(result['warnings'].join).to include('would be replaced')
+      expect(result['warnings'].join).to include('would be replaced', 'CDN', '24 h')
     end
 
     it 'trusts the bytes, not the header: a page claiming to be a GIF is refused' do
@@ -171,6 +232,54 @@ RSpec.describe 'MCP image tools', type: :request do
       result = call_tool('images', { operation: 'upload', url: source, path: 'animado' })
       expect(result['content_type']).to eq('image/png')
       expect(result['file_name']).to eq('animado.png')
+    end
+
+    # Pages load slowly with images that are heavier or wider than they are
+    # shown (website17#465: a 2.7 MB PNG on the home page).
+    context 'with a large photo' do
+      let(:source) { 'https://images.example.com/grande.png' }
+      let(:photo) do
+        file = Tempfile.new(['grande', '.png'])
+        MiniMagick.convert do |convert|
+          convert.size('2400x1200')
+          convert << 'plasma:fractal'
+          convert << file.path
+        end
+        File.binread(file.path)
+      end
+
+      before do
+        FileStoreService.create_null(exists: { 'grande.png' => false, 'grande.webp' => false })
+        stub_request(:get, source).to_return(body: photo)
+      end
+
+      it 'says how heavy and wide it is, and how to shrink it' do
+        result = call_tool('images', { operation: 'upload', url: source })
+
+        expect(result).to include('width' => 2400, 'height' => 1200)
+        expect(result['warnings'].join).to include('2400 px wide', 'max_width', 'KB')
+      end
+
+      it 'shrinks it to max_width before storing it' do
+        widths = {}
+        allow(FileStoreService.current).to receive(:upload) do |file, name|
+          widths[name] = MiniMagick::Image.open(file.path).width
+          FileStoreService.image_url(name, 'image')
+        end
+
+        preview = call_tool('images', { operation: 'upload', url: source, max_width: 1600 })
+        expect(preview).to include('width' => 1600, 'height' => 800)
+        expect(preview['bytes']).to be < photo.bytesize
+
+        call_tool('images', { operation: 'upload', url: source, max_width: 1600, confirm: true })
+        expect(widths).to eq('grande.png' => 1600, 'grande.webp' => 1600)
+      end
+
+      it 'leaves a narrower image as it is' do
+        result = call_tool('images', { operation: 'upload', url: source, max_width: 3000 })
+
+        expect(result).to include('width' => 2400, 'bytes' => photo.bytesize)
+      end
     end
 
     it 'refuses a host only the server can reach' do
@@ -203,6 +312,13 @@ RSpec.describe 'MCP image tools', type: :request do
       expect(slot['upload_with']).to include('curl', '-T', slot['put_url'])
       expect(slot['then']).to include('operation' => 'upload', 'path' => 'portada.png')
       expect(slot['then']['url']).to include('/incoming/')
+    end
+
+    it 'keeps the folder for the upload that takes it from there' do
+      slot = call_tool('images', { operation: 'upload_slot', path: 'training/COMCOL/cover.png' })
+
+      expect(slot['then']['path']).to eq('training/COMCOL/cover.png')
+      expect(slot['put_url']).to match(%r{/incoming/[\w-]+/cover\.png\?})
     end
 
     it 'needs a file name' do
