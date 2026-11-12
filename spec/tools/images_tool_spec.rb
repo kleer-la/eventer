@@ -161,7 +161,7 @@ describe ImagesTool do
   it 'names the operations it knows when given another, without calling a private method' do
     result = run(operation: 'drop_staging_copy', url: "#{bucket}/incoming/x/y.png")
 
-    expect(result['errors'].join).to include('list', 'find_usage', 'upload', 'upload_slot')
+    expect(result['errors'].join).to include('list', 'find_usage', 'upload', 'upload_slot', 'delete')
   end
 
   context 'as a user who may only read' do

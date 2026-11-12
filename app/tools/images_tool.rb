@@ -5,7 +5,7 @@ class ImagesTool < AuthenticatedTool
   tool_name 'images'
   requires_permission :read, :images
 
-  OPERATIONS = %w[list find_usage upload upload_slot].freeze
+  OPERATIONS = %w[list find_usage upload upload_slot delete].freeze
   DEFAULT_LIMIT = 50
   MAX_LIMIT = 200
 
@@ -38,15 +38,20 @@ class ImagesTool < AuthenticatedTool
     `path` may include folders (news/foto.png). The preview gives width and
     height and warns about an image over 300 KB or 1600 px wide: max_width
     scales a PNG, JPEG or WebP down before it is stored.
+    operation=delete: removes the stored `image` (file name or URL). It is
+    refused while anything uses it — the answer says where, as find_usage
+    would. Two steps: confirm=false (the default) says what would go;
+    confirm=true deletes it. A WebP twin is a file of its own.
   MD
 
   arguments do
-    optional(:operation).filled(:string).description("'list' (default), 'find_usage', 'upload' or 'upload_slot'")
+    optional(:operation).filled(:string).description("'list' (default), 'find_usage', 'upload', 'upload_slot' " \
+                                                     "or 'delete'")
     optional(:query).filled(:string).description('list: substring matched against the file name')
     optional(:extension).filled(:string).description("list: file extension without the dot, e.g. 'gif' or 'webp'")
     optional(:min_size_kb).filled(:integer).description('list: only images at least this big, in KB')
     optional(:limit).filled(:integer).description("list: how many (default #{DEFAULT_LIMIT}, max #{MAX_LIMIT})")
-    optional(:image).filled(:string).description('find_usage: public URL of the image, or its file name')
+    optional(:image).filled(:string).description('find_usage/delete: public URL of the image, or its file name')
     optional(:url).filled(:string).description('upload: public http/https URL of the image to fetch')
     optional(:path).filled(:string).description('upload: file name to store it under; taken from the URL when ' \
                                                 'omitted. upload_slot: the name of the file (required)')
@@ -54,10 +59,10 @@ class ImagesTool < AuthenticatedTool
     optional(:convert_to_webp).filled(:bool).description('upload: also store a WebP twin of a PNG/JPEG (default true)')
     optional(:max_width).filled(:integer).description('upload: scale a wider PNG, JPEG or WebP down to this ' \
                                                       'many pixels before storing it (1600 suits any page)')
-    optional(:confirm).filled(:bool).description('upload: false (default) = check only; true = store it')
+    optional(:confirm).filled(:bool).description('upload/delete: false (default) = check only; true = do it')
   end
 
-  # The operation is looked up in OPERATIONS before `send`, so only these three
+  # The operation is looked up in OPERATIONS before `send`, so only these
   # methods are reachable from a client.
   def call(operation: 'list', **args)
     return unknown_operation(operation) unless OPERATIONS.include?(operation)
@@ -91,9 +96,39 @@ class ImagesTool < AuthenticatedTool
 
     key = FileStoreService.image_key(image)
     url = key ? FileStoreService.image_url(key, 'image') : image
-    usage = ImageUsageService.find_usage(key ? FileStoreService.image_url_variants(key) : [image])
+    usage = usage_of(key, image)
     { image: url, used: usage.any?, usage: usage,
       models_searched: ImageUsageService.registered_models.map(&:name).compact.sort }.to_json
+  end
+
+  def usage_of(key, image)
+    ImageUsageService.find_usage(key ? FileStoreService.image_url_variants(key) : [image])
+  end
+
+  def delete(image: nil, confirm: false, **)
+    return unauthorized(:manage, :images) unless ability.can?(:manage, :images)
+    return error('image is required: the public URL or the file name') if image.blank?
+
+    key = FileStoreService.image_key(image)
+    return error("#{image} is not in the image bucket") if key.blank? || key.end_with?('/')
+    return error("#{key} does not exist, so there is nothing to delete") unless FileStoreService.current.exists?(key)
+
+    usage = usage_of(key, image)
+    usage.any? ? in_use(key, usage) : deletion(key, confirm)
+  end
+
+  def in_use(key, usage)
+    { status: 'error', usage: usage, errors: ["#{key} is in use; point those at another image first"] }.to_json
+  end
+
+  def deletion(key, confirm)
+    answer = { file_name: key, url: FileStoreService.image_url(key, 'image') }
+    unless confirm
+      return answer.merge(status: 'preview', note: 'Nothing was deleted. Call again with confirm=true.').to_json
+    end
+
+    FileStoreService.current.delete(key)
+    answer.merge(status: 'deleted', note: 'The CDN may keep serving it for up to 24 h.').to_json
   end
 
   def upload(url: nil, path: nil, overwrite: false, convert_to_webp: true, max_width: nil, confirm: false, **)

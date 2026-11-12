@@ -347,6 +347,52 @@ RSpec.describe 'MCP image tools', type: :request do
     end
   end
 
+  # Removing an image nobody uses any more (an orphan left by a replacement, a
+  # file uploaded under the wrong name). One in use is refused, wherever its
+  # URL is written.
+  describe 'delete' do
+    let(:url) { 'https://kleer-images.s3.sa-east-1.amazonaws.com/news/vieja%20portada.jpg' }
+
+    before do
+      FileStoreService.create_null(exists: { 'news/vieja portada.jpg' => true, 'no-existe.png' => false })
+      allow(FileStoreService.current).to receive(:delete).and_call_original
+    end
+
+    it 'says what it would delete, then deletes it on confirm' do
+      preview = call_tool('images', { operation: 'delete', image: url })
+      expect(preview).to include('status' => 'preview', 'file_name' => 'news/vieja portada.jpg')
+      expect(FileStoreService.current).not_to have_received(:delete)
+
+      result = call_tool('images', { operation: 'delete', image: 'news/vieja portada.jpg', confirm: true })
+      expect(result).to include('status' => 'deleted', 'file_name' => 'news/vieja portada.jpg')
+      expect(FileStoreService.current).to have_received(:delete).with('news/vieja portada.jpg')
+    end
+
+    it 'refuses an image in use, saying where, however its URL was written' do
+      article = create(:article, cover: 'https://d3vnsn21cv5bcd.cloudfront.net/news/vieja+portada.jpg')
+
+      result = call_tool('images', { operation: 'delete', image: 'news/vieja portada.jpg', confirm: true })
+
+      expect(result['status']).to eq('error')
+      expect(result['errors'].join).to include('in use')
+      expect(result['usage'].to_s).to include(article.id.to_s)
+      expect(FileStoreService.current).not_to have_received(:delete)
+    end
+
+    it 'says so when there is no such image' do
+      result = call_tool('images', { operation: 'delete', image: 'no-existe.png', confirm: true })
+
+      expect(result['errors'].join).to include('no-existe.png', 'not')
+      expect(FileStoreService.current).not_to have_received(:delete)
+    end
+
+    it 'needs to know which image, and only touches the image bucket' do
+      expect(call_tool('images', { operation: 'delete' })['errors'].join).to include('image is required')
+      expect(call_tool('images', { operation: 'delete', image: 'https://otro.example.com/x.png' })['errors'].join)
+        .to include('not in the image bucket')
+    end
+  end
+
   describe 'permissions' do
     let(:user) { create(:comercial) }
 
@@ -356,6 +402,7 @@ RSpec.describe 'MCP image tools', type: :request do
       expect(call_tool('images', { operation: 'upload', url: 'https://images.example.com/x.gif' }).to_s)
         .to include('Unauthorized')
       expect(call_tool('images', { operation: 'upload_slot', path: 'x.png' }).to_s).to include('Unauthorized')
+      expect(call_tool('images', { operation: 'delete', image: 'x.png' }).to_s).to include('Unauthorized')
     end
   end
 end
