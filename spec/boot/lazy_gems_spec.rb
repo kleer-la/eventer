@@ -7,12 +7,18 @@ require 'open3'
 # worker and in the job process (#237). These specs boot the app the same way,
 # in a fresh process, and list which of the given constants ended up defined.
 RSpec.describe 'Boot memory' do
+  # The test environment eager-loads only under CI (config/environments/test.rb),
+  # so the probe sets CI to boot the way production does: app/ loaded during
+  # boot, before Rails turns YJIT on. Without it, a devcontainer run loads app/
+  # in the probe's eager_load!, after YJIT is on, and counts that code (#240).
+  def boot_env = { 'RAILS_ENV' => 'test', 'CI' => '1' }
+
   def constants_loaded_at_boot(names)
     probe = <<~RUBY
       Rails.application.eager_load!
       puts #{names.inspect}.select { |c| Object.const_defined?(c) }.join(',')
     RUBY
-    out, err, status = Open3.capture3({ 'RAILS_ENV' => 'test' }, 'bin/rails', 'runner', probe,
+    out, err, status = Open3.capture3(boot_env, 'bin/rails', 'runner', probe,
                                       chdir: Rails.root.to_s)
     expect(status).to be_success, err
     out.lines.last.to_s.strip
@@ -39,7 +45,7 @@ RSpec.describe 'Boot memory' do
       Rails.application.eager_load!
       puts [RubyVM::YJIT.enabled?, RubyVM::YJIT.runtime_stats[:compiled_iseq_count].to_i].join(',')
     RUBY
-    out, err, status = Open3.capture3({ 'RAILS_ENV' => 'test' }, 'bin/rails', 'runner', probe,
+    out, err, status = Open3.capture3(boot_env, 'bin/rails', 'runner', probe,
                                       chdir: Rails.root.to_s)
     expect(status).to be_success, err
     enabled, compiled = out.lines.last.to_s.strip.split(',')
