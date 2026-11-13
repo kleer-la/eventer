@@ -8,9 +8,14 @@
 module OauthAccess
   OWNER_BY_SCOPE = { 'mcp' => 'User', 'handoff' => 'HandoffUser' }.freeze
 
+  # A valid token revokes the one it was refreshed from, as Doorkeeper's own
+  # authenticate does: until then both work, so a refresh never races a request
+  # still carrying the old token (#242).
   def self.valid?(plain_token, scope: 'mcp')
     token = access_token(plain_token)
-    token.present? && token.accessible? && token.scopes.to_a == [scope] && owner_of(token, scope).present?
+    valid = token.present? && token.accessible? && token.scopes.to_a == [scope] && owner_of(token, scope).present?
+    token.revoke_previous_refresh_token! if valid
+    valid
   end
 
   def self.authenticate(plain_token)

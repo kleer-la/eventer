@@ -13,9 +13,7 @@ class HandoffMcpTransport < McpTokenTransport
     OauthAccess.valid?(token, scope: 'handoff')
   end
 
-  def unauthorized_response(request)
-    status, headers, body = super
-    metadata = "#{request.base_url}/.well-known/oauth-protected-resource/handoff/mcp"
-    [status, headers.merge('WWW-Authenticate' => %(Bearer resource_metadata="#{metadata}")), body]
+  def resource_metadata_url(request)
+    "#{request.base_url}/.well-known/oauth-protected-resource/handoff/mcp"
   end
 end

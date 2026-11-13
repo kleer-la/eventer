@@ -48,7 +48,7 @@ Doorkeeper.configure do
   force_ssl_in_redirect_uri { |uri| %w[localhost 127.0.0.1].exclude?(uri.host) }
   allow_token_introspection false
 
-  access_token_expires_in 2.hours
+  access_token_expires_in 1.day
   use_refresh_token
   revoke_previous_authorization_code_token
   hash_token_secrets

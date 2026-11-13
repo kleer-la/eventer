@@ -68,10 +68,20 @@ class McpTokenTransport < FastMcp::Transports::AuthenticatedRackTransport
     OauthAccess.valid?(token)
   end
 
+  # RFC 6750 §3.1: with a token that is expired, revoked or unknown, say
+  # invalid_token so the client refreshes it; without one, only point at the
+  # metadata, which starts a login (#242).
   def unauthorized_response(request)
     status, headers, body = super
-    metadata = "#{request.base_url}/.well-known/oauth-protected-resource"
-    [status, headers.merge('WWW-Authenticate' => %(Bearer resource_metadata="#{metadata}")), body]
+    challenge = %(Bearer resource_metadata="#{resource_metadata_url(request)}")
+    if request.get_header('HTTP_AUTHORIZATION').to_s.match?(/\ABearer \S/i)
+      challenge += ', error="invalid_token", error_description="The access token is expired, revoked or unknown"'
+    end
+    [status, headers.merge('WWW-Authenticate' => challenge), body]
+  end
+
+  def resource_metadata_url(request)
+    "#{request.base_url}/.well-known/oauth-protected-resource"
   end
 
   # The initialize response is the one whose result carries serverInfo; it is
