@@ -18,6 +18,12 @@ class EventTypeWriteService < ContentWriteService
   self.publication_permission = :set_include_in_catalog
 
   include TrainerAssignment
+  include HeadingLevelWarnings
+
+  # The course page puts the description right under its h1, and recipients
+  # and takeaways under their section's h2. program and faq are split into
+  # items on their headings, so they are not checked.
+  self.heading_starts = { description: 2, recipients: 3, takeaways: 3 }
 
   def initialize(in_catalog: nil, **args)
     super(published: in_catalog, **args)
@@ -31,10 +37,14 @@ class EventTypeWriteService < ContentWriteService
   end
 
   def model_warnings
-    return [] unless @record.new_record?
+    [catalog_warning, *heading_level_warnings].compact
+  end
 
-    ['It is created out of the public catalog (include_in_catalog is false). Once it is ready to be on ' \
-     'sale on the site, update it with in_catalog=true.']
+  def catalog_warning
+    return unless @record.new_record?
+
+    'It is created out of the public catalog (include_in_catalog is false). Once it is ready to be on ' \
+      'sale on the site, update it with in_catalog=true.'
   end
 
   # A new course is forced out of the catalog (nil → false): that is not taking

@@ -2,11 +2,13 @@
 
 class ArticleWriteService < ContentWriteService
   include TrainerAssignment
+  include HeadingLevelWarnings
 
   self.model = Article
   self.editable_fields = %i[title tabtitle description body lang slug cover header industry noindex selected
                             redirect_url substantive_change_at]
   self.long_fields = %w[body]
+  self.heading_starts = { body: 2 }
 
   # Rails would cast an unparseable string to nil and silently clear the
   # field, so the moment is parsed here and a bad one fails the call.
@@ -30,7 +32,7 @@ class ArticleWriteService < ContentWriteService
   def model_warnings
     return [] unless @record.changed.include?('body')
 
-    ['The body changed: the spoken-audio version will be regenerated.']
+    ['The body changed: the spoken-audio version will be regenerated.'] + heading_level_warnings
   end
 
   # With redirect_url the site answers the article's URL with a 301 whether it

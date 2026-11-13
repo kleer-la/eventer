@@ -2,6 +2,7 @@
 
 class ResourceWriteService < ContentWriteService
   include RedirectWarnings
+  include HeadingLevelWarnings
 
   self.model = Resource
   self.editable_fields = %i[title_es title_en description_es description_en format slug slug_en
@@ -11,6 +12,7 @@ class ResourceWriteService < ContentWriteService
                             share_text_es share_text_en tags_es tags_en
                             seo_description_es seo_description_en tabtitle_es tabtitle_en redirect_url]
   self.long_fields = %w[long_description_es long_description_en comments_es comments_en]
+  self.heading_starts = { long_description_es: 2, long_description_en: 2 }
 
   include TrainerAssignment
   self.trainer_associations = %i[authors translators illustrators]
@@ -20,7 +22,7 @@ class ResourceWriteService < ContentWriteService
   def redirect_reach = ', and it leaves the resource lists and the sitemap'
 
   def model_warnings
-    redirect_warnings + untranslated_warnings
+    redirect_warnings + untranslated_warnings + heading_level_warnings
   end
 
   def untranslated_warnings
