@@ -53,6 +53,17 @@ class Service < ApplicationRecord
       .merge('is_training_program' => service_area&.is_training_program || false)
   end
 
+  # Where the site shows the service (service_url in website17's
+  # services_controller): under its area, or straight under formacion/training
+  # in a training program.
+  def site_path
+    return unless service_area
+    return "/#{service_area.lang.presence || 'es'}/#{service_area.site_section}/#{slug}" if
+      service_area.is_training_program
+
+    "#{service_area.site_path}/#{slug}"
+  end
+
   # A redirected service answers 301: a card to it leads somewhere else.
   def servable_as_recommendation?
     published && !redirected?

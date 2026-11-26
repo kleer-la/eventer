@@ -67,6 +67,20 @@ class ServiceArea < ApplicationRecord
     "#{name} (id #{id}, slug #{slug}, lang #{lang})"
   end
 
+  # Where the site shows the area, as website17 builds it (area_url in
+  # controllers/helper.rb): training programs live under formacion/training.
+  SITE_SECTIONS = { false => { 'es' => 'servicios', 'en' => 'services' },
+                    true => { 'es' => 'formacion', 'en' => 'training' } }.freeze
+
+  def site_section = SITE_SECTIONS.dig(is_training_program == true, lang.presence || 'es')
+  def site_path = "/#{lang.presence || 'es'}/#{site_section}/#{slug}"
+
+  # The page on the website this Keventer serves (WEBSITE_URL): QA's in QA.
+  def self.site_url(path)
+    website = ENV.fetch('WEBSITE_URL', nil)
+    "#{website.chomp('/')}#{path}" if website.present?
+  end
+
   def to_mcp
     { id: id, slug: slug, name: name, lang: lang }
   end

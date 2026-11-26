@@ -17,6 +17,49 @@ module OfferingFormatWarnings
   private
 
   def offering_format_warnings
+    list_shape_warnings + outside_list_warnings + rendered_html_warnings
+  end
+
+  # Of a list block the site gets only the items: a separator, a paragraph or
+  # a client case after the list saves fine and never reaches the page.
+  LIST_CONTAINERS = { outcomes: 'ul', program: 'ol', faq: 'ol' }.freeze
+  # Markup that only wraps or spaces, which leaves nothing behind when removed
+  WRAPPERS = %w[div br].freeze
+
+  def outside_list_warnings
+    LIST_CONTAINERS.filter_map do |block, container|
+      next unless @fields.key?(block) && @record.public_send(block).present?
+
+      left = left_outside(@record.public_send(block).body.to_html, container)
+      next if left.empty?
+
+      "#{block}: the site shows only its #{container} > li items, so this is left out of the page: #{left.join(', ')}"
+    end
+  end
+
+  def left_outside(html, container)
+    doc = Nokogiri::HTML5.fragment(html)
+    doc.css(container).each(&:remove)
+    elements = doc.css('*').map(&:name).uniq - WRAPPERS
+    text = doc.text.squish
+    elements.map { |tag| "<#{tag}>" } + (text.empty? ? [] : ["«#{text.truncate(80)}»"])
+  end
+
+  # The prose blocks reach the page rendered by ActionText, which drops what
+  # its safe list does not allow (SiteRenderedHtml). Keventer keeps it all.
+  def rendered_html_warnings
+    (self.class.rich_text_fields - LIST_BLOCKS.keys).filter_map do |block|
+      next unless @fields.key?(block)
+
+      dropped = SiteRenderedHtml.new(@fields[block]).dropped
+      next if dropped.empty?
+
+      "#{block}: the site does not show #{dropped.join(', ')}. Keventer keeps it, but the page renders a " \
+        'safe list of HTML (no inline styles, data-* attributes, iframes or tables): use plain markup instead'
+    end
+  end
+
+  def list_shape_warnings
     LIST_BLOCKS.flat_map do |block, shape|
       next [] unless @fields.key?(block) && @record.public_send(block).present?
       next broken_item_warnings(block) if items_of(block).any?

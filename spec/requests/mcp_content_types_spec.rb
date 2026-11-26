@@ -112,6 +112,51 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
   describe 'services' do
     let!(:service) { create(:service, name: 'Formación en Scrum', published: false) }
 
+    # Keventer stores a block's HTML as given, but the API serves it rendered by
+    # ActionText (body.to_s), which keeps a safe list of tags and attributes; and
+    # of a list block the site gets only the items. Whatever falls outside saved
+    # fine and vanished from the page without a word (MCP suggestion #8 in QA).
+    context 'when the site would not show part of a block' do
+      it 'names the tags and attributes the page drops' do
+        html = '<p>Caso</p><hr style="border:0"><div data-x="1">y</div><iframe src="https://v.example"></iframe>'
+        result = call_tool('services', { operation: 'update', id: service.slug, value_proposition: html })
+
+        warning = result['warnings'].find { |w| w.start_with?('value_proposition') }
+        expect(warning).to include('<iframe>', 'style (on hr)', 'data-x (on div)')
+      end
+
+      it 'says nothing when the HTML is all shown' do
+        result = call_tool('services', { operation: 'update', id: service.slug,
+                                         value_proposition: '<p>Caso <strong>real</strong></p><hr>' })
+
+        expect(result['warnings'].grep(/value_proposition/)).to be_empty
+      end
+
+      it 'names what a list block leaves outside its items' do
+        result = call_tool('services', { operation: 'update', id: service.slug,
+                                         program: '<ol><li>Paso<ul><li>Detalle</li></ul></li></ol>' \
+                                                  '<hr><p>Caso de cliente</p>' })
+
+        warning = result['warnings'].find { |w| w.start_with?('program') }
+        expect(warning).to include('ol > li', 'Caso de cliente', '<hr>')
+      end
+    end
+
+    it 'gives the page of the service on the site' do
+      original = ENV.fetch('WEBSITE_URL', nil)
+      ENV['WEBSITE_URL'] = 'https://site.example'
+      area = service.service_area
+
+      read = call_tool('services', { operation: 'get', id: service.slug })
+      saved = call_tool('services', { operation: 'update', id: service.slug, subtitle: 'Otra', confirm: true })
+
+      expected = "https://site.example/#{area.lang.presence || 'es'}/servicios/#{area.slug}/#{service.slug}"
+      expect(read['url']).to eq(expected)
+      expect(saved['url']).to eq(expected)
+    ensure
+      ENV['WEBSITE_URL'] = original
+    end
+
     it 'lists, and returns the rich-text blocks as HTML' do
       expect(call_tool('services')['services'].pluck('name')).to eq(['Formación en Scrum'])
 

@@ -17,6 +17,15 @@ class ServicesTool < AuthenticatedTool
     operation=get: one service in full, by id (slug or numeric): the rich-text
     blocks that make up its page (value proposition, outcomes, definitions,
     program, target, FAQ), the recommended-way copy, and what it recommends.
+    Blocks come back as the site shows them, and `url` is the service's page on
+    the website (also in the answer to a save), to check the result there.
+    How the site reads each block: outcomes is only its ul > li items; program
+    and FAQ only their ol > li items, each with its detail or answer in a nested
+    ul > li — anything outside those lists (a separator, a paragraph, a client
+    case) is left out of the page. value_proposition, definitions and target are
+    prose, rendered through a safe list of HTML: no inline styles, data-*
+    attributes, iframes or tables. The preview names whatever a write brings
+    that the page would not show.
     operation=create: needs name, subtitle, service_area, value_proposition,
     outcomes, program, target and side_image; unpublished unless published=true.
     operation=update: edits service `id`; only the fields passed are touched.
@@ -110,7 +119,8 @@ class ServicesTool < AuthenticatedTool
 
   def get(id: nil, **)
     service = find(id)
-    { id: service.id, slug: service.slug, name: service.name, subtitle: service.subtitle,
+    { id: service.id, slug: service.slug, url: ServiceArea.site_url(service.site_path),
+      name: service.name, subtitle: service.subtitle,
       service_area: service.service_area&.to_mcp, published: service.published, ordering: service.ordering,
       card_description: service.card_description, pricing: service.pricing,
       side_image: service.side_image, hero_image: service.hero_image,

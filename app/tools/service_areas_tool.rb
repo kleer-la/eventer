@@ -140,7 +140,8 @@ class ServiceAreasTool < AuthenticatedTool
   end
 
   def get(area)
-    { id: area.id, slug: area.slug, name: area.name, lang: area.lang, visible: area.visible,
+    { id: area.id, slug: area.slug, url: ServiceArea.site_url(area.site_path),
+      name: area.name, lang: area.lang, visible: area.visible,
       is_training_program: area.is_training_program, ordering: area.ordering,
       icon: area.icon, side_image: area.side_image, hero_image: area.hero_image,
       hero_highlight: area.hero_highlight, hero_highlight_text: area.hero_highlight_text,

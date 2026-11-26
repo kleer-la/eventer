@@ -25,6 +25,9 @@ class ServiceWriteService < ContentWriteService
 
   private
 
+  # The page to look at once it is saved.
+  def saved_extras = { url: ServiceArea.site_url(@record.site_path) }.compact
+
   def assign
     super
     assign_service_area

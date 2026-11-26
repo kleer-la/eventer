@@ -30,6 +30,9 @@ class ServiceAreaWriteService < ContentWriteService
 
   private
 
+  # The page to look at once it is saved.
+  def saved_extras = { url: ServiceArea.site_url(@record.site_path) }.compact
+
   def model_warnings
     offering_format_warnings + slug_change_warnings(also: ', and every service URL under it moves with it') +
       redirect_warnings
