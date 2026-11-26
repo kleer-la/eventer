@@ -25,6 +25,10 @@ class Coupon < ApplicationRecord
     coupon_type == 'amount_off'
   end
 
+  # The admin filters use none of its associations; ransack 6 needs that
+  # said explicitly (#241).
+  def self.ransackable_associations(_auth_object = nil) = []
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[active amount_off code coupon_type created_at display expires_on icon id id_value
        internal_name percent_off updated_at]

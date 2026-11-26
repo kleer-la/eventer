@@ -29,6 +29,10 @@ class MailTemplate < ApplicationRecord
     render_template(value, contact)
   end
 
+  # The admin filters use none of its associations; ransack 6 needs that
+  # said explicitly (#241).
+  def self.ransackable_associations(_auth_object = nil) = []
+
   def self.ransackable_attributes(auth_object = nil)
     %w[active cc content created_at delivery_schedule id id_value identifier resource_slug subject to
        trigger_type updated_at]

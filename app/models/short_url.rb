@@ -9,6 +9,10 @@ class ShortUrl < ApplicationRecord
 
   before_validation :generate_short_code, on: :create, unless: :short_code_present?
 
+  # The admin filters use none of its associations; ransack 6 needs that
+  # said explicitly (#241).
+  def self.ransackable_associations(_auth_object = nil) = []
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[click_count created_at id id_value original_url short_code updated_at]
   end

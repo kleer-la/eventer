@@ -92,9 +92,10 @@ gem 'xero-ruby', '~> 18.2', require: false # required by XeroClientService
 
 gem 'activeadmin'
 gem 'activeadmin_addons'
-# ActiveAdmin's filters run on ransack: stay on 4.4 (security fixes in 4.4.4).
-# 6.1 breaks admin index filters; the upgrade goes on its own (#239).
-gem 'ransack', '~> 4.4', '>= 4.4.4'
+# ActiveAdmin's filters run on ransack. Since 6.x every association and attribute
+# a filter touches must be in the model's ransackable_* allowlist (#241);
+# spec/features/admin/screens_render_spec.rb and filters_spec.rb catch a missing one.
+gem 'ransack', '~> 6.1'
 
 # MCP server: lets Claude read and edit blog articles over OAuth 2.1
 gem 'doorkeeper', '~> 5.9'

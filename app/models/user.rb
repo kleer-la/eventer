@@ -28,6 +28,10 @@ class User < ApplicationRecord
     "#{email} #{roles_html}".html_safe
   end
 
+  # The admin filters use none of its associations; ransack 6 needs that
+  # said explicitly (#241).
+  def self.ransackable_associations(_auth_object = nil) = []
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at current_sign_in_at current_sign_in_ip email encrypted_password id id_value
        last_sign_in_at last_sign_in_ip remember_created_at reset_password_sent_at reset_password_token sign_in_count updated_at]

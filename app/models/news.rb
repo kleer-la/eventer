@@ -11,6 +11,10 @@ class News < ApplicationRecord
   scope :published, -> { where(published: true) }
   scope :unpublished, -> { where(published: false) }
 
+  # The admin filters use none of its associations; ransack 6 needs that
+  # said explicitly (#241).
+  def self.ransackable_associations(_auth_object = nil) = []
+
   def self.ransackable_attributes(auth_object = nil)
     %w[audio created_at description event_date id id_value img lang published title updated_at url
        video where]

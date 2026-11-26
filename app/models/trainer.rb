@@ -39,6 +39,10 @@ class Trainer < ApplicationRecord
     "http://www.gravatar.com/avatar/#{hash}"
   end
 
+  # The admin filters use none of its associations; ransack 6 needs that
+  # said explicitly (#241).
+  def self.ransackable_associations(_auth_object = nil) = []
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[average_rating bio bio_en country_id created_at deleted gravatar_email id id_value
        is_kleerer landing linkedin_url name signature_credentials signature_image
