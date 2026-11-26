@@ -76,6 +76,23 @@ RSpec.describe 'OAuth for MCP clients', type: :request do
     expect(ArticlesTool.new(headers: { 'authorization' => "Bearer #{access_token}" }).current_user).to be_nil
   end
 
+  # Without the grant's code_challenge column, Doorkeeper < 5.9.10 accepted any
+  # code_verifier: a stolen code was enough to get a token.
+  it 'refuses a code exchanged with the wrong code_verifier' do
+    client = register_client
+    sign_in administrator
+    post '/oauth/authorize', params: { client_id: client['client_id'], redirect_uri: redirect_uri,
+                                       response_type: 'code', scope: 'mcp', code_challenge: challenge,
+                                       code_challenge_method: 'S256' }
+    code = Rack::Utils.parse_query(URI(response.headers['Location']).query)['code']
+
+    post '/oauth/token', params: { grant_type: 'authorization_code', code: code, redirect_uri: redirect_uri,
+                                   client_id: client['client_id'], code_verifier: 'not-the-verifier' }
+
+    expect(response).to have_http_status(:bad_request)
+    expect(response.parsed_body['error']).to eq('invalid_grant')
+  end
+
   it 'requires PKCE and only allows http redirect uris on localhost' do
     client = register_client
     sign_in administrator
