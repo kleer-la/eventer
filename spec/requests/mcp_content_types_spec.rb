@@ -362,6 +362,62 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
       expect(call_tool('pages', { operation: 'get', id: page.id })['rendered_title']).to be_nil
     end
 
+    # An overlay's template is website17's, and it reads only some section slugs:
+    # a section under any other slug saves fine and never shows (#243).
+    context 'overlay templates' do
+      let(:news_page) { create(:page, name: 'Novedades', lang: :es, slug: 'novedades', template: 'overlay') }
+      let(:resources_page) { create(:page, name: 'Recursos', lang: :es, slug: 'recursos', template: 'overlay') }
+
+      it 'says which sections the template reads, and which of the page it ignores' do
+        news_page.sections.create!(slug: 'hero', title: 'Novedades')
+        news_page.sections.create!(slug: 'banner', title: 'Nadie la lee')
+
+        read = call_tool('pages', { operation: 'get', id: news_page.id })
+
+        expect(read['template_sections'].keys).to eq(['hero'])
+        expect(read['template_sections']['hero']).to include('H1')
+        expect(read['ignored_sections']).to eq(['banner'])
+      end
+
+      it 'says so when the template reads no section at all' do
+        read = call_tool('pages', { operation: 'get', id: resources_page.id })
+
+        expect(read['template_sections']).to eq({})
+        expect(read['template_note']).to include('no section')
+      end
+
+      it 'warns before adding a section the template will not read' do
+        result = call_tool('pages', { operation: 'create_section', page_id: resources_page.id, slug: 'hero',
+                                      title: 'Recursos para equipos' })
+
+        expect(result['status']).to eq('preview')
+        expect(result['warnings'].join).to include("'hero'", 'will not show')
+      end
+
+      it 'does not warn about a section the template reads' do
+        result = call_tool('pages', { operation: 'create_section', page_id: news_page.id, slug: 'hero',
+                                      title: 'Novedades' })
+
+        expect(result['warnings']).to be_empty
+      end
+
+      it 'warns when a section is renamed to a slug the template does not read' do
+        hero = news_page.sections.create!(slug: 'hero', title: 'Novedades')
+
+        result = call_tool('pages', { operation: 'update_section', id: hero.id, slug: 'intro' })
+
+        expect(result['warnings'].join).to include("'intro'", 'hero')
+      end
+
+      it 'warns about an overlay website17 does not load' do
+        page = create(:page, name: 'Contacto', lang: :es, slug: 'contacto-viejo', template: 'overlay')
+
+        expect(call_tool('pages', { operation: 'get', id: page.id })['template_sections']).to be_nil
+        result = call_tool('pages', { operation: 'create_section', page_id: page.id, slug: 'hero', title: 'Hola' })
+        expect(result['warnings'].join).to include('does not load')
+      end
+    end
+
     # Sections were read-only here: a flagship is made of them, so changing a
     # button or a paragraph meant going to the admin.
     context 'sections' do

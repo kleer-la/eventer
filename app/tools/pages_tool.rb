@@ -24,7 +24,11 @@ class PagesTool < AuthenticatedTool
     its browser tab says: the site adds ' | Kleer' after the SEO title (or the
     name) unless the title already says Kleer somewhere. `other_language` is the page with the
     same slug in the other language (null if there is none), with its noindex:
-    a page indexed in one language only is usually a mistake.
+    a page indexed in one language only is usually a mistake. For an overlay,
+    `template_sections` maps each section slug its template reads to what it
+    shows (empty: the template reads none, so its headings are fixed in the
+    site's code), and `ignored_sections` lists this page's sections the
+    template never reads. Read it before adding a section to an overlay.
     operation=create: name and lang are required; the slug is derived from the
     name when omitted. The page is created without sections; a 'flagship' with
     no sections renders empty, and the preview says so.
@@ -35,6 +39,8 @@ class PagesTool < AuthenticatedTool
     its role: in a flagship 'hero' is the top band and 'contact' the closing
     banner; any other slug is a body block, shown in `position` order, and
     becomes its HTML anchor. The slug is derived from the title when omitted.
+    In an overlay only the slugs in `template_sections` show; the preview
+    warns about any other.
     operation=update_section: edits section `id`; only the fields passed are
     touched. `content` is raw HTML; to change part of it, prefer
     `replacements` on the field 'content'. In a flagship, a hero `cta_url`
@@ -172,7 +178,22 @@ class PagesTool < AuthenticatedTool
       cover: page.cover, canonical: page.canonical, show_in_footer: page.show_in_footer, noindex: page.noindex,
       **seo(page), other_language: other_language(page),
       sections: page.sections.order(:position).map { |section| section_summary(section) },
-      updated_at: page.updated_at }.to_json
+      **template_sections(page), updated_at: page.updated_at }.to_json
+  end
+
+  # For an overlay, which section slugs website17's template reads, and which
+  # of this page's sections it never reads (#243). Nil when it loads no overlay
+  # by this slug.
+  def template_sections(page)
+    return {} unless page.overlay?
+
+    template = OverlayTemplate.for(page)
+    return { template_sections: nil, template_note: 'website17 does not load an overlay with this slug.' } \
+      unless template
+
+    { template_sections: template.sections,
+      ignored_sections: page.sections.map(&:slug).reject { |slug| template.reads?(slug) },
+      template_note: template.note }.compact
   end
 
   def seo(page)
