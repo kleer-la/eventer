@@ -13,7 +13,6 @@ class Event < ApplicationRecord
   has_many :participants
   has_many :categories, through: :event_type
 
-
   scope :visible, -> { where(cancelled: false).where('date >= ?', DateTime.now - 1) }
   scope :past_visible, -> { where(cancelled: false).where('date <= ?', DateTime.now) }
   scope :public_events, -> { where("visibility_type = 'pu' or visibility_type = 'co'") }
@@ -241,21 +240,6 @@ class Event < ApplicationRecord
 
   def human_cancellation_limit_date
     humanize_date cancellation_limit_date
-  end
-
-  INTERESTED_ERROR = 'No se pudo crear el participante'
-  def interested_participant(fname, lname, email, country_iso, notes)
-    iz = InfluenceZone.find_by_country(country_iso)
-    return "No se encontró el país #{country_iso}. " + INTERESTED_ERROR if iz.nil?
-
-    part = participants.create(status: Participant::STATUS[:new],
-                               fname:, lname:, email:,
-                               phone: 'na', id_number: 'na', address: 'na', influence_zone: iz,
-                               notes:)
-
-    part.save if part.valid?
-    part.errors.add(:participants, INTERESTED_ERROR) unless part.valid?
-    part.errors.full_messages.join(', ')
   end
 
   def price(qty, date, referer_code = '')

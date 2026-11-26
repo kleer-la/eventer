@@ -508,36 +508,6 @@ describe Event do
     end
   end
 
-  context 'New interested participant' do
-    before(:each) do
-      c = FactoryBot.create(:country, iso_code: 'AR')
-      FactoryBot.create(:influence_zone, country: c)
-      @event = FactoryBot.create(:event)
-    end
-
-    it 'Evething is cool' do
-      expect do
-        @event.interested_participant('fname', 'lname', 'e@mail.com', 'AR', 'notes')
-      end.to change(Participant, :count).by(1)
-    end
-    it 'not cool' do
-      expect do
-        @result = @event.interested_participant('', '', '', 'AR', '')
-      end.to change(Participant, :count).by(0)
-
-      expect(@result).to match(/Fname/)
-      expect(@result).to match(/Lname/)
-      expect(@result).to match(/Email/)
-    end
-    it 'country not found' do
-      expect do
-        @result = @event.interested_participant('', '', '', 'ZZ', '')
-      end.to change(Participant, :count).by(0)
-
-      expect(@result).to match(/país/)
-    end
-  end
-
   context 'princing' do
     before(:each) do
       @eb = DateTime.new(2022, 1, 1)
