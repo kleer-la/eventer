@@ -101,6 +101,45 @@ RSpec.describe 'MCP resource tools', type: :request do
     end
   end
 
+  # get answers the texts of each language nested under es/en; create and
+  # update take that same shape, so a resource read in one environment can be
+  # written in another without retyping it (MCP suggestion #1, #237).
+  describe 'the shape get returns' do
+    let(:source) do
+      create(:resource, title_es: 'Canvas de valor', description_es: 'Un canvas', tabtitle_es: 'Canvas | Kleer',
+                        title_en: 'Value canvas', description_en: 'A canvas', getit_en: 'https://drive.example/en')
+    end
+
+    it 'creates a copy from what get answered' do
+      read = call_tool('resources', { operation: 'get', id: source.slug })
+      source.destroy!
+
+      result = call_tool('resources', { operation: 'create', format: read['format'], slug: read['slug'],
+                                        es: read['es'], en: read['en'], confirm: true })
+
+      expect(result['status']).to eq('saved')
+      copy = Resource.find(result['id'])
+      expect(copy).to have_attributes(title_es: 'Canvas de valor', tabtitle_es: 'Canvas | Kleer',
+                                      title_en: 'Value canvas', getit_en: 'https://drive.example/en')
+    end
+
+    it 'updates one language through it' do
+      call_tool('resources', { operation: 'update', id: source.slug, en: { title: 'The value canvas' },
+                               confirm: true })
+
+      expect(source.reload).to have_attributes(title_en: 'The value canvas', title_es: 'Canvas de valor')
+    end
+
+    it 'refuses a field given both ways with different values' do
+      result = call_tool('resources', { operation: 'update', id: source.slug, title_en: 'Uno',
+                                        en: { title: 'Otro' } })
+
+      expect(result['status']).to eq('error')
+      expect(result['errors'].join).to include('title_en')
+      expect(source.reload.title_en).to eq('Value canvas')
+    end
+  end
+
   describe 'update_resource' do
     let!(:resource) { create(:resource, title_es: 'Viejo', published: false) }
 

@@ -8,6 +8,10 @@ class ResourcesTool < AuthenticatedTool
 
   OPERATIONS = %w[list get create update concepts].freeze
   FORMATS = 'card | book | infographic | canvas | guide | game | assessment | video | concepts | other'
+  # The texts each language has: get answers them as es: {title: …}, and
+  # create/update take them that way too, or flat as title_es.
+  SIDE_FIELDS = %w[title description long_description comments cover getit buyit landing preview
+                   share_text tags seo_description tabtitle].freeze
 
   description <<~MD
     Resources: books, infographics, canvases, guides, games, videos…
@@ -45,7 +49,9 @@ class ResourcesTool < AuthenticatedTool
     One bad card saves nothing.
 
     Fields ending in _es and _en are the Spanish and English sides of the same
-    thing. Writes take two steps: confirm=false (the default) validates and
+    thing. create/update also take them as get answers them, `es: {title, …}`
+    and `en: {…}`, so a resource read in QA can be written in production as is.
+    Writes take two steps: confirm=false (the default) validates and
     previews without saving; call again with confirm=true once the user agrees.
     `redirect_url` (a path like /es/recursos/otro or a full URL): the resource's
     URL answers 301 there, published or not — set it when something replaces it,
@@ -117,6 +123,12 @@ class ResourcesTool < AuthenticatedTool
       optional(:related_slugs).array(:string).description('Slugs of related cards; [] empties it')
       optional(:_destroy).filled(:bool).description('true deletes the card')
     end.description('concepts: the cards to create, update or delete')
+    %w[es en].each do |lang|
+      optional(lang.to_sym).hash do
+        ResourcesTool::SIDE_FIELDS.each { |field| optional(field.to_sym).maybe(:string) }
+      end.description("create/update: the #{lang} texts in the shape get answers them " \
+                      "(title, description, …), instead of or as well as the *_#{lang} fields")
+    end
     optional(:confirm).filled(:bool).description('create/update: false (default) = preview only; true = save')
     instance_exec(&ApplicationTool::REPLACEMENTS)
     instance_exec(&ApplicationTool::CLEAR)
@@ -203,10 +215,22 @@ class ResourcesTool < AuthenticatedTool
   end
 
   def side(resource, lang)
-    %w[title description long_description comments cover getit buyit landing preview
-       share_text tags seo_description tabtitle].to_h do |field|
-      [field, resource.public_send("#{field}_#{lang}")]
+    SIDE_FIELDS.to_h { |field| [field, resource.public_send("#{field}_#{lang}")] }
+  end
+
+  # es: {title: …} / en: {…} become title_es / title_en. A field given both
+  # ways must say the same thing: which one wins would be a guess.
+  def flattened(fields)
+    conflicts = []
+    flat = fields.except(:es, :en)
+    %i[es en].each do |lang|
+      (fields[lang] || {}).each do |field, value|
+        key = :"#{field}_#{lang}"
+        conflicts << key if flat.key?(key) && flat[key] != value
+        flat[key] = value
+      end
     end
+    [flat, conflicts]
   end
 
   def recommendation(content)
@@ -218,6 +242,12 @@ class ResourcesTool < AuthenticatedTool
   def write(resource, confirm:, **fields)
     action = resource ? :update : :create
     return unauthorized(action, Resource) unless ability.can?(action, Resource)
+
+    fields, conflicts = flattened(fields)
+    if conflicts.any?
+      return { status: 'error',
+               errors: ["Given both flat and nested with different values: #{conflicts.join(', ')}"] }.to_json
+    end
 
     ResourceWriteService.new(ability: ability, record: resource, **fields.except(:query, :concepts))
                         .call(confirm: confirm).to_json
