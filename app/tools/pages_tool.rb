@@ -181,15 +181,14 @@ class PagesTool < AuthenticatedTool
       **template_sections(page), updated_at: page.updated_at }.to_json
   end
 
-  # For an overlay, which section slugs website17's template reads, and which
-  # of this page's sections it never reads (#243). Nil when it loads no overlay
-  # by this slug.
+  # For an overlay, which section slugs the website's template reads, and which
+  # of this page's sections it never reads (#243). Nil, with a note saying why,
+  # when the website did not answer or loads no overlay by this slug.
   def template_sections(page)
     return {} unless page.overlay?
 
     template = OverlayTemplate.for(page)
-    return { template_sections: nil, template_note: 'website17 does not load an overlay with this slug.' } \
-      unless template
+    return { template_sections: nil, template_note: template.note } unless template.known?
 
     { template_sections: template.sections,
       ignored_sections: page.sections.map(&:slug).reject { |slug| template.reads?(slug) },

@@ -36,6 +36,9 @@ class WebsiteCacheReset
   private
 
   def refresh
+    # A refresh is also when a new deploy of the site gets noticed: ask it
+    # again which sections its templates read.
+    WebsitePageTemplates.clear(website_url: @website_url)
     response = Net::HTTP.get_response(URI.parse("#{@website_url}/cache-reset?token=#{@token}"))
     return failed("#{@website_url} answered #{response.code} #{response.message}") unless
       response.is_a?(Net::HTTPSuccess)

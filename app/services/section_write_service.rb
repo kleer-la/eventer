@@ -19,10 +19,9 @@ class SectionWriteService < ContentWriteService
   def model_warnings
     page = @record.page
     return [] unless page&.overlay? && (@record.new_record? || @record.slug_changed?)
-    return ["website17 does not load an overlay with slug #{page.slug.inspect}: no section of it shows."] \
-      if OverlayTemplate.unknown?(page)
 
     template = OverlayTemplate.for(page)
+    return [template.note] unless template.known? # not checked, or no section of it shows
     return [] if template.reads?(@record.slug)
 
     [unread_slug_warning(template)]

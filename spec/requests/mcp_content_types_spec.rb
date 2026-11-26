@@ -364,9 +364,40 @@ RSpec.describe 'MCP tools for the other content types', type: :request do
 
     # An overlay's template is website17's, and it reads only some section slugs:
     # a section under any other slug saves fine and never shows (#243).
+    # The list comes from the website itself (website17's PageTemplates).
     context 'overlay templates' do
       let(:news_page) { create(:page, name: 'Novedades', lang: :es, slug: 'novedades', template: 'overlay') }
       let(:resources_page) { create(:page, name: 'Recursos', lang: :es, slug: 'recursos', template: 'overlay') }
+      let(:site_templates) do
+        { templates: [{ slug: nil, sections: { hero: 'Home hero' } },
+                      { slug: 'novedades', sections: { hero: 'Title is the H1 of the news page' } },
+                      { slug: 'recursos', sections: {} }] }
+      end
+
+      around do |example|
+        original = ENV.fetch('WEBSITE_URL', nil)
+        ENV['WEBSITE_URL'] = 'https://site.example'
+        example.run
+      ensure
+        ENV['WEBSITE_URL'] = original
+      end
+
+      before do
+        stub_request(:get, 'https://site.example/page-templates.json')
+          .to_return(status: 200, body: site_templates.to_json, headers: { 'Content-Type' => 'application/json' })
+      end
+
+      it 'says it could not check when the website does not answer' do
+        stub_request(:get, 'https://site.example/page-templates.json').to_return(status: 503)
+
+        read = call_tool('pages', { operation: 'get', id: news_page.id })
+        expect(read['template_sections']).to be_nil
+        expect(read['template_note']).to include('https://site.example', 'not checked')
+
+        result = call_tool('pages', { operation: 'create_section', page_id: news_page.id, slug: 'hero', title: 'X' })
+        expect(result['status']).to eq('preview')
+        expect(result['warnings'].join).to include('not checked')
+      end
 
       it 'says which sections the template reads, and which of the page it ignores' do
         news_page.sections.create!(slug: 'hero', title: 'Novedades')
