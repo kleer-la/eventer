@@ -1,5 +1,5 @@
 # Build stage
-FROM ruby:4.0.9-slim AS build
+FROM ruby:4.0.10-slim AS build
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
@@ -31,7 +31,7 @@ RUN ASSETS_PRECOMPILE=1 SECRET_KEY_BASE=dummy RAILS_ENV=production \
     rm -rf tmp/cache/assets
 
 # Runtime stage
-FROM ruby:4.0.9-slim
+FROM ruby:4.0.10-slim
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \

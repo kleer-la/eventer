@@ -13,6 +13,7 @@ require 'factory_bot_rails'
 require 'delayed_job_active_record'
 
 require 'webmock/rspec'
+require_relative 'support/capybara_chrome_reset'
 WebMock.disable_net_connect!(allow_localhost: true)
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

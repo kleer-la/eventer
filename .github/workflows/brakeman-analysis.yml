@@ -21,7 +21,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 4.0.9
+          ruby-version: 4.0.10
       # Brakeman parses the source and needs none of the app's gems (rmagick
       # needs ImageMagick headers); same version as Gemfile.lock.
       - name: Install Brakeman

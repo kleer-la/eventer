@@ -17,7 +17,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 4.0.9
+          ruby-version: 4.0.10
       # Only the lockfile is audited, so the app's gems (rmagick needs
       # ImageMagick headers) are not installed; same version as Gemfile.lock.
       - name: Install bundler-audit
